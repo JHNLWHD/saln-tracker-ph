@@ -1,0 +1,105 @@
+import { Link } from 'react-router';
+import type { Route } from "./+types/official.$slug";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
+import { findOfficialBySlug, getOfficialWithSALNData } from "../data/officials";
+import { SALNRecordsView } from "../components/SALNRecordsView";
+import { Button } from "../components/ui/Button";
+import { Badge } from "../components/ui/Badge";
+
+export function meta({ params }: Route.MetaArgs) {
+  const official = findOfficialBySlug(params.slug);
+  return [
+    { title: `${official?.name} - SALN Records | SALN Tracker Philippines` },
+    { name: "description", content: `View SALN records for ${official?.name}, ${official?.position}` },
+  ];
+}
+
+export default function OfficialSALN({ params }: Route.ComponentProps) {
+  const official = findOfficialBySlug(params.slug);
+  const officialWithSALN = official ? getOfficialWithSALNData(official) : null;
+
+  if (!official) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="container mx-auto px-4 lg:px-8 py-8">
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Official Not Found</h1>
+            <p className="text-gray-600 mb-6">The requested official could not be found.</p>
+            <Link to="/">
+              <Button variant="primary">
+                Go Back
+              </Button>
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const getPositionColor = (position: string) => {
+    switch (position) {
+      case 'PRESIDENT': return 'ph-red';
+      case 'VICE PRESIDENT': return 'ph-blue';
+      case 'SENATOR': return 'ph-yellow';
+      default: return 'default';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <main className="container mx-auto px-4 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Back Button */}
+          <div>
+            <Link to="/">
+              <Button 
+                variant="ghost" 
+                className="mb-4"
+              >
+                ← Back to Home
+              </Button>
+            </Link>
+          </div>
+
+          {/* Official Header */}
+          <div className="bg-white rounded-xl p-8 shadow-md">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                    {official.name}
+                  </h1>
+                  <Badge variant={getPositionColor(official.position)} size="lg">
+                    {official.position}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{officialWithSALN?.saln_count || 0}</p>
+                    <p className="text-sm text-gray-600">SALN Records</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{officialWithSALN?.latest_saln_year || 'None'}</p>
+                    <p className="text-sm text-gray-600">Latest Year</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* SALN Records */}
+          <SALNRecordsView official={official} />
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+}

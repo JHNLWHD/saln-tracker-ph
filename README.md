@@ -1,18 +1,22 @@
-# React Router Netlify Template
+# SALN Tracker Philippines 🇵🇭
 
-A modern, production-ready template for building full-stack React applications using React Router,
-deployed to Netlify.
+A modern web platform dedicated to tracking and monitoring the Statement of Assets, Liabilities, and Net Worth (SALN) of Philippine public officials, promoting transparency and accountability in government service.
+
+**#OpenSALN #PublicSALNNow**
+
+## About
+
+The SALN Tracker Philippines is designed to aggregate and display SALN records from official government channels, making it easier for citizens to access public financial disclosure information. This platform serves as a centralized hub for transparency data, helping promote good governance and public accountability.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-- 💻 Configured for deployment to Netlify
+- 📋 **Official Database** - Comprehensive list of current Philippine public officials (President, Vice President, Senators)
+- 🔍 **SALN Records View** - Detailed display of financial declarations when available
+- 🏛️ **Government Transparency** - Promotes accountability through public access to SALN data
+- 📱 **Responsive Design** - Modern Filipino election website design with Philippine flag colors
+- 🚀 **Fast Performance** - Built with React Router 7 and optimized for speed
+- 🔒 **TypeScript** - Type-safe development for reliability
+- 🎨 **TailwindCSS** - Beautiful, accessible styling with shadcn/ui patterns
 
 ## Getting Started
 
@@ -33,6 +37,33 @@ npm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+## Project Structure
+
+```
+app/
+├── components/          # Reusable UI components
+│   ├── ui/             # Base UI components (Button, Card, Badge, Hashtags)
+│   ├── layout/         # Layout components (Header, Footer)
+│   ├── OfficialsGrid.tsx    # Main officials listing
+│   └── SALNRecordsView.tsx  # SALN records display
+├── data/               # Data management
+│   └── officials.ts    # Officials data and SALN helpers
+├── routes/             # Application routes
+│   ├── home.tsx       # Homepage with officials grid
+│   ├── about.tsx      # About page with platform info
+│   ├── official.$slug.tsx  # Individual official pages
+│   └── $.tsx          # 404 Not Found page
+└── app.css            # Global styles and Tailwind config
+```
+
+## Key Technologies
+
+- **React Router 7** - Modern routing and server-side rendering
+- **TypeScript** - Type safety and better developer experience
+- **TailwindCSS** - Utility-first CSS framework
+- **Vite** - Fast build tool and development server
+- **Philippine Design System** - Custom theme with flag colors and cultural elements
 
 ## Building for Production
 
@@ -61,14 +92,37 @@ This template is preconfigured for deployment to Netlify.
 Follow <https://docs.netlify.com/welcome/add-new-site/> to add this project as a site
 in your Netlify account.
 
-## Styling
+## Data Sources
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+This platform is designed to aggregate SALN data from official government channels only. Currently, the system displays a "No data yet" state as we work to establish proper data sourcing partnerships with relevant government agencies.
+
+**Important:** All SALN data will be sourced exclusively from official channels to ensure accuracy and authenticity.
+
+## Design System
+
+The platform features a modern Filipino election website design system:
+
+- **Colors**: Philippine flag colors (Red #F70000, Blue #0038A8, Yellow #FCD116)
+- **Typography**: Bold headings with tight tracking, medium weight text
+- **Components**: Clean cards with rounded corners, multi-variant buttons, glass effects
+- **Layout**: Container-based, responsive grid, mobile-first approach
+- **Branding**: Flag-inspired gradients and patriotic color schemes
+
+## Contributing
+
+We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
+
+## Legal Framework
+
+The Statement of Assets, Liabilities, and Net Worth (SALN) is required under Philippine law for all public officials. This platform supports the constitutional right of citizens to access information on matters of public concern.
 
 ## See also
 
-[Guide: how to deploy a React Router 7 site to Netlify](https://developers.netlify.com/guides/how-to-deploy-a-react-router-7-site-to-netlify/)
+- [Guide: how to deploy a React Router 7 site to Netlify](https://developers.netlify.com/guides/how-to-deploy-a-react-router-7-site-to-netlify/)
+- [React Router Documentation](https://reactrouter.com/)
+- [TailwindCSS Documentation](https://tailwindcss.com/)
 
 ---
 
-Built with ❤️ using React Router.
+Built with ❤️ for Philippine transparency and accountability.
+**#OpenSALN #PublicSALNNow**
