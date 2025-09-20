@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { PostHogProvider } from 'posthog-js/react'
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
@@ -36,6 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="apple-mobile-web-app-title" content="SALN Tracker PH" />
+        <meta name="google-site-verification" content="8eVz-3g4SCi3zM_wW6c7Hr8LsobQZ5BxPMac-hKpGSU" />
         <Meta />
         <Links />
       </head>
@@ -49,7 +51,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={{
+        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+        capture_pageview: true,
+        capture_pageleave: true,
+        capture_exceptions: true,
+        debug: import.meta.env.MODE === "development",
+      }}
+    >
+      <Outlet />
+    </PostHogProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

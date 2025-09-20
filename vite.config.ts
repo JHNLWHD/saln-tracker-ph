@@ -12,4 +12,7 @@ export default defineConfig({
     },
   },
   plugins: [reactRouter(), tsconfigPaths(), netlifyPlugin()],
+  ssr: {
+    noExternal: ['posthog-js', 'posthog-js/react']
+  }
 });
