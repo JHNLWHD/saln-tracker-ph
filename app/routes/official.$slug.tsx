@@ -23,10 +23,10 @@ export default function OfficialSALN({ params }: Route.ComponentProps) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="container mx-auto px-4 lg:px-8 py-8">
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Official Not Found</h1>
-            <p className="text-gray-600 mb-6">The requested official could not be found.</p>
+        <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+          <div className="text-center py-8 sm:py-12">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Official Not Found</h1>
+            <p className="text-gray-600 mb-6 text-sm sm:text-base">The requested official could not be found.</p>
             <Link to="/">
               <Button variant="primary">
                 Go Back
@@ -51,14 +51,14 @@ export default function OfficialSALN({ params }: Route.ComponentProps) {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <main className="container mx-auto px-4 lg:px-8 py-8">
-        <div className="space-y-8">
+      <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Back Button */}
           <div>
             <Link to="/">
               <Button 
                 variant="ghost" 
-                className="mb-4"
+                className="mb-2 sm:mb-4 text-sm"
               >
                 ← Back to Home
               </Button>
@@ -66,28 +66,28 @@ export default function OfficialSALN({ params }: Route.ComponentProps) {
           </div>
 
           {/* Official Header */}
-          <div className="bg-white rounded-xl p-8 shadow-md">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+          <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3 mb-2">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
                     {official.name}
                   </h1>
-                  <Badge variant={getPositionColor(official.position)} size="lg">
+                  <Badge variant={getPositionColor(official.position)} size="lg" className="self-start">
                     {official.position}
                   </Badge>
                 </div>
               </div>
               
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="bg-gray-50 p-3 sm:p-4 rounded-lg flex-shrink-0">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{officialWithSALN?.saln_count || 0}</p>
-                    <p className="text-sm text-gray-600">SALN Records</p>
+                    <p className="text-lg sm:text-2xl font-bold text-gray-900">{officialWithSALN?.saln_count || 0}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">SALN Records</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{officialWithSALN?.latest_saln_year || 'None'}</p>
-                    <p className="text-sm text-gray-600">Latest Year</p>
+                    <p className="text-lg sm:text-2xl font-bold text-gray-900">{officialWithSALN?.latest_saln_year || 'None'}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Latest Year</p>
                   </div>
                 </div>
               </div>
