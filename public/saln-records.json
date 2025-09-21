@@ -1,0 +1,1321 @@
+{
+  "metadata": {
+    "version": "1.5",
+    "last_updated": "2025-09-21T14:48:14.587Z",
+    "total_records": 54,
+    "source": "SALN Tracker Philippines - Aggregated from official government sources",
+    "description": "Statement of Assets, Liabilities, and Net Worth records for Philippine public officials with source links"
+  },
+  "records": [
+    {
+      "id": "saln-pres-001-2015",
+      "official_id": "pres-001",
+      "year": 2015,
+      "net_worth": 509751141.74,
+      "total_assets": 537164839.97,
+      "total_liabilities": 27413698.23,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 537164839.97,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 27413698.23
+        }
+      ],
+      "date_filed": "2015-12-31",
+      "status": "submitted",
+      "source_url": "https://www.slideshare.net/slideshow/bongbong-marcos-saln-filed-in-2015pdf/251658771",
+      "source_description": "SlideShare Document"
+    },
+    {
+      "id": "saln-vp-001-2017",
+      "official_id": "vp-001",
+      "year": 2017,
+      "net_worth": 44828759,
+      "total_assets": 51141947,
+      "total_liabilities": 6313188,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 51141947,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6313188
+        }
+      ],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2016",
+      "official_id": "vp-001",
+      "year": 2016,
+      "net_worth": 34895997,
+      "total_assets": 41850451,
+      "total_liabilities": 6954454,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 41850451,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6954454
+        }
+      ],
+      "date_filed": "2016-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2012",
+      "official_id": "vp-001",
+      "year": 2012,
+      "net_worth": 22116102,
+      "total_assets": 30778837,
+      "total_liabilities": 8692735,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 30778837,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 8692735
+        }
+      ],
+      "date_filed": "2012-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2011",
+      "official_id": "vp-001",
+      "year": 2011,
+      "net_worth": 14271148,
+      "total_assets": 21820391,
+      "total_liabilities": 7549242,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 21820391,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 7549242
+        }
+      ],
+      "date_filed": "2011-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2010",
+      "official_id": "vp-001",
+      "year": 2010,
+      "net_worth": 16242887,
+      "total_assets": 21550887,
+      "total_liabilities": 5308000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 21550887,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5308000
+        }
+      ],
+      "date_filed": "2010-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2009",
+      "official_id": "vp-001",
+      "year": 2009,
+      "net_worth": 18281265,
+      "total_assets": 20171259,
+      "total_liabilities": 1890000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20171259,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1890000
+        }
+      ],
+      "date_filed": "2009-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2008",
+      "official_id": "vp-001",
+      "year": 2008,
+      "net_worth": 18493617,
+      "total_assets": 20268617,
+      "total_liabilities": 1775000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20268617,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1775000
+        }
+      ],
+      "date_filed": "2008-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-sen-003-2018",
+      "official_id": "sen-003",
+      "year": 2018,
+      "net_worth": 10575228,
+      "total_assets": 15575228,
+      "total_liabilities": 5000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 15575228,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5000000
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-003-2017",
+      "official_id": "sen-003",
+      "year": 2017,
+      "net_worth": 8502082.09,
+      "total_assets": 8502082.09,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 8502082.09
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-005-2020",
+      "official_id": "sen-005",
+      "year": 2020,
+      "net_worth": 91213596.57,
+      "total_assets": 91213596.57,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 91213596.57,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-005-2019",
+      "official_id": "sen-005",
+      "year": 2019,
+      "net_worth": 95404344.93,
+      "total_assets": 125404344.93,
+      "total_liabilities": 30000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 125404344.93,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 30000000
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-005-2018",
+      "official_id": "sen-005",
+      "year": 2018,
+      "net_worth": 96210607.14,
+      "total_assets": 96210607.14,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 96210607.14,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-005-2017",
+      "official_id": "sen-005",
+      "year": 2017,
+      "net_worth": 88226485.77,
+      "total_assets": 88226485.77,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 88226485.77
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-006-2020",
+      "official_id": "sen-006",
+      "year": 2020,
+      "net_worth": 16720359.73,
+      "total_assets": 16720359.73,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 16720359.73,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-006-2019",
+      "official_id": "sen-006",
+      "year": 2019,
+      "net_worth": 16050112.22,
+      "total_assets": 16050112.22,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 16050112.22,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-006-2018",
+      "official_id": "sen-006",
+      "year": 2018,
+      "net_worth": 15627176.04,
+      "total_assets": 15776787.04,
+      "total_liabilities": 149611,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 15776787.04,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 149611
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-006-2017",
+      "official_id": "sen-006",
+      "year": 2017,
+      "net_worth": 16196665.71,
+      "total_assets": 16196665.71,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 16196665.71
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-010-2020",
+      "official_id": "sen-010",
+      "year": 2020,
+      "net_worth": 33029725,
+      "total_assets": 57529725,
+      "total_liabilities": 24500000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 57529725,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 24500000
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-010-2019",
+      "official_id": "sen-010",
+      "year": 2019,
+      "net_worth": 30249305,
+      "total_assets": 56249305,
+      "total_liabilities": 26000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 56249305,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 26000000
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-010-2018",
+      "official_id": "sen-010",
+      "year": 2018,
+      "net_worth": 26921555,
+      "total_assets": 54421555,
+      "total_liabilities": 27500000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 54421555,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 27500000
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-010-2017",
+      "official_id": "sen-010",
+      "year": 2017,
+      "net_worth": 23727895,
+      "total_assets": 23727895,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 23727895
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-012-2020",
+      "official_id": "sen-012",
+      "year": 2020,
+      "net_worth": 220736702.43,
+      "total_assets": 368947827.67,
+      "total_liabilities": 148211125.25,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 368947827.67,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 148211125.25
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-012-2019",
+      "official_id": "sen-012",
+      "year": 2019,
+      "net_worth": 203667746.67,
+      "total_assets": 344597827.67,
+      "total_liabilities": 140930081,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 344597827.67,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 140930081
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-012-2018",
+      "official_id": "sen-012",
+      "year": 2018,
+      "net_worth": 182851570.34,
+      "total_assets": 316171328.67,
+      "total_liabilities": 133319758.33,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 316171328.67,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 133319758.33
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-012-2017",
+      "official_id": "sen-012",
+      "year": 2017,
+      "net_worth": 152094252.72,
+      "total_assets": 152094252.72,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 152094252.72
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-012-2016",
+      "official_id": "sen-012",
+      "year": 2016,
+      "net_worth": 121768713.77,
+      "total_assets": 121768713.77,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 121768713.77
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2016-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-013-2020",
+      "official_id": "sen-013",
+      "year": 2020,
+      "net_worth": 22274508.68,
+      "total_assets": 42357371.1,
+      "total_liabilities": 20082862.42,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 42357371.1,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 20082862.42
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-013-2019",
+      "official_id": "sen-013",
+      "year": 2019,
+      "net_worth": 18391012.8,
+      "total_assets": 38961465.22,
+      "total_liabilities": 20570452.42,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 38961465.22,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 20570452.42
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-014-2018",
+      "official_id": "sen-014",
+      "year": 2018,
+      "net_worth": 45205138.25,
+      "total_assets": 47901749.25,
+      "total_liabilities": 2696611,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 47901749.25,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 2696611
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-014-2017",
+      "official_id": "sen-014",
+      "year": 2017,
+      "net_worth": 39192743.62,
+      "total_assets": 39192743.62,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 39192743.62
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-015-2020",
+      "official_id": "sen-015",
+      "year": 2020,
+      "net_worth": 34383136.29,
+      "total_assets": 36985720.88,
+      "total_liabilities": 2602584.59,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 36985720.88,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 2602584.59
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-015-2019",
+      "official_id": "sen-015",
+      "year": 2019,
+      "net_worth": 33025241.41,
+      "total_assets": 36265531.68,
+      "total_liabilities": 3240290.27,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 36265531.68,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 3240290.27
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-017-2019",
+      "official_id": "sen-017",
+      "year": 2019,
+      "net_worth": 19975821.25,
+      "total_assets": 20635213.25,
+      "total_liabilities": 659392,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20635213.25,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 659392
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-017-2018",
+      "official_id": "sen-017",
+      "year": 2018,
+      "net_worth": 16695048.17,
+      "total_assets": 18848984.17,
+      "total_liabilities": 2153936,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 18848984.17,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 2153936
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-017-2017",
+      "official_id": "sen-017",
+      "year": 2017,
+      "net_worth": 13471564.17,
+      "total_assets": 13471564.17,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 13471564.17
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-018-2018",
+      "official_id": "sen-018",
+      "year": 2018,
+      "net_worth": 28950447.48,
+      "total_assets": 30185440,
+      "total_liabilities": 1234992.52,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 30185440,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1234992.52
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-018-2017",
+      "official_id": "sen-018",
+      "year": 2017,
+      "net_worth": 26449095,
+      "total_assets": 28350000,
+      "total_liabilities": 1900905,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 28350000,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1900905
+        }
+      ],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2017.12312017.amended.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-018-2016",
+      "official_id": "sen-018",
+      "year": 2016,
+      "net_worth": 25231190,
+      "total_assets": 26300000,
+      "total_liabilities": 1068810,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 26300000,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1068810
+        }
+      ],
+      "date_filed": "2016-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.alpha.31Dec2016.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-019-2020",
+      "official_id": "sen-019",
+      "year": 2020,
+      "net_worth": 58330268.5,
+      "total_assets": 58791068.5,
+      "total_liabilities": 460800,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 58791068.5,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 460800
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-019-2019",
+      "official_id": "sen-019",
+      "year": 2019,
+      "net_worth": 48959138.98,
+      "total_assets": 50125538.98,
+      "total_liabilities": 1166400,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 50125538.98,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1166400
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-019-2017",
+      "official_id": "sen-019",
+      "year": 2017,
+      "net_worth": 36305440.9,
+      "total_assets": 36305440.9,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 36305440.9
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-020-2019",
+      "official_id": "sen-020",
+      "year": 2019,
+      "net_worth": 77772861.57,
+      "total_assets": 383769804.3,
+      "total_liabilities": 305996942.73,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 383769804.3,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 305996942.73
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-020-2018",
+      "official_id": "sen-020",
+      "year": 2018,
+      "net_worth": 70120700.3,
+      "total_assets": 129051804.3,
+      "total_liabilities": 58931104,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 129051804.3,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 58931104
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-020-2017",
+      "official_id": "sen-020",
+      "year": 2017,
+      "net_worth": 64730400,
+      "total_assets": 64730400,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 64730400
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+      "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-021-2020",
+      "official_id": "sen-021",
+      "year": 2020,
+      "net_worth": 84591678.21,
+      "total_assets": 89983845.8,
+      "total_liabilities": 5392167.59,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 89983845.8,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5392167.59
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-021-2019",
+      "official_id": "sen-021",
+      "year": 2019,
+      "net_worth": 82774150.15,
+      "total_assets": 89896030.63,
+      "total_liabilities": 7121880.48,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 89896030.63,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 7121880.48
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-021-2018",
+      "official_id": "sen-021",
+      "year": 2018,
+      "net_worth": 76388279.52,
+      "total_assets": 81970994.97,
+      "total_liabilities": 5582715.45,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 81970994.97,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5582715.45
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-021-2017",
+      "official_id": "sen-021",
+      "year": 2017,
+      "net_worth": 73109829.18,
+      "total_assets": 79298873.23,
+      "total_liabilities": 6189044.05,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 79298873.23,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6189044.05
+        }
+      ],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2017.12312017.amended.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-021-2016",
+      "official_id": "sen-021",
+      "year": 2016,
+      "net_worth": 73929349.65,
+      "total_assets": 80056900.06,
+      "total_liabilities": 6127550.41,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 80056900.06,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6127550.41
+        }
+      ],
+      "date_filed": "2016-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.asof.20151231.pdf",
+      "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-023-2020",
+      "official_id": "sen-023",
+      "year": 2020,
+      "net_worth": 74948600,
+      "total_assets": 175810000,
+      "total_liabilities": 100861400,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 175810000,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 100861400
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-023-2019",
+      "official_id": "sen-023",
+      "year": 2019,
+      "net_worth": 70948600,
+      "total_assets": 171810000,
+      "total_liabilities": 100861400,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 171810000,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 100861400
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-024-2020",
+      "official_id": "sen-024",
+      "year": 2020,
+      "net_worth": 36270467,
+      "total_assets": 52270467,
+      "total_liabilities": 16000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 52270467,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 16000000
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-sen-024-2019",
+      "official_id": "sen-024",
+      "year": 2019,
+      "net_worth": 34020467,
+      "total_assets": 45020467,
+      "total_liabilities": 11000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 45020467,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 11000000
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 export interface Asset {
   description: string;
   value: number;
-  category: 'Real Property' | 'Personal Property' | 'Investments';
+  source?: string;
 }
 
 export interface Liability {
@@ -22,6 +22,8 @@ export interface SALNRecord {
   liabilities: Liability[];
   date_filed: string;
   status: 'submitted' | 'verified' | 'under_review' | 'flagged';
+  source_url?: string;
+  source_description?: string;
 }
 
 export interface Official {
@@ -34,7 +36,6 @@ export interface Official {
 
 // Utility function to generate URL-friendly slugs
 export function generateSlug(official: Official): string {
-  const position = official.position.toLowerCase().replace(' ', '-');
   const name = official.name
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
@@ -42,7 +43,7 @@ export function generateSlug(official: Official): string {
     .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim();
   
-  return `${position}-${name}`;
+  return name;
 }
 
 // Function to find official by slug
@@ -216,37 +217,93 @@ export const officials: Official[] = [
   }
 ];
 
-// SALN Records data - currently empty but ready for real data
-export const salnRecords: SALNRecord[] = [];
-
-// Helper function to get SALN records for a specific official
-export function getSALNRecordsForOfficial(officialId: string): SALNRecord[] {
-  return salnRecords.filter(record => record.official_id === officialId);
+// SALN Data interface for JSON structure
+interface SALNDataFile {
+  metadata: {
+    version: string;
+    last_updated: string;
+    total_records: number;
+    source: string;
+    description: string;
+  };
+  records: SALNRecord[];
 }
 
-// Helper function to get the latest SALN year for an official
-export function getLatestSALNYear(officialId: string): number | undefined {
-  const records = getSALNRecordsForOfficial(officialId);
+// Cache for SALN data to avoid repeated fetches
+let salnDataCache: SALNRecord[] | null = null;
+
+// Function to load SALN records from JSON file
+async function loadSALNRecords(): Promise<SALNRecord[]> {
+  if (salnDataCache) {
+    return salnDataCache;
+  }
+
+  try {
+    // Determine the base URL for fetching
+    let baseUrl: string;
+    
+    if (typeof window !== 'undefined') {
+      // Client-side: use current origin
+      baseUrl = window.location.origin;
+    } else {
+      // Server-side: use environment variable or default to production URL
+      baseUrl = process.env.SITE_URL || 'https://saln-tracker-ph.netlify.app';
+    }
+    
+    const response = await fetch(`${baseUrl}/saln-records.json`);
+    if (!response.ok) {
+      throw new Error(`Failed to load SALN data: ${response.status}`);
+    }
+    
+    const salnData: SALNDataFile = await response.json();
+    salnDataCache = salnData.records;
+    return salnDataCache;
+  } catch (error) {
+    console.error('Error loading SALN records:', error);
+    // Return empty array as fallback
+    return [];
+  }
+}
+
+// Export a function that returns a promise for SALN records
+export const getSALNRecords = loadSALNRecords;
+
+// Helper function to get SALN records for a specific official - now async
+export async function getSALNRecordsForOfficial(officialId: string): Promise<SALNRecord[]> {
+  const allRecords = await getSALNRecords();
+  return allRecords.filter(record => record.official_id === officialId);
+}
+
+// Helper function to get the latest SALN year for an official - now async
+export async function getLatestSALNYear(officialId: string): Promise<number | undefined> {
+  const records = await getSALNRecordsForOfficial(officialId);
   if (records.length === 0) return undefined;
   
   return Math.max(...records.map(record => record.year));
 }
 
-// Helper function to count SALN records for an official
-export function getSALNRecordCount(officialId: string): number {
-  return getSALNRecordsForOfficial(officialId).length;
+// Helper function to count SALN records for an official - now async
+export async function getSALNRecordCount(officialId: string): Promise<number> {
+  const records = await getSALNRecordsForOfficial(officialId);
+  return records.length;
 }
 
-// Helper function to get computed values for officials
-export function getOfficialWithSALNData(official: Official) {
+// Helper function to get computed values for officials - now async
+export async function getOfficialWithSALNData(official: Official) {
+  const saln_count = await getSALNRecordCount(official.id);
+  const latest_saln_year = await getLatestSALNYear(official.id);
+  
   return {
     ...official,
-    saln_count: getSALNRecordCount(official.id),
-    latest_saln_year: getLatestSALNYear(official.id)
+    saln_count,
+    latest_saln_year
   };
 }
 
-// Get all officials with computed SALN data
-export function getOfficialsWithSALNData() {
-  return officials.map(getOfficialWithSALNData);
+// Get all officials with computed SALN data - now async
+export async function getOfficialsWithSALNData() {
+  const allOfficials = await Promise.all(
+    officials.map(official => getOfficialWithSALNData(official))
+  );
+  return allOfficials;
 }

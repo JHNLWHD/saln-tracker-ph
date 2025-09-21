@@ -1,16 +1,14 @@
 import type { Official, SALNRecord } from '../data/officials';
-import { getSALNRecordsForOfficial } from '../data/officials';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { Hashtags } from './ui/Hashtags';
 
 interface SALNRecordsViewProps {
   official: Official;
+  salnRecords?: SALNRecord[];
 }
 
-export function SALNRecordsView({ official }: SALNRecordsViewProps) {
-  // Get SALN records for this official from data
-  const salnRecords = getSALNRecordsForOfficial(official.id);
+export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewProps) {
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-PH', {
@@ -81,12 +79,6 @@ export function SALNRecordsView({ official }: SALNRecordsViewProps) {
                 <div className="space-y-4 sm:space-y-6">
                   {/* Financial Summary */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <div className="bg-primary-50 p-3 sm:p-4 rounded-lg border border-primary-100">
-                      <p className="text-xs sm:text-sm font-medium text-primary-600 mb-1">Net Worth</p>
-                      <p className="text-base sm:text-xl font-bold text-primary-900 leading-tight">
-                        {formatCurrency(record.net_worth)}
-                      </p>
-                    </div>
                     <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-100">
                       <p className="text-xs sm:text-sm font-medium text-green-600 mb-1">Total Assets</p>
                       <p className="text-base sm:text-xl font-bold text-green-900 leading-tight">
@@ -97,6 +89,12 @@ export function SALNRecordsView({ official }: SALNRecordsViewProps) {
                       <p className="text-xs sm:text-sm font-medium text-red-600 mb-1">Total Liabilities</p>
                       <p className="text-base sm:text-xl font-bold text-red-900 leading-tight">
                         {formatCurrency(record.total_liabilities)}
+                      </p>
+                    </div>
+                    <div className="bg-primary-50 p-3 sm:p-4 rounded-lg border border-primary-100">
+                      <p className="text-xs sm:text-sm font-medium text-primary-600 mb-1">Net Worth</p>
+                      <p className="text-base sm:text-xl font-bold text-primary-900 leading-tight">
+                        {formatCurrency(record.net_worth)}
                       </p>
                     </div>
                   </div>
@@ -116,9 +114,11 @@ export function SALNRecordsView({ official }: SALNRecordsViewProps) {
                                 <p className="font-medium text-gray-900 text-xs sm:text-sm leading-tight">
                                   {asset.description}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1 truncate">
-                                  {asset.category}
-                                </p>
+                                {asset.source && (
+                                  <p className="text-xs text-gray-500 mt-1 truncate">
+                                    {asset.source}
+                                  </p>
+                                )}
                               </div>
                               <p className="font-bold text-gray-900 text-xs sm:text-sm flex-shrink-0">
                                 {formatCurrency(asset.value)}
@@ -155,6 +155,33 @@ export function SALNRecordsView({ official }: SALNRecordsViewProps) {
                       </div>
                     </div>
                   </div>
+
+                  {/* Source Link */}
+                  {record.source_url && (
+                    <div className="pt-4 sm:pt-6 border-t border-gray-100">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">
+                            Data Source
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-500">
+                            {record.source_description || 'Official Government Source'}
+                          </p>
+                        </div>
+                        <a
+                          href={record.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs sm:text-sm font-medium text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors duration-200 flex-shrink-0"
+                        >
+                          <span>View Source</span>
+                          <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               </CardContent>

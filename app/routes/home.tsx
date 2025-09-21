@@ -12,7 +12,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Home() {
+export async function loader({}: Route.LoaderArgs) {
+  const officials = await getOfficialsWithSALNData();
+  return { officials };
+}
+
+export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -35,7 +40,7 @@ export default function Home() {
           </div>
           
           {/* Officials Grid */}
-          <OfficialsGrid officials={getOfficialsWithSALNData()} />
+          <OfficialsGrid officials={loaderData.officials} />
         </div>
       </main>
 

@@ -1,12 +1,18 @@
 import { Link } from 'react-router';
 import type { Official } from '../data/officials';
-import { generateSlug, getOfficialWithSALNData } from '../data/officials';
+import { generateSlug } from '../data/officials';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 
+// Extended interface for officials with SALN data
+interface OfficialWithSALN extends Official {
+  saln_count: number;
+  latest_saln_year?: number;
+}
+
 interface OfficialsGridProps {
-  officials: Official[];
+  officials: OfficialWithSALN[];
 }
 
 export function OfficialsGrid({ officials }: OfficialsGridProps) {
@@ -39,7 +45,6 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {officialsList.map((official, index) => {
-              const officialWithSALN = getOfficialWithSALNData(official);
               return (
                 <Card 
                   key={official.id} 
@@ -67,12 +72,12 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                           <p className="text-gray-500 text-xs sm:text-sm">SALN Records</p>
-                          <p className="font-semibold text-gray-900 text-sm sm:text-base">{officialWithSALN.saln_count}</p>
+                          <p className="font-semibold text-gray-900 text-sm sm:text-base">{official.saln_count}</p>
                         </div>
                         <div>
                           <p className="text-gray-500 text-xs sm:text-sm">Latest Year</p>
                           <p className="font-semibold text-gray-900 text-sm sm:text-base">
-                            {officialWithSALN.latest_saln_year || 'None'}
+                            {official.latest_saln_year || 'None'}
                           </p>
                         </div>
                       </div>

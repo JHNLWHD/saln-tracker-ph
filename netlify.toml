@@ -2,5 +2,8 @@
 command = "react-router build"
 publish = "build/client"
 
+[build.environment]
+SITE_URL = "https://saln-tracker-ph.netlify.app"
+
 [dev]
 command = "react-router dev"

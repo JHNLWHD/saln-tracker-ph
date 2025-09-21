@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import type { Route } from "./+types/official.$slug";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { findOfficialBySlug, getOfficialWithSALNData } from "../data/officials";
+import { findOfficialBySlug, getOfficialWithSALNData, getSALNRecordsForOfficial } from "../data/officials";
 import { SALNRecordsView } from "../components/SALNRecordsView";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
@@ -15,28 +15,22 @@ export function meta({ params }: Route.MetaArgs) {
   ];
 }
 
-export default function OfficialSALN({ params }: Route.ComponentProps) {
+export async function loader({ params }: Route.LoaderArgs) {
   const official = findOfficialBySlug(params.slug);
-  const officialWithSALN = official ? getOfficialWithSALNData(official) : null;
-
   if (!official) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-          <div className="text-center py-8 sm:py-12">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Official Not Found</h1>
-            <p className="text-gray-600 mb-6 text-sm sm:text-base">The requested official could not be found.</p>
-            <Link to="/">
-              <Button variant="primary">
-                Go Back
-              </Button>
-            </Link>
-          </div>
-        </main>
-      </div>
-    );
+    throw new Response("Not Found", { status: 404 });
   }
+  
+  const [officialWithSALN, salnRecords] = await Promise.all([
+    getOfficialWithSALNData(official),
+    getSALNRecordsForOfficial(official.id)
+  ]);
+  
+  return { official, officialWithSALN, salnRecords };
+}
+
+export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
+  const { official, officialWithSALN, salnRecords } = loaderData;
 
   const getPositionColor = (position: string) => {
     switch (position) {
@@ -95,7 +89,7 @@ export default function OfficialSALN({ params }: Route.ComponentProps) {
           </div>
 
           {/* SALN Records */}
-          <SALNRecordsView official={official} />
+          <SALNRecordsView official={official} salnRecords={salnRecords} />
         </div>
       </main>
       
