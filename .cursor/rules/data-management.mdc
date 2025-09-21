@@ -1,0 +1,103 @@
+---
+globs: app/data/*.ts
+description: Data structure patterns and management for SALN records
+---
+
+# Data Management Patterns
+
+## Core Data Structure
+All data management is centralized in [app/data/officials.ts](mdc:app/data/officials.ts):
+
+### TypeScript Interfaces
+```typescript
+interface Official {
+  id: string;
+  name: string;
+  position: 'PRESIDENT' | 'VICE PRESIDENT' | 'SENATOR';
+}
+
+interface SALNRecord {
+  id: string;
+  official_id: string;
+  year: number;
+  date_filed: string;
+  status: 'submitted' | 'verified' | 'under_review' | 'flagged';
+  net_worth: number;
+  total_assets: number;
+  total_liabilities: number;
+  assets: Asset[];
+  liabilities: Liability[];
+}
+
+interface Asset {
+  description: string;
+  category: string;
+  value: number;
+}
+
+interface Liability {
+  nature: string;
+  creditor: string;
+  balance: number;
+}
+```
+
+## Data Access Patterns
+
+### Officials Data
+```typescript
+// Get all officials with computed SALN data
+const officials = getOfficialsWithSALNData();
+
+// Find official by slug
+const official = findOfficialBySlug('president-ferdinand-marcos-jr');
+
+// Get official with SALN metadata
+const officialWithSALN = getOfficialWithSALNData(official);
+```
+
+### SALN Records
+```typescript
+// Get SALN records for specific official
+const records = getSALNRecordsForOfficial(official.id);
+
+// Get computed SALN statistics
+const count = getSALNRecordCount(official.id);
+const latestYear = getLatestSALNYear(official.id);
+```
+
+### Utility Functions
+```typescript
+// Generate SEO-friendly slug
+const slug = generateSlug(official);
+// Result: "president-ferdinand-marcos-jr"
+
+// Find official by slug (reverse lookup)
+const official = findOfficialBySlug(slug);
+```
+
+## Data State Management
+- **No External State Library**: Use React's built-in state management
+- **Computed Properties**: Calculate SALN counts and latest years on-demand
+- **Centralized Data**: All data operations go through [officials.ts](mdc:app/data/officials.ts)
+- **Type Safety**: Always use TypeScript interfaces for data structures
+
+## Current Data Status
+- **Officials**: Current 2025 Philippine government officials (President, VP, Senators)
+- **SALN Records**: Empty array - displays "No data yet" state with transparency hashtags
+- **Data Sources**: Designed to aggregate from official government channels only
+
+## Future Data Integration
+When implementing real data sources:
+1. **Maintain interface compatibility** - don't break existing components
+2. **Add data validation** - ensure data integrity from external sources
+3. **Implement caching** - for performance with large datasets
+4. **Add data loading states** - for better user experience
+5. **Include data timestamps** - for freshness indicators
+
+## Best Practices
+1. **Always export types** from data files for component use
+2. **Use computed properties** instead of storing redundant data
+3. **Validate data shape** when adding new sources
+4. **Keep functions pure** - no side effects in data utilities
+5. **Document data sources** - maintain transparency about data origins

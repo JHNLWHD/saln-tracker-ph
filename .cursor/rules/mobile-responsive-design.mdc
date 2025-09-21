@@ -1,0 +1,83 @@
+---
+globs: *.tsx
+description: Mobile-first responsive design patterns and best practices
+---
+
+# Mobile-First Responsive Design Rules
+
+## Core Principles
+- **Mobile-First**: Always design for mobile, then enhance for larger screens
+- **Readable Text**: Ensure all text is readable on mobile devices (minimum 12px)
+- **Touch-Friendly**: Buttons and interactive elements should be easily tappable
+- **Flexible Layouts**: Use responsive grid systems and flexible containers
+
+## Responsive Breakpoints
+Use Tailwind's responsive prefixes consistently:
+- **Default**: Mobile (up to 640px)
+- **sm**: Small tablets (640px+)
+- **md**: Tablets (768px+)
+- **lg**: Laptops (1024px+)
+- **xl**: Desktops (1280px+)
+
+## Text Sizing Patterns
+```tsx
+// Headings - responsive sizing
+<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+<h2 className="text-lg sm:text-xl lg:text-2xl font-semibold">
+
+// Body text - readable on all devices
+<p className="text-sm sm:text-base leading-relaxed">
+
+// Small text - ensure readability
+<p className="text-xs sm:text-sm text-gray-600">
+```
+
+## Spacing Patterns
+```tsx
+// Container padding - tighter on mobile
+<div className="px-3 sm:px-4 lg:px-8">
+
+// Section spacing - reduced on mobile
+<div className="space-y-4 sm:space-y-6 lg:space-y-8">
+
+// Internal padding - adaptive
+<div className="p-3 sm:p-4 lg:p-6">
+```
+
+## Layout Patterns
+```tsx
+// Responsive grids
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+
+// Flexible containers
+<div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+
+// Conditional visibility
+<div className="hidden sm:block">Desktop content</div>
+<div className="sm:hidden">Mobile content</div>
+```
+
+## Component Sizing
+```tsx
+// Icons and logos - scale down on mobile
+<div className="h-7 w-7 sm:h-8 sm:w-8">
+
+// Cards - full width on mobile, constrained on desktop
+<Card className="w-full max-w-md mx-auto sm:max-w-none">
+```
+
+## Interactive Elements
+```tsx
+// Buttons - appropriate sizing for touch
+<Button className="w-full sm:w-auto text-sm">
+
+// Links - adequate touch targets
+<Link className="block py-2 px-3 sm:inline sm:p-0">
+```
+
+## Best Practices
+1. **Test on real devices** - Simulator testing isn't enough
+2. **Use `leading-tight`** for large text on mobile to prevent line height issues
+3. **Implement `truncate`** for long text that might overflow
+4. **Use `flex-shrink-0`** for elements that shouldn't shrink
+5. **Apply `min-w-0`** to flex containers to allow text truncation

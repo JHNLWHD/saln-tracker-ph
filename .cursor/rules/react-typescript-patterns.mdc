@@ -1,0 +1,64 @@
+---
+globs: *.tsx,*.ts
+---
+
+# React TypeScript Development Patterns
+
+## Component Structure
+Follow this consistent pattern for React components:
+
+```tsx
+import type { ComponentProps } from './types';
+import { ComponentUI } from './ui/ComponentName';
+
+interface ComponentNameProps {
+  // Define props with clear types
+  data: DataType;
+  onAction?: (param: ParamType) => void;
+  className?: string;
+}
+
+export function ComponentName({ data, onAction, className = '' }: ComponentNameProps) {
+  // Component logic here
+  return (
+    <div className={`base-classes ${className}`}>
+      {/* JSX content */}
+    </div>
+  );
+}
+```
+
+## TypeScript Guidelines
+- **Always use explicit return types** for functions that return JSX
+- **Define interfaces** for all component props, even simple ones
+- **Use type imports** with `import type` for type-only imports
+- **Avoid `any` type** - use proper TypeScript interfaces
+- **Export types** from data files for reuse across components
+
+## Component Guidelines
+- **Single Responsibility**: Each component should have one clear purpose
+- **Reusable UI Components**: Place in `app/components/ui/` directory
+- **Layout Components**: Place in `app/components/layout/` directory
+- **Feature Components**: Place in `app/components/` root directory
+
+## Props Patterns
+- **Always destructure props** in function parameters
+- **Provide default values** for optional props using `= defaultValue`
+- **Use optional chaining** (`?.`) for potentially undefined values
+- **Pass className prop** for styling flexibility
+
+## Import Organization
+```tsx
+// 1. React and external libraries
+import { Link } from 'react-router';
+
+// 2. Type imports
+import type { Route } from "./+types/route-name";
+
+// 3. Internal components
+import { Header } from "../components/layout/Header";
+import { Button } from "../components/ui/Button";
+
+// 4. Data and utilities
+import { getData } from "../data/officials";
+```

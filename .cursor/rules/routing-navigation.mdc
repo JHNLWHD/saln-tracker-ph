@@ -1,0 +1,98 @@
+---
+globs: *.tsx,app/routes.ts
+description: React Router 7 patterns and navigation best practices
+---
+
+# React Router 7 Navigation Patterns
+
+## Route Structure
+Follow the file-based routing convention defined in [app/routes.ts](mdc:app/routes.ts):
+
+```
+/                    → app/routes/home.tsx
+/about              → app/routes/about.tsx  
+/official/:slug     → app/routes/official.$slug.tsx
+/*                  → app/routes/$.tsx (404 catch-all)
+```
+
+## URL Slug Pattern
+Use SEO-friendly slugs for official pages:
+```tsx
+// Slug format: position-name
+// Examples:
+// /official/president-ferdinand-marcos-jr
+// /official/vice-president-sara-duterte
+// /official/senator-alan-peter-cayetano
+
+// Generate slugs using utility function
+import { generateSlug } from '../data/officials';
+const slug = generateSlug(official);
+```
+
+## Navigation Components
+Always use React Router's `Link` component for client-side navigation:
+
+```tsx
+import { Link } from 'react-router';
+
+// Internal navigation
+<Link to="/" className="hover:text-primary-600 transition-colors">
+  Home
+</Link>
+
+// Dynamic routes
+<Link to={`/official/${generateSlug(official)}`}>
+  View SALN Records
+</Link>
+
+// Button-style links
+<Link to="/about">
+  <Button variant="primary">Learn More</Button>
+</Link>
+```
+
+## Route Components Pattern
+```tsx
+import type { Route } from "./+types/route-name";
+
+// Meta function for SEO
+export function meta({ params }: Route.MetaArgs) {
+  return [
+    { title: "Page Title - SALN Tracker Philippines" },
+    { name: "description", content: "Page description for SEO" },
+  ];
+}
+
+// Main component
+export default function RouteComponent({ params }: Route.ComponentProps) {
+  // Route logic here
+  return <div>{/* Page content */}</div>;
+}
+```
+
+## Error Handling
+- **404 Pages**: Use [app/routes/$.tsx](mdc:app/routes/$.tsx) for catch-all routing
+- **Not Found States**: Check for data existence and show appropriate messages
+- **Navigation Fallbacks**: Always provide "Back to Home" links
+
+## Data Loading Patterns
+```tsx
+// Load data in component
+const official = findOfficialBySlug(params.slug);
+
+// Handle not found
+if (!official) {
+  return <NotFoundComponent />;
+}
+
+// Use computed data
+const officialWithSALN = getOfficialWithSALNData(official);
+```
+
+## Best Practices
+1. **Always use `Link`** for internal navigation (never `<a>` tags)
+2. **Include transition classes** for smooth hover effects
+3. **Provide clear navigation paths** - users should always know where they are
+4. **Use semantic slugs** that are readable and SEO-friendly
+5. **Include breadcrumbs** or "back" buttons for deep pages
+6. **Handle loading states** appropriately during navigation

@@ -1,0 +1,78 @@
+---
+alwaysApply: true
+description: Transparency campaign integration and messaging guidelines
+---
+
+# Transparency Campaign Integration
+
+## Core Mission
+SALN Tracker Philippines promotes government transparency through the **#OpenSALN #PublicSALNNow** campaign.
+
+## Campaign Hashtags
+Always include these transparency hashtags:
+- **#OpenSALN** - Advocacy for open SALN records
+- **#PublicSALNNow** - Call for immediate public access
+
+## Implementation Locations
+
+### Required Placements
+1. **Header** - [app/components/layout/Header.tsx](mdc:app/components/layout/Header.tsx)
+2. **Footer** - [app/components/layout/Footer.tsx](mdc:app/components/layout/Footer.tsx)  
+3. **Homepage Hero** - [app/routes/home.tsx](mdc:app/routes/home.tsx)
+4. **About Page** - [app/routes/about.tsx](mdc:app/routes/about.tsx)
+5. **No Data States** - [app/components/SALNRecordsView.tsx](mdc:app/components/SALNRecordsView.tsx)
+6. **404 Page** - [app/routes/$.tsx](mdc:app/routes/$.tsx)
+
+### Hashtags Component
+Use the reusable [Hashtags component](mdc:app/components/ui/Hashtags.tsx):
+
+```tsx
+import { Hashtags } from '../ui/Hashtags';
+
+// Standard usage
+<Hashtags size="md" />
+
+// With subtext for emphasis
+<Hashtags size="lg" showSubtext={true} />
+
+// Glass effect variant
+<Hashtags variant="glass" size="lg" />
+
+// Responsive sizing
+<Hashtags size="md" className="sm:hidden" />
+<Hashtags size="lg" className="hidden sm:inline-block" />
+```
+
+## Messaging Guidelines
+
+### Transparency Messaging
+- **Data Disclaimer**: "All SALN data sourced exclusively from official government channels"
+- **Platform Role**: "We are a data aggregator, not the original source"
+- **Verification**: "For official verification, refer to appropriate government agencies"
+
+### No Data State Messaging
+When SALN records are not available:
+```tsx
+<h3>No SALN Data Yet</h3>
+<p>SALN records for {official.name} have not been uploaded to this system yet.</p>
+<Hashtags size="lg" showSubtext={true} />
+```
+
+### Legal Framework References
+- 1987 Constitution Article XI, Section 17
+- Republic Act 6713 (Code of Conduct and Ethical Standards)
+- Republic Act 3019 (Anti-Graft and Corrupt Practices Act)
+- Freedom of Information Executive Order
+
+## Content Guidelines
+1. **Maintain neutral tone** - Factual, not political
+2. **Emphasize transparency** - Focus on public right to information
+3. **Include legal basis** - Reference Philippine laws supporting SALN disclosure
+4. **Promote civic engagement** - Encourage informed citizen participation
+5. **Support accountability** - Frame as good governance initiative
+
+## Visual Integration
+- Use Philippine flag colors for campaign elements
+- Apply glass effects for hashtag displays
+- Ensure mobile responsiveness for all campaign messaging
+- Maintain consistent typography and spacing
