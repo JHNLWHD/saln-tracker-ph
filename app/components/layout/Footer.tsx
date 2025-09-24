@@ -37,6 +37,7 @@ export function Footer() {
         
         <div className="border-t border-gray-200 mt-6 sm:mt-8 pt-4 sm:pt-8 text-center text-xs sm:text-sm text-gray-600">
           <p>&copy; {new Date().getFullYear()} SALN Tracker Philippines. Built with transparency and accountability in mind.</p>
+          <p className="mt-2">Built by <Link to="https://bettergov.ph/" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">BetterGov.ph</Link> • <Link to="https://discord.com/invite/5xBQmjWm" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Join our Discord</Link></p>
         </div>
       </div>
     </footer>
