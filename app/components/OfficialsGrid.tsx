@@ -110,6 +110,17 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
                         </div>
                         <div className="text-center space-y-2">
                           <Hashtags size="sm" showSubtext={true} />
+                          <p className="text-xs text-gray-500 leading-relaxed">
+                            Please help us by asking for <strong>{official.name}'s</strong> SALN here{' '}
+                            <Link 
+                              to="https://www.ombudsman.gov.ph/request-for-copy-of-salns/" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="underline hover:text-primary-600"
+                            >
+                              https://www.ombudsman.gov.ph/request-for-copy-of-salns/
+                            </Link>
+                          </p>
                         </div>
                       </div>
                     )}

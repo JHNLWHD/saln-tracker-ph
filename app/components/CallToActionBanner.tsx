@@ -34,6 +34,17 @@ export function CallToActionBanner({
           <div className="mt-2">
             <Hashtags variant="glass" size="sm" />
           </div>
+          <p className="text-xs sm:text-sm text-white/90 leading-relaxed mt-3">
+            Please help us by asking for your candidate's SALN here{' '}
+            <Link 
+              to="https://www.ombudsman.gov.ph/request-for-copy-of-salns/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline hover:text-white"
+            >
+              https://www.ombudsman.gov.ph/request-for-copy-of-salns/
+            </Link>
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 sm:flex-shrink-0">
