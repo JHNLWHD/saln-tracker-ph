@@ -4,6 +4,7 @@ import { Footer } from "../components/layout/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { Hashtags } from "../components/ui/Hashtags";
+import { CallToActionBanner } from "../components/CallToActionBanner";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -32,6 +33,9 @@ export default function About() {
               <Hashtags size="lg" className="hidden sm:inline-block" />
             </div>
           </div>
+
+          {/* Call for Help Banner */}
+          <CallToActionBanner />
 
           {/* What is SALN */}
           <Card>

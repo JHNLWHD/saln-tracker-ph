@@ -3,6 +3,7 @@ import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
 import { OfficialsGrid } from "../components/OfficialsGrid";
 import { Hashtags } from "../components/ui/Hashtags";
+import { CallToActionBanner } from "../components/CallToActionBanner";
 import { getOfficialsWithSALNData } from "../data/officials";
 
 export function meta({}: Route.MetaArgs) {
@@ -38,6 +39,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <Hashtags variant="glass" size="md" className="sm:hidden" />
             <Hashtags variant="glass" size="lg" className="hidden sm:inline-block" />
           </div>
+          
+          {/* Call for Help Banner */}
+          <CallToActionBanner />
           
           {/* Officials Grid */}
           <OfficialsGrid officials={loaderData.officials} />
