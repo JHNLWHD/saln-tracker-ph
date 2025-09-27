@@ -42,8 +42,41 @@ export function generateSlug(official: Official): string {
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim();
-  
+
   return name;
+}
+
+import currency from 'currency.js';
+
+export function formatCurrency({ amount, shorten = false }: { amount: number, shorten: boolean }): string {
+  const options = {
+    symbol: '₱',
+    precision: 0,
+    separator: ',',
+    decimal: '.',
+    pattern: '! #',
+    negativePattern: '(! #)'
+  };
+
+  if (shorten) {
+    if (amount >= 1000000000) {
+      const billions = currency(amount / 1000000000, { precision: 1 });
+      return `₱${billions.format(options).replace('₱', '')}B`;
+    } else if (amount >= 1000000) {
+      const millions = currency(amount / 1000000, { precision: 1 });
+      return `₱${millions.format(options).replace('₱', '')}M`;
+    } else if (amount >= 1000) {
+      const thousands = currency(amount / 1000, { precision: 1 });
+      return `₱${thousands.format(options).replace('₱', '')}K`;
+    }
+  }
+
+  return currency(amount, options).format();
+}
+
+// Utility function to format large numbers with commas
+export function formatNumber(num: number): string {
+  return num.toLocaleString();
 }
 
 // Function to find official by slug
@@ -59,7 +92,7 @@ export const officials: Official[] = [
     position: 'PRESIDENT',
     status: 'active'
   },
-  
+
   // VICE PRESIDENT
   {
     id: 'vp-001',
@@ -241,7 +274,7 @@ async function loadSALNRecords(): Promise<SALNRecord[]> {
   try {
     // Determine the base URL for fetching
     let baseUrl: string;
-    
+
     if (typeof window !== 'undefined') {
       // Client-side: use current origin
       baseUrl = window.location.origin;
@@ -249,12 +282,12 @@ async function loadSALNRecords(): Promise<SALNRecord[]> {
       // Server-side: use environment variable or default to production URL
       baseUrl = process.env.SITE_URL || 'https://saln-tracker-ph.netlify.app';
     }
-    
+
     const response = await fetch(`${baseUrl}/saln-records.json`);
     if (!response.ok) {
       throw new Error(`Failed to load SALN data: ${response.status}`);
     }
-    
+
     const salnData: SALNDataFile = await response.json();
     salnDataCache = salnData.records;
     return salnDataCache;
@@ -278,7 +311,7 @@ export async function getSALNRecordsForOfficial(officialId: string): Promise<SAL
 export async function getLatestSALNYear(officialId: string): Promise<number | undefined> {
   const records = await getSALNRecordsForOfficial(officialId);
   if (records.length === 0) return undefined;
-  
+
   return Math.max(...records.map(record => record.year));
 }
 
@@ -288,15 +321,26 @@ export async function getSALNRecordCount(officialId: string): Promise<number> {
   return records.length;
 }
 
+// Helper function to get the latest SALN record for an official - now async
+export async function getLatestSALNRecord(officialId: string): Promise<SALNRecord | undefined> {
+  const records = await getSALNRecordsForOfficial(officialId);
+  if (records.length === 0) return undefined;
+
+  const latestYear = Math.max(...records.map(record => record.year));
+  return records.find(record => record.year === latestYear);
+}
+
 // Helper function to get computed values for officials - now async
 export async function getOfficialWithSALNData(official: Official) {
   const saln_count = await getSALNRecordCount(official.id);
   const latest_saln_year = await getLatestSALNYear(official.id);
-  
+  const latest_saln_record = await getLatestSALNRecord(official.id);
+
   return {
     ...official,
     saln_count,
-    latest_saln_year
+    latest_saln_year,
+    latest_saln_record
   };
 }
 

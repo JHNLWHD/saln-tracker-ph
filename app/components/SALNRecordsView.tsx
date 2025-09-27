@@ -1,4 +1,5 @@
 import type { Official, SALNRecord } from '../data/officials';
+import { formatCurrency } from '../data/officials';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { Hashtags } from './ui/Hashtags';
@@ -10,13 +11,6 @@ interface SALNRecordsViewProps {
 
 export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewProps) {
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const getStatusVariant = (status: SALNRecord['status']) => {
     switch (status) {
@@ -82,19 +76,19 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
                     <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-100">
                       <p className="text-xs sm:text-sm font-medium text-green-600 mb-1">Total Assets</p>
                       <p className="text-base sm:text-xl font-bold text-green-900 leading-tight">
-                        {formatCurrency(record.total_assets)}
+                        {formatCurrency({ amount: record.total_assets, shorten: false })}
                       </p>
                     </div>
                     <div className="bg-red-50 p-3 sm:p-4 rounded-lg border border-red-100">
                       <p className="text-xs sm:text-sm font-medium text-red-600 mb-1">Total Liabilities</p>
                       <p className="text-base sm:text-xl font-bold text-red-900 leading-tight">
-                        {formatCurrency(record.total_liabilities)}
+                        {formatCurrency({ amount: record.total_liabilities, shorten: false })}
                       </p>
                     </div>
                     <div className="bg-primary-50 p-3 sm:p-4 rounded-lg border border-primary-100">
                       <p className="text-xs sm:text-sm font-medium text-primary-600 mb-1">Net Worth</p>
                       <p className="text-base sm:text-xl font-bold text-primary-900 leading-tight">
-                        {formatCurrency(record.net_worth)}
+                        {formatCurrency({ amount: record.net_worth, shorten: false })}
                       </p>
                     </div>
                   </div>
