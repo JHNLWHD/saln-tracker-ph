@@ -18,13 +18,10 @@ interface OfficialsGridProps {
   officials: OfficialWithSALN[];
 }
 
+type SortBy = 'net_worth' | 'assets' | 'liabilities' | 'last_name' | 'first_name' | 'default';
+
 export function OfficialsGrid({ officials }: OfficialsGridProps) {
-  const [senators, _] = useState(officials.filter(o => o.position === 'SENATOR'));
-  const [groupedOfficials, setGroupedOfficials] = useState({
-    PRESIDENT: officials.filter(o => o.position === 'PRESIDENT'),
-    'VICE PRESIDENT': officials.filter(o => o.position === 'VICE PRESIDENT'),
-    SENATOR: senators || []
-  });
+  const [sortBy, setSortBy] = useState<SortBy>('default');
 
   const getPositionColor = (position: Official['position']) => {
     switch (position) {
@@ -39,40 +36,8 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
     }
   };
 
-  const handleSortCondition = (sortedData: OfficialWithSALN[]) => {
-    setGroupedOfficials({
-      ...groupedOfficials,
-      SENATOR: sortedData
-    });
-  }
-
   const handleSortBy = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const getLastName = (name: string) => {
-      return name.split(' ')[name.split(' ').length - 1];
-    };
-    const value = e.target.value;
-    const updatedSenators = [...senators]
-
-    switch (value) {
-      case 'net_worth':
-        handleSortCondition(updatedSenators.sort((a, b) => (b?.latest_saln_record?.net_worth || 0) - (a?.latest_saln_record?.net_worth || 0)))
-        break;
-      case 'assets':
-        handleSortCondition(updatedSenators.sort((a, b) => (b.latest_saln_record?.total_assets || 0) - (a.latest_saln_record?.total_assets || 0)));
-        break;
-      case 'liabilities':
-        handleSortCondition(updatedSenators.sort((a, b) => (b.latest_saln_record?.total_liabilities || 0) - (a.latest_saln_record?.total_liabilities || 0)));
-        break;
-      case 'last_name':
-        handleSortCondition(updatedSenators.sort((a, b) => getLastName(a.name).localeCompare(getLastName(b.name))));
-        break;
-      case 'first_name':
-        handleSortCondition(updatedSenators.sort((a, b) => a.name.localeCompare(b.name)));
-        break;
-      default:
-        handleSortCondition(updatedSenators);
-        break;
-    }
+    setSortBy(e.target.value as SortBy);
   };
 
   const renderSortBy = () => {
@@ -80,7 +45,7 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
       <div className="flex gap-3 items-center">
         <label htmlFor="countries" className="block text-sm font-bold text-gray-900">Sort by:
         </label>
-        <select onChange={handleSortBy} id="countries" className="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-max p-2.5 ">
+        <select onChange={handleSortBy} value={sortBy} id="countries" className="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-max p-2.5 ">
           <option selected>--</option>
           <option value="net_worth">Net Worth</option>
           <option value="assets">Assets</option>
@@ -91,6 +56,48 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
       </div>
     );
   };
+
+  const sortSenators = (senators: OfficialWithSALN[], sortCondition: SortBy) => {
+    const getLastName = (name: string) => {
+      return name.split(' ')[name.split(' ').length - 1];
+    };
+    const sortedSenators = [...senators];
+
+    switch (sortCondition) {
+      case 'net_worth':
+        sortedSenators.sort((a, b) => (b?.latest_saln_record?.net_worth || 0) - (a?.latest_saln_record?.net_worth || 0))
+        break;
+      case 'assets':
+        sortedSenators.sort((a, b) => (b.latest_saln_record?.total_assets || 0) - (a.latest_saln_record?.total_assets || 0));
+        break;
+      case 'liabilities':
+        sortedSenators.sort((a, b) => (b.latest_saln_record?.total_liabilities || 0) - (a.latest_saln_record?.total_liabilities || 0));
+        break;
+      case 'last_name':
+        sortedSenators.sort((a, b) => getLastName(a.name).localeCompare(getLastName(b.name)));
+        break;
+      case 'first_name':
+        sortedSenators.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        sortedSenators;
+        break;
+    }
+
+    return sortedSenators;
+  };
+
+  // Grouping/Sorting Logic computed directly on render
+  const groupedOfficials = (() => {
+    const allOfficials = [...officials];
+    const senatorsList = allOfficials.filter(o => o.position === 'SENATOR');
+
+    return {
+      PRESIDENT: allOfficials.filter(o => o.position === 'PRESIDENT'),
+      'VICE PRESIDENT': allOfficials.filter(o => o.position === 'VICE PRESIDENT'),
+      SENATOR: sortSenators(senatorsList, sortBy)
+    };
+  })();
 
   return (
     <div className="space-y-6 sm:space-y-8">
