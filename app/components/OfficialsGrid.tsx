@@ -43,9 +43,9 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
   const renderSortBy = () => {
     return (
       <div className="flex gap-3 items-center">
-        <label htmlFor="countries" className="block text-sm font-bold text-gray-900">Sort by:
+        <label htmlFor="sort-select" className="block text-sm font-bold text-gray-900">Sort by:
         </label>
-        <select onChange={handleSortBy} value={sortBy} id="countries" className="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-max p-2.5 ">
+        <select onChange={handleSortBy} value={sortBy} id="sort-select" className="shadow-md bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-max p-2.5 ">
           <option selected>--</option>
           <option value="net_worth">Net Worth</option>
           <option value="assets">Assets</option>
