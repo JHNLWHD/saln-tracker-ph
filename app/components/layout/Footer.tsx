@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import GitHubButton from 'react-github-btn';
 import { Hashtags } from '../ui/Hashtags';
 
 export function Footer() {
@@ -25,6 +26,7 @@ export function Footer() {
               <Hashtags size="sm" className="sm:hidden" />
               <Hashtags size="md" className="hidden sm:inline-block" />
             </div>
+
           </div>
           
           <div className="lg:col-span-1">
@@ -38,6 +40,29 @@ export function Footer() {
         <div className="border-t border-gray-200 mt-6 sm:mt-8 pt-4 sm:pt-8 text-center text-xs sm:text-sm text-gray-600">
           <p>&copy; {new Date().getFullYear()} SALN Tracker Philippines. Built with transparency and accountability in mind.</p>
           <p className="mt-2">Built by <Link to="https://bettergov.ph/" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">BetterGov.ph</Link> • <Link to="https://discord.com/invite/5xBQmjWm" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 transition-colors">Join our Discord</Link></p>
+          {import.meta.env.VITE_GITHUB_REPO && (
+            <div className="mt-3 sm:mt-4 flex items-center justify-center gap-3">
+              <a
+                className="text-xs sm:text-sm text-primary-600 hover:text-primary-700 underline underline-offset-2"
+                href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contribute on GitHub
+              </a>
+              <span className="inline-flex items-center">
+                <GitHubButton
+                  href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}`}
+                  data-icon="octicon-star"
+                  data-size="large"
+                  data-show-count="true"
+                  aria-label={`Star ${import.meta.env.VITE_GITHUB_REPO} on GitHub`}
+                >
+                  Star
+                </GitHubButton>
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </footer>
