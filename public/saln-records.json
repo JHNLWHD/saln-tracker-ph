@@ -346,6 +346,26 @@
       "source_description": "Rappler News Report"
     },
     {
+      "id": "saln-sen-006-2024",
+      "official_id": "sen-006",
+      "year": 2024,
+      "net_worth": 18986258.21,
+      "total_assets": 19884098.21,
+      "total_liabilities": 897840.0,
+      "assets": [
+        {
+          "description": "Total Assets as Reported",
+          "value": 19884098.21,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2025-10-20",
+      "status": "submitted",
+      "source_url": "https://www.rappler.com/philippines/hontiveros-releases-2024-saln/",
+      "source_description": "Rappler"
+    },
+    {
       "id": "saln-sen-006-2020",
       "official_id": "sen-006",
       "year": 2020,
