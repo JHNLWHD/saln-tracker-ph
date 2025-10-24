@@ -951,7 +951,7 @@
       "assets": [
         {
           "description": "Total Assets as reported",
-          "value": 58791068.5,
+          "value": 0,
           "source": "As reported in SALN"
         }
       ],
@@ -959,13 +959,13 @@
         {
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
-          "balance": 460800
+          "balance": 0
         }
       ],
       "date_filed": "2025-06-30",
       "status": "submitted",
-      "source_url": "https://politiko.https://politiko.com.ph/2025/10/21/ping-lacsons-net-worth-quadruples-to-p245m-risa-hontiveros-at-p19m/headlines/com.ph/2025/10/21/ping-lacsons-net-worth-quadruples-to-p245m-risa-hontiveros-at-p19m/headlines/",
-      "source_description": "Politiko"
+      "source_url": "https://www.gmanetwork.com/news/topstories/nation/963093/ping-lacson-saln-p244-million-net-worth/story/",
+      "source_description": "GMA Network"
     },
     {
       "id": "saln-sen-019-2020",
