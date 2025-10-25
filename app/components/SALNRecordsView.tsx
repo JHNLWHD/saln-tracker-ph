@@ -115,7 +115,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
                                 )}
                               </div>
                               <p className="font-bold text-gray-900 text-xs sm:text-sm flex-shrink-0">
-                                {formatCurrency(asset.value)}
+                                {formatCurrency({ amount: asset.value, shorten: false })}
                               </p>
                             </div>
                           </div>
@@ -141,7 +141,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
                                 </p>
                               </div>
                               <p className="font-bold text-gray-900 text-xs sm:text-sm flex-shrink-0">
-                                {formatCurrency(liability.balance)}
+                                {formatCurrency({ amount: liability.balance, shorten: false })}
                               </p>
                             </div>
                           </div>
