@@ -281,8 +281,7 @@ async function loadSALNRecords(): Promise<SALNRecord[]> {
     } else {
       // Server-side: use environment variable or default to production URL
       baseUrl =
-        import.meta.env.VITE_DEV_SITE_URL ||
-        "https://saln-tracker-ph.netlify.app";
+        import.meta.env.VITE_SITE_URL || "https://saln-tracker-ph.netlify.app";
     }
 
     const response = await fetch(`${baseUrl}/saln-records.json`);
