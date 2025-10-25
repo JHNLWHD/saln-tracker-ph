@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "version": "1.5",
-    "last_updated": "2025-09-21T14:48:14.587Z",
-    "total_records": 54,
+    "version": "1.6",
+    "last_updated": "2025-10-25T14:48:14.587Z",
+    "total_records": 55,
     "source": "SALN Tracker Philippines - Aggregated from official government sources",
     "description": "Statement of Assets, Liabilities, and Net Worth records for Philippine public officials with source links"
   },
@@ -344,6 +344,32 @@
       "status": "submitted",
       "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
       "source_description": "Rappler News Report"
+    },
+    {
+      "id": "saln-sen-006-2024",
+      "official_id": "sen-006",
+      "year": 2024,
+      "net_worth": 18986258,
+      "total_assets": 19884098,
+      "total_liabilities": 897840,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 19884098,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 897840
+        }
+      ],
+      "date_filed": "2025-10-20",
+      "status": "submitted",
+      "source_url": "https://www.facebook.com/share/p/1TU7ZSVPjq/",
+      "source_description": "Risa Hontiveros' Official FB Page"
     },
     {
       "id": "saln-sen-006-2020",
