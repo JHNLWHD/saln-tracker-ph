@@ -346,6 +346,32 @@
       "source_description": "Rappler News Report"
     },
     {
+      "id": "saln-sen-006-2024",
+      "official_id": "sen-006",
+      "year": 2024,
+      "net_worth": 18986258,
+      "total_assets": 19884098,
+      "total_liabilities": 897840,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 19884098,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 897840
+        }
+      ],
+      "date_filed": "2025-10-20",
+      "status": "submitted",
+      "source_url": "https://www.facebook.com/share/p/1TU7ZSVPjq/",
+      "source_description": "Risa Hontiveros' Official FB Page"
+    },
+    {
       "id": "saln-sen-006-2020",
       "official_id": "sen-006",
       "year": 2020,
