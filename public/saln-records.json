@@ -2,7 +2,7 @@
   "metadata": {
     "version": "1.6",
     "last_updated": "2025-10-25T14:48:14.587Z",
-    "total_records": 55,
+    "total_records": 56,
     "source": "SALN Tracker Philippines - Aggregated from official government sources",
     "description": "Statement of Assets, Liabilities, and Net Worth records for Philippine public officials with source links"
   },
@@ -966,6 +966,31 @@
       "status": "submitted",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.alpha.31Dec2016.pdf",
       "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-019-2025",
+      "official_id": "sen-019",
+      "year": 2025,
+      "net_worth": 244940509.6,
+      "total_assets": 0,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Lacson said he would provide further details of his SoA, Liabilities, and Net Worth 2025 including his ITRs for 2023 and 2024 as obtained.",
+          "value": 0,
+          "source": ""
+        }
+      ],
+      "liabilities": [
+        {
+          "nature": "Lacson said he would provide further details of his SoA, Liabilities, and Net Worth 2025 including his ITRs for 2023 and 2024 as obtained.",
+          "balance": 0
+        }
+      ],
+      "date_filed": "2025-06-30",
+      "status": "submitted",
+      "source_url": "https://www.gmanetwork.com/news/topstories/nation/963093/ping-lacson-saln-p244-million-net-worth/story/",
+      "source_description": "GMA Network"
     },
     {
       "id": "saln-sen-019-2020",
