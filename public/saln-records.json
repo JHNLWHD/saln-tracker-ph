@@ -554,6 +554,32 @@
       "source_description": "Rappler News Report"
     },
     {
+      "id": "saln-sen-011-2020",
+      "official_id": "sen-011",
+      "year": 2025,
+      "net_worth": 1261337817,
+      "total_assets": 1261337817,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 1261337817,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1261337817
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
       "id": "saln-sen-012-2020",
       "official_id": "sen-012",
       "year": 2020,
