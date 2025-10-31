@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "version": "1.6",
-    "last_updated": "2025-10-25T14:48:14.587Z",
-    "total_records": 56,
+    "version": "1.7",
+    "last_updated": "2025-10-31T11:40:00Z",
+    "total_records": 57,
     "source": "SALN Tracker Philippines - Aggregated from official government sources",
     "description": "Statement of Assets, Liabilities, and Net Worth records for Philippine public officials with source links"
   },
@@ -914,6 +914,32 @@
       "status": "submitted",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
       "source_description": "House of Representatives Database"
+    },
+    {
+      "id": "saln-sen-018-2025",
+      "official_id": "sen-018",
+      "year": 2025,
+      "net_worth": 51961550,
+      "total_assets": 80401700,
+      "total_liabilities": 28440150,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 80401700,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 28440150
+        }
+      ],
+      "date_filed": "2025-10-29",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
     },
     {
       "id": "saln-sen-018-2017",
