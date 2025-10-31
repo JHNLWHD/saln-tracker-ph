@@ -1571,6 +1571,32 @@
       "source_description": "House of Representatives Database"
     },
     {
+      "id": "saln-sen-023-2025",
+      "official_id": "sen-023",
+      "year": 2025,
+      "net_worth": 202036375.68,
+      "total_assets": 294383580.35,
+      "total_liabilities": 92347204.67,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 294383580.35,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 92347204.67
+        }
+      ],
+      "date_filed": "2025-10-29",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
+    },
+    {
       "id": "saln-sen-023-2020",
       "official_id": "sen-023",
       "year": 2020,
