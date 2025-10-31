@@ -268,16 +268,16 @@
       "source_description": "Philippine Senate Official Website"
     },
     {
-      "id": "saln-sen-001-2024",
-      "official_id": "sen-001",
+      "id": "saln-sen-002-2024",
+      "official_id": "sen-002",
       "year": 2024,
-      "net_worth": 109130757,
-      "total_assets": 110662791,
-      "total_liabilities": 1532034,
+      "net_worth": 137073459.63,
+      "total_assets": 179065861.12,
+      "total_liabilities": 41992401.49,
       "assets": [
         {
           "description": "Total Assets as reported",
-          "value": 110662791,
+          "value": 179065861.12,
           "source": "As reported in SALN"
         }
       ],
@@ -285,7 +285,7 @@
         {
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
-          "balance": 1532034
+          "balance": 41992401.49
         }
       ],
       "date_filed": "2025-10-29",
