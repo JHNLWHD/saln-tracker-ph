@@ -819,6 +819,32 @@
       "source_description": "Philippine Senate Official Website"
     },
     {
+      "id": "saln-sen-015-2025",
+      "official_id": "sen-015",
+      "year": 2025,
+      "net_worth": 32293018.05,
+      "total_assets": 61314073.99,
+      "total_liabilities": 29021055.94,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 61314073.99,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 29021055.94
+        }
+      ],
+      "date_filed": "2025-10-29",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
+    },
+    {
       "id": "saln-sen-015-2019",
       "official_id": "sen-015",
       "year": 2019,
