@@ -729,6 +729,25 @@
       "source_description": "Rappler News Report"
     },
     {
+      "id": "saln-sen-011-2025",
+      "official_id": "sen-011",
+      "year": 2025,
+      "net_worth": 1261337817,
+      "total_assets": 1261337817,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 1261337817
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2025-10-30",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
+    },
+    {
       "id": "saln-sen-012-2025",
       "official_id": "sen-012",
       "year": 2025,
