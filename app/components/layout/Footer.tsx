@@ -9,9 +9,11 @@ export function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
           <div className="col-span-1 lg:col-span-3">
             <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
-              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-flag-gradient flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-xs sm:text-sm">PH</span>
-              </div>
+              <img
+                src="/bettergov_logo.svg" 
+                alt="BetterGov Logo"
+                className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex-shrink-0"
+              />
               <div>
                 <h3 className="font-bold text-gray-900 text-sm sm:text-base">SALN Tracker Philippines</h3>
                 <p className="text-xs sm:text-sm text-gray-600">Promoting Government Transparency</p>

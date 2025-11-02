@@ -9,9 +9,11 @@ export function Header() {
           {/* Logo and Title */}
           <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
             <Link to="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity min-w-0">
-              <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg bg-flag-gradient flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-xs sm:text-sm">PH</span>
-              </div>
+              <img
+                src="/bettergov_logo.svg" 
+                alt="BetterGov Logo"
+                className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex-shrink-0"
+              />
               <div className="min-w-0">
                 <h1 className="text-base sm:text-xl font-bold text-gray-900 tracking-tight truncate">
                   SALN Tracker
