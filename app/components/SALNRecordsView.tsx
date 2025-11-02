@@ -3,6 +3,7 @@ import { formatCurrency } from '../data/officials';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { Hashtags } from './ui/Hashtags';
+import { NetWorthChart } from './NetWorthChart';
 
 interface SALNRecordsViewProps {
   official: Official;
@@ -45,6 +46,15 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
 
       {salnRecords.length > 0 ? (
         <div className="space-y-6 sm:space-y-8">
+          {salnRecords.length >= 2 && (
+            <Card>
+              <CardContent className="pt-6">
+                <NetWorthChart salnRecords={salnRecords} />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* SALN Records */}
           {salnRecords.map((record, index) => (
             <Card 
               key={record.id}
