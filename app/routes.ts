@@ -4,5 +4,6 @@ export default [
   index("routes/home.tsx"),
   route("about", "routes/about.tsx"),
   route("official/:slug", "routes/official.$slug.tsx"),
+  route("resources", "routes/resources.tsx"),
   route("*", "routes/$.tsx") // Catch-all route for 404
 ] satisfies RouteConfig;

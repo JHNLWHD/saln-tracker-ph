@@ -39,6 +39,12 @@ export function Header() {
               >
                 About
               </Link>
+              <Link 
+                to="/resources" 
+                className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              >
+                Resources
+              </Link>
             </nav>
 
             {/* Mobile Navigation */}
@@ -54,6 +60,12 @@ export function Header() {
                 className="text-xs font-medium text-gray-700 hover:text-primary-600 transition-colors px-2 py-1"
               >
                 About
+              </Link>
+              <Link 
+                to="/resources" 
+                className="text-xs font-medium text-gray-700 hover:text-primary-600 transition-colors px-2 py-1"
+              >
+                Resources
               </Link>
             </nav>
 
