@@ -1,9 +1,9 @@
 // Resource Records
 export interface Resource {
-  id: string;
+  id: number;
   description: string;
   source_url: string;
-  year?: number;
+  year: number;
   type: string;
 }
 

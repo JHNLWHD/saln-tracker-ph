@@ -15,7 +15,6 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({}: Route.LoaderArgs) {
   const resources = await getResourceRecords();
-  console.log(resources);
   return { resources };
 }
 
@@ -42,7 +41,7 @@ export default function Resources({ loaderData }: Route.ComponentProps) {
           </div>
 
           {/* Info Cards */}
-          <ResourcesGrid />
+          <ResourcesGrid resources={ loaderData.resources }/>
 
         </div>
       </main>

@@ -8,157 +8,157 @@
   },
   "data": [
     {
-      "id": "1",
+      "id": 1,
       "description": "PCIJ: SALNs of Cabinet Members – An Epidemic of Redactions",
       "source_url": "https://pcij.org/2017/09/22/salns-of-cabinet-members-an-epidemic-of-redactions/",
       "year": 2017,
       "type": "html"
     },
     {
-      "id": "2",
+      "id": 2,
       "description": "House of Representatives SALN CY 2018 (Alpha)",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
       "year": 2018,
       "type": "pdf"
     },
     {
-      "id": "3",
+      "id": 3,
       "description": "House of Representatives SALN CY 2017 (Amended)",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2017.12312017.amended.pdf",
       "year": 2017,
       "type": "pdf"
     },
     {
-      "id": "4",
+      "id": 4,
       "description": "House of Representatives SALN 31 Dec 2016 (Alpha)",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.alpha.31Dec2016.pdf",
       "year": 2016,
       "type": "pdf"
     },
     {
-      "id": "5",
+      "id": 5,
       "description": "House of Representatives SALN Net Worth 31 Dec 2016",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.networth.31Dec2016.pdf",
       "year": 2016,
       "type": "pdf"
     },
     {
-      "id": "6",
+      "id": 6,
       "description": "House of Representatives SALN as of 31 Dec 2015",
       "source_url": "https://docs.congress.hrep.online/download/docs/saln.asof.20151231.pdf",
       "year": 2015,
       "type": "pdf"
     },
     {
-      "id": "7",
+      "id": 7,
       "description": "Senate SALN Table Summary 2020",
       "source_url": "https://legacy.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
       "year": 2020,
       "type": "pdf"
     },
     {
-      "id": "8",
+      "id": 8,
       "description": "ABS-CBN: Senators’ Net Worth Rise (2020–2024)",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/10-senators-saw-their-net-worth-rise-from-2020-2046",
       "year": 2025,
       "type": "html"
     },
     {
-      "id": "9",
+      "id": 9,
       "description": "PhilStar Life: Cynthia Villar Richest Senator (2019)",
       "source_url": "https://www.philstarlife.com/news-and-views/250989-cynthia-villar-richest-senator-2019#",
       "year": 2019,
       "type": "html"
     },
     {
-      "id": "10",
+      "id": 10,
       "description": "PhilStar Life: PH Richest Senators",
       "source_url": "https://philstarlife.com/news-and-views/725906-ph-richest-senators#",
-      "year": null,
+      "year": 2021,
       "type": "html"
     },
     {
-      "id": "11",
+      "id": 11,
       "description": "MindaNews: PCIJ Wealth Check on Presidential Bets (2016)",
       "source_url": "https://mindanews.com/top-stories/2016/05/pcij-wealth-check-saln-files-of-5-bets-for-president-writ-in-opaque-loose-curious-parts/",
       "year": 2016,
       "type": "html"
     },
     {
-      "id": "12",
+      "id": 12,
       "description": "PCIJ: Duterte’s Secret SALN – The Lie of His FOI",
       "source_url": "https://pcij.org/2019/12/11/dutertes-secret-saln-the-lie-of-his-foi/",
       "year": 2019,
       "type": "html"
     },
     {
-      "id": "13",
+      "id": 13,
       "description": "PCIJ: Duterte 2015 SALN – P148M Cash, Bank Growth",
       "source_url": "https://pcij.org/2016/05/02/dutertes-2015-saln-p148-m-cashbrin-bank-tops-rivals-in-wealth-growth/",
       "year": 2015,
       "type": "html"
     },
     {
-      "id": "14",
+      "id": 14,
       "description": "PCIJ: Wealth Check – Rodrigo Duterte",
       "source_url": "https://pcij.org/2016/05/06/wealth-check-rodrigo-duterte/",
       "year": 2016,
       "type": "html"
     },
     {
-      "id": "15",
+      "id": 15,
       "description": "PCIJ: Robredo, Escudero, Trillanes – 2015 SALNs",
       "source_url": "https://pcij.org/2016/05/05/robredo-escudero-trillanesbrwhat-their-2015-saln-show/",
       "year": 2015,
       "type": "html"
     },
     {
-      "id": "16",
+      "id": 16,
       "description": "PCIJ: What Imee Marcos Disclosed (2013)",
       "source_url": "https://pcij.org/2013/04/04/what-imee-disclosed-and-didnt/",
       "year": 2013,
       "type": "html"
     },
     {
-      "id": "17",
+      "id": 17,
       "description": "PCIJ: Marcos Daughter Tied to Offshore Trust",
       "source_url": "https://pcij.org/2013/04/04/ferdinand-marcoss-daughter-tiedbr-to-offshore-trust-in-the-caribbean/",
       "year": 2013,
       "type": "html"
     },
     {
-      "id": "18",
+      "id": 18,
       "description": "PCIJ: Rising Fortunes, Falling Taxes",
       "source_url": "https://pcij.org/2011/04/10/rising-fortunes-falling-taxes/",
       "year": 2011,
       "type": "html"
     },
     {
-      "id": "19",
+      "id": 19,
       "description": "PCIJ: Manny Villar, JV Ejercito Linked to Offshore Accounts",
       "source_url": "https://pcij.org/2013/04/05/manny-villar-jv-ejercitobr-linked-to-offshore-accounts/",
       "year": 2013,
       "type": "html"
     },
     {
-      "id": "20",
+      "id": 20,
       "description": "PCIJ: Repentant, Reticent, Rude",
       "source_url": "https://pcij.org/2013/04/05/repentant-reticent-rude/",
       "year": 2013,
       "type": "html"
     },
     {
-      "id": "21",
+      "id": 21,
       "description": "Bulatlat: Duterte Family Wealth Spikes (2019)",
       "source_url": "https://www.bulatlat.com/2019/04/09/pcij-reports-duterte-sara-paolo-mark-big-spikes-in-wealth-cash-while-in-public-office/",
       "year": 2019,
       "type": "html"
     },
     {
-      "id": "22",
+      "id": 22,
       "description": "FOI: SALNs of President Marcos Jr. and Cabinet",
       "source_url": "https://www.foi.gov.ph/requests/salns-of-president-ferdinand-marcos-jr-and-his-cabinet/",
-      "year": null,
+      "year": 2023,
       "type": "html"
     }
   ]
