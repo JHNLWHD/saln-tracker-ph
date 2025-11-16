@@ -5,6 +5,8 @@ export interface Resource {
   source_url: string;
   year: number;
   type: string;
+  source: string;
+  summary?: string;
 }
 
 // Resource Data interface for JSON structure
