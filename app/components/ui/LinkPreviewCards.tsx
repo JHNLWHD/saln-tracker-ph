@@ -117,7 +117,7 @@ LinkPreviewContent.displayName = 'LinkPreviewContent';
 
 const LinkPreviewTags = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className = '', children, ...props }, ref) => (
-    <div ref={ref} className={`mt-4 pt-4 border-t border-gray-100 ${className}`} {...props}>
+    <div ref={ref} className={`m-2 p-2 border-t border-gray-100 mt-auto ${className}`} {...props}>
       {children}
     </div>
   )

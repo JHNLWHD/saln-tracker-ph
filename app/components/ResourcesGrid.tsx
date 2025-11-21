@@ -86,30 +86,29 @@ export function ResourcesGrid({ resources }: ResourcesGridProps) {
               
               <LinkPreviewContent>
                 {/* Headline */}
-                <LinkPreviewHeadline className="h-14 line-clamp-2">
+                <LinkPreviewHeadline className="h-16 line-clamp-2">
                   {data.description}
                 </LinkPreviewHeadline>
 
-                <p className="text-sm text-gray-700 mt-2">
+                <p className="h-38 text-sm text-gray-700 mt-2">
                   {data.summary}
                 </p>
-
-                {/* Tags */}
-                <LinkPreviewTags>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      {/* Reused Badges for Source, Year, and content Type */}
-                      <Badge variant="ph-red" className="text-xs flex-shrink-0">
-                        {data.source} | {data.year}
-                      </Badge>
-                    </div>
-                    <Badge variant="ph-yellow" className="text-xs flex-shrink-0">
-                      {data.type}
+              </LinkPreviewContent>
+              
+              {/* Tags */}
+              <LinkPreviewTags>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    {/* Reused Badges for Source, Year, and content Type */}
+                    <Badge variant="ph-red" className="text-xs flex-shrink-0">
+                      {data.source} | {data.year}
                     </Badge>
                   </div>
-                </LinkPreviewTags>
-
-              </LinkPreviewContent>
+                  <Badge variant="ph-yellow" className="text-xs flex-shrink-0">
+                    {data.type}
+                  </Badge>
+                </div>
+              </LinkPreviewTags>
             </LinkPreviewCard>
           )
         })}

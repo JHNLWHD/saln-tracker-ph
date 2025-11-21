@@ -34,7 +34,7 @@ export default function Resources({ loaderData }: Route.ComponentProps) {
               Content and Links Related to SALN
             </p>
             <p className="text-sm sm:text-base text-primary-200 mb-4 sm:mb-6 px-2 leading-relaxed">
-              Promoting Transparency Through Accesible Resources
+              Promoting Transparency Through Accessible Resources
             </p>
             <Hashtags variant="glass" size="md" className="sm:hidden" />
             <Hashtags variant="glass" size="lg" className="hidden sm:inline-block" />

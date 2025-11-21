@@ -1,0 +1,38 @@
+{
+  "version": "5",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "6a2ce0e544e15e8f8883a5c18da5948e37fd0f2619f68cb31f3af53c51817025",
+    "https://edge.netlify.com/bootstrap/context.ts": "72496497b40d9e808f419efc764ecb438952a32f61ed94cd54952fc59f17f69d",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "eaa6148ded3121d8dee62dd91c86e7fe76601df0f3ca8d7962243a30f4c8935f"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@netlify/vite-plugin-react-router@^1.0.1",
+        "npm:@react-router/dev@^7.5.2",
+        "npm:@react-router/node@^7.5.2",
+        "npm:@react-router/serve@^7.5.2",
+        "npm:@types/node@^20.17.32",
+        "npm:@types/react-dom@^18.3.6",
+        "npm:@types/react@^18.3.20",
+        "npm:autoprefixer@^10.4.21",
+        "npm:currency.js@^2.0.4",
+        "npm:isbot@^5.1.27",
+        "npm:postcss@^8.5.3",
+        "npm:posthog-js@^1.266.3",
+        "npm:react-dom@^18.3.1",
+        "npm:react-github-btn@^1.4.0",
+        "npm:react-router@^7.5.2",
+        "npm:react@^18.3.1",
+        "npm:recharts@^3.3.0",
+        "npm:tailwindcss@^3.4.17",
+        "npm:typescript@^5.8.3",
+        "npm:vite-tsconfig-paths@^5.1.4",
+        "npm:vite@^6.3.3"
+      ]
+    }
+  }
+}
