@@ -8,8 +8,8 @@ import { getResourceRecords } from "~/data/resources";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Resources - SALN Tracker Philippines"},
-    { name: "description", content: "Resources realted to SALN"},
+    { title: "SALN Resources - SALN Tracker Philippines"},
+    { name: "description", content: "Content and Links Related to SALN - Promoting Transparency Through Accessible Resources"},
   ];
 }
 
@@ -25,7 +25,6 @@ export default function Resources({ loaderData }: Route.ComponentProps) {
 
       <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         <div className="space-y-6 sm:space-y-8">
-          {/* Hero Section */}
           <div className="text-center py-8 sm:py-12 px-4 sm:px-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-white">
             <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4 leading-tight">
               SALN Resources
@@ -40,7 +39,6 @@ export default function Resources({ loaderData }: Route.ComponentProps) {
             <Hashtags variant="glass" size="lg" className="hidden sm:inline-block" />
           </div>
 
-          {/* Info Cards */}
           <ResourcesGrid resources={ loaderData.resources }/>
 
         </div>

@@ -10,7 +10,6 @@ interface ResourcesGridProps{
 type SortBy = 'year' | 'type' | 'source';
 
 export function ResourcesGrid({ resources }: ResourcesGridProps) {
-  // Default sort is year
   const [sortBy, setSortBy] = useState<SortBy>('year');
 
   const handleSortBy = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -77,15 +76,13 @@ export function ResourcesGrid({ resources }: ResourcesGridProps) {
             hoverable
             className="h-full flex flex-col"
             >
-              {/* Image Source */}
               <LinkImage
-                record_id={data.id}
+                recordId={data.id}
                 type={data.type}
                 alt="A preview of the link"
               />
               
               <LinkPreviewContent>
-                {/* Headline */}
                 <LinkPreviewHeadline className="h-16 line-clamp-2">
                   {data.description}
                 </LinkPreviewHeadline>
@@ -95,11 +92,9 @@ export function ResourcesGrid({ resources }: ResourcesGridProps) {
                 </p>
               </LinkPreviewContent>
               
-              {/* Tags */}
               <LinkPreviewTags>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    {/* Reused Badges for Source, Year, and content Type */}
                     <Badge variant="ph-red" className="text-xs flex-shrink-0">
                       {data.source} | {data.year}
                     </Badge>

@@ -7,7 +7,7 @@ interface LinkPreviewCardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 interface LinkImageProps extends HTMLAttributes<HTMLImageElement> {
-  record_id: number;
+  recordId: number;
   type: string;
   alt: string;
 }
@@ -78,8 +78,8 @@ const imageSrc = function (id: number, type: string): string {
 
 
 const LinkImage = forwardRef<HTMLImageElement, LinkImageProps>(
-  ({ className = '', record_id, type, alt, ...props }, ref) => {
-    const finalImageSrc = imageSrc(Number(record_id), type);
+  ({ className = '', recordId, type, alt, ...props }, ref) => {
+    const finalImageSrc = imageSrc(Number(recordId), type);
 
     return (
       <img
