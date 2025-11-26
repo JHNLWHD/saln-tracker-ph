@@ -26,6 +26,10 @@ export async function loader({ params }: Route.LoaderArgs) {
     getSALNRecordsForOfficial(official.id)
   ]);
   
+  salnRecords.sort((a, b) => {
+    return b.year - a.year;
+  });
+  
   return { official, officialWithSALN, salnRecords };
 }
 
