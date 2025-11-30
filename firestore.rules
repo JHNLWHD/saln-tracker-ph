@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Officials collection with nested SALN records - read-only public access
+    match /officials/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

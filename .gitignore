@@ -9,3 +9,8 @@
 .netlify
 
 .env
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log

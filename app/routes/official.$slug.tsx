@@ -3,33 +3,37 @@ import type { Route } from "./+types/official.$slug";
 import type { Agency } from "../data/officials";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { findOfficialBySlug, getOfficialWithSALNData, getSALNRecordsForOfficial, getAgencyDisplayName } from "../data/officials";
+import { findOfficialBySlug, getOfficialWithSALNData, getAgencyDisplayName } from "../data/officials";
 import { SALNRecordsView } from "../components/SALNRecordsView";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 
 export function meta({ params }: Route.MetaArgs) {
-  const official = findOfficialBySlug(params.slug);
+  // Convert slug to readable name for meta tags
+  const readableName = params.slug
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  
   return [
-    { title: `${official?.name} - SALN Records | SALN Tracker Philippines` },
-    { name: "description", content: `View SALN records for ${official?.name}, ${official?.position}` },
+    { title: `${readableName} - SALN Records | SALN Tracker Philippines` },
+    { name: "description", content: `View SALN records for ${readableName}` },
   ];
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const official = findOfficialBySlug(params.slug);
+  // Direct Firestore lookup using slug as document ID (most efficient)
+  const official = await findOfficialBySlug(params.slug);
   if (!official) {
     throw new Response("Not Found", { status: 404 });
   }
   
-  const [officialWithSALN, salnRecords] = await Promise.all([
-    getOfficialWithSALNData(official),
-    getSALNRecordsForOfficial(official.id)
-  ]);
+  // Get computed SALN data
+  const officialWithSALN = await getOfficialWithSALNData(official);
   
-  salnRecords.sort((a, b) => {
-    return b.year - a.year;
-  });
+  // SALN records are already in the official document (nested structure)
+  // They're already sorted by year DESC from Firestore
+  const salnRecords = official.saln_records || [];
   
   return { official, officialWithSALN, salnRecords };
 }
