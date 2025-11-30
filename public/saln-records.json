@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "version": "1.8",
-    "last_updated": "2025-11-02T05:28:00Z",
-    "total_records": 79,
+    "version": "2.0",
+    "last_updated": "2025-11-30T08:17:48.227Z",
+    "total_records": 78,
     "source": "SALN Tracker Philippines - Aggregated from official government sources",
     "description": "Statement of Assets, Liabilities, and Net Worth records for Philippine public officials with source links"
   },
@@ -34,16 +34,16 @@
       "source_description": "SlideShare Document"
     },
     {
-      "id": "saln-vp-001-2017",
-      "official_id": "vp-001",
-      "year": 2017,
-      "net_worth": 44828759,
-      "total_assets": 51141947,
-      "total_liabilities": 6313188,
+      "id": "saln-sen-001-2024",
+      "official_id": "sen-001",
+      "year": 2024,
+      "net_worth": 109130757,
+      "total_assets": 110662791,
+      "total_liabilities": 1532034,
       "assets": [
         {
           "description": "Total Assets as reported",
-          "value": 51141947,
+          "value": 110662791,
           "source": "As reported in SALN"
         }
       ],
@@ -51,25 +51,25 @@
         {
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
-          "balance": 6313188
+          "balance": 1532034
         }
       ],
-      "date_filed": "2017-12-31",
+      "date_filed": "2025-10-29",
       "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
     },
     {
-      "id": "saln-vp-001-2016",
-      "official_id": "vp-001",
-      "year": 2016,
-      "net_worth": 34895997,
-      "total_assets": 41850451,
-      "total_liabilities": 6954454,
+      "id": "saln-sen-002-2024",
+      "official_id": "sen-002",
+      "year": 2024,
+      "net_worth": 137073459.63,
+      "total_assets": 179065861.12,
+      "total_liabilities": 41992401.49,
       "assets": [
         {
           "description": "Total Assets as reported",
-          "value": 41850451,
+          "value": 179065861.12,
           "source": "As reported in SALN"
         }
       ],
@@ -77,143 +77,13 @@
         {
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
-          "balance": 6954454
+          "balance": 41992401.49
         }
       ],
-      "date_filed": "2016-12-31",
+      "date_filed": "2025-10-29",
       "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
-    },
-    {
-      "id": "saln-vp-001-2012",
-      "official_id": "vp-001",
-      "year": 2012,
-      "net_worth": 22116102,
-      "total_assets": 30778837,
-      "total_liabilities": 8692735,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 30778837,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 8692735
-        }
-      ],
-      "date_filed": "2012-12-31",
-      "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
-    },
-    {
-      "id": "saln-vp-001-2011",
-      "official_id": "vp-001",
-      "year": 2011,
-      "net_worth": 14271148,
-      "total_assets": 21820391,
-      "total_liabilities": 7549242,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 21820391,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 7549242
-        }
-      ],
-      "date_filed": "2011-12-31",
-      "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
-    },
-    {
-      "id": "saln-vp-001-2010",
-      "official_id": "vp-001",
-      "year": 2010,
-      "net_worth": 16242887,
-      "total_assets": 21550887,
-      "total_liabilities": 5308000,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 21550887,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 5308000
-        }
-      ],
-      "date_filed": "2010-12-31",
-      "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
-    },
-    {
-      "id": "saln-vp-001-2009",
-      "official_id": "vp-001",
-      "year": 2009,
-      "net_worth": 18281265,
-      "total_assets": 20171259,
-      "total_liabilities": 1890000,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 20171259,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 1890000
-        }
-      ],
-      "date_filed": "2009-12-31",
-      "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
-    },
-    {
-      "id": "saln-vp-001-2008",
-      "official_id": "vp-001",
-      "year": 2008,
-      "net_worth": 18493617,
-      "total_assets": 20268617,
-      "total_liabilities": 1775000,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 20268617,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 1775000
-        }
-      ],
-      "date_filed": "2008-12-31",
-      "status": "submitted",
-      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
-      "source_description": "Philippine Center for Investigative Journalism"
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
     },
     {
       "id": "saln-sen-003-2024",
@@ -234,32 +104,6 @@
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
           "balance": 0
-        }
-      ],
-      "date_filed": "2025-10-29",
-      "status": "submitted",
-      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
-      "source_description": "ABS-CBN Network"
-    },
-    {
-      "id": "saln-sen-001-2024",
-      "official_id": "sen-001",
-      "year": 2024,
-      "net_worth": 109130757,
-      "total_assets": 110662791,
-      "total_liabilities": 1532034,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 110662791,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 1532034
         }
       ],
       "date_filed": "2025-10-29",
@@ -292,32 +136,6 @@
       "status": "submitted",
       "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
       "source_description": "Philippine Senate Official Website"
-    },
-    {
-      "id": "saln-sen-002-2024",
-      "official_id": "sen-002",
-      "year": 2024,
-      "net_worth": 137073459.63,
-      "total_assets": 179065861.12,
-      "total_liabilities": 41992401.49,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 179065861.12,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 41992401.49
-        }
-      ],
-      "date_filed": "2025-10-29",
-      "status": "submitted",
-      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
-      "source_description": "ABS-CBN Network"
     },
     {
       "id": "saln-sen-003-2017",
@@ -365,26 +183,6 @@
       "source_description": "ABS-CBN Network"
     },
     {
-      "id": "saln-sen-005-2020",
-      "official_id": "sen-005",
-      "year": 2020,
-      "net_worth": 91213596.57,
-      "total_assets": 91213596.57,
-      "total_liabilities": 0,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 91213596.57,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [],
-      "date_filed": "2020-12-31",
-      "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-005-2025",
       "official_id": "sen-005",
       "year": 2025,
@@ -403,6 +201,26 @@
       "status": "submitted",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-005-2020",
+      "official_id": "sen-005",
+      "year": 2020,
+      "net_worth": 91213596.57,
+      "total_assets": 91213596.57,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 91213596.57,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-005-2019",
@@ -607,16 +425,16 @@
       "source_description": "ABS-CBN Network"
     },
     {
-      "id": "saln-sen-010-2020",
-      "official_id": "sen-010",
-      "year": 2020,
-      "net_worth": 33029725,
-      "total_assets": 57529725,
-      "total_liabilities": 24500000,
+      "id": "saln-sen-008-2025",
+      "official_id": "sen-008",
+      "year": 2025,
+      "net_worth": 244042908.57,
+      "total_assets": 244042908.57,
+      "total_liabilities": 0,
       "assets": [
         {
           "description": "Total Assets as reported",
-          "value": 57529725,
+          "value": 244042908.57,
           "source": "As reported in SALN"
         }
       ],
@@ -624,13 +442,38 @@
         {
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
-          "balance": 24500000
+          "balance": 244042908.57
         }
       ],
-      "date_filed": "2020-12-31",
+      "date_filed": "2025-10-29",
       "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-009-2025",
+      "official_id": "sen-009",
+      "year": 2025,
+      "net_worth": 1052977100,
+      "total_assets": 1052977100,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Net Worth as reported in SALN",
+          "value": 1052977100
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1052977100
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
     },
     {
       "id": "saln-sen-010-2024",
@@ -659,6 +502,32 @@
       "source_description": "ABS-CBN Network"
     },
     {
+      "id": "saln-sen-010-2020",
+      "official_id": "sen-010",
+      "year": 2020,
+      "net_worth": 33029725,
+      "total_assets": 57529725,
+      "total_liabilities": 24500000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 57529725,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 24500000
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
       "id": "saln-sen-010-2019",
       "official_id": "sen-010",
       "year": 2019,
@@ -685,32 +554,6 @@
       "source_description": "Philippine Senate Official Website"
     },
     {
-      "id": "saln-sen-008-2025",
-      "official_id": "sen-008",
-      "year": 2025,
-      "net_worth": 244042908.57,
-      "total_assets": 244042908.57,
-      "total_liabilities": 0,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 244042908.57,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 244042908.57
-        }
-      ],
-      "date_filed": "2025-10-29",
-      "status": "submitted",
-      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
-      "source_description": "ABS-CBN Network"
-    },
-    {
       "id": "saln-sen-010-2018",
       "official_id": "sen-010",
       "year": 2018,
@@ -735,31 +578,6 @@
       "status": "submitted",
       "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
       "source_description": "Philippine Senate Official Website"
-    },
-    {
-      "id": "saln-sen-009-2025",
-      "official_id": "sen-009",
-      "year": 2025,
-      "net_worth": 1052977100,
-      "total_assets": 1052977100,
-      "total_liabilities": 0,
-      "assets": [
-        {
-          "description": "Net Worth as reported in SALN",
-          "value": 1052977100
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 1052977100
-        }
-      ],
-      "date_filed": "2018-12-31",
-      "status": "submitted",
-      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
-      "source_description": "ABS-CBN Network"
     },
     {
       "id": "saln-sen-010-2017",
@@ -942,32 +760,6 @@
       "source_description": "Rappler News Report"
     },
     {
-      "id": "saln-sen-013-2020",
-      "official_id": "sen-013",
-      "year": 2020,
-      "net_worth": 22274508.68,
-      "total_assets": 42357371.1,
-      "total_liabilities": 20082862.42,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 42357371.1,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 20082862.42
-        }
-      ],
-      "date_filed": "2020-12-31",
-      "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-013-2025",
       "official_id": "sen-013",
       "year": 2025,
@@ -994,6 +786,32 @@
       "source_description": "ABS-CBN Network"
     },
     {
+      "id": "saln-sen-013-2020",
+      "official_id": "sen-013",
+      "year": 2020,
+      "net_worth": 22274508.68,
+      "total_assets": 42357371.1,
+      "total_liabilities": 20082862.42,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 42357371.1,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 20082862.42
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
       "id": "saln-sen-013-2019",
       "official_id": "sen-013",
       "year": 2019,
@@ -1017,32 +835,6 @@
       "date_filed": "2019-12-31",
       "status": "submitted",
       "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
-      "id": "saln-sen-014-2018",
-      "official_id": "sen-014",
-      "year": 2018,
-      "net_worth": 45205138.25,
-      "total_assets": 47901749.25,
-      "total_liabilities": 2696611,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 47901749.25,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 2696611
-        }
-      ],
-      "date_filed": "2018-12-31",
-      "status": "submitted",
-      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
       "source_description": "Philippine Senate Official Website"
     },
     {
@@ -1072,6 +864,32 @@
       "source_description": "ABS-CBN Network"
     },
     {
+      "id": "saln-sen-014-2018",
+      "official_id": "sen-014",
+      "year": 2018,
+      "net_worth": 45205138.25,
+      "total_assets": 47901749.25,
+      "total_liabilities": 2696611,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 47901749.25,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 2696611
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
       "id": "saln-sen-014-2017",
       "official_id": "sen-014",
       "year": 2017,
@@ -1089,32 +907,6 @@
       "status": "submitted",
       "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
       "source_description": "Rappler News Report"
-    },
-    {
-      "id": "saln-sen-015-2020",
-      "official_id": "sen-015",
-      "year": 2020,
-      "net_worth": 34383136.29,
-      "total_assets": 36985720.88,
-      "total_liabilities": 2602584.59,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 36985720.88,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 2602584.59
-        }
-      ],
-      "date_filed": "2020-12-31",
-      "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-015-2025",
@@ -1141,6 +933,32 @@
       "status": "submitted",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-015-2020",
+      "official_id": "sen-015",
+      "year": 2020,
+      "net_worth": 34383136.29,
+      "total_assets": 36985720.88,
+      "total_liabilities": 2602584.59,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 36985720.88,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 2602584.59
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-015-2019",
@@ -1195,32 +1013,6 @@
       "source_description": "ABS-CBN Network"
     },
     {
-      "id": "saln-sen-017-2019",
-      "official_id": "sen-017",
-      "year": 2019,
-      "net_worth": 19975821.25,
-      "total_assets": 20635213.25,
-      "total_liabilities": 659392,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 20635213.25,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 659392
-        }
-      ],
-      "date_filed": "2019-12-31",
-      "status": "submitted",
-      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-017-2025",
       "official_id": "sen-017",
       "year": 2025,
@@ -1245,6 +1037,32 @@
       "status": "submitted",
       "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdfhttps://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-017-2019",
+      "official_id": "sen-017",
+      "year": 2019,
+      "net_worth": 19975821.25,
+      "total_assets": 20635213.25,
+      "total_liabilities": 659392,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20635213.25,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 659392
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-017-2018",
@@ -1292,32 +1110,6 @@
       "source_description": "Rappler News Report"
     },
     {
-      "id": "saln-sen-018-2018",
-      "official_id": "sen-018",
-      "year": 2018,
-      "net_worth": 28950447.48,
-      "total_assets": 30185440,
-      "total_liabilities": 1234992.52,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 30185440,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 1234992.52
-        }
-      ],
-      "date_filed": "2018-12-31",
-      "status": "submitted",
-      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
-      "source_description": "House of Representatives Database"
-    },
-    {
       "id": "saln-sen-018-2025",
       "official_id": "sen-018",
       "year": 2025,
@@ -1342,6 +1134,32 @@
       "status": "submitted",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-018-2018",
+      "official_id": "sen-018",
+      "year": 2018,
+      "net_worth": 28950447.48,
+      "total_assets": 30185440,
+      "total_liabilities": 1234992.52,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 30185440,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1234992.52
+        }
+      ],
+      "date_filed": "2018-12-31",
+      "status": "submitted",
+      "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
+      "source_description": "House of Representatives Database"
     },
     {
       "id": "saln-sen-018-2017",
@@ -1492,32 +1310,6 @@
       "source_description": "Rappler News Report"
     },
     {
-      "id": "saln-sen-020-2019",
-      "official_id": "sen-020",
-      "year": 2019,
-      "net_worth": 77772861.57,
-      "total_assets": 383769804.3,
-      "total_liabilities": 305996942.73,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 383769804.3,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 305996942.73
-        }
-      ],
-      "date_filed": "2019-12-31",
-      "status": "submitted",
-      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-020-2025",
       "official_id": "sen-020",
       "year": 2025,
@@ -1542,6 +1334,32 @@
       "status": "submitted",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-020-2019",
+      "official_id": "sen-020",
+      "year": 2019,
+      "net_worth": 77772861.57,
+      "total_assets": 383769804.3,
+      "total_liabilities": 305996942.73,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 383769804.3,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 305996942.73
+        }
+      ],
+      "date_filed": "2019-12-31",
+      "status": "submitted",
+      "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-020-2018",
@@ -1589,32 +1407,6 @@
       "source_description": "Rappler News Report"
     },
     {
-      "id": "saln-sen-021-2020",
-      "official_id": "sen-021",
-      "year": 2020,
-      "net_worth": 84591678.21,
-      "total_assets": 89983845.8,
-      "total_liabilities": 5392167.59,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 89983845.8,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 5392167.59
-        }
-      ],
-      "date_filed": "2020-12-31",
-      "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-021-2025",
       "official_id": "sen-021",
       "year": 2025,
@@ -1639,6 +1431,32 @@
       "status": "submitted",
       "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
       "source_description": "ABS-CBN Network"
+    },
+    {
+      "id": "saln-sen-021-2020",
+      "official_id": "sen-021",
+      "year": 2020,
+      "net_worth": 84591678.21,
+      "total_assets": 89983845.8,
+      "total_liabilities": 5392167.59,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 89983845.8,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5392167.59
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
     },
     {
       "id": "saln-sen-021-2019",
@@ -1745,6 +1563,31 @@
       "source_description": "House of Representatives Database"
     },
     {
+      "id": "saln-sen-022-2025",
+      "official_id": "sen-022",
+      "year": 2025,
+      "net_worth": 362073052,
+      "total_assets": 362073052,
+      "total_liabilities": 0,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 362073052
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 0
+        }
+      ],
+      "date_filed": "2025-10-29",
+      "status": "submitted",
+      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+      "source_description": "ABS-CBN Network"
+    },
+    {
       "id": "saln-sen-023-2025",
       "official_id": "sen-023",
       "year": 2025,
@@ -1763,31 +1606,6 @@
           "creditor": "As reported in SALN",
           "nature": "Total Liabilities as reported",
           "balance": 92347204.67
-        }
-      ],
-      "date_filed": "2025-10-29",
-      "status": "submitted",
-      "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
-      "source_description": "ABS-CBN Network"
-    },
-    {
-      "id": "saln-sen-022-2025",
-      "official_id": "sen-022",
-      "year": 2025,
-      "net_worth": 362073052,
-      "total_assets": 362073052,
-      "total_liabilities": 0,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 362073052
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 0
         }
       ],
       "date_filed": "2025-10-29",
@@ -1848,32 +1666,6 @@
       "source_description": "Philippine Senate Official Website"
     },
     {
-      "id": "saln-sen-024-2020",
-      "official_id": "sen-024",
-      "year": 2020,
-      "net_worth": 36270467,
-      "total_assets": 52270467,
-      "total_liabilities": 16000000,
-      "assets": [
-        {
-          "description": "Total Assets as reported",
-          "value": 52270467,
-          "source": "As reported in SALN"
-        }
-      ],
-      "liabilities": [
-        {
-          "creditor": "As reported in SALN",
-          "nature": "Total Liabilities as reported",
-          "balance": 16000000
-        }
-      ],
-      "date_filed": "2020-12-31",
-      "status": "submitted",
-      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
-      "source_description": "Philippine Senate Official Website"
-    },
-    {
       "id": "saln-sen-024-2025",
       "official_id": "sen-024",
       "year": 2025,
@@ -1900,6 +1692,32 @@
       "source_description": "ABS-CBN Network"
     },
     {
+      "id": "saln-sen-024-2020",
+      "official_id": "sen-024",
+      "year": 2020,
+      "net_worth": 36270467,
+      "total_assets": 52270467,
+      "total_liabilities": 16000000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 52270467,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 16000000
+        }
+      ],
+      "date_filed": "2020-12-31",
+      "status": "submitted",
+      "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+      "source_description": "Philippine Senate Official Website"
+    },
+    {
       "id": "saln-sen-024-2019",
       "official_id": "sen-024",
       "year": 2019,
@@ -1924,6 +1742,188 @@
       "status": "submitted",
       "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
       "source_description": "Philippine Senate Official Website"
+    },
+    {
+      "id": "saln-vp-001-2017",
+      "official_id": "vp-001",
+      "year": 2017,
+      "net_worth": 44828759,
+      "total_assets": 51141947,
+      "total_liabilities": 6313188,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 51141947,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6313188
+        }
+      ],
+      "date_filed": "2017-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2016",
+      "official_id": "vp-001",
+      "year": 2016,
+      "net_worth": 34895997,
+      "total_assets": 41850451,
+      "total_liabilities": 6954454,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 41850451,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 6954454
+        }
+      ],
+      "date_filed": "2016-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2012",
+      "official_id": "vp-001",
+      "year": 2012,
+      "net_worth": 22116102,
+      "total_assets": 30778837,
+      "total_liabilities": 8692735,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 30778837,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 8692735
+        }
+      ],
+      "date_filed": "2012-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2011",
+      "official_id": "vp-001",
+      "year": 2011,
+      "net_worth": 14271148,
+      "total_assets": 21820391,
+      "total_liabilities": 7549242,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 21820391,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 7549242
+        }
+      ],
+      "date_filed": "2011-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2010",
+      "official_id": "vp-001",
+      "year": 2010,
+      "net_worth": 16242887,
+      "total_assets": 21550887,
+      "total_liabilities": 5308000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 21550887,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 5308000
+        }
+      ],
+      "date_filed": "2010-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2009",
+      "official_id": "vp-001",
+      "year": 2009,
+      "net_worth": 18281265,
+      "total_assets": 20171259,
+      "total_liabilities": 1890000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20171259,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1890000
+        }
+      ],
+      "date_filed": "2009-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
+    },
+    {
+      "id": "saln-vp-001-2008",
+      "official_id": "vp-001",
+      "year": 2008,
+      "net_worth": 18493617,
+      "total_assets": 20268617,
+      "total_liabilities": 1775000,
+      "assets": [
+        {
+          "description": "Total Assets as reported",
+          "value": 20268617,
+          "source": "As reported in SALN"
+        }
+      ],
+      "liabilities": [
+        {
+          "creditor": "As reported in SALN",
+          "nature": "Total Liabilities as reported",
+          "balance": 1775000
+        }
+      ],
+      "date_filed": "2008-12-31",
+      "status": "submitted",
+      "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+      "source_description": "Philippine Center for Investigative Journalism"
     }
   ]
 }
