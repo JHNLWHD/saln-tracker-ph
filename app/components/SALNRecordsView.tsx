@@ -57,7 +57,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
           {/* SALN Records */}
           {salnRecords.map((record, index) => (
             <Card 
-              key={index}
+              key={`${record.year}-${index}`}
             >
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between gap-3">
