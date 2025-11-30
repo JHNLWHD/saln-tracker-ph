@@ -1,8 +1,9 @@
 import { Link } from 'react-router';
 import type { Route } from "./+types/official.$slug";
+import type { Agency } from "../data/officials";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { findOfficialBySlug, getOfficialWithSALNData, getSALNRecordsForOfficial } from "../data/officials";
+import { findOfficialBySlug, getOfficialWithSALNData, getSALNRecordsForOfficial, getAgencyDisplayName } from "../data/officials";
 import { SALNRecordsView } from "../components/SALNRecordsView";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
@@ -36,12 +37,18 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
   const { official, officialWithSALN, salnRecords } = loaderData;
 
-  const getPositionColor = (position: string) => {
-    switch (position) {
-      case 'PRESIDENT': return 'ph-red';
-      case 'VICE PRESIDENT': return 'ph-blue';
-      case 'SENATOR': return 'ph-yellow';
-      default: return 'default';
+  const getAgencyBadgeVariant = (agency: Agency): 'executive' | 'legislative' | 'constitutional' | 'judiciary' => {
+    switch (agency) {
+      case 'EXECUTIVE':
+        return 'executive';
+      case 'LEGISLATIVE':
+        return 'legislative';
+      case 'CONSTITUTIONAL_COMMISSION':
+        return 'constitutional';
+      case 'JUDICIARY':
+        return 'judiciary';
+      default:
+        return 'executive';
     }
   };
 
@@ -67,13 +74,23 @@ export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
           <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sm:gap-6">
               <div className="min-w-0 flex-1">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-3 mb-2">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-                    {official.name}
-                  </h1>
-                  <Badge variant={getPositionColor(official.position)} size="lg" className="self-start">
+                <div className="flex flex-col gap-3 mb-2">
+                  <div className="flex flex-wrap items-start gap-3">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
+                      {official.name}
+                    </h1>
+                    <Badge variant={getAgencyBadgeVariant(official.agency)} size="lg" className="self-start">
+                      {getAgencyDisplayName(official.agency)}
+                    </Badge>
+                  </div>
+                  <p className="text-sm sm:text-base text-gray-600">
                     {official.position}
-                  </Badge>
+                  </p>
+                  {official.status === 'inactive' && (
+                    <Badge variant="default" size="sm" className="self-start">
+                      Former Official
+                    </Badge>
+                  )}
                 </div>
               </div>
               
