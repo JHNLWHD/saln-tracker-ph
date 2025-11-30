@@ -198,8 +198,8 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
                   <div className="mt-auto">
                     {/* Records Count */}
                     <div className="pb-3 border-t border-gray-100">
-                      <div className="flex items-center gap-2 text-sm pt-3">
-                        <span className="text-gray-500">Available Records:</span>
+                      <div className="flex items-center justify-between text-sm pt-3">
+                        <span className="text-gray-500">Available Records</span>
                         <span className="font-semibold text-gray-900">{official.saln_count}</span>
                       </div>
                     </div>
