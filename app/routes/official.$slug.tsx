@@ -31,9 +31,10 @@ export async function loader({ params }: Route.LoaderArgs) {
   // Get computed SALN data
   const officialWithSALN = await getOfficialWithSALNData(official);
   
-  // SALN records are already in the official document (nested structure)
-  // They're already sorted by year DESC from Firestore
-  const salnRecords = official.saln_records || [];
+  // Get SALN records and sort by year DESC (most recent first)
+  // Note: Firestore preserves insertion order for arrays, doesn't auto-sort
+  // This ensures correct display order even if data is added/modified manually
+  const salnRecords = (official.saln_records || []).slice().sort((a, b) => b.year - a.year);
   
   return { official, officialWithSALN, salnRecords };
 }
