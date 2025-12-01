@@ -6,12 +6,18 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "npm run dev",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "migrate:firestore": "node migrate-to-firestore.js",
+    "deploy:firestore": "firebase deploy --only firestore",
+    "deploy:firestore:rules": "firebase deploy --only firestore:rules",
+    "deploy:firestore:indexes": "firebase deploy --only firestore:indexes"
   },
   "dependencies": {
     "@react-router/node": "^7.5.2",
     "@react-router/serve": "^7.5.2",
     "currency.js": "^2.0.4",
+    "firebase": "^12.6.0",
+    "firebase-admin": "^13.6.0",
     "isbot": "^5.1.27",
     "posthog-js": "^1.266.3",
     "react": "^18.3.1",

@@ -93,7 +93,7 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
   const renderOfficialCard = (official: OfficialWithSALN) => {
     return (
       <Card
-        key={official.id}
+        key={official.slug}
         hoverable
         className="h-full flex flex-col"
       >
@@ -208,7 +208,7 @@ export function OfficialsGrid({ officials }: OfficialsGridProps) {
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {sortedOfficials.map((official) => (
-            <div key={official.id}>
+            <div key={official.slug}>
               {renderOfficialCard(official)}
             </div>
           ))}

@@ -1,3 +1,7 @@
+import { collection, getDocs, doc, getDoc, getDocsFromCache, getDocsFromServer, getDocFromCache, getDocFromServer } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import currency from 'currency.js';
+
 export interface Asset {
   description: string;
   value: number;
@@ -11,8 +15,6 @@ export interface Liability {
 }
 
 export interface SALNRecord {
-  id: string;
-  official_id: string;
   year: number;
   net_worth: number;
   total_assets: number;
@@ -28,17 +30,17 @@ export interface SALNRecord {
 export type Agency = 'EXECUTIVE' | 'LEGISLATIVE' | 'CONSTITUTIONAL_COMMISSION' | 'JUDICIARY';
 
 export interface Official {
-  id: string;
+  slug: string;
   name: string;
   position: string;
   agency: Agency;
   status: 'active' | 'inactive';
   term_start?: string;
   term_end?: string;
-  slug?: string;
+  saln_records?: SALNRecord[];
 }
 
-export function generateSlug(official: Official): string {
+export function generateSlug(official: Official | { name: string }): string {
   const name = official.name
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
@@ -48,8 +50,6 @@ export function generateSlug(official: Official): string {
 
   return name;
 }
-
-import currency from 'currency.js';
 
 export function formatCurrency({ amount, shorten = false }: { amount: number, shorten: boolean }): string {
   const options = {
@@ -79,10 +79,6 @@ export function formatCurrency({ amount, shorten = false }: { amount: number, sh
 
 export function formatNumber(num: number): string {
   return num.toLocaleString();
-}
-
-export function findOfficialBySlug(slug: string): Official | undefined {
-  return officials.find(official => generateSlug(official) === slug);
 }
 
 export function getAgencyDisplayName(agency: Agency): string {
@@ -118,460 +114,213 @@ export function groupOfficialsByStatusAndAgency<T extends Official>(officials: T
   return grouped;
 }
 
-export const officials: Official[] = [
-  {
-    id: 'pres-001',
-    name: 'Ferdinand "Bongbong" Romualdez Marcos Jr.',
-    position: 'President',
-    agency: 'EXECUTIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-30'
-  },
-  {
-    id: 'vp-001',
-    name: 'Sara Zimmerman Duterte',
-    position: 'Vice President',
-    agency: 'EXECUTIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-30'
-  },
-  {
-    id: 'sen-001',
-    name: 'Alan Peter Cayetano',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-002',
-    name: 'JV Ejercito',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-003',
-    name: 'Francis Escudero',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-004',
-    name: 'Jinggoy Estrada',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-005',
-    name: 'Win Gatchalian',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-006',
-    name: 'Risa Hontiveros',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-007',
-    name: 'Loren Legarda',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-008',
-    name: 'Robin Padilla',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-009',
-    name: 'Raffy Tulfo',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-010',
-    name: 'Joel Villanueva',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-011',
-    name: 'Mark Villar',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-012',
-    name: 'Juan Miguel Zubiri',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2022-06-30',
-    term_end: '2028-06-29'
-  },
-  {
-    id: 'sen-013',
-    name: 'Bong Go',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-014',
-    name: 'Bam Aquino',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-015',
-    name: 'Ronald "Bato" dela Rosa',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-016',
-    name: 'Erwin Tulfo',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-017',
-    name: 'Kiko Pangilinan',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-018',
-    name: 'Rodante Marcoleta',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-019',
-    name: 'Panfilo Lacson',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-020',
-    name: 'Tito Sotto',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-021',
-    name: 'Pia Cayetano',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-022',
-    name: 'Camille Villar',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-023',
-    name: 'Lito Lapid',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'sen-024',
-    name: 'Imee Marcos',
-    position: 'Senator',
-    agency: 'LEGISLATIVE',
-    status: 'active',
-    term_start: '2025-06-30',
-    term_end: '2031-06-29'
-  },
-  {
-    id: 'comelec-001',
-    name: 'George Erwin M. Garcia',
-    position: 'Chairman, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2022-02-04',
-    term_end: '2029-02-04'
-  },
-  {
-    id: 'comelec-002',
-    name: 'Aimee Ferolino-Ampoloquio',
-    position: 'Commissioner, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2015-02-02',
-    term_end: '2029-02-02'
-  },
-  {
-    id: 'comelec-003',
-    name: 'Rey E. Bulay',
-    position: 'Commissioner, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2021-10-12',
-    term_end: '2028-02-02'
-  },
-  {
-    id: 'comelec-004',
-    name: 'Aimee Torrefranca-Neri',
-    position: 'Commissioner, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2022-02-14',
-    term_end: '2029-02-02'
-  },
-  {
-    id: 'comelec-005',
-    name: 'Nelson S. Celis',
-    position: 'Commissioner, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2024-02-07',
-    term_end: '2031-02-02'
-  },
-  {
-    id: 'comelec-006',
-    name: 'Ernesto Ferdinand F. Maceda Jr.',
-    position: 'Commissioner, Commission on Elections',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2024-05-16',
-    term_end: '2031-02-02'
-  },
-  {
-    id: 'coa-001',
-    name: 'Gamaliel A. Cordoba',
-    position: 'Chairman, Commission on Audit',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2021-02-25',
-    term_end: '2028-02-02'
-  },
-  {
-    id: 'csc-001',
-    name: 'Karlo Alexei B. Nograles',
-    position: 'Chairman, Civil Service Commission',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2022-02-14',
-    term_end: '2029-02-02'
-  },
-  {
-    id: 'chr-001',
-    name: 'Richard P. Palpal-latoc',
-    position: 'Chairman, Commission on Human Rights',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2015-08-04',
-    term_end: '2022-08-04'
-  },
-  {
-    id: 'omb-001',
-    name: 'Samuel R. Martires',
-    position: 'Ombudsman',
-    agency: 'CONSTITUTIONAL_COMMISSION',
-    status: 'active',
-    term_start: '2021-08-03',
-    term_end: '2028-08-03'
-  },
-  {
-    id: 'pres-former-001',
-    name: 'Rodrigo Roa Duterte',
-    position: 'Former President',
-    agency: 'EXECUTIVE',
-    status: 'inactive',
-    term_start: '2016-06-30',
-    term_end: '2022-06-30'
-  },
-  {
-    id: 'vp-former-001',
-    name: 'Maria Leonor "Leni" Gerona Robredo',
-    position: 'Former Vice President',
-    agency: 'EXECUTIVE',
-    status: 'inactive',
-    term_start: '2016-06-30',
-    term_end: '2022-06-30'
-  },
-  {
-    id: 'pres-former-002',
-    name: 'Benigno Simeon "Noynoy" Cojuangco Aquino III',
-    position: 'Former President',
-    agency: 'EXECUTIVE',
-    status: 'inactive',
-    term_start: '2010-06-30',
-    term_end: '2016-06-30'
-  },
-  {
-    id: 'sen-former-001',
-    name: 'Leila de Lima',
-    position: 'Former Senator',
-    agency: 'LEGISLATIVE',
-    status: 'inactive',
-    term_start: '2016-06-30',
-    term_end: '2022-06-30'
-  },
-  {
-    id: 'sen-former-002',
-    name: 'Antonio Trillanes IV',
-    position: 'Former Senator',
-    agency: 'LEGISLATIVE',
-    status: 'inactive',
-    term_start: '2007-06-30',
-    term_end: '2019-06-30'
-  },
-  {
-    id: 'sen-former-003',
-    name: 'Miriam Defensor Santiago',
-    position: 'Former Senator',
-    agency: 'LEGISLATIVE',
-    status: 'inactive',
-    term_start: '1995-06-30',
-    term_end: '2016-09-29'
-  }
-];
-
-interface SALNDataFile {
-  metadata: {
-    version: string;
-    last_updated: string;
-    total_records: number;
-    source: string;
-    description: string;
-  };
-  records: SALNRecord[];
-}
-
-let salnDataCache: SALNRecord[] | null = null;
-
-async function loadSALNRecords(): Promise<SALNRecord[]> {
-  if (salnDataCache) {
-    return salnDataCache;
-  }
-
+/**
+ * Fetch all officials from Firestore
+ * Uses Firestore's built-in cache (IndexedDB) automatically
+ * @param source - 'default' (cache-first), 'server' (force network), or 'cache' (cache-only)
+ */
+async function loadOfficials(source: 'default' | 'server' | 'cache' = 'default'): Promise<Official[]> {
   try {
-    let baseUrl: string;
+    const officialsCollection = collection(db, 'officials');
+    let querySnapshot;
 
-    if (typeof window !== 'undefined') {
-      baseUrl = window.location.origin;
+    // Use Firestore's built-in cache management
+    if (source === 'cache') {
+      // Try cache only (offline-first)
+      querySnapshot = await getDocsFromCache(officialsCollection);
+    } else if (source === 'server') {
+      // Force fetch from server
+      querySnapshot = await getDocsFromServer(officialsCollection);
     } else {
-      baseUrl =
-        import.meta.env.VITE_SITE_URL || "https://saln-tracker-ph.netlify.app";
+      // Default: cache-first, then server (automatic behavior)
+      querySnapshot = await getDocs(officialsCollection);
     }
+    
+    const officials: Official[] = [];
+    querySnapshot.forEach((docSnapshot) => {
+      const data = docSnapshot.data() as Official;
+      // Ensure saln_records is an array and slug is set
+      officials.push({
+        ...data,
+        slug: data.slug || docSnapshot.id,
+        saln_records: data.saln_records || []
+      });
+    });
 
-    const response = await fetch(`${baseUrl}/saln-records.json`);
-    if (!response.ok) {
-      throw new Error(`Failed to load SALN data: ${response.status}`);
-    }
-
-    const salnData: SALNDataFile = await response.json();
-    salnDataCache = salnData.records;
-    return salnDataCache;
+    return officials;
   } catch (error) {
-    console.error('Error loading SALN records:', error);
+    console.error('Error loading officials from Firestore:', error);
+    
+    // If server fetch fails and we weren't already trying cache, try cache as fallback
+    if (source === 'server') {
+      try {
+        const officialsCollection = collection(db, 'officials');
+        const cacheSnapshot = await getDocsFromCache(officialsCollection);
+        const officials: Official[] = [];
+        cacheSnapshot.forEach((docSnapshot) => {
+          const data = docSnapshot.data() as Official;
+          officials.push({
+            ...data,
+            slug: data.slug || docSnapshot.id,
+            saln_records: data.saln_records || []
+          });
+        });
+        return officials;
+      } catch (cacheError) {
+        console.error('Cache fallback also failed:', cacheError);
+      }
+    }
+    
     return [];
   }
 }
 
-export const getSALNRecords = loadSALNRecords;
-
-export async function getSALNRecordsForOfficial(officialId: string): Promise<SALNRecord[]> {
-  const allRecords = await getSALNRecords();
-  return allRecords.filter(record => record.official_id === officialId);
+/**
+ * Get all officials
+ * @param forceRefresh - If true, fetches fresh data from server bypassing cache
+ */
+export async function getOfficials(forceRefresh: boolean = false): Promise<Official[]> {
+  return loadOfficials(forceRefresh ? 'server' : 'default');
 }
 
-export async function getLatestSALNYear(officialId: string): Promise<number | undefined> {
-  const records = await getSALNRecordsForOfficial(officialId);
+/**
+ * Find an official by their slug
+ * Uses Firestore's built-in cache (cache-first by default)
+ * @param slug - The official's slug
+ * @param source - 'default' (cache-first), 'server' (force network), or 'cache' (cache-only)
+ */
+export async function findOfficialBySlug(
+  slug: string,
+  source: 'default' | 'server' | 'cache' = 'default'
+): Promise<Official | undefined> {
+  try {
+    const docRef = doc(db, 'officials', slug);
+    let docSnap;
+
+    // Use Firestore's built-in cache management
+    if (source === 'cache') {
+      docSnap = await getDocFromCache(docRef);
+    } else if (source === 'server') {
+      docSnap = await getDocFromServer(docRef);
+    } else {
+      // Default: cache-first, then server
+      docSnap = await getDoc(docRef);
+    }
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data() as Official;
+      return {
+        ...data,
+        slug: data.slug || docSnap.id,
+        saln_records: data.saln_records || []
+      };
+    }
+    
+    return undefined;
+  } catch (error) {
+    console.error(`Error loading official by slug ${slug}:`, error);
+    
+    // If server fetch fails and we weren't already trying cache, try cache as fallback
+    if (source === 'server') {
+      try {
+        const docRef = doc(db, 'officials', slug);
+        const cacheSnap = await getDocFromCache(docRef);
+        if (cacheSnap.exists()) {
+          const data = cacheSnap.data() as Official;
+          return {
+            ...data,
+            slug: data.slug || cacheSnap.id,
+            saln_records: data.saln_records || []
+          };
+        }
+      } catch (cacheError) {
+        console.error('Cache fallback also failed:', cacheError);
+      }
+    }
+    
+    return undefined;
+  }
+}
+
+/**
+ * Get a single official by slug
+ * Alias for findOfficialBySlug for backward compatibility
+ */
+export async function getOfficialBySlug(slug: string): Promise<Official | null> {
+  return await findOfficialBySlug(slug) || null;
+}
+
+/**
+ * Get all SALN records (flattened from all officials)
+ * This maintains backward compatibility with code expecting all records
+ */
+export async function getSALNRecords(): Promise<SALNRecord[]> {
+  const allOfficials = await loadOfficials();
+  const allRecords: SALNRecord[] = [];
+  
+  for (const official of allOfficials) {
+    if (official.saln_records && official.saln_records.length > 0) {
+      allRecords.push(...official.saln_records);
+    }
+  }
+  
+  return allRecords;
+}
+
+/**
+ * Get SALN records for a specific official by slug
+ */
+export async function getSALNRecordsForOfficial(slug: string): Promise<SALNRecord[]> {
+  try {
+    const official = await findOfficialBySlug(slug);
+    return official?.saln_records || [];
+  } catch (error) {
+    console.error(`Error loading SALN records for slug ${slug}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Get the latest SALN year for an official
+ */
+export async function getLatestSALNYear(slug: string): Promise<number | undefined> {
+  const records = await getSALNRecordsForOfficial(slug);
   if (records.length === 0) return undefined;
 
   return Math.max(...records.map(record => record.year));
 }
 
-export async function getSALNRecordCount(officialId: string): Promise<number> {
-  const records = await getSALNRecordsForOfficial(officialId);
+/**
+ * Get SALN record count for an official
+ */
+export async function getSALNRecordCount(slug: string): Promise<number> {
+  const records = await getSALNRecordsForOfficial(slug);
   return records.length;
 }
 
-export async function getLatestSALNRecord(officialId: string): Promise<SALNRecord | undefined> {
-  const records = await getSALNRecordsForOfficial(officialId);
+/**
+ * Get the latest SALN record for an official
+ */
+export async function getLatestSALNRecord(slug: string): Promise<SALNRecord | undefined> {
+  const records = await getSALNRecordsForOfficial(slug);
   if (records.length === 0) return undefined;
 
   const latestYear = Math.max(...records.map(record => record.year));
   return records.find(record => record.year === latestYear);
 }
 
+/**
+ * Get an official with their SALN data computed
+ */
 export async function getOfficialWithSALNData(official: Official) {
-  const saln_count = await getSALNRecordCount(official.id);
-  const latest_saln_year = await getLatestSALNYear(official.id);
-  const latest_saln_record = await getLatestSALNRecord(official.id);
+  const saln_records = official.saln_records || [];
+  const saln_count = saln_records.length;
+  const latest_saln_year = saln_count > 0 
+    ? Math.max(...saln_records.map(record => record.year))
+    : undefined;
+  const latest_saln_record = saln_count > 0
+    ? saln_records.find(record => record.year === latest_saln_year)
+    : undefined;
 
   return {
     ...official,
@@ -581,9 +330,28 @@ export async function getOfficialWithSALNData(official: Official) {
   };
 }
 
+/**
+ * Get all officials with their SALN data computed
+ */
 export async function getOfficialsWithSALNData() {
-  const allOfficials = await Promise.all(
-    officials.map(official => getOfficialWithSALNData(official))
-  );
-  return allOfficials;
+  const allOfficials = await loadOfficials();
+  const officialsWithSALN = allOfficials.map(official => {
+    const saln_records = official.saln_records || [];
+    const saln_count = saln_records.length;
+    const latest_saln_year = saln_count > 0 
+      ? Math.max(...saln_records.map(record => record.year))
+      : undefined;
+    const latest_saln_record = saln_count > 0
+      ? saln_records.find(record => record.year === latest_saln_year)
+      : undefined;
+
+    return {
+      ...official,
+      saln_count,
+      latest_saln_year,
+      latest_saln_record
+    };
+  });
+  
+  return officialsWithSALN;
 }
