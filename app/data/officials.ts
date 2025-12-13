@@ -27,14 +27,18 @@ export interface SALNRecord {
   source_description?: string;
 }
 
-export type Agency = 'EXECUTIVE' | 'LEGISLATIVE' | 'CONSTITUTIONAL_COMMISSION' | 'JUDICIARY';
+const VALID_AGENCIES = ['EXECUTIVE', 'LEGISLATIVE', 'CONSTITUTIONAL_COMMISSION', 'JUDICIARY'] as const;
+export type Agency = typeof VALID_AGENCIES[number];
+
+const VALID_STATUSES = ['active', 'inactive'] as const;
+export type Status = typeof VALID_STATUSES[number];
 
 export interface Official {
   slug: string;
   name: string;
   position: string;
   agency: Agency;
-  status: 'active' | 'inactive';
+  status: Status;
   term_start?: string;
   term_end?: string;
   saln_records?: SALNRecord[];
@@ -138,13 +142,11 @@ async function loadOfficials(source: 'default' | 'server' | 'cache' = 'default')
     
     const officials: Official[] = [];
     querySnapshot.forEach((docSnapshot) => {
-      const data = docSnapshot.data() as Official;
-      // Ensure saln_records is an array and slug is set
-      officials.push({
-        ...data,
-        slug: data.slug || docSnapshot.id,
-        saln_records: data.saln_records || []
-      });
+      const data = docSnapshot.data();
+      const official = validateOfficial(data);
+      if (official) {
+        officials.push(official);
+      }
     });
 
     return officials;
@@ -158,12 +160,11 @@ async function loadOfficials(source: 'default' | 'server' | 'cache' = 'default')
         const cacheSnapshot = await getDocsFromCache(officialsCollection);
         const officials: Official[] = [];
         cacheSnapshot.forEach((docSnapshot) => {
-          const data = docSnapshot.data() as Official;
-          officials.push({
-            ...data,
-            slug: data.slug || docSnapshot.id,
-            saln_records: data.saln_records || []
-          });
+          const data = docSnapshot.data();
+          const official = validateOfficial(data);
+          if (official) {
+            officials.push(official);
+          }
         });
         return officials;
       } catch (cacheError) {
@@ -173,6 +174,29 @@ async function loadOfficials(source: 'default' | 'server' | 'cache' = 'default')
     
     return [];
   }
+}
+
+/**
+ * Type guard: Validates Firestore data matches Official interface
+ * Uses constants derived from type definitions - no enum duplication
+ */
+function validateOfficial(data: any, id: string): Official | null {
+  if (!data.name || !VALID_AGENCIES.includes(data.agency) || !VALID_STATUSES.includes(data.status)) {
+    return null;
+  }
+
+  const official: Official = {
+    slug: data.slug || id,
+    name: data.name,
+    position: data.position,
+    agency: data.agency,
+    status: data.status,
+    term_start: data.term_start,
+    term_end: data.term_end,
+    saln_records: data.saln_records || []
+  };
+
+  return official;
 }
 
 /**
