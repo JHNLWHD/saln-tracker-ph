@@ -37,12 +37,12 @@ export function CallToActionBanner({
           <p className="text-xs sm:text-sm text-white/90 leading-relaxed mt-3">
             Please help us by asking for your candidate's SALN here{' '}
             <Link 
-              to="https://www.ombudsman.gov.ph/request-for-copy-of-salns/" 
+              to="https://www.ombudsman.gov.ph/?page_id=128060"
               target="_blank" 
               rel="noopener noreferrer"
               className="underline hover:text-white"
             >
-              https://www.ombudsman.gov.ph/request-for-copy-of-salns/
+              https://www.ombudsman.gov.ph/?page_id=128060
             </Link>
           </p>
         </div>
