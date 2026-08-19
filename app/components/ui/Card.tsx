@@ -23,7 +23,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       bordered: 'bg-white border-2 border-gray-200'
     };
 
-    const hoverStyles = hoverable ? 'hover:shadow-xl hover:scale-[1.02] cursor-pointer' : '';
+    const hoverStyles = hoverable ? 'hover:shadow-xl hover:scale-[1.02]' : '';
     
     const paddingStyles = {
       none: '',
