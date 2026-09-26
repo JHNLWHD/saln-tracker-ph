@@ -4,35 +4,52 @@ import type { Agency } from "../data/officials";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
 import { getAgencyDisplayName } from "../data/officials";
-import { readLegacyProfile } from "../archive/archive.server";
+import { getArchive, readLegacyProfile } from "../archive/archive.server";
+import { PersonProfile } from "../components/PersonProfile";
 import { SALNRecordsView } from "../components/SALNRecordsView";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 
-export function meta({ params }: Route.MetaArgs) {
+export function meta({ data, params }: Route.MetaArgs) {
   // Convert slug to readable name for meta tags
   const readableName = params.slug
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
   
+  const name = data?.person.person.canonicalName ?? readableName;
   return [
-    { title: `${readableName} - SALN Records | SALN Tracker Philippines` },
-    { name: "description", content: `View SALN records for ${readableName}` },
+    { title: `${name} - SALN Archive | SALN Tracker PH` },
+    { name: "description", content: `Inspect archived SALN Source Documents and public-office evidence for ${name}.` },
   ];
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
+  if (process.env.ARCHIVE_ADAPTER && process.env.ARCHIVE_ADAPTER !== "firebase") {
+    const person = await (await getArchive()).findPersonBySlug(params.slug);
+    if (!person) throw new Response("Not Found", { status: 404 });
+    return { person, legacyPresentation: null };
+  }
   const result = await readLegacyProfile(params.slug);
   if (!result) {
     throw new Response("Not Found", { status: 404 });
   }
   
-  return { person: result.person, ...result.legacyPresentation };
+  return result;
 }
 
 export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
-  const { person, official, officialWithSALN, salnRecords } = loaderData;
+  const { person, legacyPresentation } = loaderData;
+  if (!legacyPresentation) {
+    return <>
+      <Header />
+      <main className="archive-container py-8 sm:py-12">
+        <PersonProfile record={person} />
+      </main>
+      <Footer />
+    </>;
+  }
+  const { official, officialWithSALN, salnRecords } = legacyPresentation;
 
   const getAgencyBadgeVariant = (agency: Agency): 'executive' | 'legislative' | 'constitutional' | 'judiciary' => {
     switch (agency) {

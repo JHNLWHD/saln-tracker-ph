@@ -110,6 +110,23 @@ The redesign follows the compact navigation and table layout of the [BetterGov B
 
 ## Contributing
 
+### Local reviewed Archive
+
+The relational Archive is opt-in while the legacy site remains the default. Use a local SQLite file through libSQL to inspect the first reviewed Person:
+
+```bash
+npm ci
+npm run archive:migrate
+npm run archive:import-person -- data/reviewed/0001-ferdinand-marcos-jr.json
+ARCHIVE_ADAPTER=turso TURSO_DATABASE_URL=file:.data/archive.db npm run dev
+```
+
+Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Canonical directory pages arrive in the later directory slice.
+
+The import validates the manifest and writes metadata in one transaction. This first import rejects an existing Person; repeatable manifests are a later slice. To remove this initial schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
+
+CLI remote writes require both `--environment staging` and `ARCHIVE_ENVIRONMENT=staging`, plus `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. These commands do not enable production publication. Do not commit database files or credentials.
+
 We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
 
 ## Legal Framework
