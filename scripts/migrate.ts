@@ -1,4 +1,4 @@
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir, readFile, readdir } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import type { Client } from "@libsql/client";
@@ -10,8 +10,14 @@ export async function migrateArchive(db: ArchiveDatabase) {
 }
 
 export async function rollbackArchive(client: Client) {
-  const sql = await readFile(new URL("../drizzle/0000_down.sql", import.meta.url), "utf8");
-  await client.batch(sql.split(";").map(statement => statement.trim()).filter(Boolean), "write");
+  const directory = new URL("../drizzle/", import.meta.url);
+  const files = (await readdir(directory)).filter(name => /^\d{4}_down\.sql$/.test(name)).sort().reverse();
+  const statements = [];
+  for (const file of files) {
+    const sql = await readFile(new URL(file, directory), "utf8");
+    statements.push(...sql.split(";").map(statement => statement.trim()).filter(Boolean));
+  }
+  await client.batch(statements, "write");
 }
 
 async function main() {

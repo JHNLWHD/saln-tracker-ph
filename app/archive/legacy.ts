@@ -91,6 +91,7 @@ export function createLegacyArchive(reader: LegacyReader) {
     async findPersonBySlug(slug) {
       return (await readProfile(slug))?.person ?? null;
     },
+    async findSourceDocument() { return null; },
   };
   return { ...archive, readHome, readProfile };
 }

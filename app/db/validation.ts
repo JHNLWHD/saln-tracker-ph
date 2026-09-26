@@ -3,14 +3,14 @@ import type { Citation, Constituency, ElectoralTerm, Jurisdiction, Office, Parti
 const facts = ["person", "office", "startDate", "endDate", "assumptionMethod"] as const;
 type Data = Record<string, unknown>;
 
-function object(value: unknown, fields: string[], path: string): Data {
+export function object(value: unknown, fields: string[], path: string): Data {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${path} must be an object`);
   const result = value as Data;
   for (const key of Object.keys(result)) if (!fields.includes(key)) throw new Error(`${path}.${key} is not supported`);
   return result;
 }
 
-function text(value: unknown, path: string): string {
+export function text(value: unknown, path: string): string {
   if (typeof value !== "string" || !value.trim() || value !== value.trim()) throw new Error(`${path} must be non-empty trimmed text`);
   return value;
 }
@@ -19,7 +19,7 @@ function nullableText(value: unknown, path: string): string | null {
   return value === null ? null : text(value, path);
 }
 
-function choice<T extends string>(value: unknown, options: readonly T[], path: string): T {
+export function choice<T extends string>(value: unknown, options: readonly T[], path: string): T {
   if (typeof value !== "string" || !options.includes(value as T)) throw new Error(`${path} is not a supported value`);
   return value as T;
 }
@@ -46,7 +46,7 @@ export function parsePartialDate(value: string | null): PartialDate | null {
   return { value, precision };
 }
 
-function date(value: unknown, path: string): PartialDate | null {
+export function date(value: unknown, path: string): PartialDate | null {
   if (value === null) return null;
   const row = object(value, ["value", "precision"], path);
   const parsed = parsePartialDate(text(row.value, `${path}.value`));
