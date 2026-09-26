@@ -1,6 +1,6 @@
 import { useId } from 'react';
-import type { PartialDate, PersonRecord, Tenure } from '../archive/types';
-import { EmptyState } from './ui/Archive';
+import type { PartialDate, PersonRecord, SourceDocument, Tenure } from '../archive/types';
+import { ArchiveTable, EmptyState } from './ui/Archive';
 
 const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
   election: 'Election',
@@ -9,6 +9,26 @@ const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
   vacancy_appointment: 'Appointment to a vacancy',
   chamber_selection: 'Selection within the chamber',
   unknown: 'Not established',
+};
+
+const factLabels: Record<string, string> = {
+  person: 'Person',
+  office: 'Office',
+  startDate: 'Start date',
+  endDate: 'End date',
+  assumptionMethod: 'Assumption Method',
+};
+
+const provenanceLabels: Record<SourceDocument['provenanceType'], string> = {
+  official_download: 'Official download',
+  formal_release: 'Formally released copy',
+  preserved_copy: 'Preserved Copy',
+};
+
+const transcriptionLabels: Record<SourceDocument['transcriptionLevel'], string> = {
+  document_only: 'Document only',
+  summary_totals: 'Summary totals',
+  full_itemization: 'Full itemization',
 };
 
 function EvidenceDate({ date }: { date: PartialDate | null }) {
@@ -44,6 +64,68 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
         </aside>
       )}
 
+      <section aria-labelledby={`${id}-filings`} className="space-y-6">
+        <h2 id={`${id}-filings`}>SALN Filings</h2>
+        {record.sourceDocuments.length === 0 && (
+          <EmptyState>
+            <p>The project has not acquired a Source Document for this Person. This does not establish that the Person failed to file a SALN.</p>
+          </EmptyState>
+        )}
+        {record.filings.map(filing => {
+          const documents = record.sourceDocuments.filter(document => document.filingId === filing.id);
+          const hasReviewedTotals = record.financialSummaries.some(summary => summary.filingId === filing.id);
+          return (
+            <section key={filing.id} aria-labelledby={`${id}-filing-${filing.id}`} className="space-y-4 border-b border-gray-300 pb-6">
+              <div>
+                <p className="archive-label">Filing</p>
+                <h3 id={`${id}-filing-${filing.id}`}>Reporting Date: <EvidenceDate date={filing.reportingDate} /></h3>
+              </div>
+              <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[10rem_1fr]">
+                <dt className="font-semibold">Filer Name</dt><dd>{filing.filerName}</dd>
+                <dt className="font-semibold">Execution Date</dt><dd><EvidenceDate date={filing.executionDate} /></dd>
+                <dt className="font-semibold">Receipt Date</dt><dd><EvidenceDate date={filing.receiptDate} /></dd>
+              </dl>
+              {!hasReviewedTotals && <p className="archive-muted">No reviewed summary totals are available for this Filing. Inspect the Source Document for the declared information.</p>}
+              {documents.length === 0 ? <p>No Source Document is currently in the archive for this Filing.</p> : (
+                <ArchiveTable caption={`Source Documents for ${filing.filerName} (${filing.reportingDate.value})`}>
+                  <thead><tr><th scope="col">Source Document</th><th scope="col">Provenance</th><th scope="col">Transcription Level</th><th scope="col">Actions</th></tr></thead>
+                  <tbody>
+                    {documents.map(document => {
+                      const href = `/documents/${document.sha256}`;
+                      return (
+                        <tr key={document.id}>
+                          <td className="min-w-[12rem]">
+                            <p className="font-semibold break-words">{document.fileName}</p>
+                            <p className="archive-muted">{document.mediaType} · {document.byteSize.toLocaleString('en-PH')} bytes</p>
+                          </td>
+                          <td className="min-w-[18rem] space-y-2">
+                            <p className="font-semibold">{provenanceLabels[document.provenanceType]}</p>
+                            <p>{document.provenanceNote}</p>
+                            {document.originalUrl && <a className="text-primary-700 underline" href={document.originalUrl}>Original source<span className="sr-only"> for {document.fileName}</span></a>}
+                            <dl className="space-y-1">
+                              <div><dt className="font-semibold">Official Release Date</dt><dd><EvidenceDate date={document.officialReleaseDate} /></dd></div>
+                              <div><dt className="font-semibold">Acquisition Date</dt><dd><EvidenceDate date={document.acquisitionDate} /></dd></div>
+                              <div><dt className="font-semibold">Archive Publication Date</dt><dd><time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></dd></div>
+                            </dl>
+                          </td>
+                          <td>{transcriptionLabels[document.transcriptionLevel]}</td>
+                          <td>
+                            <div className="flex flex-col items-start gap-3">
+                              <a className="text-primary-700 underline" href={href}>Open<span className="sr-only"> {document.fileName}</span></a>
+                              <a className="text-primary-700 underline" href={`${href}?download=1`} download={document.fileName}>Download<span className="sr-only"> {document.fileName}</span></a>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </ArchiveTable>
+              )}
+            </section>
+          );
+        })}
+      </section>
+
       <section aria-labelledby={`${id}-tenures`} className="space-y-4">
         <h2 id={`${id}-tenures`}>Public office and evidence</h2>
         {includedTenures.length === 0 && <p>No Tenure in an included Office has been established for this profile.</p>}
@@ -64,7 +146,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
               {tenure.disputedFacts.length > 0 && (
                 <div>
                   <p className="font-semibold">Disputed Facts</p>
-                  <ul className="list-disc pl-5">{tenure.disputedFacts.map(fact => <li key={fact}>{fact}</li>)}</ul>
+                  <ul className="list-disc pl-5">{tenure.disputedFacts.map(fact => <li key={fact}>{factLabels[fact] ?? fact}</li>)}</ul>
                 </div>
               )}
               <div>
@@ -76,7 +158,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                         <a href={citation.url} className="text-primary-700 underline">{citation.title}</a>
                         <p>{citation.publisher} · {citation.type === 'official_record' ? 'Official record' : 'Public article'}</p>
                         <p>Published: <EvidenceDate date={citation.publishedDate} /></p>
-                        {citation.supports.length > 0 && <p>Supports: {citation.supports.join(', ')}</p>}
+                        {citation.supports.length > 0 && <p>Supports: {citation.supports.map(fact => factLabels[fact] ?? fact).join(', ')}</p>}
                       </li>
                     ))}
                   </ul>
@@ -86,14 +168,6 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
           );
         })}
       </section>
-
-      {record.sourceDocuments.length === 0 ? (
-        <EmptyState>
-          <p>The project has not acquired a Source Document for this Person. This does not establish that the Person failed to file a SALN.</p>
-        </EmptyState>
-      ) : (
-        <p>{record.sourceDocuments.length} {record.sourceDocuments.length === 1 ? 'Source Document is' : 'Source Documents are'} in the Archive.</p>
-      )}
     </article>
   );
 }

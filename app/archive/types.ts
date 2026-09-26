@@ -119,4 +119,5 @@ export interface PersonRecord {
 export interface Archive {
   listPeople(): Promise<PersonRecord[]>;
   findPersonBySlug(slug: string): Promise<PersonRecord | null>;
+  findSourceDocument(sha256: string): Promise<SourceDocument | null>;
 }

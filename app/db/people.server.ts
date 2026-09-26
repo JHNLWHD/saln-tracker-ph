@@ -1,8 +1,10 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import type { Archive, Citation, PersonRecord } from "../archive/types";
 import type { ArchiveDatabase } from "./client.server";
 import * as schema from "./schema";
 import { hasEligibleTenure, parsePartialDate, validateReviewedPerson } from "./validation";
+import { personIsEligible } from "./eligibility";
+import { findPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 
 function unchanged<T extends { id: string }>(existing: T[], incoming: T[], entity: string) {
   for (const row of incoming) {
@@ -86,23 +88,29 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
     };
     record.person.eligibility = hasEligibleTenure(record) ? "eligible" : record.tenures.some(tenure =>
       tenure.disputedFacts.some(fact => fact === "person" || fact === "office")) ? "disputed" : "unverified";
+    if (record.person.eligibility === "eligible") {
+      const [filingRows, documentRows] = await Promise.all([
+        db.select({ filing: schema.filings }).from(schema.filings).innerJoin(schema.people, eq(schema.people.id, schema.filings.personId))
+          .where(and(eq(schema.people.id, person.id), personIsEligible())).orderBy(schema.filings.reportingDate, schema.filings.id),
+        db.select({ document: schema.sourceDocuments }).from(schema.sourceDocuments).innerJoin(schema.filings, eq(schema.filings.id, schema.sourceDocuments.filingId))
+          .innerJoin(schema.people, eq(schema.people.id, schema.filings.personId)).where(and(eq(schema.people.id, person.id), personIsEligible()))
+          .orderBy(schema.sourceDocuments.archivePublicationDate, schema.sourceDocuments.id),
+      ]);
+      record.filings = filingRows.map(({ filing: row }) => {
+        const { reviewedAt, reviewedBy, ...filing } = row;
+        const reportingDate = parsePartialDate(filing.reportingDate);
+        if (!reportingDate) throw new Error("Stored Filing has no Reporting Date");
+        return { ...filing, reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) };
+      });
+      record.sourceDocuments = documentRows.map(({ document }) => sourceDocumentFromRow(document));
+    }
     return record;
   }
   return {
+    findSourceDocument(sha256) { return findPublicSourceDocument(db, sha256); },
     async listPeople() {
       // ponytail: one read per Person for the small first roster; paginate in the directory query slice.
-      const people = await db.select().from(schema.people).where(sql`exists (
-        select 1 from ${schema.tenures}
-        inner join ${schema.offices} on ${schema.offices.id} = ${schema.tenures.officeId}
-        inner join ${schema.tenureCitations} on ${schema.tenureCitations.tenureId} = ${schema.tenures.id}
-        inner join ${schema.citations} on ${schema.citations.id} = ${schema.tenureCitations.citationId}
-        where ${schema.tenures.personId} = ${schema.people.id}
-          and ${schema.offices.included} = 1 and ${schema.offices.kind} = 'elected'
-          and ${schema.tenures.verificationStatus} != 'unverified'
-          and not exists (select 1 from json_each(${schema.tenures.disputedFacts}) where value in ('person','office'))
-          and exists (select 1 from json_each(${schema.tenureCitations.supports}) where value = 'person')
-          and exists (select 1 from json_each(${schema.tenureCitations.supports}) where value = 'office')
-      )`).orderBy(schema.people.canonicalName, schema.people.id);
+      const people = await db.select().from(schema.people).where(personIsEligible()).orderBy(schema.people.canonicalName, schema.people.id);
       return Promise.all(people.map(readPerson));
     },
     async findPersonBySlug(slug) {
