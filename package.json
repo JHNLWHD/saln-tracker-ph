@@ -11,12 +11,17 @@
     "deploy:firestore": "firebase deploy --only firestore",
     "deploy:firestore:rules": "firebase deploy --only firestore:rules",
     "deploy:firestore:indexes": "firebase deploy --only firestore:indexes",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "archive:migrate": "node --import tsx scripts/migrate.ts",
+    "archive:import-person": "node --import tsx scripts/import-person.ts",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "@react-router/node": "^7.5.2",
     "@react-router/serve": "^7.5.2",
     "currency.js": "^2.0.4",
+    "drizzle-orm": "^0.45.3",
     "firebase": "^12.6.0",
     "firebase-admin": "^13.6.0",
     "isbot": "^5.1.27",
@@ -34,6 +39,7 @@
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "autoprefixer": "^10.4.21",
+    "drizzle-kit": "^0.31.11",
     "pdf-parse": "^2.4.5",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
