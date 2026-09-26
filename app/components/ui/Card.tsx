@@ -15,15 +15,15 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseStyles = 'rounded-xl transition-all duration-200';
+    const baseStyles = 'archive-card';
     
     const variants = {
-      default: 'bg-white shadow-md border border-gray-100',
-      glass: 'bg-white/80 backdrop-blur-glass border border-white/20 shadow-lg',
-      bordered: 'bg-white border-2 border-gray-200'
+      default: 'archive-card-default',
+      glass: 'archive-card-default',
+      bordered: 'archive-card-bordered'
     };
 
-    const hoverStyles = hoverable ? 'hover:shadow-xl hover:scale-[1.02]' : '';
+    const hoverStyles = hoverable ? 'archive-card-interactive' : '';
     
     const paddingStyles = {
       none: '',

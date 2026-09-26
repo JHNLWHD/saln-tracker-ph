@@ -13,7 +13,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseStyles = 'inline-flex items-center font-medium rounded-full transition-all duration-200';
+    const baseStyles = 'inline-flex items-center font-medium rounded-sm border border-current';
     
     const variants = {
       default: 'bg-gray-100 text-gray-800',

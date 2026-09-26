@@ -10,18 +10,11 @@ import { PostHogProvider } from 'posthog-js/react'
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { Header } from "./components/layout/Header";
+import { Footer } from "./components/layout/Footer";
+import { EmptyState } from "./components/ui/Archive";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
   { rel: "stylesheet", href: stylesheet },
   { rel: "icon", type: "image/png", href: "/favicon-96x96.png", sizes: "96x96" },
   { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
@@ -68,12 +61,12 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
+  let message = "The page could not load";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "Page not found" : "The page could not load";
     details =
       error.status === 404
         ? "The requested page could not be found."
@@ -84,14 +77,20 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <>
+      <Header />
+      <main className="archive-container py-12">
+        <h1>{message}</h1>
+        <EmptyState title="Try another page" action={<a href="/">Return to the Archive</a>}>
+          <p>{details}</p>
+        </EmptyState>
+        {stack && (
+          <pre className="w-full p-4 overflow-x-auto">
+            <code>{stack}</code>
+          </pre>
+        )}
+      </main>
+      <Footer />
+    </>
   );
 }
