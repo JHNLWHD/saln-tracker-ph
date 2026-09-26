@@ -1,59 +1,62 @@
 import { and, eq, inArray } from "drizzle-orm";
 import type { Archive, Citation, PersonRecord } from "../archive/types";
-import type { ArchiveDatabase } from "./client.server";
+import type { ArchiveDatabase, ArchiveWriter } from "./client.server";
 import * as schema from "./schema";
-import { hasEligibleTenure, parsePartialDate, validateReviewedPerson } from "./validation";
+import { hasEligibleTenure, parsePartialDate, validateReviewedPerson, type ReviewedPerson } from "./validation";
+import { missingRows } from "./canonical";
 import { personIsEligible } from "./eligibility";
 import { findPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 
-function unchanged<T extends { id: string }>(existing: T[], incoming: T[], entity: string) {
-  for (const row of incoming) {
-    const saved = existing.find(item => item.id === row.id);
-    if (saved && Object.entries(row).some(([key, value]) => JSON.stringify(saved[key as keyof T]) !== JSON.stringify(value))) {
-      throw new Error(`${entity} ${row.id} already exists with different metadata; use an Editorial Correction`);
-    }
+/** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
+export async function writeReviewedPerson(tx: ArchiveWriter, record: ReviewedPerson, verifyOnly = false) {
+  const { nameVariants, ...person } = record.person;
+  const personRows = missingRows(await tx.select().from(schema.people).where(eq(schema.people.id, person.id)), [{ ...person, ...record.review }], row => row.id, "Person", verifyOnly);
+  if (personRows.length) await tx.insert(schema.people).values(personRows);
+  const names = nameVariants.map(value => ({ personId: person.id, value }));
+  const missingNames = missingRows(await tx.select().from(schema.personNames).where(eq(schema.personNames.personId, person.id)), names, row => row.value, "Name Variant", verifyOnly);
+  if (missingNames.length) await tx.insert(schema.personNames).values(missingNames);
+  if (record.jurisdictions.length) {
+    const rows = missingRows(await tx.select().from(schema.jurisdictions).where(inArray(schema.jurisdictions.id, record.jurisdictions.map(row => row.id))), record.jurisdictions, row => row.id, "Jurisdiction", verifyOnly);
+    if (rows.length) await tx.insert(schema.jurisdictions).values(rows);
   }
-}
-
-/** Publication accepts reviewed metadata only, and never rewrites an existing identity. */
-export async function importReviewedPerson(db: ArchiveDatabase, input: unknown) {
-  const record = validateReviewedPerson(input);
-  const terms = record.electoralTerms.map(term => ({ ...term, startDate: term.startDate?.value ?? null, endDate: term.endDate?.value ?? null }));
+  if (record.jurisdictionRelationships.length) {
+    const rows = missingRows(await tx.select().from(schema.jurisdictionRelationships).where(inArray(schema.jurisdictionRelationships.fromId, record.jurisdictions.map(row => row.id))), record.jurisdictionRelationships, row => JSON.stringify([row.fromId, row.toId, row.kind]), "Jurisdiction Relationship", verifyOnly);
+    if (rows.length) await tx.insert(schema.jurisdictionRelationships).values(rows);
+  }
+  if (record.offices.length) {
+    const rows = missingRows(await tx.select().from(schema.offices).where(inArray(schema.offices.id, record.offices.map(row => row.id))), record.offices, row => row.id, "Office", verifyOnly);
+    if (rows.length) await tx.insert(schema.offices).values(rows);
+  }
+  if (record.constituencies.length) {
+    const rows = missingRows(await tx.select().from(schema.constituencies).where(inArray(schema.constituencies.id, record.constituencies.map(row => row.id))), record.constituencies, row => row.id, "Constituency", verifyOnly);
+    if (rows.length) await tx.insert(schema.constituencies).values(rows);
+  }
+  if (record.electoralTerms.length) {
+    const terms = record.electoralTerms.map(term => ({ ...term, startDate: term.startDate?.value ?? null, endDate: term.endDate?.value ?? null }));
+    const rows = missingRows(await tx.select().from(schema.electoralTerms).where(inArray(schema.electoralTerms.id, terms.map(row => row.id))), terms, row => row.id, "Electoral Term", verifyOnly);
+    if (rows.length) await tx.insert(schema.electoralTerms).values(rows);
+  }
   const citations = [...new Map(record.tenures.flatMap(tenure => tenure.citations).map(source => {
     const { supports, ...metadata } = source;
     return [source.id, { ...metadata, publishedDate: source.publishedDate?.value ?? null }];
   })).values()];
-  await db.transaction(async tx => {
-    const { nameVariants, ...person } = record.person;
-    await tx.insert(schema.people).values({ ...person, ...record.review });
-    if (nameVariants.length) await tx.insert(schema.personNames).values(nameVariants.map(value => ({ personId: person.id, value })));
-    if (record.jurisdictions.length) {
-      unchanged(await tx.select().from(schema.jurisdictions).where(inArray(schema.jurisdictions.id, record.jurisdictions.map(row => row.id))), record.jurisdictions, "Jurisdiction");
-      await tx.insert(schema.jurisdictions).values(record.jurisdictions).onConflictDoNothing();
-    }
-    if (record.jurisdictionRelationships.length) await tx.insert(schema.jurisdictionRelationships).values(record.jurisdictionRelationships).onConflictDoNothing();
-    if (record.offices.length) {
-      unchanged(await tx.select().from(schema.offices).where(inArray(schema.offices.id, record.offices.map(row => row.id))), record.offices, "Office");
-      await tx.insert(schema.offices).values(record.offices).onConflictDoNothing();
-    }
-    if (record.constituencies.length) {
-      unchanged(await tx.select().from(schema.constituencies).where(inArray(schema.constituencies.id, record.constituencies.map(row => row.id))), record.constituencies, "Constituency");
-      await tx.insert(schema.constituencies).values(record.constituencies).onConflictDoNothing();
-    }
-    if (terms.length) {
-      unchanged(await tx.select().from(schema.electoralTerms).where(inArray(schema.electoralTerms.id, terms.map(row => row.id))), terms, "Electoral Term");
-      await tx.insert(schema.electoralTerms).values(terms).onConflictDoNothing();
-    }
-    if (citations.length) {
-      unchanged(await tx.select().from(schema.citations).where(inArray(schema.citations.id, citations.map(row => row.id))), citations, "Citation");
-      await tx.insert(schema.citations).values(citations).onConflictDoNothing();
-    }
-    for (const tenure of record.tenures) {
-      const { citations: sources, ...fields } = tenure;
-      await tx.insert(schema.tenures).values({ ...fields, startDate: tenure.startDate?.value ?? null, endDate: tenure.endDate?.value ?? null });
-      if (sources.length) await tx.insert(schema.tenureCitations).values(sources.map(source => ({ tenureId: tenure.id, citationId: source.id, supports: source.supports })));
-    }
-  });
+  if (citations.length) {
+    const rows = missingRows(await tx.select().from(schema.citations).where(inArray(schema.citations.id, citations.map(row => row.id))), citations, row => row.id, "Citation", verifyOnly);
+    if (rows.length) await tx.insert(schema.citations).values(rows);
+  }
+  for (const tenure of record.tenures) {
+    const { citations: sources, ...fields } = tenure;
+    const rows = missingRows(await tx.select().from(schema.tenures).where(eq(schema.tenures.id, tenure.id)), [{ ...fields, startDate: tenure.startDate?.value ?? null, endDate: tenure.endDate?.value ?? null }], row => row.id, "Tenure", verifyOnly);
+    if (rows.length) await tx.insert(schema.tenures).values(rows);
+    const citations = sources.map(source => ({ tenureId: tenure.id, citationId: source.id, supports: source.supports }));
+    const links = missingRows(await tx.select().from(schema.tenureCitations).where(eq(schema.tenureCitations.tenureId, tenure.id)), citations, row => row.citationId, "Tenure Citation", verifyOnly);
+    if (links.length) await tx.insert(schema.tenureCitations).values(links);
+  }
+}
+
+export async function importReviewedPerson(db: ArchiveDatabase, input: unknown) {
+  const record = validateReviewedPerson(input);
+  await db.transaction(tx => writeReviewedPerson(tx, record));
   return { personId: record.person.id, eligible: hasEligibleTenure(record) };
 }
 

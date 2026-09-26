@@ -137,3 +137,17 @@ export const sourceDocuments = sqliteTable("source_documents", {
   check("source_document_provenance_note", sql`length(trim(${t.provenanceNote})) > 0`),
   check("source_document_transcription", sql`${t.transcriptionLevel} in ('document_only','summary_totals','full_itemization')`),
 ]);
+
+export const manifestApplications = sqliteTable("manifest_applications", {
+  id: text("id").primaryKey(),
+  version: integer("version").notNull(),
+  kind: text("kind", { enum: ["person", "filing"] }).notNull(),
+  digest: text("digest").notNull(),
+  canonicalPayload: text("canonical_payload").notNull(),
+  appliedAt: text("applied_at").notNull(),
+}, (t) => [
+  check("manifest_version", sql`${t.version} = 1`),
+  check("manifest_kind", sql`${t.kind} in ('person','filing')`),
+  check("manifest_digest", sql`length(${t.digest}) = 64 and ${t.digest} not glob '*[^0-9a-f]*'`),
+  check("manifest_payload", sql`json_valid(${t.canonicalPayload}) and json_type(${t.canonicalPayload}) = 'object'`),
+]);

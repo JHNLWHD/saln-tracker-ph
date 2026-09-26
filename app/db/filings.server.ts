@@ -2,9 +2,10 @@ import { createHash } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import type { SourceDocument } from "../archive/types";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
-import type { ArchiveDatabase } from "./client.server";
+import type { ArchiveDatabase, ArchiveWriter } from "./client.server";
 import { personIsEligible } from "./eligibility";
-import { validateReviewedFiling } from "./filing-validation";
+import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
+import { missingRows } from "./canonical";
 import { filings, people, sourceDocuments } from "./schema";
 import { parsePartialDate } from "./validation";
 
@@ -22,10 +23,7 @@ export async function findPublicSourceDocument(db: ArchiveDatabase, sha256: stri
   return result ? sourceDocumentFromRow(result.document) : null;
 }
 
-/** Store verified bytes first. A database failure can leave an unlisted object, never a broken public record. */
-export async function importReviewedFiling(db: ArchiveDatabase, input: unknown, bytes: Uint8Array, storage: DocumentStorage) {
-  const manifest = validateReviewedFiling(input);
-  const { filing, document } = manifest;
+export function verifiedDocumentBytes(document: ReviewedFiling["document"], bytes: Uint8Array) {
   const body = Uint8Array.from(bytes);
   if (body.byteLength !== document.byteSize || createHash("sha256").update(body).digest("hex") !== document.sha256) throw new Error("Source Document byte size or checksum does not match its manifest");
   const signature = Buffer.from(body.subarray(0, 8));
@@ -33,20 +31,46 @@ export async function importReviewedFiling(db: ArchiveDatabase, input: unknown, 
     document.mediaType === "image/png" ? signature.equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) :
       signature.subarray(0, 3).equals(Buffer.from([255, 216, 255]));
   if (!signatureMatches) throw new Error("Source Document media type does not match its file signature");
-  const [person] = await db.select({ id: people.id }).from(people).where(and(eq(people.id, filing.personId), personIsEligible())).limit(1);
+  return body;
+}
+
+export async function requireEligiblePerson(db: ArchiveWriter, personId: string) {
+  const [person] = await db.select({ id: people.id }).from(people).where(and(eq(people.id, personId), personIsEligible())).limit(1);
   if (!person) throw new Error("A Filing requires an Archive-Eligible Person");
-  const [existingFiling, existingDocument] = await Promise.all([
-    db.select({ id: filings.id }).from(filings).where(eq(filings.id, filing.id)).limit(1),
-    db.select({ id: sourceDocuments.id }).from(sourceDocuments).where(eq(sourceDocuments.id, document.id)).limit(1),
+}
+
+/** Read-only comparison also permits another original page for the same immutable Filing. */
+export async function inspectReviewedFiling(db: ArchiveWriter, manifest: ReviewedFiling, verifyOnly = false) {
+  const { filing, document } = manifest;
+  const filingRow = { ...filing, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null };
+  const documentRow = { ...document, storageKey: documentStorageKey(document.sha256), acquisitionDate: document.acquisitionDate.value, officialReleaseDate: document.officialReleaseDate?.value ?? null };
+  const [savedFilings, savedDocuments] = await Promise.all([
+    db.select().from(filings).where(eq(filings.id, filing.id)),
+    db.select().from(sourceDocuments).where(eq(sourceDocuments.id, document.id)),
   ]);
-  if (existingFiling.length || existingDocument.length) throw new Error("Filing or Source Document ID already exists; existing evidence cannot be overwritten");
-  const stored = await storage.put(body, document.sha256, document.mediaType);
-  if (stored.storageKey !== documentStorageKey(document.sha256)) throw new Error("Storage returned an unexpected Source Document key");
-  await db.transaction(async tx => {
-    const [eligible] = await tx.select({ id: people.id }).from(people).where(and(eq(people.id, filing.personId), personIsEligible())).limit(1);
-    if (!eligible) throw new Error("Person eligibility changed before publication");
-    await tx.insert(filings).values({ ...filing, ...manifest.review, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null });
-    await tx.insert(sourceDocuments).values({ ...document, storageKey: stored.storageKey, acquisitionDate: document.acquisitionDate.value, officialReleaseDate: document.officialReleaseDate?.value ?? null });
-  });
-  return { filingId: filing.id, sourceDocumentId: document.id, storageKey: stored.storageKey };
+  return {
+    filingRows: missingRows(savedFilings, [filingRow], row => row.id, "Filing", verifyOnly),
+    documentRows: missingRows(savedDocuments, [documentRow], row => row.id, "Source Document", verifyOnly),
+  };
+}
+
+/** The caller owns the transaction, including its manifest application record. */
+export async function writeReviewedFiling(tx: ArchiveWriter, manifest: ReviewedFiling, verifyOnly = false) {
+  if (!verifyOnly) await requireEligiblePerson(tx, manifest.filing.personId);
+  const { filingRows, documentRows } = await inspectReviewedFiling(tx, manifest, verifyOnly);
+  if (filingRows.length) await tx.insert(filings).values(filingRows.map(row => ({ ...row, ...manifest.review })));
+  if (documentRows.length) await tx.insert(sourceDocuments).values(documentRows);
+}
+
+/** A metadata failure can leave an unlisted object, never a broken public record. */
+export async function importReviewedFiling(db: ArchiveDatabase, input: unknown, bytes: Uint8Array, storage: DocumentStorage) {
+  const manifest = validateReviewedFiling(input);
+  const body = verifiedDocumentBytes(manifest.document, bytes);
+  await requireEligiblePerson(db, manifest.filing.personId);
+  const { documentRows } = await inspectReviewedFiling(db, manifest);
+  if (!documentRows.length) throw new Error("Source Document ID already exists; existing evidence cannot be overwritten");
+  const stored = await storage.put(body, manifest.document.sha256, manifest.document.mediaType);
+  if (stored.storageKey !== documentStorageKey(manifest.document.sha256)) throw new Error("Storage returned an unexpected Source Document key");
+  await db.transaction(tx => writeReviewedFiling(tx, manifest));
+  return { filingId: manifest.filing.id, sourceDocumentId: manifest.document.id, storageKey: stored.storageKey };
 }
