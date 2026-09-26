@@ -1,4 +1,4 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { forwardRef, useId, type HTMLAttributes } from "react";
 
 interface LinkPreviewCardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'glass' | 'bordered';
@@ -21,15 +21,16 @@ const LinkPreviewCard = forwardRef<HTMLDivElement, LinkPreviewCardProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseStyles = 'relative rounded-xl transition-all duration-200 overflow-hidden';
+    const contentId = useId();
+    const baseStyles = 'archive-card relative';
 
     const variants = {
-      default: 'bg-white shadow-md border border-gray-100',
-      glass: 'bg-white/80 backdrop-blur-glass border border-white/20 shadow-lg',
-      bordered: 'bg-white border-2 border-gray-200'
+      default: 'archive-card-default',
+      glass: 'archive-card-default',
+      bordered: 'archive-card-bordered'
     };
 
-    const hoverStyles = hoverable ? 'hover:shadow-xl hover:scale-[1.02]' : '';
+    const hoverStyles = hoverable ? 'archive-card-interactive' : '';
 
     return (
       <div
@@ -37,13 +38,15 @@ const LinkPreviewCard = forwardRef<HTMLDivElement, LinkPreviewCardProps>(
         className={`${baseStyles} ${variants[variant]} ${hoverStyles} ${className}`}
         {...props}
       >
-        {children}
+        <div id={contentId}>{children}</div>
         <a 
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute inset-0 z-10" 
+          className="absolute inset-0 z-10"
+          aria-describedby={contentId}
         >
+          <span className="sr-only">Open source in a new tab</span>
         </a>
       </div>
     );
