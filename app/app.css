@@ -78,7 +78,7 @@
   .evidence-row h3 { margin-block: 0.3rem 0.5rem; }
   .evidence-row a, .archive-empty a { color: var(--archive-blue); text-decoration: underline; }
   .evidence-row-detail { font-size: 0.875rem; }
-  .archive-table-scroll { max-width: 100%; overflow-x: auto; }
+  .archive-table-scroll { position: relative; max-width: 100%; overflow-x: auto; }
   .archive-table { width: 100%; background: var(--archive-surface); border-collapse: collapse; text-align: left; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
   .archive-table caption { text-align: left; font-weight: 700; padding-block: 0.75rem; }
   .archive-table th, .archive-table td { padding: 0.75rem; border-bottom: 1px solid var(--archive-rule); vertical-align: top; }
