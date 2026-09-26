@@ -8,18 +8,21 @@ import { inspectReviewedFiling, requireEligiblePerson, verifiedDocumentBytes, wr
 import { writeReviewedPerson } from "./people.server";
 import { manifestApplications } from "./schema";
 import { choice, object, text, validateReviewedPerson, type ReviewedPerson } from "./validation";
+import { validateReviewedCorrection, type ReviewedCorrection } from "./correction-validation";
+import { writeReviewedCorrection } from "./corrections.server";
 
 export type ReviewedManifest = { id: string; version: 1 } & (
-  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling }
+  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling } | { kind: "correction"; payload: ReviewedCorrection }
 );
 
 export function validateReviewedManifest(value: unknown): ReviewedManifest {
   const input = object(value, ["id", "version", "kind", "payload"], "manifest");
   const id = text(input.id, "manifest.id");
   if (input.version !== 1) throw new Error("Unsupported manifest version");
-  const kind = choice(input.kind, ["person", "filing"], "manifest.kind");
-  return kind === "person" ? { id, version: 1, kind, payload: validateReviewedPerson(input.payload) } :
-    { id, version: 1, kind, payload: validateReviewedFiling(input.payload) };
+  const kind = choice(input.kind, ["person", "filing", "correction"], "manifest.kind");
+  if (kind === "person") return { id, version: 1, kind, payload: validateReviewedPerson(input.payload) };
+  if (kind === "filing") return { id, version: 1, kind, payload: validateReviewedFiling(input.payload) };
+  return { id, version: 1, kind, payload: validateReviewedCorrection(input.payload) };
 }
 
 export function manifestDigest(manifest: ReviewedManifest): string {
@@ -53,9 +56,10 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
   return db.transaction(async tx => {
     const [existing] = await tx.select().from(manifestApplications).where(eq(manifestApplications.id, manifest.id));
     if (existing) checkApplication(existing);
-    if (manifest.kind === "person") await writeReviewedPerson(tx, manifest.payload, Boolean(existing));
-    else await writeReviewedFiling(tx, manifest.payload, Boolean(existing));
     if (!existing) await tx.insert(manifestApplications).values({ id: manifest.id, version: manifest.version, kind: manifest.kind, digest, canonicalPayload, appliedAt: new Date().toISOString() });
+    if (manifest.kind === "person") await writeReviewedPerson(tx, manifest.payload, Boolean(existing));
+    else if (manifest.kind === "filing") await writeReviewedFiling(tx, manifest.payload, Boolean(existing));
+    else await writeReviewedCorrection(tx, manifest.id, manifest.payload, Boolean(existing));
     return { manifestId: manifest.id, digest, status: existing ? "unchanged" as const : "applied" as const };
   });
 }

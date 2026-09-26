@@ -6,8 +6,10 @@ import { join } from "node:path";
 import test from "node:test";
 import { eq } from "drizzle-orm";
 import { exportPublicSnapshot } from "../app/archive/snapshot.server";
+import type { CorrectionChanges, EditorialCorrection } from "../app/archive/types";
 import { connectArchive } from "../app/db/client.server";
 import { importReviewedPerson } from "../app/db/people.server";
+import { applyReviewedManifest } from "../app/db/manifests.server";
 import * as schema from "../app/db/schema";
 import type { ReviewedPerson } from "../app/db/validation";
 import { migrateArchive } from "../scripts/migrate";
@@ -138,5 +140,70 @@ test("private queue, Source Tip, and internal review changes cannot enter or cha
     assert.deepEqual(after, before);
     assert.ok(!after.snapshotJson.includes(privateCanary));
     assert.doesNotMatch(after.snapshotJson, /Private explanation|source_tips|unverified_queue|tip-private|queue-private/);
+  } finally { await close(); }
+});
+
+function correction(id: string, target: EditorialCorrection["target"], changes: CorrectionChanges, previousCorrectionId: string | null = null) {
+  const supports = [...new Set([
+    ...Object.keys(changes).filter(field => field !== "verificationStatus" && field !== "disputedFacts"),
+    ...(changes.verificationStatus ? ["person", "office"] : []), ...(changes.disputedFacts ?? []),
+  ])];
+  return { id, version: 1, kind: "correction", payload: {
+    review: { reviewedAt: "2026-09-27", reviewedBy: privateCanary }, reason: `Reviewed correction ${id}.`, target, previousCorrectionId, changes,
+    citations: [{ id: `citation-${id}`, title: `Correction evidence ${id}`, url: `https://example.org/${id}`, publisher: "Test Publisher", type: "public_article", publishedDate: null, supports }],
+  } };
+}
+
+test("snapshot projects reviewed corrections and their history without changing original Filings or Source Documents", async () => {
+  const { db, close } = await setup();
+  try {
+    const before = await exportPublicSnapshot(db);
+    const originalFilings = await db.select().from(schema.filings);
+    const originalDocuments = await db.select().from(schema.sourceDocuments);
+    const manifests = [
+      correction("correct-person", { type: "person", id: "person-a" }, { canonicalName: "Corrected Person", nameVariants: ["Older name", "Alternate name"] }),
+      correction("correct-filing", { type: "filing", id: "filing-a" }, { reportingDate: { value: "2023-12", precision: "month" } }),
+      correction("correct-provenance", { type: "source_document", id: "document-a" }, { provenanceNote: "Corrected public custody description." }),
+      correction("correct-tenure", { type: "tenure", id: "tenure-person-a" }, { startDate: null, verificationStatus: "disputed", disputedFacts: ["startDate"] }),
+    ];
+    for (const manifest of manifests) await applyReviewedManifest(db, manifest);
+    const result = await exportPublicSnapshot(db);
+    assert.notEqual(result.snapshot.version, before.snapshot.version);
+    assert.equal(result.snapshot.data.people[0].canonicalName, "Corrected Person");
+    assert.deepEqual(result.snapshot.data.personNames.filter(row => row.personId === "person-a").map(row => row.value), ["Alternate name", "Older name"]);
+    assert.deepEqual(result.snapshot.data.filings[0].reportingDate, { value: "2023-12", precision: "month" });
+    assert.equal(result.snapshot.data.sourceDocuments[0].provenanceNote, "Corrected public custody description.");
+    assert.equal(result.snapshot.data.tenures[0].startDate, null);
+    assert.equal(result.snapshot.data.tenures[0].verificationStatus, "disputed");
+    assert.deepEqual(result.snapshot.data.tenureCitations.filter(row => row.tenureId === "tenure-person-a").map(row => row.citationId), ["citation-correct-tenure", "citation-person-a"]);
+    assert.ok(result.snapshot.data.citations.some(row => row.id === "citation-correct-tenure"));
+    assert.equal(result.snapshot.data.editorialCorrections.length, 4);
+    assert.equal(result.snapshot.data.editorialCorrections[0].reason, "Reviewed correction correct-filing.");
+    assert.deepEqual(result.snapshot.data.editorialCorrections[0].previousValues, { reportingDate: { value: "2024", precision: "year" } });
+    assert.deepEqual(result.checksumManifest.documents, before.checksumManifest.documents);
+    assert.deepEqual(await db.select().from(schema.filings), originalFilings);
+    assert.deepEqual(await db.select().from(schema.sourceDocuments), originalDocuments);
+    assert.doesNotMatch(result.snapshotJson, /reviewedBy|private-reviewer|canonicalPayload|appliedAt/);
+    for (const manifest of manifests) assert.equal((await applyReviewedManifest(db, manifest)).status, "unchanged");
+    assert.deepEqual(await exportPublicSnapshot(db), result);
+  } finally { await close(); }
+});
+
+test("corrected sole Office disputes filter snapshots until a reviewed resolution, preserving all citations afterward", async () => {
+  const { db, close } = await setup();
+  try {
+    await applyReviewedManifest(db, correction("dispute-office", { type: "tenure", id: "tenure-person-a" }, { verificationStatus: "disputed", disputedFacts: ["office"] }));
+    const disputed = await exportPublicSnapshot(db);
+    assert.deepEqual(disputed.snapshot.data.people.map(row => row.id), ["person-b"]);
+    assert.deepEqual(disputed.snapshot.data.filings, []);
+    assert.deepEqual(disputed.checksumManifest.documents, []);
+    assert.doesNotMatch(disputed.snapshotJson, /person-a|dispute-office|document-a/);
+    await applyReviewedManifest(db, correction("resolve-office", { type: "tenure", id: "tenure-person-a" }, { verificationStatus: "verified", disputedFacts: [] }, "dispute-office"));
+    const resolved = await exportPublicSnapshot(db);
+    assert.deepEqual(resolved.snapshot.data.people.map(row => row.id), ["person-a", "person-b"]);
+    assert.equal(resolved.snapshot.data.filings.length, 2);
+    assert.deepEqual(resolved.snapshot.data.tenureCitations.filter(row => row.tenureId === "tenure-person-a").map(row => row.citationId), ["citation-dispute-office", "citation-person-a", "citation-resolve-office"]);
+    assert.equal(resolved.snapshot.data.editorialCorrections.length, 2);
+    assert.equal(resolved.checksumManifest.documents[0].sha256, checksum);
   } finally { await close(); }
 });

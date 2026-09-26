@@ -142,17 +142,23 @@ For staging, set `ARCHIVE_STORAGE=r2`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KE
 
 ### Repeatable manifests and Public Data Snapshots
 
-Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
+Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing" | "correction", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
 
 The compatibility commands `archive:import-person` and `archive:import-filing` use this same ledger with stable IDs derived from the Person or Source Document ID. A rerun checks the stored metadata and, for a Filing, verifies the stored bytes without uploading them again. New pages can join an existing Filing only when its metadata matches exactly. Same-period Filings remain distinct.
 
-The four examples in [the Hontiveros local verification directory](data/examples/hontiveros-2024-local-verification/README.md) demonstrate one Person, one Filing and three acquired image Source Documents. Follow that README for source URLs, checksums and scope.
+The examples in [the Hontiveros local verification directory](data/examples/hontiveros-2024-local-verification/README.md) demonstrate one Person, one Filing, three acquired image Source Documents, and an Editorial Correction of the Execution Date. Follow that README for source URLs, checksums and scope.
 
 ```bash
 npm run archive:export -- .data/snapshots
 ```
 
 This read-only export produces `<content-version>/archive.json` and `<content-version>/source-checksums.json`. Both share a content-derived version, and repeated exports are byte-identical. Existing artifacts are verified, not overwritten. The checksum file groups exact duplicate bytes while retaining each Source Document ID and Filing relationship in the snapshot. Only explicit public fields for Archive-Eligible People are exported; private tips, unverified queue tables, credentials, storage keys and import audit details are excluded. Exporting locally does not publish or deploy the files. Release packaging must use the validated pair together.
+
+### Editorial Corrections and Disputed Facts
+
+Apply a correction with `npm run archive:import -- correction.json`. Its payload records the review, a public reason, the target record type and ID, the target's `previousCorrectionId` (null for the first), a `changes` object, and attributable citations supporting each changed fact. Supported targets are Person, Tenure, Filing, and Source Document metadata. A stale predecessor or changed manifest ID is rejected. A correction cannot replace identity links, source checksums, file bytes, storage keys, or file size/type.
+
+Profiles and Public Data Snapshots use corrected metadata and show the correction history. The underlying records stay unchanged, so an original manifest can still replay after a correction. All conflict citations remain visible. A dispute about the Person or included Office removes that Tenure as an eligibility basis; a date-only dispute does not. A Person with another Verified Tenure can remain eligible. A direct profile link shows a scope notice when eligibility is unresolved.
 
 We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
 
