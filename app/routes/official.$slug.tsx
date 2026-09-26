@@ -3,7 +3,8 @@ import type { Route } from "./+types/official.$slug";
 import type { Agency } from "../data/officials";
 import { Header } from "../components/layout/Header";
 import { Footer } from "../components/layout/Footer";
-import { findOfficialBySlug, getOfficialWithSALNData, getAgencyDisplayName } from "../data/officials";
+import { getAgencyDisplayName } from "../data/officials";
+import { readLegacyProfile } from "../archive/archive.server";
 import { SALNRecordsView } from "../components/SALNRecordsView";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
@@ -22,25 +23,16 @@ export function meta({ params }: Route.MetaArgs) {
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
-  // Direct Firestore lookup using slug as document ID (most efficient)
-  const official = await findOfficialBySlug(params.slug);
-  if (!official) {
+  const result = await readLegacyProfile(params.slug);
+  if (!result) {
     throw new Response("Not Found", { status: 404 });
   }
   
-  // Get computed SALN data
-  const officialWithSALN = await getOfficialWithSALNData(official);
-  
-  // Get SALN records and sort by year DESC (most recent first)
-  // Note: Firestore preserves insertion order for arrays, doesn't auto-sort
-  // This ensures correct display order even if data is added/modified manually
-  const salnRecords = (official.saln_records || []).slice().sort((a, b) => b.year - a.year);
-  
-  return { official, officialWithSALN, salnRecords };
+  return { person: result.person, ...result.legacyPresentation };
 }
 
 export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
-  const { official, officialWithSALN, salnRecords } = loaderData;
+  const { person, official, officialWithSALN, salnRecords } = loaderData;
 
   const getAgencyBadgeVariant = (agency: Agency): 'executive' | 'legislative' | 'constitutional' | 'judiciary' => {
     switch (agency) {
@@ -82,7 +74,7 @@ export default function OfficialSALN({ loaderData }: Route.ComponentProps) {
                 <div className="flex flex-col gap-3 mb-2">
                   <div className="flex flex-wrap items-start gap-3">
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
-                      {official.name}
+                      {person.person.canonicalName}
                     </h1>
                     <Badge variant={getAgencyBadgeVariant(official.agency)} size="lg" className="self-start">
                       {getAgencyDisplayName(official.agency)}
