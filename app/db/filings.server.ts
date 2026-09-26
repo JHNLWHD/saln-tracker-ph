@@ -2,12 +2,13 @@ import { createHash } from "node:crypto";
 import { and, eq, sql } from "drizzle-orm";
 import type { SourceDocument } from "../archive/types";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
-import type { ArchiveDatabase, ArchiveWriter } from "./client.server";
+import { readArchiveTransaction, type ArchiveDatabase, type ArchiveWriter } from "./client.server";
 import { personIsEligible } from "./eligibility";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { missingRows } from "./canonical";
 import { filings, manifestApplications, people, sourceDocuments } from "./schema";
 import { parsePartialDate } from "./validation";
+import { projectCorrections, readEditorialCorrections } from "./corrections.server";
 
 export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect): SourceDocument {
   const acquisitionDate = parsePartialDate(row.acquisitionDate);
@@ -17,10 +18,12 @@ export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect):
 
 export async function findPublicSourceDocument(db: ArchiveDatabase, sha256: string): Promise<SourceDocument | null> {
   if (!/^[a-f0-9]{64}$/.test(sha256)) return null;
-  const [result] = await db.select({ document: sourceDocuments }).from(sourceDocuments)
-    .innerJoin(filings, eq(filings.id, sourceDocuments.filingId)).innerJoin(people, eq(people.id, filings.personId))
-    .where(and(eq(sourceDocuments.sha256, sha256), personIsEligible())).orderBy(sourceDocuments.id).limit(1);
-  return result ? sourceDocumentFromRow(result.document) : null;
+  return readArchiveTransaction(db, async tx => {
+    const [result] = await tx.select({ document: sourceDocuments }).from(sourceDocuments)
+      .innerJoin(filings, eq(filings.id, sourceDocuments.filingId)).innerJoin(people, eq(people.id, filings.personId))
+      .where(and(eq(sourceDocuments.sha256, sha256), personIsEligible())).orderBy(sourceDocuments.id).limit(1);
+    return result ? projectCorrections("source_document", sourceDocumentFromRow(result.document), await readEditorialCorrections(tx)) : null;
+  });
 }
 
 export function verifiedDocumentBytes(document: ReviewedFiling["document"], bytes: Uint8Array) {

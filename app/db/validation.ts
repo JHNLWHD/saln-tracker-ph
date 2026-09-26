@@ -1,6 +1,6 @@
 import type { Citation, Constituency, ElectoralTerm, Jurisdiction, Office, PartialDate, PersonRecord, Tenure } from "../archive/types";
 
-const facts = ["person", "office", "startDate", "endDate", "assumptionMethod"] as const;
+export const facts = ["person", "office", "startDate", "endDate", "assumptionMethod"] as const;
 type Data = Record<string, unknown>;
 
 export function object(value: unknown, fields: string[], path: string): Data {
@@ -29,7 +29,7 @@ function array<T>(value: unknown, parse: (item: unknown, path: string) => T, pat
   return value.map((item, i) => parse(item, `${path}[${i}]`));
 }
 
-function strings(value: unknown, path: string): string[] {
+export function strings(value: unknown, path: string): string[] {
   const result = array(value, text, path);
   if (new Set(result).size !== result.length) throw new Error(`${path} contains duplicates`);
   return result;
@@ -61,13 +61,13 @@ function interval(start: PartialDate | null, end: PartialDate | null, path: stri
   if (latestEnd < earliestStart) throw new Error(`${path} ends before it starts`);
 }
 
-function citation(value: unknown, path: string): Citation {
+export function citation(value: unknown, path: string, supportedFacts: readonly string[] = facts): Citation {
   const row = object(value, ["id", "title", "url", "publisher", "type", "supports", "publishedDate"], path);
   const url = text(row.url, `${path}.url`);
   const parsed = new URL(url);
   if (!["https:", "http:"].includes(parsed.protocol) || parsed.username || parsed.password) throw new Error(`${path}.url must be a public HTTP URL`);
   const supports = strings(row.supports, `${path}.supports`);
-  supports.forEach(value => choice(value, facts, `${path}.supports`));
+  supports.forEach(value => choice(value, supportedFacts, `${path}.supports`));
   return {
     id: text(row.id, `${path}.id`), title: text(row.title, `${path}.title`), url,
     publisher: text(row.publisher, `${path}.publisher`),
@@ -178,13 +178,18 @@ export function validateReviewedPerson(value: unknown): ReviewedPerson {
       if (saved && saved !== current) throw new Error("Citation ID has conflicting metadata");
       sources.set(source.id, current);
     }
-    if (tenure.verificationStatus !== "unverified" && !tenure.citations.some(source => source.supports.includes("person") && source.supports.includes("office"))) throw new Error("Verified identity and Office need an attributable citation supporting both");
-    if (tenure.verificationStatus === "disputed" && !tenure.disputedFacts.length) throw new Error("A disputed Tenure must name its disputed facts");
-    if (tenure.disputedFacts.some(fact => fact === "person" || fact === "office") && tenure.verificationStatus !== "disputed") throw new Error("Disputed identity or Office must be marked disputed");
-    for (const field of ["startDate", "endDate"] as const) {
-      if (tenure[field] && !tenure.citations.some(source => source.supports.includes(field))) throw new Error(`${field} needs supporting evidence`);
-    }
-    if (tenure.assumptionMethod !== "unknown" && !tenure.citations.some(source => source.supports.includes("assumptionMethod"))) throw new Error("Assumption Method needs supporting evidence");
+    validateTenureEvidence(tenure);
   }
   return result;
+}
+
+export function validateTenureEvidence(tenure: Tenure) {
+  interval(tenure.startDate, tenure.endDate, "Tenure");
+  if (tenure.verificationStatus !== "unverified" && !tenure.citations.some(source => source.supports.includes("person") && source.supports.includes("office"))) throw new Error("Verified identity and Office need an attributable citation supporting both");
+  if (tenure.verificationStatus === "disputed" && !tenure.disputedFacts.length) throw new Error("A disputed Tenure must name its disputed facts");
+  if (tenure.disputedFacts.some(fact => fact === "person" || fact === "office") && tenure.verificationStatus !== "disputed") throw new Error("Disputed identity or Office must be marked disputed");
+  for (const field of ["startDate", "endDate"] as const) {
+    if (tenure[field] && !tenure.citations.some(source => source.supports.includes(field))) throw new Error(`${field} needs supporting evidence`);
+  }
+  if (tenure.assumptionMethod !== "unknown" && !tenure.citations.some(source => source.supports.includes("assumptionMethod"))) throw new Error("Assumption Method needs supporting evidence");
 }

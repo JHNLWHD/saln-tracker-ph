@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { Citation, Constituency, Jurisdiction, Office, SourceDocument, Tenure } from "../archive/types";
+import { check, index, integer, primaryKey, sqliteTable, text, uniqueIndex, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
+import type { Citation, Constituency, CorrectionChanges, CorrectionTargetType, Jurisdiction, Office, SourceDocument, Tenure } from "../archive/types";
 
 export const people = sqliteTable("people", {
   id: text("id").primaryKey(),
@@ -141,13 +141,35 @@ export const sourceDocuments = sqliteTable("source_documents", {
 export const manifestApplications = sqliteTable("manifest_applications", {
   id: text("id").primaryKey(),
   version: integer("version").notNull(),
-  kind: text("kind", { enum: ["person", "filing"] }).notNull(),
+  kind: text("kind", { enum: ["person", "filing", "correction"] }).notNull(),
   digest: text("digest").notNull(),
   canonicalPayload: text("canonical_payload").notNull(),
   appliedAt: text("applied_at").notNull(),
 }, (t) => [
   check("manifest_version", sql`${t.version} = 1`),
-  check("manifest_kind", sql`${t.kind} in ('person','filing')`),
+  check("manifest_kind", sql`${t.kind} in ('person','filing','correction')`),
   check("manifest_digest", sql`length(${t.digest}) = 64 and ${t.digest} not glob '*[^0-9a-f]*'`),
   check("manifest_payload", sql`json_valid(${t.canonicalPayload}) and json_type(${t.canonicalPayload}) = 'object'`),
+]);
+
+export const editorialCorrections = sqliteTable("editorial_corrections", {
+  id: text("id").primaryKey().references(() => manifestApplications.id),
+  targetType: text("target_type").$type<CorrectionTargetType>().notNull(),
+  targetId: text("target_id").notNull(),
+  previousCorrectionId: text("previous_correction_id").references((): AnySQLiteColumn => editorialCorrections.id),
+  revision: integer("revision").notNull(),
+  reason: text("reason").notNull(),
+  reviewedAt: text("reviewed_at").notNull(),
+  reviewedBy: text("reviewed_by").notNull(),
+  previousValues: text("previous_values", { mode: "json" }).$type<CorrectionChanges>().notNull(),
+  changes: text("changes", { mode: "json" }).$type<CorrectionChanges>().notNull(),
+  citations: text("citations", { mode: "json" }).$type<Citation[]>().notNull(),
+}, (t) => [
+  uniqueIndex("corrections_target_revision").on(t.targetType, t.targetId, t.revision),
+  check("correction_target_type", sql`${t.targetType} in ('person','tenure','filing','source_document')`),
+  check("correction_revision", sql`${t.revision} > 0 and ((${t.revision} = 1 and ${t.previousCorrectionId} is null) or (${t.revision} > 1 and ${t.previousCorrectionId} is not null))`),
+  check("correction_reason", sql`length(trim(${t.reason})) > 0`),
+  check("correction_changes", sql`json_valid(${t.changes}) and json_type(${t.changes}) = 'object'`),
+  check("correction_previous_values", sql`json_valid(${t.previousValues}) and json_type(${t.previousValues}) = 'object'`),
+  check("correction_citations", sql`json_valid(${t.citations}) and json_type(${t.citations}) = 'array' and json_array_length(${t.citations}) > 0`),
 ]);

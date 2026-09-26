@@ -24,4 +24,10 @@ The [Philippine News Agency article](https://www.pna.gov.ph/articles/1261401), p
 
 The source's name fields read `HONTIVEROS-BARAQUEL`, `ANA THERESIA` and `N.`. Filer Name joins these fields in printed family-first order. The source's reporting heading establishes 31 December 2024 with day precision. The canonical Person name remains Risa Hontiveros.
 
-Official Release Date, Execution Date and Custodian Receipt Date remain null in these examples. No publication date from a news article was used as the Official Release Date. The Person's cited public article establishes an included Elected Office; Tenure dates and Assumption Method remain unknown. This eligibility evidence does not assert membership in a current roster.
+The original Filing manifests leave Official Release Date, Execution Date and Custodian Receipt Date null. No publication date from a news article was used as the Official Release Date. The Person's cited public article establishes an included Elected Office; Tenure dates and Assumption Method remain unknown. This eligibility evidence does not assert membership in a current roster.
+
+## Execution Date correction
+
+The original four manifests retain their null Execution Date. `0005-execution-date-correction.json` adds a reviewed date to the current view through a separate correction. The second scan shows `10-Apr-25` beside the declarant signature, establishing 10 April 2025 with day precision. The separate oath stamp is not used as the Execution Date. The reason and stable source citation remain public; the original Filing and all three source images remain unchanged.
+
+Apply the correction after the first four manifests with `npm run archive:import -- data/examples/hontiveros-2024-local-verification/0005-execution-date-correction.json`. It takes no source-file argument. This is a local verification example, not production publication.

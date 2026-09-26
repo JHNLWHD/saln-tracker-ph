@@ -104,6 +104,26 @@ export interface DeclaredFinancialSummary {
   reviewedAt: string;
 }
 
+export type CorrectionTargetType = "person" | "tenure" | "filing" | "source_document";
+export type CorrectionChanges = Partial<
+  Pick<Person, "canonicalName" | "nameVariants"> &
+  Pick<Tenure, "startDate" | "endDate" | "assumptionMethod" | "verificationStatus" | "disputedFacts"> &
+  Pick<Filing, "filerName" | "reportingDate" | "executionDate" | "receiptDate"> &
+  Pick<SourceDocument, "fileName" | "originalUrl" | "provenanceType" | "provenanceNote" | "officialReleaseDate" | "acquisitionDate" | "archivePublicationDate">
+>;
+
+export interface EditorialCorrection {
+  id: string;
+  target: { type: CorrectionTargetType; id: string };
+  previousCorrectionId: string | null;
+  revision: number;
+  reason: string;
+  reviewedAt: string;
+  previousValues: CorrectionChanges;
+  changes: CorrectionChanges;
+  citations: Citation[];
+}
+
 export interface PersonRecord {
   person: Person;
   offices: Office[];
@@ -114,6 +134,7 @@ export interface PersonRecord {
   filings: Filing[];
   sourceDocuments: SourceDocument[];
   financialSummaries: DeclaredFinancialSummary[];
+  editorialCorrections?: EditorialCorrection[];
 }
 
 export interface Archive {
