@@ -1,0 +1,41 @@
+{
+  "id": "example-local-hontiveros-2024-page-2-v1",
+  "version": 1,
+  "kind": "filing",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-09-26",
+      "reviewedBy": "Codex source review"
+    },
+    "filing": {
+      "id": "filing-hontiveros-2024-12-31",
+      "personId": "person-risa-hontiveros",
+      "filerName": "HONTIVEROS-BARAQUEL ANA THERESIA N.",
+      "reportingDate": {
+        "value": "2024-12-31",
+        "precision": "day"
+      },
+      "executionDate": null,
+      "receiptDate": null,
+      "supersedesFilingId": null
+    },
+    "document": {
+      "id": "document-hontiveros-2024-release-page-2",
+      "filingId": "filing-hontiveros-2024-12-31",
+      "fileName": "hontiveros-2024-release-page-2.jpg",
+      "mediaType": "image/jpeg",
+      "byteSize": 160788,
+      "sha256": "54f6e72dd45b8f01ecf22b9ebc7fbdf8ae919effebe8cde3382ee86e7aabeb69",
+      "originalUrl": "https://www.facebook.com/photo/?fbid=1381337593358335&set=pcb.1381296843362410",
+      "provenanceType": "formal_release",
+      "provenanceNote": "Second scan in the three-image release; liabilities, certification and execution. No printed page number is visible above the publisher footer. The other scans were acquired separately. Acquired from the public 2024 SALN photo release of the verified Senator Risa Hontiveros Facebook account, attributed by Philippine News Agency and linked by PhilSTAR Life. Preserves the exact JPEG bytes served for the displayed scan at acquisition, including the publisher redactions, watermark and footer. The acquired image is the 837 by 1280 pixel Facebook rendition; it is not asserted to be the uploaded master, an unredacted filing, or a complete PDF. The project did not resize, re-encode or combine the image.",
+      "officialReleaseDate": null,
+      "acquisitionDate": {
+        "value": "2026-09-26",
+        "precision": "day"
+      },
+      "archivePublicationDate": "2026-09-26T13:55:34.092Z",
+      "transcriptionLevel": "document_only"
+    }
+  }
+}

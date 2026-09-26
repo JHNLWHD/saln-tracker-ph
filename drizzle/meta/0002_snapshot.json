@@ -1,0 +1,1049 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "bbbf081c-7466-4ddc-98f0-dd4a779cf0e1",
+  "prevId": "7213844f-1b30-4e28-b368-8dd8f90d458b",
+  "tables": {
+    "citations": {
+      "name": "citations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "publisher": {
+          "name": "publisher",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "published_date": {
+          "name": "published_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "citation_type": {
+          "name": "citation_type",
+          "value": "\"citations\".\"type\" in ('official_record','public_article')"
+        }
+      }
+    },
+    "constituencies": {
+      "name": "constituencies",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "jurisdiction_id": {
+          "name": "jurisdiction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "constituencies_jurisdiction_id_jurisdictions_id_fk": {
+          "name": "constituencies_jurisdiction_id_jurisdictions_id_fk",
+          "tableFrom": "constituencies",
+          "tableTo": "jurisdictions",
+          "columnsFrom": [
+            "jurisdiction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "constituency_kind": {
+          "name": "constituency_kind",
+          "value": "\"constituencies\".\"kind\" in ('nation','legislative_district','party_list','provincial_district','local_district','at_large')"
+        }
+      }
+    },
+    "electoral_terms": {
+      "name": "electoral_terms",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "office_id": {
+          "name": "office_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "electoral_terms_office_id_offices_id_fk": {
+          "name": "electoral_terms_office_id_offices_id_fk",
+          "tableFrom": "electoral_terms",
+          "tableTo": "offices",
+          "columnsFrom": [
+            "office_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "filings": {
+      "name": "filings",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "person_id": {
+          "name": "person_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "filer_name": {
+          "name": "filer_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reporting_date": {
+          "name": "reporting_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "execution_date": {
+          "name": "execution_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "receipt_date": {
+          "name": "receipt_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "supersedes_filing_id": {
+          "name": "supersedes_filing_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reviewed_at": {
+          "name": "reviewed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reviewed_by": {
+          "name": "reviewed_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "filings_person_reporting": {
+          "name": "filings_person_reporting",
+          "columns": [
+            "person_id",
+            "reporting_date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "filings_person_id_people_id_fk": {
+          "name": "filings_person_id_people_id_fk",
+          "tableFrom": "filings",
+          "tableTo": "people",
+          "columnsFrom": [
+            "person_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "filing_filer_name": {
+          "name": "filing_filer_name",
+          "value": "length(trim(\"filings\".\"filer_name\")) > 0"
+        },
+        "filing_no_unreviewed_supersession": {
+          "name": "filing_no_unreviewed_supersession",
+          "value": "\"filings\".\"supersedes_filing_id\" is null"
+        }
+      }
+    },
+    "jurisdiction_relationships": {
+      "name": "jurisdiction_relationships",
+      "columns": {
+        "from_id": {
+          "name": "from_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "to_id": {
+          "name": "to_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "jurisdiction_relationships_from_id_jurisdictions_id_fk": {
+          "name": "jurisdiction_relationships_from_id_jurisdictions_id_fk",
+          "tableFrom": "jurisdiction_relationships",
+          "tableTo": "jurisdictions",
+          "columnsFrom": [
+            "from_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "jurisdiction_relationships_to_id_jurisdictions_id_fk": {
+          "name": "jurisdiction_relationships_to_id_jurisdictions_id_fk",
+          "tableFrom": "jurisdiction_relationships",
+          "tableTo": "jurisdictions",
+          "columnsFrom": [
+            "to_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "jurisdiction_relationships_from_id_to_id_kind_pk": {
+          "columns": [
+            "from_id",
+            "to_id",
+            "kind"
+          ],
+          "name": "jurisdiction_relationships_from_id_to_id_kind_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "jurisdiction_relationship_kind": {
+          "name": "jurisdiction_relationship_kind",
+          "value": "\"jurisdiction_relationships\".\"kind\" in ('geographic','administrative')"
+        },
+        "jurisdiction_not_self": {
+          "name": "jurisdiction_not_self",
+          "value": "\"jurisdiction_relationships\".\"from_id\" != \"jurisdiction_relationships\".\"to_id\""
+        }
+      }
+    },
+    "jurisdictions": {
+      "name": "jurisdictions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "jurisdiction_kind": {
+          "name": "jurisdiction_kind",
+          "value": "\"jurisdictions\".\"kind\" in ('country','region','province','city','municipality','legislative_district')"
+        }
+      }
+    },
+    "manifest_applications": {
+      "name": "manifest_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "digest": {
+          "name": "digest",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "canonical_payload": {
+          "name": "canonical_payload",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "applied_at": {
+          "name": "applied_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "manifest_version": {
+          "name": "manifest_version",
+          "value": "\"manifest_applications\".\"version\" = 1"
+        },
+        "manifest_kind": {
+          "name": "manifest_kind",
+          "value": "\"manifest_applications\".\"kind\" in ('person','filing')"
+        },
+        "manifest_digest": {
+          "name": "manifest_digest",
+          "value": "length(\"manifest_applications\".\"digest\") = 64 and \"manifest_applications\".\"digest\" not glob '*[^0-9a-f]*'"
+        },
+        "manifest_payload": {
+          "name": "manifest_payload",
+          "value": "json_valid(\"manifest_applications\".\"canonical_payload\") and json_type(\"manifest_applications\".\"canonical_payload\") = 'object'"
+        }
+      }
+    },
+    "offices": {
+      "name": "offices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "kind": {
+          "name": "kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "included": {
+          "name": "included",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "jurisdiction_id": {
+          "name": "jurisdiction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "offices_jurisdiction_id_jurisdictions_id_fk": {
+          "name": "offices_jurisdiction_id_jurisdictions_id_fk",
+          "tableFrom": "offices",
+          "tableTo": "jurisdictions",
+          "columnsFrom": [
+            "jurisdiction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "office_kind": {
+          "name": "office_kind",
+          "value": "\"offices\".\"kind\" in ('elected','chamber_leadership')"
+        },
+        "office_included": {
+          "name": "office_included",
+          "value": "\"offices\".\"included\" in (0,1)"
+        }
+      }
+    },
+    "people": {
+      "name": "people",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "canonical_name": {
+          "name": "canonical_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reviewed_at": {
+          "name": "reviewed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reviewed_by": {
+          "name": "reviewed_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "people_slug_unique": {
+          "name": "people_slug_unique",
+          "columns": [
+            "slug"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "person_name_present": {
+          "name": "person_name_present",
+          "value": "length(trim(\"people\".\"canonical_name\")) > 0"
+        }
+      }
+    },
+    "person_names": {
+      "name": "person_names",
+      "columns": {
+        "person_id": {
+          "name": "person_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "person_names_person_id_people_id_fk": {
+          "name": "person_names_person_id_people_id_fk",
+          "tableFrom": "person_names",
+          "tableTo": "people",
+          "columnsFrom": [
+            "person_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "person_names_person_id_value_pk": {
+          "columns": [
+            "person_id",
+            "value"
+          ],
+          "name": "person_names_person_id_value_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "source_documents": {
+      "name": "source_documents",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "filing_id": {
+          "name": "filing_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "media_type": {
+          "name": "media_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "byte_size": {
+          "name": "byte_size",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "storage_key": {
+          "name": "storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "original_url": {
+          "name": "original_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "provenance_type": {
+          "name": "provenance_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provenance_note": {
+          "name": "provenance_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "official_release_date": {
+          "name": "official_release_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "acquisition_date": {
+          "name": "acquisition_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "archive_publication_date": {
+          "name": "archive_publication_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "transcription_level": {
+          "name": "transcription_level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "source_documents_filing": {
+          "name": "source_documents_filing",
+          "columns": [
+            "filing_id"
+          ],
+          "isUnique": false
+        },
+        "source_documents_checksum": {
+          "name": "source_documents_checksum",
+          "columns": [
+            "sha256"
+          ],
+          "isUnique": false
+        },
+        "source_documents_publication": {
+          "name": "source_documents_publication",
+          "columns": [
+            "archive_publication_date"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "source_documents_filing_id_filings_id_fk": {
+          "name": "source_documents_filing_id_filings_id_fk",
+          "tableFrom": "source_documents",
+          "tableTo": "filings",
+          "columnsFrom": [
+            "filing_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "source_document_size": {
+          "name": "source_document_size",
+          "value": "\"source_documents\".\"byte_size\" > 0"
+        },
+        "source_document_checksum": {
+          "name": "source_document_checksum",
+          "value": "length(\"source_documents\".\"sha256\") = 64 and \"source_documents\".\"sha256\" not glob '*[^0-9a-f]*'"
+        },
+        "source_document_storage_key": {
+          "name": "source_document_storage_key",
+          "value": "\"source_documents\".\"storage_key\" = 'documents/sha256/' || \"source_documents\".\"sha256\""
+        },
+        "source_document_media_type": {
+          "name": "source_document_media_type",
+          "value": "\"source_documents\".\"media_type\" in ('application/pdf','image/jpeg','image/png')"
+        },
+        "source_document_provenance": {
+          "name": "source_document_provenance",
+          "value": "\"source_documents\".\"provenance_type\" in ('official_download','formal_release','preserved_copy')"
+        },
+        "source_document_provenance_note": {
+          "name": "source_document_provenance_note",
+          "value": "length(trim(\"source_documents\".\"provenance_note\")) > 0"
+        },
+        "source_document_transcription": {
+          "name": "source_document_transcription",
+          "value": "\"source_documents\".\"transcription_level\" in ('document_only','summary_totals','full_itemization')"
+        }
+      }
+    },
+    "tenure_citations": {
+      "name": "tenure_citations",
+      "columns": {
+        "tenure_id": {
+          "name": "tenure_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "citation_id": {
+          "name": "citation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "supports": {
+          "name": "supports",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tenure_citations_tenure_id_tenures_id_fk": {
+          "name": "tenure_citations_tenure_id_tenures_id_fk",
+          "tableFrom": "tenure_citations",
+          "tableTo": "tenures",
+          "columnsFrom": [
+            "tenure_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tenure_citations_citation_id_citations_id_fk": {
+          "name": "tenure_citations_citation_id_citations_id_fk",
+          "tableFrom": "tenure_citations",
+          "tableTo": "citations",
+          "columnsFrom": [
+            "citation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "tenure_citations_tenure_id_citation_id_pk": {
+          "columns": [
+            "tenure_id",
+            "citation_id"
+          ],
+          "name": "tenure_citations_tenure_id_citation_id_pk"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "tenure_citation_supports": {
+          "name": "tenure_citation_supports",
+          "value": "json_valid(\"tenure_citations\".\"supports\") and json_type(\"tenure_citations\".\"supports\") = 'array'"
+        }
+      }
+    },
+    "tenures": {
+      "name": "tenures",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "person_id": {
+          "name": "person_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "office_id": {
+          "name": "office_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "electoral_term_id": {
+          "name": "electoral_term_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "constituency_id": {
+          "name": "constituency_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "assumption_method": {
+          "name": "assumption_method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "verification_status": {
+          "name": "verification_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "disputed_facts": {
+          "name": "disputed_facts",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
+        }
+      },
+      "indexes": {
+        "tenures_person": {
+          "name": "tenures_person",
+          "columns": [
+            "person_id"
+          ],
+          "isUnique": false
+        },
+        "tenures_verification": {
+          "name": "tenures_verification",
+          "columns": [
+            "verification_status",
+            "office_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "tenures_person_id_people_id_fk": {
+          "name": "tenures_person_id_people_id_fk",
+          "tableFrom": "tenures",
+          "tableTo": "people",
+          "columnsFrom": [
+            "person_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tenures_office_id_offices_id_fk": {
+          "name": "tenures_office_id_offices_id_fk",
+          "tableFrom": "tenures",
+          "tableTo": "offices",
+          "columnsFrom": [
+            "office_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tenures_electoral_term_id_electoral_terms_id_fk": {
+          "name": "tenures_electoral_term_id_electoral_terms_id_fk",
+          "tableFrom": "tenures",
+          "tableTo": "electoral_terms",
+          "columnsFrom": [
+            "electoral_term_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tenures_constituency_id_constituencies_id_fk": {
+          "name": "tenures_constituency_id_constituencies_id_fk",
+          "tableFrom": "tenures",
+          "tableTo": "constituencies",
+          "columnsFrom": [
+            "constituency_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "tenure_verification": {
+          "name": "tenure_verification",
+          "value": "\"tenures\".\"verification_status\" in ('verified','unverified','disputed')"
+        },
+        "tenure_assumption": {
+          "name": "tenure_assumption",
+          "value": "\"tenures\".\"assumption_method\" in ('election','succession','substitution','vacancy_appointment','chamber_selection','unknown')"
+        },
+        "tenure_disputed_facts": {
+          "name": "tenure_disputed_facts",
+          "value": "json_valid(\"tenures\".\"disputed_facts\") and json_type(\"tenures\".\"disputed_facts\") = 'array'"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

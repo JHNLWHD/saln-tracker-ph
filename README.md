@@ -121,7 +121,7 @@ ARCHIVE_ADAPTER=turso TURSO_DATABASE_URL=file:.data/archive.db npm run dev
 
 Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Canonical directory pages arrive in the later directory slice.
 
-The import validates the manifest and writes metadata in one transaction. This first import rejects an existing Person; repeatable manifests are a later slice. To remove this initial schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
+The import validates reviewed metadata and records its application in one transaction. An identical rerun verifies stored rows and is a no-op. To remove the current schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
 
 CLI remote writes require both `--environment staging` and `ARCHIVE_ENVIRONMENT=staging`, plus `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. These commands do not enable production publication. Do not commit database files or credentials.
 
@@ -139,6 +139,20 @@ Open uses `/documents/:sha256`; Download uses the same route with `?download=1`.
 For staging, set `ARCHIVE_STORAGE=r2`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` along with the staging database settings above. R2 writes use a conditional request to prevent overwrite. Local publication timestamps describe the local environment; production publication dates must be reviewed for the actual release. Production storage and release remain separate gated operations.
 
 `data/examples/hontiveros-2024-page-1.local.json` records the real source used for local verification. It identifies the exact 140,352-byte Facebook-served JPEG, its stable release URL and checksum, and explicitly covers only page 1 of 3. Its publication timestamp is a local example, not a production release date. Import `data/reviewed/0002-risa-hontiveros.json` first. Acquire and verify the released image separately; source files belong in object storage and are not committed with this example. A platform may serve another rendition, so do not bypass a checksum mismatch.
+
+### Repeatable manifests and Public Data Snapshots
+
+Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
+
+The compatibility commands `archive:import-person` and `archive:import-filing` use this same ledger with stable IDs derived from the Person or Source Document ID. A rerun checks the stored metadata and, for a Filing, verifies the stored bytes without uploading them again. New pages can join an existing Filing only when its metadata matches exactly. Same-period Filings remain distinct.
+
+The four examples in [the Hontiveros local verification directory](data/examples/hontiveros-2024-local-verification/README.md) demonstrate one Person, one Filing and three acquired image Source Documents. Follow that README for source URLs, checksums and scope.
+
+```bash
+npm run archive:export -- .data/snapshots
+```
+
+This read-only export produces `<content-version>/archive.json` and `<content-version>/source-checksums.json`. Both share a content-derived version, and repeated exports are byte-identical. Existing artifacts are verified, not overwritten. The checksum file groups exact duplicate bytes while retaining each Source Document ID and Filing relationship in the snapshot. Only explicit public fields for Archive-Eligible People are exported; private tips, unverified queue tables, credentials, storage keys and import audit details are excluded. Exporting locally does not publish or deploy the files. Release packaging must use the validated pair together.
 
 We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
 

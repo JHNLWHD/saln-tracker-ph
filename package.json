@@ -15,7 +15,9 @@
     "archive:migrate": "node --import tsx scripts/migrate.ts",
     "archive:import-person": "node --import tsx scripts/import-person.ts",
     "db:generate": "drizzle-kit generate",
-    "archive:import-filing": "node --import tsx scripts/import-filing.ts"
+    "archive:import-filing": "node --import tsx scripts/import-filing.ts",
+    "archive:import": "node --import tsx scripts/import-manifest.ts",
+    "archive:export": "node --import tsx scripts/export-snapshot.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
