@@ -76,7 +76,7 @@ For staging, set `ARCHIVE_STORAGE=r2`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KE
 
 ### Repeatable manifests and Public Data Snapshots
 
-Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing" | "correction" | "identities" | "roster" | "summary" | "secondary_report", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
+Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing" | "correction" | "identities" | "roster" | "summary" | "report", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
 
 The compatibility commands `archive:import-person` and `archive:import-filing` use this same ledger with stable IDs derived from the Person or Source Document ID. A rerun checks the stored metadata and, for a Filing, verifies the stored bytes without uploading them again. New pages can join an existing Filing only when its metadata matches exactly. Same-period Filings remain distinct.
 
