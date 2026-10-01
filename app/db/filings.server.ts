@@ -2,13 +2,14 @@ import { createHash } from "node:crypto";
 import { and, eq, sql } from "drizzle-orm";
 import type { SourceDocument } from "../archive/types";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
-import { readArchiveTransaction, type ArchiveDatabase, type ArchiveWriter } from "./client.server";
+import { readArchiveTransaction, type ArchiveDatabase, type ArchiveReader, type ArchiveWriter } from "./client.server";
 import { personIsEligible } from "./eligibility";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { missingRows } from "./canonical";
 import { filings, manifestApplications, people, sourceDocuments } from "./schema";
 import { parsePartialDate } from "./validation";
 import { projectCorrections, readEditorialCorrections } from "./corrections.server";
+import { canonicalPersonId } from "./identities.server";
 
 export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect): SourceDocument {
   const acquisitionDate = parsePartialDate(row.acquisitionDate);
@@ -17,13 +18,15 @@ export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect):
 }
 
 export async function findPublicSourceDocument(db: ArchiveDatabase, sha256: string): Promise<SourceDocument | null> {
+  return readArchiveTransaction(db, tx => readPublicSourceDocument(tx, sha256));
+}
+
+export async function readPublicSourceDocument(tx: ArchiveReader, sha256: string, id?: string): Promise<SourceDocument | null> {
   if (!/^[a-f0-9]{64}$/.test(sha256)) return null;
-  return readArchiveTransaction(db, async tx => {
-    const [result] = await tx.select({ document: sourceDocuments }).from(sourceDocuments)
-      .innerJoin(filings, eq(filings.id, sourceDocuments.filingId)).innerJoin(people, eq(people.id, filings.personId))
-      .where(and(eq(sourceDocuments.sha256, sha256), personIsEligible())).orderBy(sourceDocuments.id).limit(1);
-    return result ? projectCorrections("source_document", sourceDocumentFromRow(result.document), await readEditorialCorrections(tx)) : null;
-  });
+  const [result] = await tx.select({ document: sourceDocuments }).from(sourceDocuments)
+    .innerJoin(filings, eq(filings.id, sourceDocuments.filingId)).innerJoin(people, eq(people.id, canonicalPersonId(filings.personId)))
+    .where(and(eq(sourceDocuments.sha256, sha256), id ? eq(sourceDocuments.id, id) : undefined, personIsEligible())).orderBy(sourceDocuments.id).limit(1);
+  return result ? projectCorrections("source_document", sourceDocumentFromRow(result.document), await readEditorialCorrections(tx)) : null;
 }
 
 export function verifiedDocumentBytes(document: ReviewedFiling["document"], bytes: Uint8Array) {
@@ -38,7 +41,7 @@ export function verifiedDocumentBytes(document: ReviewedFiling["document"], byte
 }
 
 export async function requireEligiblePerson(db: ArchiveWriter, personId: string) {
-  const [person] = await db.select({ id: people.id }).from(people).where(and(eq(people.id, personId), personIsEligible())).limit(1);
+  const [person] = await db.select({ id: people.id }).from(people).where(and(eq(people.id, canonicalPersonId(personId)), personIsEligible())).limit(1);
   if (!person) throw new Error("A Filing requires an Archive-Eligible Person");
 }
 

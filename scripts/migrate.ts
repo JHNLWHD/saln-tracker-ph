@@ -17,7 +17,8 @@ export async function rollbackArchive(client: Client) {
     const sql = await readFile(new URL(file, directory), "utf8");
     statements.push(...sql.split(";").map(statement => statement.trim()).filter(Boolean));
   }
-  await client.batch(statements, "write");
+  // Native migration mode temporarily disables foreign keys for table rebuilds and restores them.
+  await client.migrate(statements);
 }
 
 async function main() {

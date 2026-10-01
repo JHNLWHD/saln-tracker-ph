@@ -1,18 +1,20 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type { Archive, Citation, PersonRecord } from "../archive/types";
 import { readArchiveTransaction, type ArchiveDatabase, type ArchiveReader, type ArchiveWriter } from "./client.server";
 import * as schema from "./schema";
 import { hasEligibleTenure, parsePartialDate, validateReviewedPerson, type ReviewedPerson } from "./validation";
 import { missingRows } from "./canonical";
 import { personIsEligible } from "./eligibility";
-import { findPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
+import { findPublicSourceDocument, readPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 import { checkCitationMetadata, projectCorrections, readEditorialCorrections } from "./corrections.server";
+import { checkPersonIdentifiers, findPersonIdentifier, identityLineage, readIdentityMatches } from "./identities.server";
 
 /** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
 export async function writeReviewedPerson(tx: ArchiveWriter, record: ReviewedPerson, verifyOnly = false) {
   const corrections = await readEditorialCorrections(tx);
   await checkCitationMetadata(tx, record.tenures.flatMap(tenure => tenure.citations), corrections);
   const { nameVariants, ...person } = record.person;
+  await checkPersonIdentifiers(tx, [person.id, person.slug].map(value => ({ value, personId: person.id })));
   const personRows = missingRows(await tx.select().from(schema.people).where(eq(schema.people.id, person.id)), [{ ...person, ...record.review }], row => row.id, "Person", verifyOnly);
   if (personRows.length) await tx.insert(schema.people).values(personRows);
   const names = nameVariants.map(value => ({ personId: person.id, value }));
@@ -68,9 +70,13 @@ export async function importReviewedPerson(db: ArchiveDatabase, input: unknown) 
 
 export function createDbArchive(db: ArchiveDatabase): Archive {
   async function readPerson(db: ArchiveReader, person: typeof schema.people.$inferSelect): Promise<PersonRecord> {
-    const [names, tenures, corrections] = await Promise.all([
-      db.select().from(schema.personNames).where(eq(schema.personNames.personId, person.id)),
-      db.select().from(schema.tenures).where(eq(schema.tenures.personId, person.id)),
+    const matches = await readIdentityMatches(db);
+    const lineage = identityLineage(person.id, matches);
+    const [names, formerPeople, aliases, tenures, corrections] = await Promise.all([
+      db.select().from(schema.personNames).where(inArray(schema.personNames.personId, lineage)),
+      db.select().from(schema.people).where(inArray(schema.people.id, lineage)),
+      db.select().from(schema.personAliases).where(inArray(schema.personAliases.personId, lineage)),
+      db.select().from(schema.tenures).where(inArray(schema.tenures.personId, lineage)),
       readEditorialCorrections(db),
     ]);
     const officeIds = tenures.map(tenure => tenure.officeId);
@@ -82,11 +88,12 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
       termIds.length ? db.select().from(schema.electoralTerms).where(inArray(schema.electoralTerms.id, termIds)) : [],
       db.select({ source: schema.citations, tenureId: schema.tenureCitations.tenureId, supports: schema.tenureCitations.supports })
         .from(schema.citations).innerJoin(schema.tenureCitations, eq(schema.citations.id, schema.tenureCitations.citationId))
-        .innerJoin(schema.tenures, eq(schema.tenures.id, schema.tenureCitations.tenureId)).where(eq(schema.tenures.personId, person.id)),
+        .innerJoin(schema.tenures, eq(schema.tenures.id, schema.tenureCitations.tenureId)).where(inArray(schema.tenures.personId, lineage)),
     ]);
     const jurisdictionIds = [...offices, ...constituencies].flatMap(row => row.jurisdictionId ? [row.jurisdictionId] : []);
     const record: PersonRecord = {
-      person: { id: person.id, slug: person.slug, canonicalName: person.canonicalName, nameVariants: names.map(name => name.value), legacySlugs: [], eligibility: "unverified" },
+      person: { id: person.id, slug: person.slug, canonicalName: person.canonicalName, nameVariants: names.filter(name => name.personId === person.id).map(name => name.value),
+        legacySlugs: [...new Set([...formerPeople.map(row => row.slug), ...aliases.filter(row => row.kind === "slug").map(row => row.value)])].filter(slug => slug !== person.slug).sort(), eligibility: "unverified" },
       offices, constituencies,
       jurisdictions: jurisdictionIds.length ? await db.select().from(schema.jurisdictions).where(inArray(schema.jurisdictions.id, jurisdictionIds)) : [],
       electoralTerms: terms.map(term => ({ ...term, startDate: parsePartialDate(term.startDate), endDate: parsePartialDate(term.endDate) })),
@@ -95,31 +102,36 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
         citations: sources.filter(source => source.tenureId === tenure.id).map(({ source, supports }): Citation => ({ ...source, supports, publishedDate: parsePartialDate(source.publishedDate) })),
       })),
       filings: [], sourceDocuments: [], financialSummaries: [],
+      identityMatches: matches.filter(row => lineage.includes(row.fromPersonId)),
 
     };
     record.person = projectCorrections("person", record.person, corrections);
-    record.tenures = record.tenures.map(tenure => projectCorrections("tenure", tenure, corrections));
+    const formerNames = formerPeople.filter(row => row.id !== person.id).flatMap(row => {
+      const projected = projectCorrections("person", { ...row, nameVariants: names.filter(name => name.personId === row.id).map(name => name.value) }, corrections);
+      return [row.canonicalName, projected.canonicalName, ...projected.nameVariants];
+    });
+    record.person.nameVariants = [...new Set([...record.person.nameVariants, ...formerNames])].filter(name => name !== record.person.canonicalName).sort();
+    record.tenures = record.tenures.map(tenure => ({ ...projectCorrections("tenure", tenure, corrections), personId: person.id }));
     record.person.eligibility = hasEligibleTenure(record) ? "eligible" : record.tenures.some(tenure =>
       tenure.disputedFacts.some(fact => fact === "person" || fact === "office")) ? "disputed" : "unverified";
     if (record.person.eligibility === "eligible") {
       const [filingRows, documentRows] = await Promise.all([
-        db.select({ filing: schema.filings }).from(schema.filings).innerJoin(schema.people, eq(schema.people.id, schema.filings.personId))
-          .where(and(eq(schema.people.id, person.id), personIsEligible())).orderBy(schema.filings.reportingDate, schema.filings.id),
+        db.select().from(schema.filings).where(inArray(schema.filings.personId, lineage)).orderBy(schema.filings.reportingDate, schema.filings.id),
         db.select({ document: schema.sourceDocuments }).from(schema.sourceDocuments).innerJoin(schema.filings, eq(schema.filings.id, schema.sourceDocuments.filingId))
-          .innerJoin(schema.people, eq(schema.people.id, schema.filings.personId)).where(and(eq(schema.people.id, person.id), personIsEligible()))
+          .where(inArray(schema.filings.personId, lineage))
           .orderBy(schema.sourceDocuments.archivePublicationDate, schema.sourceDocuments.id),
       ]);
-      record.filings = filingRows.map(({ filing: row }) => {
+      record.filings = filingRows.map(row => {
         const { reviewedAt, reviewedBy, ...filing } = row;
         const reportingDate = parsePartialDate(filing.reportingDate);
         if (!reportingDate) throw new Error("Stored Filing has no Reporting Date");
-        return projectCorrections("filing", { ...filing, reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) }, corrections);
+        return { ...projectCorrections("filing", { ...filing, reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) }, corrections), personId: person.id };
       });
       record.filings.sort((a, b) => a.reportingDate.value < b.reportingDate.value ? -1 : a.reportingDate.value > b.reportingDate.value ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
       record.sourceDocuments = documentRows.map(({ document }) => projectCorrections("source_document", sourceDocumentFromRow(document), corrections))
         .sort((a, b) => a.archivePublicationDate < b.archivePublicationDate ? -1 : a.archivePublicationDate > b.archivePublicationDate ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
     }
-    record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? row.target.id === person.id :
+    record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? lineage.includes(row.target.id) :
       row.target.type === "tenure" ? record.tenures.some(tenure => tenure.id === row.target.id) :
         row.target.type === "filing" ? record.filings.some(filing => filing.id === row.target.id) :
           row.target.type === "source_document" && record.sourceDocuments.some(document => document.id === row.target.id));
@@ -127,6 +139,12 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
   }
   return {
     findSourceDocument(sha256) { return findPublicSourceDocument(db, sha256); },
+    async findLegacyDocument(path) {
+      return readArchiveTransaction(db, async tx => {
+        const [link] = await tx.select().from(schema.legacyDocuments).where(eq(schema.legacyDocuments.path, path));
+        return link ? readPublicSourceDocument(tx, link.sha256, link.sourceDocumentId) : null;
+      });
+    },
     async listPeople() {
       return readArchiveTransaction(db, async tx => {
         // ponytail: one read per Person for the small first roster; paginate in the directory query slice.
@@ -137,7 +155,7 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
     },
     async findPersonBySlug(slug) {
       return readArchiveTransaction(db, async tx => {
-        const [person] = await tx.select().from(schema.people).where(eq(schema.people.slug, slug)).limit(1);
+        const person = await findPersonIdentifier(tx, slug);
         return person ? readPerson(tx, person) : null;
       });
     },

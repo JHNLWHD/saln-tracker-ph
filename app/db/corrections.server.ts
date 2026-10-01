@@ -79,9 +79,12 @@ async function loadTarget(db: ArchiveWriter, target: ReviewedCorrection["target"
 
 export async function checkCitationMetadata(db: ArchiveWriter, citations: Citation[], history: EditorialCorrection[]) {
   const originals = await db.select().from(schema.citations).where(inArray(schema.citations.id, citations.map(row => row.id)));
+  const identities = await db.select({ citations: schema.identityMatches.citations }).from(schema.identityMatches);
   const existing = [
     ...originals.map(row => ({ ...row, publishedDate: parsePartialDate(row.publishedDate) })),
     ...history.flatMap(row => row.citations).map(({ supports: _supports, ...row }) => row),
+    ...identities.flatMap(row => row.citations).map(({ supports: _supports, ...row }) => row),
+    ...citations.map(({ supports: _supports, ...row }) => row),
   ];
   for (const { supports: _supports, ...source } of citations) {
     if (existing.some(row => row.id === source.id && canonicalJson(row) !== canonicalJson(source))) throw new Error("Citation ID has different immutable metadata");
