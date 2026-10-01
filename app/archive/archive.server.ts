@@ -19,6 +19,7 @@ async function legacyArchive() {
 }
 
 export async function getArchive(): Promise<Archive> {
+  if (process.env.ARCHIVE_ENVIRONMENT === 'staging' && process.env.ARCHIVE_ADAPTER !== 'turso') throw new Error('Staging requires the Turso Archive adapter');
   const adapter = process.env.ARCHIVE_ADAPTER ?? "turso";
   if (adapter === "local") return localArchive;
   if (adapter === "turso") {

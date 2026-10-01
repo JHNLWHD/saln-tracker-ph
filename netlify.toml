@@ -1,5 +1,5 @@
 [build]
-command = "react-router build"
+command = "npm run build:netlify"
 publish = "build/client"
 
 [build.environment]
@@ -7,3 +7,8 @@ SITE_URL = "https://saln-tracker-ph.netlify.app"
 
 [dev]
 command = "react-router dev"
+
+[context.develop.environment]
+ARCHIVE_ENVIRONMENT = "staging"
+ARCHIVE_ADAPTER = "turso"
+ARCHIVE_STORAGE = "r2"
