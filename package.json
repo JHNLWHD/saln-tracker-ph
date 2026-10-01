@@ -20,7 +20,8 @@
     "archive:export": "node --import tsx scripts/export-snapshot.ts",
     "archive:capture-legacy": "node --import tsx scripts/legacy-capture.ts",
     "archive:audit-legacy": "node --import tsx scripts/legacy-audit.ts",
-    "archive:source-tip-destination": "node --import tsx scripts/source-tip-destination.ts"
+    "archive:source-tip-destination": "node --import tsx scripts/source-tip-destination.ts",
+    "build:netlify": "node --import tsx scripts/develop-preflight.ts && npm run build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
