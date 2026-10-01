@@ -1,0 +1,36 @@
+{
+  "id": "roster-speaker-2026-09-25",
+  "version": 1,
+  "kind": "roster",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex source review"
+    },
+    "scope": "speaker",
+    "verifiedAsOf": "2026-09-25",
+    "members": [
+      {
+        "tenureId": "tenure-dy-speaker-2025",
+        "citations": [
+          {
+            "id": "evidence-dy-speaker-house-2026-09-25",
+            "title": "Speaker Dy: From doctor of Batanes to national lawmaker, Rep. Gato leaves legacy of service",
+            "publisher": "House of Representatives, Press and Public Affairs Bureau",
+            "url": "https://congress.gov.ph/media/press-releases/10250",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-25",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
