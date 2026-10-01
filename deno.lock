@@ -19,7 +19,6 @@
         "npm:@types/react-dom@^18.3.6",
         "npm:@types/react@^18.3.20",
         "npm:autoprefixer@^10.4.21",
-        "npm:currency.js@^2.0.4",
         "npm:isbot@^5.1.27",
         "npm:postcss@^8.5.3",
         "npm:posthog-js@^1.266.3",

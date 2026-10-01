@@ -1,0 +1,9 @@
+{
+  "productionReportRef": null,
+  "rollbackUntil": null,
+  "rollbackUsed": null,
+  "recoveryCommit": null,
+  "productionCommit": null,
+  "snapshotVersion": null,
+  "documents": []
+}
