@@ -31,3 +31,9 @@ The original Filing manifests leave Official Release Date, Execution Date and Cu
 The original four manifests retain their null Execution Date. `0005-execution-date-correction.json` adds a reviewed date to the current view through a separate correction. The second scan shows `10-Apr-25` beside the declarant signature, establishing 10 April 2025 with day precision. The separate oath stamp is not used as the Execution Date. The reason and stable source citation remain public; the original Filing and all three source images remain unchanged.
 
 Apply the correction after the first four manifests with `npm run archive:import -- data/examples/hontiveros-2024-local-verification/0005-execution-date-correction.json`. It takes no source-file argument. This is a local verification example, not production publication.
+
+## Summary Transcription and Related Reporting
+
+`0006-reviewed-summary.json` copies the three printed total boxes after visual review on 2026-10-02: total assets PHP 19,884,098.21 from the additional sheet; liabilities PHP 897,840.00 and declared net worth PHP 18,986,258.21 from the certification scan. Each value retains its own Source Document ID and location. No itemization or independent wealth verification is implied. The exact acquired bytes and original document-only manifests remain unchanged; public extraction progress advances for the referenced scans.
+
+`0007-related-reporting.json` publishes the already-reviewed PNA article only as a Secondary Report. It adds no Filing, Source Document, totals or coverage. Apply both after the existing five manifests. Replay must be a verified no-op. Correct metadata or totals through a new Editorial Correction targeting financial_summary or secondary_report. These remain local verification examples; they record no production publication.

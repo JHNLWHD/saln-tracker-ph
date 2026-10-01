@@ -1,0 +1,33 @@
+{
+  "id": "summary:hontiveros-2024",
+  "version": 1,
+  "kind": "summary",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex scan transcription review"
+    },
+    "summary": {
+      "id": "summary-hontiveros-2024-12-31",
+      "filingId": "filing-hontiveros-2024-12-31",
+      "totalAssets": "19884098.21",
+      "totalLiabilities": "897840.00",
+      "declaredNetWorth": "18986258.21",
+      "currency": "PHP",
+      "sources": {
+        "totalAssets": {
+          "sourceDocumentId": "document-hontiveros-2024-release-page-3",
+          "location": "TOTAL ASSETS box, printed additional sheet page 3 of 3"
+        },
+        "totalLiabilities": {
+          "sourceDocumentId": "document-hontiveros-2024-release-page-2",
+          "location": "TOTAL LIABILITIES box on the liabilities and certification scan"
+        },
+        "declaredNetWorth": {
+          "sourceDocumentId": "document-hontiveros-2024-release-page-2",
+          "location": "NET WORTH box below TOTAL LIABILITIES"
+        }
+      }
+    }
+  }
+}

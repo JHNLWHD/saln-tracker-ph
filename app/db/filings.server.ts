@@ -3,18 +3,21 @@ import { and, eq, sql } from "drizzle-orm";
 import type { SourceDocument } from "../archive/types";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
 import { readArchiveTransaction, type ArchiveDatabase, type ArchiveReader, type ArchiveWriter } from "./client.server";
-import { personIsEligible } from "./eligibility";
+import { personIsEligible, requireEligiblePerson } from "./eligibility";
+export { requireEligiblePerson } from "./eligibility";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { missingRows } from "./canonical";
 import { filings, manifestApplications, people, sourceDocuments } from "./schema";
 import { parsePartialDate } from "./validation";
 import { projectCorrections, readEditorialCorrections } from "./corrections.server";
 import { canonicalPersonId } from "./identities.server";
+import { readFinancialSummaries, withTranscriptionLevels } from "./transcriptions.server";
 
 export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect): SourceDocument {
+  const { storageKey: _key, ...document } = row;
   const acquisitionDate = parsePartialDate(row.acquisitionDate);
   if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
-  return { ...row, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
+  return { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
 }
 
 export async function findPublicSourceDocument(db: ArchiveDatabase, sha256: string): Promise<SourceDocument | null> {
@@ -26,7 +29,12 @@ export async function readPublicSourceDocument(tx: ArchiveReader, sha256: string
   const [result] = await tx.select({ document: sourceDocuments }).from(sourceDocuments)
     .innerJoin(filings, eq(filings.id, sourceDocuments.filingId)).innerJoin(people, eq(people.id, canonicalPersonId(filings.personId)))
     .where(and(eq(sourceDocuments.sha256, sha256), id ? eq(sourceDocuments.id, id) : undefined, personIsEligible())).orderBy(sourceDocuments.id).limit(1);
-  return result ? projectCorrections("source_document", sourceDocumentFromRow(result.document), await readEditorialCorrections(tx)) : null;
+  if (!result) return null;
+  const history = await readEditorialCorrections(tx);
+  const document = projectCorrections("source_document", sourceDocumentFromRow(result.document), history);
+  const summaries = await readFinancialSummaries(tx, [document.filingId], history);
+  const copies = await tx.select().from(sourceDocuments).where(and(eq(sourceDocuments.filingId, document.filingId), eq(sourceDocuments.sha256, sha256)));
+  return withTranscriptionLevels(copies.map(row => row.id === document.id ? document : sourceDocumentFromRow(row)), summaries).find(row => row.id === document.id)!;
 }
 
 export function verifiedDocumentBytes(document: ReviewedFiling["document"], bytes: Uint8Array) {
@@ -38,11 +46,6 @@ export function verifiedDocumentBytes(document: ReviewedFiling["document"], byte
       signature.subarray(0, 3).equals(Buffer.from([255, 216, 255]));
   if (!signatureMatches) throw new Error("Source Document media type does not match its file signature");
   return body;
-}
-
-export async function requireEligiblePerson(db: ArchiveWriter, personId: string) {
-  const [person] = await db.select({ id: people.id }).from(people).where(and(eq(people.id, canonicalPersonId(personId)), personIsEligible())).limit(1);
-  if (!person) throw new Error("A Filing requires an Archive-Eligible Person");
 }
 
 /** Read-only comparison also permits another original page for the same immutable Filing. */

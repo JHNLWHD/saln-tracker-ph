@@ -1,11 +1,14 @@
 import type { Citation, CorrectionChanges, CorrectionTargetType } from "../archive/types";
 import { choice, citation, date, facts, object, parsePartialDate, strings, text } from "./validation";
+import { amount, publicUrl, summarySources } from "./transcription-validation";
 
 const fields: Record<CorrectionTargetType, readonly string[]> = {
   person: ["canonicalName", "nameVariants"],
   tenure: ["startDate", "endDate", "assumptionMethod", "verificationStatus", "disputedFacts"],
   filing: ["filerName", "reportingDate", "executionDate", "receiptDate"],
   source_document: ["fileName", "originalUrl", "provenanceType", "provenanceNote", "officialReleaseDate", "acquisitionDate", "archivePublicationDate"],
+  financial_summary: ["totalAssets", "totalLiabilities", "declaredNetWorth", "sources"],
+  secondary_report: ["title", "url", "publisher", "publishedDate", "note"],
 };
 
 export interface ReviewedCorrection {
@@ -23,17 +26,20 @@ export function validateReviewedCorrection(value: unknown): ReviewedCorrection {
   const reviewedAt = text(review.reviewedAt, "review.reviewedAt");
   if (parsePartialDate(reviewedAt)?.precision !== "day") throw new Error("review.reviewedAt must be a calendar date");
   const target = object(input.target, ["type", "id"], "target");
-  const type = choice(target.type, ["person", "tenure", "filing", "source_document"], "target.type");
+  const type = choice(target.type, ["person", "tenure", "filing", "source_document", "financial_summary", "secondary_report"], "target.type");
   const patch = object(input.changes, [...fields[type]], "changes");
   if (!Object.keys(patch).length) throw new Error("An Editorial Correction needs at least one changed field");
   const changes: CorrectionChanges = {};
   for (const [key, value] of Object.entries(patch)) {
     const path = `changes.${key}`;
     switch (key) {
-      case "canonicalName": case "filerName": case "fileName": case "provenanceNote":
+      case "canonicalName": case "filerName": case "fileName": case "provenanceNote": case "title": case "publisher": case "note":
         changes[key] = text(value, path); break;
+      case "url": changes.url = publicUrl(value, path); break;
+      case "totalAssets": case "totalLiabilities": case "declaredNetWorth": changes[key] = amount(value, path); break;
+      case "sources": changes.sources = summarySources(value); break;
       case "nameVariants": changes.nameVariants = strings(value, path); break;
-      case "startDate": case "endDate": case "executionDate": case "receiptDate": case "officialReleaseDate":
+      case "startDate": case "endDate": case "executionDate": case "receiptDate": case "officialReleaseDate": case "publishedDate":
         changes[key] = date(value, path); break;
       case "reportingDate": case "acquisitionDate": {
         const parsed = date(value, path);

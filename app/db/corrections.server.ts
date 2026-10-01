@@ -1,11 +1,12 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
-import type { Citation, CorrectionTargetType, EditorialCorrection, Filing, Person, SourceDocument, Tenure } from "../archive/types";
+import type { Citation, CorrectionTargetType, DeclaredFinancialSummary, EditorialCorrection, Filing, Person, SecondaryReport, SourceDocument, Tenure } from "../archive/types";
 import type { ArchiveReader, ArchiveWriter } from "./client.server";
 import { canonicalJson } from "./canonical";
 import type { ReviewedCorrection } from "./correction-validation";
 import { validateReviewedFiling } from "./filing-validation";
 import * as schema from "./schema";
 import { parsePartialDate, validateReviewedPerson, validateTenureEvidence } from "./validation";
+import { checkSummarySources, validateReport, validateSummary } from "./transcription-validation";
 
 export async function readEditorialCorrections(db: ArchiveReader): Promise<EditorialCorrection[]> {
   const table = schema.editorialCorrections;
@@ -36,7 +37,9 @@ type Target =
   | { type: "person"; record: Pick<Person, "id" | "canonicalName" | "nameVariants"> }
   | { type: "tenure"; record: Tenure }
   | { type: "filing"; record: Filing }
-  | { type: "source_document"; record: SourceDocument };
+  | { type: "source_document"; record: SourceDocument }
+  | { type: "financial_summary"; record: DeclaredFinancialSummary }
+  | { type: "secondary_report"; record: SecondaryReport };
 
 function filingRecord(row: typeof schema.filings.$inferSelect): Filing {
   const { reviewedAt: _date, reviewedBy: _reviewer, ...filing } = row;
@@ -46,9 +49,10 @@ function filingRecord(row: typeof schema.filings.$inferSelect): Filing {
 }
 
 function documentRecord(row: typeof schema.sourceDocuments.$inferSelect): SourceDocument {
+  const { storageKey: _key, ...document } = row;
   const acquisitionDate = parsePartialDate(row.acquisitionDate);
   if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
-  return { ...row, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
+  return { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
 }
 
 async function loadTarget(db: ArchiveWriter, target: ReviewedCorrection["target"]): Promise<Target> {
@@ -70,9 +74,15 @@ async function loadTarget(db: ArchiveWriter, target: ReviewedCorrection["target"
   } else if (target.type === "filing") {
     const [filing] = await db.select().from(schema.filings).where(eq(schema.filings.id, id));
     if (filing) return { type: "filing", record: filingRecord(filing) };
-  } else {
+  } else if (target.type === "source_document") {
     const [document] = await db.select().from(schema.sourceDocuments).where(eq(schema.sourceDocuments.id, id));
     if (document) return { type: "source_document", record: documentRecord(document) };
+  } else if (target.type === "financial_summary") {
+    const [row] = await db.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.id, id));
+    if (row) { const { reviewedBy: _reviewer, ...record } = row; return { type: "financial_summary", record }; }
+  } else if (target.type === "secondary_report") {
+    const [row] = await db.select().from(schema.secondaryReports).where(eq(schema.secondaryReports.id, id));
+    if (row) { const { reviewedBy: _reviewer, ...record } = row; return { type: "secondary_report", record: { ...record, publishedDate: parsePartialDate(record.publishedDate) } }; }
   }
   throw new Error("Editorial Correction target does not exist");
 }
@@ -117,10 +127,17 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     const [document] = await db.select().from(schema.sourceDocuments).where(eq(schema.sourceDocuments.id, original.document.id));
     if (!filing || !document) throw new Error("Correction target has no original Filing and Source Document");
     const effectiveFiling = projectCorrections("filing", filingRecord(filing), history);
-    const { storageKey: _key, ...effectiveDocument } = projectCorrections("source_document", documentRecord(document), history);
+    const effectiveDocument = projectCorrections("source_document", documentRecord(document), history);
     validateReviewedFiling({ review: original.review,
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
+  } else if (target.type === "financial_summary") {
+    const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
+    const summary = validateSummary({ ...record, ...patch.changes });
+    await checkSummarySources(db, summary);
+  } else if (target.type === "secondary_report") {
+    const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
+    validateReport({ ...record, ...patch.changes });
   }
 }
 
