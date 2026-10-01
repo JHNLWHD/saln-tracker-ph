@@ -17,7 +17,9 @@
     "db:generate": "drizzle-kit generate",
     "archive:import-filing": "node --import tsx scripts/import-filing.ts",
     "archive:import": "node --import tsx scripts/import-manifest.ts",
-    "archive:export": "node --import tsx scripts/export-snapshot.ts"
+    "archive:export": "node --import tsx scripts/export-snapshot.ts",
+    "archive:capture-legacy": "node --import tsx scripts/legacy-capture.ts",
+    "archive:audit-legacy": "node --import tsx scripts/legacy-audit.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
