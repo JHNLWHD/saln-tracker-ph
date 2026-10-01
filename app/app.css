@@ -61,8 +61,6 @@
   .site-footer-brand { font: 700 1.125rem/1.25 var(--archive-font-sans); }
   .site-footer-links { display: flex; align-items: start; flex-direction: column; gap: 0.5rem; }
   .site-footer-links a { padding-block: 0.25rem; color: var(--archive-blue); text-decoration: underline; }
-  .archive-card { border: 1px solid var(--archive-rule); border-radius: 2px; background: var(--archive-surface); }
-  .archive-card-interactive:hover, .archive-card-interactive:focus-within { border-color: var(--archive-blue); }
   .archive-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; min-height: 2.75rem; border: 1px solid transparent; border-radius: 2px; font-weight: 600; }
   .archive-button-primary { background: var(--archive-blue); color: white; }
   .archive-button-secondary { background: var(--archive-surface); color: var(--archive-ink); border-color: var(--archive-rule); }
@@ -97,8 +95,6 @@
   .advocacy-panel a { text-decoration: underline; font-weight: 600; }
   .advocacy-tags { display: inline-block; padding: 0.75rem; border-left: 2px solid var(--archive-red); background: #fef2f2; color: #7f1d1d; font-size: 0.875rem; }
   .advocacy-tags-minimal { border: 0; padding-inline: 0; }
-  .advocacy-tags-sm { font-size: 0.75rem; }
-  .advocacy-tags-lg { font-size: 1rem; }
 
   @media (min-width: 48rem) {
     .site-footer-record { grid-template-columns: 2fr 1fr; }
