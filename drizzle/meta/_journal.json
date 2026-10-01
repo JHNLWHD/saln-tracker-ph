@@ -50,6 +50,13 @@
       "when": 1790883558326,
       "tag": "0006_reviewed_transcriptions",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1790885146230,
+      "tag": "0007_directory_indexes",
+      "breakpoints": true
     }
   ]
 }

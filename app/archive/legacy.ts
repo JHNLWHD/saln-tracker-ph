@@ -84,6 +84,7 @@ export function createLegacyArchive(reader: LegacyReader) {
     return document ? projectLegacyDocument(document) : null;
   }
   const archive: Archive = {
+    async browsePeople() { return { rows: [], total: 0, page: 1, pageSize: 30, offices: [], jurisdictions: [] }; },
     async readHome() { return { rosters: [], recentlyAdded: [] }; },
     async listPeople() {
       // Unreviewed legacy identities cannot enter a public archive directory.
