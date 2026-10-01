@@ -1,0 +1,74 @@
+{
+  "id": "person:senate-completion:pia-cayetano",
+  "version": 1,
+  "kind": "person",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex identity and link review"
+    },
+    "person": {
+      "id": "person-legacy-09e4c78f1db94c85",
+      "slug": "pia-cayetano",
+      "canonicalName": "Pia Cayetano",
+      "nameVariants": []
+    },
+    "jurisdictions": [
+      {
+        "id": "jurisdiction-ph",
+        "name": "Philippines",
+        "kind": "country"
+      }
+    ],
+    "jurisdictionRelationships": [],
+    "offices": [
+      {
+        "id": "office-senator-ph",
+        "name": "Senator of the Philippines",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      }
+    ],
+    "constituencies": [
+      {
+        "id": "constituency-ph-nation",
+        "name": "Philippines",
+        "kind": "nation",
+        "jurisdictionId": "jurisdiction-ph"
+      }
+    ],
+    "electoralTerms": [],
+    "tenures": [
+      {
+        "id": "tenure-pia-cayetano-senator-evidenced-2026",
+        "personId": "person-legacy-09e4c78f1db94c85",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": [],
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

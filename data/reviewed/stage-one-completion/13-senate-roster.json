@@ -1,0 +1,540 @@
+{
+  "id": "roster-senate-2026-09-21",
+  "version": 1,
+  "kind": "roster",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex source review"
+    },
+    "scope": "senate",
+    "verifiedAsOf": "2026-09-21",
+    "members": [
+      {
+        "tenureId": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-jv-ejercito-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-francis-escudero-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-jinggoy-estrada-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-win-gatchalian-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-gatchalian-senate-president-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-loren-legarda-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-robin-padilla-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-raffy-tulfo-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-joel-villanueva-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-mark-villar-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-bam-aquino-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-pia-cayetano-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-ronald-bato-dela-rosa-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-bong-go-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-panfilo-lacson-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-lito-lapid-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-rodante-marcoleta-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-imee-marcos-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-kiko-pangilinan-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-tito-sotto-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-erwin-tulfo-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-camille-villar-senator-evidenced-2026",
+        "citations": [
+          {
+            "id": "evidence-senate-roll-call-2026-09-21",
+            "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+            "publisher": "Legislative Journal Service, Senate of the Philippines",
+            "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-21",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
