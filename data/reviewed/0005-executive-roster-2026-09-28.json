@@ -1,0 +1,57 @@
+{
+  "id": "roster-executive-2026-09-28",
+  "version": 1,
+  "kind": "roster",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex source review"
+    },
+    "scope": "executive",
+    "verifiedAsOf": "2026-09-28",
+    "members": [
+      {
+        "tenureId": "tenure-marcos-president-2022",
+        "citations": [
+          {
+            "id": "evidence-executive-roster-2026-09-28",
+            "title": "Marcos dismisses VP Sara's accusations as 'nonsense,' 'fake news'",
+            "url": "https://www.pna.gov.ph/index.php/articles/1284958",
+            "publisher": "Philippine News Agency",
+            "type": "public_article",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-28",
+              "precision": "day"
+            }
+          }
+        ]
+      },
+      {
+        "tenureId": "tenure-sara-vice-president-2022",
+        "citations": [
+          {
+            "id": "evidence-executive-roster-2026-09-28",
+            "title": "Marcos dismisses VP Sara's accusations as 'nonsense,' 'fake news'",
+            "url": "https://www.pna.gov.ph/index.php/articles/1284958",
+            "publisher": "Philippine News Agency",
+            "type": "public_article",
+            "supports": [
+              "person",
+              "office",
+              "holdsOffice"
+            ],
+            "publishedDate": {
+              "value": "2026-09-28",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

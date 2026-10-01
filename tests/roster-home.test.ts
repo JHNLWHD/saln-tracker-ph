@@ -1,0 +1,110 @@
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import test from "node:test";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { MemoryRouter } from "react-router";
+import { eq } from "drizzle-orm";
+import { ArchiveHome } from "../app/components/ArchiveHome";
+import { exportPublicSnapshot } from "../app/archive/snapshot.server";
+import { closeArchive } from "../app/archive/archive.server";
+import { connectArchive } from "../app/db/client.server";
+import { applyReviewedManifest, validateReviewedManifest } from "../app/db/manifests.server";
+import { createDbArchive } from "../app/db/people.server";
+import { rosterMembers, manifestApplications, tenures } from "../app/db/schema";
+import { validateReviewedRoster } from "../app/db/rosters.server";
+import type { DocumentStorage } from "../app/storage/objects.server";
+import { migrateArchive, rollbackArchive } from "../scripts/migrate";
+
+async function json(name: string) { return JSON.parse(await readFile(new URL(`../data/reviewed/${name}`, import.meta.url), "utf8")); }
+async function setup() {
+  const directory = await mkdtemp(join(tmpdir(), "saln-roster-"));
+  const url = `file:${join(directory, "archive.db")}`;
+  const connection = connectArchive({ url });
+  await migrateArchive(connection.db);
+  for (const name of ["0001-ferdinand-marcos-jr.json", "0002-risa-hontiveros.json"]) {
+    const payload = await json(name);
+    await applyReviewedManifest(connection.db, { id: `person:${payload.person.id}`, version: 1, kind: "person", payload });
+  }
+  for (const name of ["0003-legacy-identities.json", "0004-sara-duterte.json", "0005-executive-roster-2026-09-28.json"]) await applyReviewedManifest(connection.db, await json(name));
+  return { ...connection, url, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
+}
+
+test("reviewed executive roster uses actual cited Tenures, stable identities and truthful zero-document states", async () => {
+  const state = await setup();
+  const previous = { ARCHIVE_ADAPTER: process.env.ARCHIVE_ADAPTER, TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL };
+  try {
+    const archive = createDbArchive(state.db);
+    const home = await archive.readHome();
+    assert.equal(home.rosters[0].snapshot.verifiedAsOf, "2026-09-28");
+    assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ["President of the Philippines", "Vice President of the Philippines"]);
+    assert.ok(home.rosters[0].rows.every(row => row.documentCount === 0 && row.latestSummary === null));
+    const vp = await archive.findPersonBySlug("vp-001");
+    assert.equal(vp?.person.id, "person-legacy-86726305bdc8e680");
+    assert.deepEqual(vp?.tenures[0].startDate, { value: "2022-06-30", precision: "day" });
+    assert.equal(vp?.tenures[0].endDate, null);
+    assert.equal(vp?.tenures[0].citations.find(source => source.id === "evidence-sara-inauguration-2022")?.publishedDate?.value, "2022-06-19");
+    process.env.ARCHIVE_ADAPTER = "turso"; process.env.TURSO_DATABASE_URL = state.url;
+    const { loader } = await import("../app/routes/home");
+    const loaded = await loader({ request: new Request("http://localhost/"), params: {}, context: {} });
+    assert.deepEqual(loaded.archive, home); assert.equal(loaded.officials, null);
+    const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
+    assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
+    assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /scope="row"/); assert.match(markup, /tabindex="0"/);
+    assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
+    const exported = await exportPublicSnapshot(state.db);
+    assert.equal(exported.snapshot.data.rosterSnapshots.length, 1);
+    assert.ok(!exported.snapshotJson.includes("reviewedBy"));
+    assert.equal((await applyReviewedManifest(state.db, await json("0005-executive-roster-2026-09-28.json"))).status, "unchanged");
+  } finally { await closeArchive(); await state.close(); for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } }
+});
+
+test("Recently Added uses corrected publication dates, groups exact copies and excludes unresolved Persons", async () => {
+  const state = await setup();
+  const objects = new Map<string, Uint8Array>();
+  const storage: DocumentStorage = { async get(hash) { return objects.get(hash) ?? null; }, async put(bytes, hash) { objects.set(hash, bytes); return { created: true, storageKey: `documents/sha256/${hash}` }; } };
+  try {
+    for (const [id, year, publication, body] of [["new-period", "2025", "2026-09-27", "first"], ["old-period", "2001", "2026-09-28", "second"], ["old-period-copy", "2001", "2026-09-28", "second"]]) {
+      const bytes = Buffer.from(`%PDF-1.7\nSynthetic ${body}\n%%EOF\n`), sha256 = createHash("sha256").update(bytes).digest("hex");
+      const filingId = id === "old-period-copy" ? "old-period" : id;
+      await applyReviewedManifest(state.db, { id: `source:${id}`, version: 1, kind: "filing", payload: {
+        review: { reviewedAt: "2026-09-26", reviewedBy: "Synthetic reviewer" },
+        filing: { id: filingId, personId: "person-ferdinand-marcos-jr", filerName: "SYNTHETIC", reportingDate: { value: year, precision: "year" }, executionDate: null, receiptDate: null, supersedesFilingId: null },
+        document: { id, filingId, fileName: `${id}.pdf`, mediaType: "application/pdf", byteSize: bytes.byteLength, sha256, originalUrl: "https://example.org/synthetic.pdf", provenanceType: "official_download", provenanceNote: "Synthetic test only", officialReleaseDate: null, acquisitionDate: { value: "2026-09-26", precision: "day" }, archivePublicationDate: `${publication}T10:00:00.000Z`, transcriptionLevel: "document_only" },
+      } }, { bytes, storage });
+    }
+    const archive = createDbArchive(state.db);
+    assert.deepEqual((await archive.readHome()).recentlyAdded.map(row => row.id), ["old-period", "new-period"]);
+    assert.equal((await archive.readHome()).rosters[0].rows[0].documentCount, 2);
+    await applyReviewedManifest(state.db, { id: "publication-correction", version: 1, kind: "correction", payload: {
+      review: { reviewedAt: "2026-10-02", reviewedBy: "Synthetic reviewer" }, target: { type: "source_document", id: "new-period" }, reason: "Synthetic date correction", previousCorrectionId: null,
+      changes: { archivePublicationDate: "2026-10-01T10:00:00.000Z" }, citations: [{ id: "date-proof", title: "Synthetic publication log", url: "https://example.org/log", publisher: "Test", type: "official_record", supports: ["archivePublicationDate"], publishedDate: null }],
+    } });
+    assert.deepEqual((await archive.readHome()).recentlyAdded.map(row => row.id), ["new-period", "old-period"]);
+    const record = (await archive.findPersonBySlug("ferdinand-marcos-jr"))!;
+    assert.equal(record.person.eligibility, "eligible");
+    // Synthetic out-of-band change proves that both home paths use the shared eligibility guard.
+    await state.db.update(tenures).set({ verificationStatus: "unverified" }).where(eq(tenures.id, "tenure-marcos-president-2022"));
+    const unresolved = await archive.readHome();
+    assert.equal(unresolved.recentlyAdded.length, 0); assert.equal(unresolved.rosters[0].rows.length, 1);
+  } finally { await state.close(); }
+});
+
+test("Roster trust boundary rejects unsupported dates, private fields and ineligible or conflicting membership atomically", async () => {
+  const state = await setup();
+  try {
+    const manifest = await json("0005-executive-roster-2026-09-28.json"), payload = manifest.payload;
+    for (const invalid of [{ ...payload, privateContact: "private" }, { ...payload, verifiedAsOf: "2026" }, { ...payload, verifiedAsOf: "2027-01-01" }, { ...payload, members: [] }, { ...payload, members: [payload.members[0], payload.members[0]] }, { ...payload, members: [{ ...payload.members[0], citations: [] }] }]) assert.throws(() => validateReviewedRoster(invalid));
+    await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: "missing-tenure", payload: { ...payload, members: [{ ...payload.members[0], tenureId: "absent" }] } }), /reviewed Tenure/);
+    assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, "missing-tenure"))).length, 0);
+    await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: "changed-citation", payload: { ...payload, members: [{ ...payload.members[0], citations: [{ ...payload.members[0].citations[0], title: "Conflicting source title" }] }] } }), /different immutable metadata/);
+    assert.equal((await state.db.select().from(rosterMembers)).length, 2);
+    assert.throws(() => validateReviewedManifest({ ...manifest, payload: { ...payload, scope: "automatic_live_roster" } }));
+    await rollbackArchive(state.client); await migrateArchive(state.db);
+    assert.equal((await state.db.select().from(rosterMembers)).length, 0);
+    assert.equal(Number((await state.client.execute("pragma foreign_keys")).rows[0].foreign_keys), 1);
+  } finally { await state.close(); }
+});

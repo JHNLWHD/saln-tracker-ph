@@ -19,7 +19,7 @@ test("legacy homepage and profile use one read and keep unreviewed data out of c
     async list() { reads++; return [document, { id: "invalid", data: { name: "Incomplete" } }]; },
     async find(slug) { reads++; return slug === document.id ? document : null; },
   });
-  const home = await archive.readHome();
+  const home = await archive.readLegacyHome();
   assert.equal(reads, 1);
   assert.equal(home.people.length, 1);
   assert.equal(home.people[0].person.id, "durable-id");
@@ -81,7 +81,7 @@ test("route loaders run locally without Firebase and preserve the missing-profil
     const { loader: homeLoader } = await import("../app/routes/home");
     const { loader: profileLoader } = await import("../app/routes/official.$slug");
     assert.deepEqual(await homeLoader({ request: new Request("http://localhost/"), params: {}, context: {} }), {
-      people: [], officials: [],
+      archive: { rosters: [], recentlyAdded: [] }, officials: null,
     });
     await assert.rejects(
       profileLoader({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }),

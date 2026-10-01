@@ -84,6 +84,7 @@ export function createLegacyArchive(reader: LegacyReader) {
     return document ? projectLegacyDocument(document) : null;
   }
   const archive: Archive = {
+    async readHome() { return { rosters: [], recentlyAdded: [] }; },
     async listPeople() {
       // Unreviewed legacy identities cannot enter a public archive directory.
       return [];
@@ -94,5 +95,5 @@ export function createLegacyArchive(reader: LegacyReader) {
     async findSourceDocument() { return null; },
     async findLegacyDocument() { return null; },
   };
-  return { ...archive, readHome, readProfile };
+  return { ...archive, readLegacyHome: readHome, readProfile };
 }

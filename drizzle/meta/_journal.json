@@ -36,6 +36,13 @@
       "when": 1790880798452,
       "tag": "0004_reviewed_identities",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790882571685,
+      "tag": "0005_reviewed_rosters",
+      "breakpoints": true
     }
   ]
 }
