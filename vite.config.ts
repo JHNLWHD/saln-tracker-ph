@@ -13,7 +13,7 @@ export default defineConfig({
   },
   plugins: [reactRouter(), tsconfigPaths(), netlifyPlugin()],
   optimizeDeps: {
-    include: ["currency.js", "recharts", "posthog-js/react"],
+    include: ["currency.js", "posthog-js/react"],
   },
   ssr: {
     noExternal: ['posthog-js', 'posthog-js/react']
