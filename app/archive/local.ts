@@ -1,9 +1,11 @@
 import type { Archive, ArchiveHome, PersonRecord } from "./types";
+import { directoryFromRecords } from './directory';
 
 /** In-memory snapshots make route and domain checks independent of remote services. */
 export function createLocalArchive(records: PersonRecord[] = [], home: ArchiveHome = { rosters: [], recentlyAdded: [] }): Archive {
   const snapshot = structuredClone(records);
   return {
+    async browsePeople(filters) { return directoryFromRecords(snapshot, filters); },
     async readHome() { return structuredClone(home); },
     async listPeople() {
       return structuredClone(snapshot.filter(record => record.person.eligibility === "eligible"));

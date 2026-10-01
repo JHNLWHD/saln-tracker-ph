@@ -165,10 +165,18 @@ export interface IdentityMatch {
 
 export interface Archive {
   readHome(): Promise<ArchiveHome>;
+  browsePeople(filters: DirectoryFilters): Promise<DirectoryResult>;
   listPeople(): Promise<PersonRecord[]>;
   findPersonBySlug(slug: string): Promise<PersonRecord | null>;
   findSourceDocument(sha256: string): Promise<SourceDocument | null>;
   findLegacyDocument(path: string): Promise<SourceDocument | null>;
+}
+
+export interface DirectoryFilters { q: string; office: string; jurisdiction: string; tenure: '' | 'current' | 'former'; documents: '' | 'available' | 'none'; year: string; page: number }
+export interface DirectoryResult {
+  rows: { id: string; slug: string; canonicalName: string; documentCount: number; offices: string[] }[];
+  total: number; page: number; pageSize: number;
+  offices: { id: string; name: string }[]; jurisdictions: { id: string; name: string }[];
 }
 
 export interface RosterSnapshot {
