@@ -311,10 +311,11 @@ test("migration preserves the existing ledger and can reverse populated correcti
     await client.batch((await readFile(new URL("../drizzle/0003_editorial_corrections.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean), "write");
     assert.deepEqual(await db.select().from(manifestApplications), [prior]);
     await client.migrate((await readFile(new URL("../drizzle/0004_reviewed_identities.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
+    await client.migrate((await readFile(new URL("../drizzle/0005_reviewed_rosters.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await applyReviewedManifest(db, person);
     await applyReviewedManifest(db, correction("name-1", "person", "person", { canonicalName: "First correction" }));
     await applyReviewedManifest(db, correction("name-2", "person", "person", { canonicalName: "Second correction" }, ["canonicalName"], "name-1"));
-    const down = await readFile(new URL("../drizzle/0004_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0003_down.sql", import.meta.url), "utf8");
+    const down = await readFile(new URL("../drizzle/0005_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0004_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0003_down.sql", import.meta.url), "utf8");
     await client.migrate(down.split(";").map(sql => sql.trim()).filter(Boolean));
     assert.equal((await db.select().from(manifestApplications)).length, 2);
     await assert.rejects(db.select().from(editorialCorrections));
@@ -322,6 +323,7 @@ test("migration preserves the existing ledger and can reverse populated correcti
     await client.batch((await readFile(new URL("../drizzle/0003_editorial_corrections.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean), "write");
     await client.migrate((await readFile(new URL("../drizzle/0004_reviewed_identities.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await client.execute("CREATE TABLE __drizzle_migrations (id INTEGER PRIMARY KEY, hash TEXT NOT NULL, created_at NUMERIC)");
+    await client.migrate((await readFile(new URL("../drizzle/0005_reviewed_rosters.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await rollbackArchive(client);
     await migrateArchive(db);
     assert.deepEqual(await db.select().from(editorialCorrections), []);

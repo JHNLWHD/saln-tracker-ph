@@ -8,6 +8,7 @@ import { personIsEligible } from "./eligibility";
 import { findPublicSourceDocument, readPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 import { checkCitationMetadata, projectCorrections, readEditorialCorrections } from "./corrections.server";
 import { checkPersonIdentifiers, findPersonIdentifier, identityLineage, readIdentityMatches } from "./identities.server";
+import { readArchiveHome } from "./rosters.server";
 
 /** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
 export async function writeReviewedPerson(tx: ArchiveWriter, record: ReviewedPerson, verifyOnly = false) {
@@ -138,6 +139,7 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
     return record;
   }
   return {
+    readHome() { return readArchiveTransaction(db, readArchiveHome); },
     findSourceDocument(sha256) { return findPublicSourceDocument(db, sha256); },
     async findLegacyDocument(path) {
       return readArchiveTransaction(db, async tx => {

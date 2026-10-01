@@ -19,7 +19,13 @@ export function personIsEligible() {
     inner join ${schema.offices} on ${schema.offices.id} = ${schema.tenures.officeId}
     where ${canonicalPersonId(schema.tenures.personId)} = ${schema.people.id}
       and ${schema.offices.included} = 1 and ${schema.offices.kind} = 'elected'
-      and ${effectiveTenureField("verificationStatus")} != 'unverified'
+      and ${tenureIsVerified()}
+  )`;
+}
+
+/** Correlated with the selected Tenure, including corrected evidence. */
+export function tenureIsVerified() {
+  return sql`${effectiveTenureField("verificationStatus")} != 'unverified'
       and not exists (select 1 from json_each(${effectiveTenureField("disputedFacts")}) where value in ('person','office'))
       and (exists (select 1 from ${schema.tenureCitations}
         inner join ${schema.citations} on ${schema.citations.id} = ${schema.tenureCitations.citationId}
@@ -30,5 +36,5 @@ export function personIsEligible() {
           where ${schema.editorialCorrections.targetType} = 'tenure' and ${schema.editorialCorrections.targetId} = ${schema.tenures.id}
             and exists (select 1 from json_each(source.value, '$.supports') where value = 'person')
             and exists (select 1 from json_each(source.value, '$.supports') where value = 'office')))
-  )`;
+  `;
 }
