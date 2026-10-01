@@ -1,5 +1,4 @@
 import { type ReactNode } from 'react';
-import { Badge } from './Badge';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -14,7 +13,7 @@ export function CollapsibleSection({ title, count, defaultExpanded = false, chil
     <details className={`archive-disclosure ${className}`} open={defaultExpanded}>
       <summary>
         <span>{title}</span>
-        <Badge variant="info">{count} {count === 1 ? 'Person' : 'People'}</Badge>
+        <span className="archive-muted text-sm">{count} {count === 1 ? 'Person' : 'People'}</span>
       </summary>
       <div className="archive-disclosure-content">{children}</div>
     </details>
