@@ -7,6 +7,8 @@ import { personIsEligible, tenureIsVerified as publicTenure } from "./eligibilit
 import { canonicalPersonId } from "./identities.server";
 import * as schema from "./schema";
 import { choice, citation, object, parsePartialDate, text, validateTenureEvidence } from "./validation";
+import { readFinancialSummaries } from "./transcriptions.server";
+import { latestSummaryCandidates } from "../archive/financial";
 
 export interface ReviewedRoster {
   review: { reviewedAt: string; reviewedBy: string };
@@ -119,8 +121,17 @@ export async function readArchiveHome(tx: ArchiveReader): Promise<ArchiveHome> {
       documentCount: sql<number>`(select count(distinct ${schema.sourceDocuments.sha256}) from ${schema.sourceDocuments} inner join ${schema.filings} on ${schema.filings.id} = ${schema.sourceDocuments.filingId} where ${canonicalPersonId(schema.filings.personId)} = ${schema.people.id})`.mapWith(Number),
     }).from(schema.tenures).innerJoin(schema.people, eq(schema.people.id, canonicalPersonId(schema.tenures.personId))).innerJoin(schema.offices, eq(schema.offices.id, schema.tenures.officeId))
       .innerJoin(schema.rosterMembers, and(eq(schema.rosterMembers.tenureId, schema.tenures.id), eq(schema.rosterMembers.snapshotId, snapshot.id)))
-      .where(and(inArray(schema.tenures.id, snapshot.members.map(member => member.tenureId)), personIsEligible(), publicTenure(), eq(schema.offices.included, true), tenureCoversRosterDate(sql`${snapshot.verifiedAsOf}`))).orderBy(schema.rosterMembers.position);
-    rosters.push({ snapshot, omittedMemberCount: memberCount - rows.length, rows: rows.map(row => ({ ...row, latestSummary: null })) });
+      .where(and(inArray(schema.tenures.id, snapshot.members.map(member => member.tenureId)), personIsEligible(), publicTenure(), tenureCoversRosterDate(sql`${snapshot.verifiedAsOf}`), eq(schema.offices.included, true))).orderBy(schema.rosterMembers.position);
+    const filings = await tx.select({ id: schema.filings.id, personId: canonicalPersonId(schema.filings.personId), reportingDate: effectiveField<string>("filing", schema.filings.id, "reportingDate.value", schema.filings.reportingDate) })
+      .from(schema.filings).where(inArray(canonicalPersonId(schema.filings.personId), rows.map(row => row.personId)));
+    const summaries = await readFinancialSummaries(tx, filings.map(filing => filing.id));
+    rosters.push({ snapshot, omittedMemberCount: memberCount - rows.length, rows: rows.map(row => {
+      const latest = latestSummaryCandidates(summaries.flatMap(summary => {
+        const filing = filings.find(filing => filing.id === summary.filingId && filing.personId === row.personId);
+        return filing ? [{ summary, reportingDate: parsePartialDate(filing.reportingDate)! }] : [];
+      }));
+      return { ...row, latestSummary: latest.length === 1 ? latest[0].summary : null, ...(latest.length ? { summaryCount: latest.length, ...(latest.length === 1 ? { summaryReportingDate: latest[0].reportingDate } : {}) } : {}) };
+    }) });
   }
   const recent = tx.select({ id: schema.sourceDocuments.id, sha256: schema.sourceDocuments.sha256, fileName: effectiveField<string>("source_document", schema.sourceDocuments.id, "fileName", schema.sourceDocuments.fileName).as("file_name"),
     archivePublicationDate: effectiveField<string>("source_document", schema.sourceDocuments.id, "archivePublicationDate", schema.sourceDocuments.archivePublicationDate).as("publication_date"),

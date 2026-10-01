@@ -82,7 +82,6 @@ export interface SourceDocument {
   mediaType: string;
   byteSize: number;
   sha256: string;
-  storageKey: string;
   originalUrl: string | null;
   provenanceType: "official_download" | "formal_release" | "preserved_copy";
   provenanceNote: string;
@@ -96,7 +95,7 @@ export interface SourceDocument {
 export interface DeclaredFinancialSummary {
   id: string;
   filingId: string;
-  sourceDocumentId: string;
+  sources: FinancialSummarySources;
   totalAssets: string;
   totalLiabilities: string;
   declaredNetWorth: string;
@@ -104,12 +103,27 @@ export interface DeclaredFinancialSummary {
   reviewedAt: string;
 }
 
-export type CorrectionTargetType = "person" | "tenure" | "filing" | "source_document";
+export type FinancialSummarySources = Record<"totalAssets" | "totalLiabilities" | "declaredNetWorth", { sourceDocumentId: string; location: string }>;
+
+export interface SecondaryReport {
+  id: string;
+  personId: string;
+  title: string;
+  url: string;
+  publisher: string;
+  publishedDate: PartialDate | null;
+  note: string;
+  reviewedAt: string;
+}
+
+export type CorrectionTargetType = "person" | "tenure" | "filing" | "source_document" | "financial_summary" | "secondary_report";
 export type CorrectionChanges = Partial<
   Pick<Person, "canonicalName" | "nameVariants"> &
   Pick<Tenure, "startDate" | "endDate" | "assumptionMethod" | "verificationStatus" | "disputedFacts"> &
   Pick<Filing, "filerName" | "reportingDate" | "executionDate" | "receiptDate"> &
-  Pick<SourceDocument, "fileName" | "originalUrl" | "provenanceType" | "provenanceNote" | "officialReleaseDate" | "acquisitionDate" | "archivePublicationDate">
+  Pick<SourceDocument, "fileName" | "originalUrl" | "provenanceType" | "provenanceNote" | "officialReleaseDate" | "acquisitionDate" | "archivePublicationDate"> &
+  Pick<DeclaredFinancialSummary, "totalAssets" | "totalLiabilities" | "declaredNetWorth" | "sources"> &
+  Pick<SecondaryReport, "title" | "url" | "publisher" | "publishedDate" | "note">
 >;
 
 export interface EditorialCorrection {
@@ -136,6 +150,8 @@ export interface PersonRecord {
   financialSummaries: DeclaredFinancialSummary[];
   editorialCorrections?: EditorialCorrection[];
   identityMatches?: IdentityMatch[];
+  relatedReports?: SecondaryReport[];
+  rosterMemberships?: { snapshotId: string; scope: RosterSnapshot["scope"]; verifiedAsOf: string; tenureId: string }[];
 }
 
 export interface IdentityMatch {
@@ -171,6 +187,8 @@ export interface RosterRow {
   officeName: string;
   documentCount: number;
   latestSummary: DeclaredFinancialSummary | null;
+  summaryReportingDate?: PartialDate;
+  summaryCount?: number;
 }
 
 export interface ArchiveHome {

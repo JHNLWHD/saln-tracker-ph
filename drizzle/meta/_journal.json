@@ -43,6 +43,13 @@
       "when": 1790882571685,
       "tag": "0005_reviewed_rosters",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1790883558326,
+      "tag": "0006_reviewed_transcriptions",
+      "breakpoints": true
     }
   ]
 }
