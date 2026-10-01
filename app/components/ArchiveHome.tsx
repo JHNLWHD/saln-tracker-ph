@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import type { ArchiveHome as HomeData } from '../archive/types';
 import { ArchiveTable, EmptyState, EvidenceRow } from './ui/Archive';
+import { formatAmount } from '../archive/financial';
 
 const scopeLabels = { executive: 'President and Vice President', senate: 'Senate', speaker: 'Speaker of the House', house: 'House of Representatives', local: 'Local elected offices' };
 
@@ -21,7 +22,7 @@ export function ArchiveHome({ data }: { data: HomeData }) {
         <tbody>{rows.map(row => <tr key={row.tenureId}>
           <th scope="row" className="min-w-[12rem]"><Link to={`/official/${row.slug}`} className="underline text-primary-700">{row.canonicalName}</Link><p className="archive-muted font-normal">{row.officeName}</p></th>
           <td><p>{row.documentCount.toLocaleString('en-PH')}</p>{row.documentCount === 0 && <p className="archive-muted">No SALN currently in the archive</p>}</td>
-          <td className="min-w-[12rem]">{row.latestSummary ? <p>Declared net worth: ₱{row.latestSummary.declaredNetWorth}</p> : <p>Totals not transcribed</p>}</td>
+          <td className="min-w-[12rem]">{row.latestSummary ? <div className="space-y-1"><p>Total assets: {formatAmount(row.latestSummary.totalAssets)}</p><p>Total liabilities: {formatAmount(row.latestSummary.totalLiabilities)}</p><p>Declared net worth: {formatAmount(row.latestSummary.declaredNetWorth)}</p><p className="archive-muted">Reporting Date: {row.summaryReportingDate?.value} ({row.summaryReportingDate?.precision} precision)</p></div> : <p>{(row.summaryCount ?? 0) > 1 ? 'Multiple reviewed summaries; inspect the Filings' : 'Totals not transcribed'}</p>}</td>
         </tr>)}</tbody>
       </ArchiveTable>
       <details><summary className="cursor-pointer underline text-primary-700">Roster evidence</summary><ul className="mt-3 space-y-2">{[...new Map(snapshot.members.flatMap(member => member.citations).map(source => [source.id, source])).values()].map(source => <li key={source.id}><a href={source.url} className="underline text-primary-700">{source.title}</a><p className="archive-muted text-sm">{source.publisher} · {source.publishedDate?.value ?? 'Publication date not established'}</p></li>)}</ul></details>

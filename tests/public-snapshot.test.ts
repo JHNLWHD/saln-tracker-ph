@@ -96,7 +96,8 @@ test("snapshot bytes are stable across reruns and insertion order, with a conten
     assert.deepEqual(data.citations[0].publishedDate, { value: "2020-07", precision: "month" });
     assert.deepEqual(data.jurisdictions.map(row => row.id), ["city", "country"]);
     assert.deepEqual(data.jurisdictionRelationships, [{ fromId: "city", toId: "country", kind: "geographic" }]);
-    assert.doesNotMatch(result.snapshotJson, /storageKey|reviewedBy|generatedAt|financialSummaries|private-reviewer/);
+    assert.doesNotMatch(result.snapshotJson, /storageKey|reviewedBy|generatedAt|private-reviewer/);
+    assert.deepEqual(result.snapshot.data.financialSummaries, []);
     await first.db.update(schema.people).set({ canonicalName: "Reviewed corrected name" }).where(eq(schema.people.id, "person-a"));
     assert.notEqual((await exportPublicSnapshot(first.db)).snapshot.version, result.snapshot.version);
   } finally { await first.close(); await second.close(); }
