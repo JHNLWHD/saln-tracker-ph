@@ -1,0 +1,785 @@
+{
+  "id": "identities-legacy-public-2026-09-26",
+  "version": 1,
+  "kind": "identities",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex identity and link review"
+    },
+    "legacyPeople": [
+      {
+        "person": {
+          "id": "person-legacy-9d3d9a553aea3124",
+          "slug": "aimee-ferolino-ampoloquio",
+          "canonicalName": "Aimee Ferolino-Ampoloquio",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-002"
+        ],
+        "slugs": [
+          "aimee-ferolino-ampoloquio"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/aimee-ferolino-ampoloquio"
+      },
+      {
+        "person": {
+          "id": "person-legacy-23d6d3a71675897e",
+          "slug": "aimee-torrefranca-neri",
+          "canonicalName": "Aimee Torrefranca-Neri",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-004"
+        ],
+        "slugs": [
+          "aimee-torrefranca-neri"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/aimee-torrefranca-neri"
+      },
+      {
+        "person": {
+          "id": "person-legacy-5fdbed715ac5baaf",
+          "slug": "alan-peter-cayetano",
+          "canonicalName": "Alan Peter Cayetano",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-001"
+        ],
+        "slugs": [
+          "alan-peter-cayetano"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/alan-peter-cayetano"
+      },
+      {
+        "person": {
+          "id": "person-legacy-ec481c54adf6cc4d",
+          "slug": "antonio-trillanes-iv",
+          "canonicalName": "Antonio Trillanes IV",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-former-002"
+        ],
+        "slugs": [
+          "antonio-trillanes-iv"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/antonio-trillanes-iv"
+      },
+      {
+        "person": {
+          "id": "person-legacy-498f481747da4da4",
+          "slug": "bam-aquino",
+          "canonicalName": "Bam Aquino",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-014"
+        ],
+        "slugs": [
+          "bam-aquino"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/bam-aquino"
+      },
+      {
+        "person": {
+          "id": "person-legacy-58186aa5e518941b",
+          "slug": "benigno-simeon-noynoy-cojuangco-aquino-iii",
+          "canonicalName": "Benigno Simeon \"Noynoy\" Cojuangco Aquino III",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "pres-former-002"
+        ],
+        "slugs": [
+          "benigno-simeon-noynoy-cojuangco-aquino-iii"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/benigno-simeon-noynoy-cojuangco-aquino-iii"
+      },
+      {
+        "person": {
+          "id": "person-legacy-868d59f645633c01",
+          "slug": "bong-go",
+          "canonicalName": "Bong Go",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-013"
+        ],
+        "slugs": [
+          "bong-go"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/bong-go"
+      },
+      {
+        "person": {
+          "id": "person-legacy-27b9527c086d299e",
+          "slug": "camille-villar",
+          "canonicalName": "Camille Villar",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-022"
+        ],
+        "slugs": [
+          "camille-villar"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/camille-villar"
+      },
+      {
+        "person": {
+          "id": "person-legacy-538c3fb72989bc8e",
+          "slug": "douglas-michael-mallillin",
+          "canonicalName": "Douglas Michael Mallillin",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "douglas-michael-mallillin",
+          "malilin"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/douglas-michael-mallillin"
+      },
+      {
+        "person": {
+          "id": "person-legacy-76c116fa899e8ecc",
+          "slug": "ernesto-ferdinand-f-maceda-jr",
+          "canonicalName": "Ernesto Ferdinand F. Maceda Jr.",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-006"
+        ],
+        "slugs": [
+          "ernesto-ferdinand-f-maceda-jr"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/ernesto-ferdinand-f-maceda-jr"
+      },
+      {
+        "person": {
+          "id": "person-legacy-678dfc767b7c77c0",
+          "slug": "erwin-tulfo",
+          "canonicalName": "Erwin Tulfo",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-016"
+        ],
+        "slugs": [
+          "erwin-tulfo"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/erwin-tulfo"
+      },
+      {
+        "person": {
+          "id": "person-legacy-ce5248cf109dbbb8",
+          "slug": "ferdinand-bongbong-romualdez-marcos-jr",
+          "canonicalName": "Ferdinand \"Bongbong\" Romualdez Marcos Jr.",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "pres-001"
+        ],
+        "slugs": [
+          "ferdinand-bongbong-romualdez-marcos-jr"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/ferdinand-bongbong-romualdez-marcos-jr"
+      },
+      {
+        "person": {
+          "id": "person-legacy-b70bfe6aad6f3fcd",
+          "slug": "francis-escudero",
+          "canonicalName": "Francis Escudero",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-003"
+        ],
+        "slugs": [
+          "francis-escudero"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/francis-escudero"
+      },
+      {
+        "person": {
+          "id": "person-legacy-3fa1604461106c0b",
+          "slug": "gamaliel-a-cordoba",
+          "canonicalName": "Gamaliel A. Cordoba",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "coa-001"
+        ],
+        "slugs": [
+          "gamaliel-a-cordoba"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/gamaliel-a-cordoba"
+      },
+      {
+        "person": {
+          "id": "person-legacy-b4e6313153f9aa8a",
+          "slug": "george-erwin-m-garcia",
+          "canonicalName": "George Erwin M. Garcia",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-001"
+        ],
+        "slugs": [
+          "george-erwin-m-garcia"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/george-erwin-m-garcia"
+      },
+      {
+        "person": {
+          "id": "person-legacy-ebbe54bb4c7facba",
+          "slug": "imee-marcos",
+          "canonicalName": "Imee Marcos",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-024"
+        ],
+        "slugs": [
+          "imee-marcos"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/imee-marcos"
+      },
+      {
+        "person": {
+          "id": "person-legacy-28bc045d892f40fc",
+          "slug": "jinggoy-estrada",
+          "canonicalName": "Jinggoy Estrada",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-004"
+        ],
+        "slugs": [
+          "jinggoy-estrada"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/jinggoy-estrada"
+      },
+      {
+        "person": {
+          "id": "person-legacy-445ac73019df28d3",
+          "slug": "joel-villanueva",
+          "canonicalName": "Joel Villanueva",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-010"
+        ],
+        "slugs": [
+          "joel-villanueva"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/joel-villanueva"
+      },
+      {
+        "person": {
+          "id": "person-legacy-319cde5c2477b5ad",
+          "slug": "juan-miguel-zubiri",
+          "canonicalName": "Juan Miguel Zubiri",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-012"
+        ],
+        "slugs": [
+          "juan-miguel-zubiri"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/juan-miguel-zubiri"
+      },
+      {
+        "person": {
+          "id": "person-legacy-793207aa53cc4fc1",
+          "slug": "jv-ejercito",
+          "canonicalName": "JV Ejercito",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-002"
+        ],
+        "slugs": [
+          "jv-ejercito"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/jv-ejercito"
+      },
+      {
+        "person": {
+          "id": "person-legacy-79ee2f48ed376fba",
+          "slug": "karlo-alexei-b-nograles",
+          "canonicalName": "Karlo Alexei B. Nograles",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "csc-001"
+        ],
+        "slugs": [
+          "karlo-alexei-b-nograles"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/karlo-alexei-b-nograles"
+      },
+      {
+        "person": {
+          "id": "person-legacy-e330e30061a8e05b",
+          "slug": "kiko-pangilinan",
+          "canonicalName": "Kiko Pangilinan",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-017"
+        ],
+        "slugs": [
+          "kiko-pangilinan"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/kiko-pangilinan"
+      },
+      {
+        "person": {
+          "id": "person-legacy-b73c60cc0c7736ff",
+          "slug": "leila-de-lima",
+          "canonicalName": "Leila de Lima",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-former-001"
+        ],
+        "slugs": [
+          "leila-de-lima"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/leila-de-lima"
+      },
+      {
+        "person": {
+          "id": "person-legacy-c3231e185dd22e33",
+          "slug": "lito-lapid",
+          "canonicalName": "Lito Lapid",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-023"
+        ],
+        "slugs": [
+          "lito-lapid"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/lito-lapid"
+      },
+      {
+        "person": {
+          "id": "person-legacy-11c2cbd87a3ec403",
+          "slug": "loren-legarda",
+          "canonicalName": "Loren Legarda",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-007"
+        ],
+        "slugs": [
+          "loren-legarda"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/loren-legarda"
+      },
+      {
+        "person": {
+          "id": "person-legacy-7efa0a4aa27373a6",
+          "slug": "luis-meinrado-pangulayan",
+          "canonicalName": "Luis Meinrado Pangulayan",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "luis-meinrado-pangulayan",
+          "pangulayan"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/luis-meinrado-pangulayan"
+      },
+      {
+        "person": {
+          "id": "person-legacy-ac046f30dfc16bf5",
+          "slug": "maria-leonor-leni-gerona-robredo",
+          "canonicalName": "Maria Leonor \"Leni\" Gerona Robredo",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "vp-former-001"
+        ],
+        "slugs": [
+          "maria-leonor-leni-gerona-robredo"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/maria-leonor-leni-gerona-robredo"
+      },
+      {
+        "person": {
+          "id": "person-legacy-313874c8b851d92d",
+          "slug": "maria-norina-tangaro-casingal",
+          "canonicalName": "Maria Norina Tangaro-Casingal",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "casingal",
+          "maria-norina-tangaro-casingal"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/maria-norina-tangaro-casingal"
+      },
+      {
+        "person": {
+          "id": "person-legacy-71c7fec7ea76dd68",
+          "slug": "marilyn-barua-yap",
+          "canonicalName": "Marilyn Barua-Yap",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "barua-yap",
+          "marilyn-barua-yap"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/marilyn-barua-yap"
+      },
+      {
+        "person": {
+          "id": "person-legacy-53a67dd214c5ebe5",
+          "slug": "mario-lipana",
+          "canonicalName": "Mario Lipana",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "lipana",
+          "mario-lipana"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/mario-lipana"
+      },
+      {
+        "person": {
+          "id": "person-legacy-b91afebaee5afaa9",
+          "slug": "mark-villar",
+          "canonicalName": "Mark Villar",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-011"
+        ],
+        "slugs": [
+          "mark-villar"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/mark-villar"
+      },
+      {
+        "person": {
+          "id": "person-legacy-f3d67c5db726dd66",
+          "slug": "miriam-defensor-santiago",
+          "canonicalName": "Miriam Defensor Santiago",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-former-003"
+        ],
+        "slugs": [
+          "miriam-defensor-santiago"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/miriam-defensor-santiago"
+      },
+      {
+        "person": {
+          "id": "person-legacy-a2ab3e7844e0d2fb",
+          "slug": "nelson-s-celis",
+          "canonicalName": "Nelson S. Celis",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-005"
+        ],
+        "slugs": [
+          "nelson-s-celis"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/nelson-s-celis"
+      },
+      {
+        "person": {
+          "id": "person-legacy-0c253d86ab8f8472",
+          "slug": "noli-rafol-pipo",
+          "canonicalName": "Noli Rafol Pipo",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "noli-rafol-pipo",
+          "pipo"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/noli-rafol-pipo"
+      },
+      {
+        "person": {
+          "id": "person-legacy-63f7c9b3ea4750c9",
+          "slug": "panfilo-lacson",
+          "canonicalName": "Panfilo Lacson",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-019"
+        ],
+        "slugs": [
+          "panfilo-lacson"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/panfilo-lacson"
+      },
+      {
+        "person": {
+          "id": "person-legacy-09e4c78f1db94c85",
+          "slug": "pia-cayetano",
+          "canonicalName": "Pia Cayetano",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-021"
+        ],
+        "slugs": [
+          "pia-cayetano"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/pia-cayetano"
+      },
+      {
+        "person": {
+          "id": "person-legacy-bf0fa9d802600fe1",
+          "slug": "raffy-tulfo",
+          "canonicalName": "Raffy Tulfo",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-009"
+        ],
+        "slugs": [
+          "raffy-tulfo"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/raffy-tulfo"
+      },
+      {
+        "person": {
+          "id": "person-legacy-452693862ce8d8b7",
+          "slug": "rey-e-bulay",
+          "canonicalName": "Rey E. Bulay",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "comelec-003"
+        ],
+        "slugs": [
+          "rey-e-bulay"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/rey-e-bulay"
+      },
+      {
+        "person": {
+          "id": "person-legacy-cf47f8a3dfd5e11c",
+          "slug": "richard-p-palpal-latoc",
+          "canonicalName": "Richard P. Palpal-latoc",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "chr-001"
+        ],
+        "slugs": [
+          "richard-p-palpal-latoc"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/richard-p-palpal-latoc"
+      },
+      {
+        "person": {
+          "id": "person-legacy-3eb6409efdf5b940",
+          "slug": "legacy-risa-hontiveros",
+          "canonicalName": "Risa Hontiveros",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-006"
+        ],
+        "slugs": [
+          "risa-hontiveros"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/risa-hontiveros"
+      },
+      {
+        "person": {
+          "id": "person-legacy-86abb38806e8baaa",
+          "slug": "robin-padilla",
+          "canonicalName": "Robin Padilla",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-008"
+        ],
+        "slugs": [
+          "robin-padilla"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/robin-padilla"
+      },
+      {
+        "person": {
+          "id": "person-legacy-8dc1199ade527d22",
+          "slug": "rodante-marcoleta",
+          "canonicalName": "Rodante Marcoleta",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-018"
+        ],
+        "slugs": [
+          "rodante-marcoleta"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/rodante-marcoleta"
+      },
+      {
+        "person": {
+          "id": "person-legacy-f5ca82aaac3b41d7",
+          "slug": "rodrigo-roa-duterte",
+          "canonicalName": "Rodrigo Roa Duterte",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "pres-former-001"
+        ],
+        "slugs": [
+          "rodrigo-roa-duterte"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/rodrigo-roa-duterte"
+      },
+      {
+        "person": {
+          "id": "person-legacy-aac2513583abdb68",
+          "slug": "ronald-bato-dela-rosa",
+          "canonicalName": "Ronald \"Bato\" dela Rosa",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-015"
+        ],
+        "slugs": [
+          "ronald-bato-dela-rosa"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/ronald-bato-dela-rosa"
+      },
+      {
+        "person": {
+          "id": "person-legacy-c3a9e17ea8d8fa1c",
+          "slug": "ryan-alvin-acosta",
+          "canonicalName": "Ryan Alvin Acosta",
+          "nameVariants": []
+        },
+        "identifiers": [],
+        "slugs": [
+          "acosta",
+          "ryan-alvin-acosta"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/ryan-alvin-acosta"
+      },
+      {
+        "person": {
+          "id": "person-legacy-79d57a4dc94c60e4",
+          "slug": "samuel-r-martires",
+          "canonicalName": "Samuel R. Martires",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "omb-001"
+        ],
+        "slugs": [
+          "samuel-r-martires"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/samuel-r-martires"
+      },
+      {
+        "person": {
+          "id": "person-legacy-86726305bdc8e680",
+          "slug": "sara-zimmerman-duterte",
+          "canonicalName": "Sara Zimmerman Duterte",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "vp-001"
+        ],
+        "slugs": [
+          "sara-zimmerman-duterte"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/sara-zimmerman-duterte"
+      },
+      {
+        "person": {
+          "id": "person-legacy-3552a05784065a37",
+          "slug": "tito-sotto",
+          "canonicalName": "Tito Sotto",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-020"
+        ],
+        "slugs": [
+          "tito-sotto"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/tito-sotto"
+      },
+      {
+        "person": {
+          "id": "person-legacy-18eff8b6ce250cae",
+          "slug": "win-gatchalian",
+          "canonicalName": "Win Gatchalian",
+          "nameVariants": []
+        },
+        "identifiers": [
+          "sen-005"
+        ],
+        "slugs": [
+          "win-gatchalian"
+        ],
+        "sourceUrl": "https://saln.bettergov.ph/official/win-gatchalian"
+      }
+    ],
+    "matches": [
+      {
+        "id": "identity-legacy-ferdinand-marcos-jr",
+        "fromPersonId": "person-legacy-ce5248cf109dbbb8",
+        "toPersonId": "person-ferdinand-marcos-jr",
+        "reason": "The exact legacy record names Ferdinand \"Bongbong\" Romualdez Marcos Jr. The PCO inauguration page explicitly uses that full name and the canonical Ferdinand R. Marcos Jr. for the same President. This match preserves identity and former URLs only; it does not approve legacy Filings or totals.",
+        "citations": [
+          {
+            "id": "evidence-marcos-inauguration-2022",
+            "title": "Inauguration of Ferdinand Romualdez Marcos Jr.",
+            "url": "https://pco.gov.ph/inauguration/pbbm/",
+            "publisher": "Presidential Communications Office",
+            "type": "official_record",
+            "supports": [
+              "identity"
+            ],
+            "publishedDate": null
+          }
+        ]
+      },
+      {
+        "id": "identity-legacy-risa-hontiveros",
+        "fromPersonId": "person-legacy-3eb6409efdf5b940",
+        "toPersonId": "person-risa-hontiveros",
+        "reason": "The exact legacy record names Risa Hontiveros. The attributable PNA report identifies Senator Risa Hontiveros and her SALN release. This reviewed Person match preserves the former record and identifiers only; its stored SALN share link is not treated as the acquired release scans.",
+        "citations": [
+          {
+            "id": "evidence-hontiveros-senator-pna-2025-10-20",
+            "title": "Senate outlines procedures for requesting SALN",
+            "url": "https://www.pna.gov.ph/articles/1261401",
+            "publisher": "Philippine News Agency",
+            "type": "public_article",
+            "supports": [
+              "identity"
+            ],
+            "publishedDate": {
+              "value": "2025-10-20",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ],
+    "documents": []
+  }
+}

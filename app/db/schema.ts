@@ -141,13 +141,13 @@ export const sourceDocuments = sqliteTable("source_documents", {
 export const manifestApplications = sqliteTable("manifest_applications", {
   id: text("id").primaryKey(),
   version: integer("version").notNull(),
-  kind: text("kind", { enum: ["person", "filing", "correction"] }).notNull(),
+  kind: text("kind", { enum: ["person", "filing", "correction", "identities"] }).notNull(),
   digest: text("digest").notNull(),
   canonicalPayload: text("canonical_payload").notNull(),
   appliedAt: text("applied_at").notNull(),
 }, (t) => [
   check("manifest_version", sql`${t.version} = 1`),
-  check("manifest_kind", sql`${t.kind} in ('person','filing','correction')`),
+  check("manifest_kind", sql`${t.kind} in ('person','filing','correction','identities')`),
   check("manifest_digest", sql`length(${t.digest}) = 64 and ${t.digest} not glob '*[^0-9a-f]*'`),
   check("manifest_payload", sql`json_valid(${t.canonicalPayload}) and json_type(${t.canonicalPayload}) = 'object'`),
 ]);
@@ -173,3 +173,33 @@ export const editorialCorrections = sqliteTable("editorial_corrections", {
   check("correction_previous_values", sql`json_valid(${t.previousValues}) and json_type(${t.previousValues}) = 'object'`),
   check("correction_citations", sql`json_valid(${t.citations}) and json_type(${t.citations}) = 'array' and json_array_length(${t.citations}) > 0`),
 ]);
+
+export const identityMatches = sqliteTable("identity_matches", {
+  id: text("id").primaryKey(),
+  fromPersonId: text("from_person_id").notNull().unique().references(() => people.id),
+  toPersonId: text("to_person_id").notNull().references(() => people.id),
+  manifestId: text("manifest_id").notNull().references(() => manifestApplications.id),
+  reason: text("reason").notNull(),
+  reviewedAt: text("reviewed_at").notNull(),
+  citations: text("citations", { mode: "json" }).$type<Citation[]>().notNull(),
+}, (t) => [
+  index("identity_match_target").on(t.toPersonId),
+  check("identity_match_distinct", sql`${t.fromPersonId} != ${t.toPersonId}`),
+  check("identity_match_reason", sql`length(trim(${t.reason})) > 0`),
+  check("identity_match_citations", sql`json_valid(${t.citations}) and json_type(${t.citations}) = 'array' and json_array_length(${t.citations}) > 0`),
+]);
+
+export const personAliases = sqliteTable("person_aliases", {
+  kind: text("kind", { enum: ["slug", "identifier"] }).notNull(),
+  value: text("value").notNull(),
+  personId: text("person_id").notNull().references(() => people.id),
+  sourceUrl: text("source_url").notNull(),
+  manifestId: text("manifest_id").notNull().references(() => manifestApplications.id),
+}, (t) => [primaryKey({ columns: [t.kind, t.value] }), index("person_alias_owner").on(t.personId), check("person_alias_kind", sql`${t.kind} in ('slug','identifier')`)]);
+
+export const legacyDocuments = sqliteTable("legacy_documents", {
+  path: text("path").primaryKey(),
+  sourceDocumentId: text("source_document_id").notNull().references(() => sourceDocuments.id),
+  sha256: text("sha256").notNull(),
+  manifestId: text("manifest_id").notNull().references(() => manifestApplications.id),
+});

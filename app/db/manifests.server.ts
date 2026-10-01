@@ -10,18 +10,21 @@ import { manifestApplications } from "./schema";
 import { choice, object, text, validateReviewedPerson, type ReviewedPerson } from "./validation";
 import { validateReviewedCorrection, type ReviewedCorrection } from "./correction-validation";
 import { writeReviewedCorrection } from "./corrections.server";
+import { legacyPersonRecord, validateReviewedIdentities, type ReviewedIdentities } from "./identity-validation";
+import { writeReviewedIdentities } from "./identities.server";
 
 export type ReviewedManifest = { id: string; version: 1 } & (
-  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling } | { kind: "correction"; payload: ReviewedCorrection }
+  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling } | { kind: "correction"; payload: ReviewedCorrection } | { kind: "identities"; payload: ReviewedIdentities }
 );
 
 export function validateReviewedManifest(value: unknown): ReviewedManifest {
   const input = object(value, ["id", "version", "kind", "payload"], "manifest");
   const id = text(input.id, "manifest.id");
   if (input.version !== 1) throw new Error("Unsupported manifest version");
-  const kind = choice(input.kind, ["person", "filing", "correction"], "manifest.kind");
+  const kind = choice(input.kind, ["person", "filing", "correction", "identities"], "manifest.kind");
   if (kind === "person") return { id, version: 1, kind, payload: validateReviewedPerson(input.payload) };
   if (kind === "filing") return { id, version: 1, kind, payload: validateReviewedFiling(input.payload) };
+  if (kind === "identities") return { id, version: 1, kind, payload: validateReviewedIdentities(input.payload) };
   return { id, version: 1, kind, payload: validateReviewedCorrection(input.payload) };
 }
 
@@ -59,7 +62,11 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
     if (!existing) await tx.insert(manifestApplications).values({ id: manifest.id, version: manifest.version, kind: manifest.kind, digest, canonicalPayload, appliedAt: new Date().toISOString() });
     if (manifest.kind === "person") await writeReviewedPerson(tx, manifest.payload, Boolean(existing));
     else if (manifest.kind === "filing") await writeReviewedFiling(tx, manifest.payload, Boolean(existing));
-    else await writeReviewedCorrection(tx, manifest.id, manifest.payload, Boolean(existing));
+    else if (manifest.kind === "correction") await writeReviewedCorrection(tx, manifest.id, manifest.payload, Boolean(existing));
+    else {
+      for (const entry of manifest.payload.legacyPeople) await writeReviewedPerson(tx, legacyPersonRecord(manifest.payload.review, entry), Boolean(existing));
+      await writeReviewedIdentities(tx, manifest.id, manifest.payload, Boolean(existing));
+    }
     return { manifestId: manifest.id, digest, status: existing ? "unchanged" as const : "applied" as const };
   });
 }

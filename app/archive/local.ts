@@ -8,12 +8,13 @@ export function createLocalArchive(records: PersonRecord[] = []): Archive {
       return structuredClone(snapshot.filter(record => record.person.eligibility === "eligible"));
     },
     async findPersonBySlug(slug) {
-      return structuredClone(snapshot.find(record => record.person.slug === slug ||
+      return structuredClone(snapshot.find(record => record.person.id === slug || record.person.slug === slug ||
         record.person.legacySlugs.includes(slug)) ?? null);
     },
     async findSourceDocument(sha256) {
       return structuredClone(snapshot.filter(record => record.person.eligibility === "eligible")
         .flatMap(record => record.sourceDocuments).find(document => document.sha256 === sha256) ?? null);
     },
+    async findLegacyDocument() { return null; },
   };
 }
