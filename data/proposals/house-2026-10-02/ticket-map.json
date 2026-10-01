@@ -1,0 +1,1352 @@
+{
+  "version": 1,
+  "status": "proposal_not_approved",
+  "approvalRef": null,
+  "asOf": "2026-10-02",
+  "source": {
+    "publisher": "House of Representatives",
+    "title": "20th Congress: House Members",
+    "url": "https://congress.gov.ph/house-members",
+    "verificationDate": "2026-10-02",
+    "method": "Visible All Representatives List table in Chrome; inactive section expanded separately. Source Name is the visible name heading; the Speaker label is a separate role. This is a DOM projection, not preserved original HTML or a SALN Source Document.",
+    "membersSha256": "1259f6d1bd2e0a36dc191ee462b8bd0faa38b45b6539b61eddb1b7ab041e82ec",
+    "inactiveSha256": "7eed006f698b82a10df6cc5ceb2d5c88c42025b0d16af2209d27c0a84c1954cf"
+  },
+  "counts": {
+    "currentMembers": 317,
+    "districtRepresentatives": 253,
+    "partyListRepresentatives": 64,
+    "displayedTotalSeats": 318,
+    "inactiveExcluded": 7
+  },
+  "membershipReview": "Complete observed current-member candidate set. A canonical manually reviewed Roster Snapshot remains blocked by HOUSE-00 identity/geography review and all batch acceptance. The source projection cannot be imported as a reviewed manifest.",
+  "typing": {
+    "District": {
+      "constituencyKind": "legislative_district",
+      "jurisdictionKind": "legislative_district",
+      "parentRule": "Review province/city Jurisdictions and geographic/administrative relationships separately. Reuse existing approved IDs; do not derive parents from the source string."
+    },
+    "Party-list": {
+      "constituencyKind": "party_list",
+      "jurisdictionKind": "country",
+      "jurisdictionId": "jurisdiction-ph",
+      "parentRule": "One shared party-list Constituency per organization; no numbered seat or invented organization Jurisdiction."
+    }
+  },
+  "existingIdentityReuse": [
+    {
+      "sourceMemberId": "D027",
+      "personId": "person-faustino-bojie-dy-iii",
+      "tenureId": "tenure-dy-isabela-6-representative-evidenced-2025",
+      "constituencyId": "constituency-isabela-6",
+      "evidenceManifest": "data/reviewed/stage-one-completion/14-faustino-bojie-dy-iii.json",
+      "note": "Source member D027 is the reviewed Speaker Bojie Dy, Isabela 6th. J027 (Faustino Michael Carlos III, Isabela 5th) remains a different Person. Do not create another Bojie Dy Person or overwrite his Speaker Tenure."
+    }
+  ],
+  "reviewFlags": [
+    {
+      "sourceMemberIds": [
+        "L042",
+        "J013"
+      ],
+      "fact": "constituency",
+      "status": "unresolved",
+      "note": "L042 is labeled Iloilo City, 2nd District in both directory and member profile; J013 is labeled Iloilo City, Lone District. Retain both source labels. HOUSE-00 must resolve the geography with attributable evidence before any approved mapping or import. Profile local-bill titles mention Second District of Iloilo; they do not resolve the office claim by themselves.",
+      "urls": [
+        "https://congress.gov.ph/house-members/view/L042",
+        "https://congress.gov.ph/house-members/view/J013"
+      ]
+    },
+    {
+      "sourceMemberIds": [
+        "J038"
+      ],
+      "fact": "current_roster_exclusion",
+      "status": "source_observed",
+      "note": "The source lists Gato under Inactive Members and no active Batanes representative. Record the seat/count difference. Do not infer a successor, vacancy start, death date or actual Tenure end from this directory."
+    }
+  ],
+  "limits": {
+    "peoplePerBatch": 12,
+    "initialFilingsPerBatch": 12,
+    "sourceDocumentsPerBatch": 12,
+    "fullItemization": "deferred"
+  },
+  "acceptanceCriteria": {
+    "evidence": "Review attributable Person and Office evidence for each member; retain exact source names as Name Variants only after an Identity Match. Preserve unknown actual Tenure dates and Assumption Method. Resolve source conflicts with citations.",
+    "manifest": "Use reviewed immutable Person and Filing manifests, fixed shared IDs and the legacy identity index from HOUSE-00, plus reviewed batch Person/Tenure IDs and append-only corrections. Reuse the House membership Office and existing People/Tenures. Import once and replay without a data change.",
+    "profile": "Check each canonical profile and direct legacy/alias redirect. Show citations, constituency, date precision and an honest Archive Gap. Keep Chamber Leadership Tenures separate from membership.",
+    "document": "Inventory candidate SALNs. Acquire at most 12 original Source Documents for at most 12 initial Filings in this ticket. Verify provenance, Filer Name, Reporting Date, checksum, byte size and immutable R2 key; bind any summary to exact pages. Record zero trustworthy documents explicitly. Propose a separate approved follow-up for overflow; no reencoded scans or rebuilt PDFs.",
+    "reconciliation": "Account for every sourceMemberId exactly once against the dated source capture and reviewed Person/Tenure mapping. Compare manifest ledger, snapshot counts, source checksums, rejected candidates and profile resolutions. Document expected changes separately from shared baseline totals.",
+    "staging": "Import into isolated develop with operator credentials. Verify exact release revision, database/R2 separation, read-only runtime, snapshot replay, profile routes, document open/download bytes and private Source Tip exclusion. Do not publish a partial House Roster Snapshot as the complete House scope.",
+    "approval": "Attach the reconciliation and staging evidence. Obtain explicit user acceptance before production publication. Follow the proven #65/#66 recovery and cutover workflow. Serialize shared imports and release approval; parallel work is evidence/manifest preparation only."
+  },
+  "foundation": {
+    "id": "HOUSE-00",
+    "title": "[Data] Review the complete House roster, identities and geography",
+    "blockedBy": [
+      "#66",
+      "#68"
+    ],
+    "acceptance": [
+      "Refresh and manually review the complete dated source projection; record all active and inactive changes and account for the 317/318 difference without inventing a holder.",
+      "Resolve L042/J013 constituency labels with attributable evidence; assign typed Jurisdictions, Constituencies and separate geographic/administrative relationships.",
+      "Freeze shared Office/Jurisdiction/Constituency IDs and publish the existing approved Person/legacy identity index. Reuse D027 explicitly. Each bounded batch reviews at most 12 Person/Tenure mappings, canonical names and aliases against this baseline. Source member IDs are source keys, never Person IDs. An ambiguous cross-batch identity creates a blocking edge before parallel preparation resumes.",
+      "Store a reviewed shared geography mapping, legacy identity index and source citation plan. Preserve actual Tenure start/end dates as unknown unless separately evidenced; scheduled Electoral Term dates do not prove actual Tenure bounds.",
+      "Obtain user acceptance of the source roster and shared mapping before any batch import. This proposal does not supply that acceptance."
+    ]
+  },
+  "batches": [
+    {
+      "id": "HOUSE-D01",
+      "title": "[Data] House district batch 01: Abra through Antique",
+      "sourceType": "District",
+      "groups": [
+        "Abra",
+        "Agusan del Norte",
+        "Agusan del Sur",
+        "Aklan",
+        "Albay",
+        "Antipolo City",
+        "Antique"
+      ],
+      "sourceMemberIds": [
+        "I098",
+        "K023",
+        "J014",
+        "J057",
+        "L061",
+        "E048",
+        "C065",
+        "L057",
+        "L072",
+        "E052",
+        "L104",
+        "K047"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D02",
+      "title": "[Data] House district batch 02: Apayao through Bataan",
+      "sourceType": "District",
+      "groups": [
+        "Apayao",
+        "Aurora",
+        "Bacolod City",
+        "Baguio City",
+        "Basilan",
+        "Bataan"
+      ],
+      "sourceMemberIds": [
+        "G013",
+        "J009",
+        "G015",
+        "D024",
+        "L002",
+        "L102",
+        "E031",
+        "K037"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D03",
+      "title": "[Data] House district batch 03: Batangas through Bohol",
+      "sourceType": "District",
+      "groups": [
+        "Batangas",
+        "Benguet",
+        "Biliran",
+        "Biñan City",
+        "Bohol"
+      ],
+      "sourceMemberIds": [
+        "L054",
+        "K048",
+        "L023",
+        "L014",
+        "L030",
+        "L078",
+        "J118",
+        "E036",
+        "L031",
+        "L091",
+        "K014",
+        "J075"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D04",
+      "title": "[Data] House district batch 04: Bukidnon through Butuan",
+      "sourceType": "District",
+      "groups": [
+        "Bukidnon",
+        "Bulacan",
+        "Butuan"
+      ],
+      "sourceMemberIds": [
+        "K005",
+        "J033",
+        "L094",
+        "K074",
+        "K029",
+        "K063",
+        "L090",
+        "J082",
+        "L025",
+        "K066",
+        "F007"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D05",
+      "title": "[Data] House district batch 05: Cagayan through Camarines Norte",
+      "sourceType": "District",
+      "groups": [
+        "Cagayan",
+        "Cagayan de Oro City",
+        "Calamba City",
+        "Caloocan City",
+        "Camarines Norte"
+      ],
+      "sourceMemberIds": [
+        "I045",
+        "G125",
+        "J047",
+        "K079",
+        "F057",
+        "K042",
+        "E042",
+        "H025",
+        "K012",
+        "J070",
+        "K064"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D06",
+      "title": "[Data] House district batch 06: Camarines Sur through Catanduanes",
+      "sourceType": "District",
+      "groups": [
+        "Camarines Sur",
+        "Camiguin",
+        "Capiz",
+        "Catanduanes"
+      ],
+      "sourceMemberIds": [
+        "K043",
+        "L089",
+        "L052",
+        "J037",
+        "K094",
+        "C100",
+        "K117",
+        "G021",
+        "K073"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D07",
+      "title": "[Data] House district batch 07: Cavite through Cavite",
+      "sourceType": "District",
+      "groups": [
+        "Cavite"
+      ],
+      "sourceMemberIds": [
+        "K070",
+        "G078",
+        "K003",
+        "I007",
+        "G059",
+        "K032",
+        "K139",
+        "K088"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D08",
+      "title": "[Data] House district batch 08: Cebu through Cotabato",
+      "sourceType": "District",
+      "groups": [
+        "Cebu",
+        "Cebu City",
+        "Cotabato"
+      ],
+      "sourceMemberIds": [
+        "K040",
+        "K035",
+        "L036",
+        "L079",
+        "J036",
+        "K046",
+        "L016",
+        "G031",
+        "K068",
+        "L026",
+        "J019",
+        "K077"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D09",
+      "title": "[Data] House district batch 09: Davao City through Dinagat Islands",
+      "sourceType": "District",
+      "groups": [
+        "Davao City",
+        "Davao Occidental",
+        "Davao Oriental",
+        "Davao de Oro",
+        "Davao del Norte",
+        "Davao del Sur",
+        "Dinagat Islands"
+      ],
+      "sourceMemberIds": [
+        "J026",
+        "L034",
+        "F073",
+        "K015",
+        "L101",
+        "K006",
+        "H084",
+        "L018",
+        "L085",
+        "L051",
+        "K018",
+        "G009"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D10",
+      "title": "[Data] House district batch 10: Eastern Samar through Ilocos Sur",
+      "sourceType": "District",
+      "groups": [
+        "Eastern Samar",
+        "General Santos City",
+        "Guimaras",
+        "Ifugao",
+        "Iligan City",
+        "Ilocos Norte",
+        "Ilocos Sur"
+      ],
+      "sourceMemberIds": [
+        "L040",
+        "J123",
+        "F055",
+        "D015",
+        "K069",
+        "K051",
+        "J012",
+        "F068",
+        "J066"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D11",
+      "title": "[Data] House district batch 11: Iloilo through Isabela",
+      "sourceType": "District",
+      "groups": [
+        "Iloilo",
+        "Iloilo City",
+        "Isabela"
+      ],
+      "sourceMemberIds": [
+        "E032",
+        "J119",
+        "E018",
+        "L084",
+        "L042",
+        "J013",
+        "J006",
+        "J039",
+        "J029",
+        "K083",
+        "J027",
+        "D027"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D12",
+      "title": "[Data] House district batch 12: Kalinga through Lapu-Lapu City",
+      "sourceType": "District",
+      "groups": [
+        "Kalinga",
+        "La Union",
+        "Laguna",
+        "Lanao del Norte",
+        "Lanao del Sur",
+        "Lapu-Lapu City"
+      ],
+      "sourceMemberIds": [
+        "L001",
+        "K059",
+        "K036",
+        "K053",
+        "L044",
+        "K009",
+        "E005",
+        "G034",
+        "K027",
+        "K002",
+        "J011",
+        "L019"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D13",
+      "title": "[Data] House district batch 13: Las Piñas City through Mandaluyong City",
+      "sourceType": "District",
+      "groups": [
+        "Las Piñas City",
+        "Leyte",
+        "Maguindanao del Norte",
+        "Maguindanao del Sur",
+        "Makati City",
+        "Malabon City",
+        "Mandaluyong City"
+      ],
+      "sourceMemberIds": [
+        "L077",
+        "F061",
+        "J044",
+        "K092",
+        "K039",
+        "J020",
+        "K052",
+        "J050",
+        "G055",
+        "L003",
+        "L066",
+        "I032"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D14",
+      "title": "[Data] House district batch 14: Mandaue City through Marinduque",
+      "sourceType": "District",
+      "groups": [
+        "Mandaue City",
+        "Manila",
+        "Marikina City",
+        "Marinduque"
+      ],
+      "sourceMemberIds": [
+        "J055",
+        "K028",
+        "J078",
+        "K020",
+        "L059",
+        "F092",
+        "E003",
+        "F070",
+        "G073",
+        "L073"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D15",
+      "title": "[Data] House district batch 15: Masbate through Navotas City",
+      "sourceType": "District",
+      "groups": [
+        "Masbate",
+        "Misamis Occidental",
+        "Misamis Oriental",
+        "Mountain Province",
+        "Muntinlupa City",
+        "Navotas City"
+      ],
+      "sourceMemberIds": [
+        "A044",
+        "H037",
+        "J046",
+        "K007",
+        "K056",
+        "L050",
+        "F027",
+        "J024",
+        "K034",
+        "G090"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D16",
+      "title": "[Data] House district batch 16: Negros Occidental through Northern Samar",
+      "sourceType": "District",
+      "groups": [
+        "Negros Occidental",
+        "Negros Oriental",
+        "Northern Samar"
+      ],
+      "sourceMemberIds": [
+        "B020",
+        "E045",
+        "L012",
+        "F082",
+        "K098",
+        "G006",
+        "L099",
+        "L070",
+        "L029",
+        "L027",
+        "I047"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D17",
+      "title": "[Data] House district batch 17: Nueva Ecija through Palawan",
+      "sourceType": "District",
+      "groups": [
+        "Nueva Ecija",
+        "Nueva Vizcaya",
+        "Occidental Mindoro",
+        "Oriental Mindoro",
+        "Palawan"
+      ],
+      "sourceMemberIds": [
+        "K080",
+        "L074",
+        "L088",
+        "K065",
+        "L017",
+        "K086",
+        "K062",
+        "D066",
+        "L075",
+        "K008",
+        "J004"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D18",
+      "title": "[Data] House district batch 18: Pampanga through Parañaque City",
+      "sourceType": "District",
+      "groups": [
+        "Pampanga",
+        "Pangasinan",
+        "Parañaque City"
+      ],
+      "sourceMemberIds": [
+        "L097",
+        "G060",
+        "L039",
+        "E019",
+        "D012",
+        "D017",
+        "F008",
+        "G030",
+        "J042",
+        "G072",
+        "H046",
+        "K138"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D19",
+      "title": "[Data] House district batch 19: Pasay City through Quezon City",
+      "sourceType": "District",
+      "groups": [
+        "Pasay City",
+        "Pasig City",
+        "Quezon",
+        "Quezon City"
+      ],
+      "sourceMemberIds": [
+        "J018",
+        "F062",
+        "F028",
+        "J068",
+        "K011",
+        "K134",
+        "K013",
+        "K089",
+        "K067",
+        "J069",
+        "K091",
+        "K022"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D20",
+      "title": "[Data] House district batch 20: Quirino through Sarangani",
+      "sourceType": "District",
+      "groups": [
+        "Quirino",
+        "Rizal",
+        "Romblon",
+        "Samar",
+        "San Jose Del Monte City",
+        "San Juan City",
+        "Santa Rosa City",
+        "Sarangani"
+      ],
+      "sourceMemberIds": [
+        "K026",
+        "L092",
+        "K085",
+        "K038",
+        "L043",
+        "A054",
+        "K082",
+        "K084",
+        "F056",
+        "K099",
+        "L041",
+        "K078"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D21",
+      "title": "[Data] House district batch 21: Siquijor through Sulu",
+      "sourceType": "District",
+      "groups": [
+        "Siquijor",
+        "Sorsogon",
+        "South Cotabato",
+        "Southern Leyte",
+        "Sultan Kudarat",
+        "Sulu"
+      ],
+      "sourceMemberIds": [
+        "K137",
+        "K030",
+        "K033",
+        "K049",
+        "H035",
+        "L083",
+        "0118",
+        "K096",
+        "L071",
+        "L080",
+        "J073",
+        "D004"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D22",
+      "title": "[Data] House district batch 22: Surigao del Norte through Valenzuela City",
+      "sourceType": "District",
+      "groups": [
+        "Surigao del Norte",
+        "Surigao del Sur",
+        "Taguig City",
+        "Taguig City-Pateros",
+        "Tarlac",
+        "Tawi-Tawi",
+        "Valenzuela City"
+      ],
+      "sourceMemberIds": [
+        "F046",
+        "L008",
+        "J105",
+        "L068",
+        "L013",
+        "K024",
+        "K021",
+        "L004",
+        "K072",
+        "K075",
+        "L037",
+        "L035"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-D23",
+      "title": "[Data] House district batch 23: Zambales through Zamboanga del Sur",
+      "sourceType": "District",
+      "groups": [
+        "Zambales",
+        "Zamboanga City",
+        "Zamboanga Sibugay",
+        "Zamboanga del Norte",
+        "Zamboanga del Sur"
+      ],
+      "sourceMemberIds": [
+        "H038",
+        "K050",
+        "L020",
+        "L095",
+        "L007",
+        "L045",
+        "K141",
+        "L048",
+        "K010",
+        "L093",
+        "K097"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P01",
+      "title": "[Data] House party-list batch 01: 1-RIDER PARTYLIST through AGAP",
+      "sourceType": "Party-list",
+      "groups": [
+        "1-RIDER PARTYLIST",
+        "1TAHANAN",
+        "4K",
+        "4Ps",
+        "ABAMIN",
+        "ABANG LINGKOD",
+        "ABONO",
+        "ACT TEACHERS",
+        "ACT-CIS",
+        "AGAP"
+      ],
+      "sourceMemberIds": [
+        "K104",
+        "L107",
+        "L062",
+        "C069",
+        "K106",
+        "G079",
+        "L047",
+        "F088",
+        "G093",
+        "K102",
+        "K103",
+        "F095"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P02",
+      "title": "[Data] House party-list batch 02: AGIMAT through ASENSO PINOY",
+      "sourceType": "Party-list",
+      "groups": [
+        "AGIMAT",
+        "AKBAYAN",
+        "AKO BIKOL",
+        "AKO BISAYA",
+        "AKO ILOCANO AKO",
+        "ALONA",
+        "ANG PROBINSYANO",
+        "APEC",
+        "ASENSO PINOY"
+      ],
+      "sourceMemberIds": [
+        "K110",
+        "K142",
+        "L032",
+        "L046",
+        "G111",
+        "L103",
+        "J102",
+        "K129",
+        "L056",
+        "J095",
+        "J093",
+        "L064"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P03",
+      "title": "[Data] House party-list batch 03: BH through KAMANGGAGAWA",
+      "sourceType": "Party-list",
+      "groups": [
+        "BH",
+        "BICOL SARO",
+        "CIBAC",
+        "COOP-NATCCO",
+        "CWS",
+        "DUMPER PTDA",
+        "FPJ PANDAY BAYANIHAN",
+        "GABRIELA",
+        "GP (GALING SA PUSO)",
+        "KABATAAN",
+        "KAMALAYAN",
+        "KAMANGGAGAWA"
+      ],
+      "sourceMemberIds": [
+        "L063",
+        "H072",
+        "J117",
+        "K121",
+        "K113",
+        "J086",
+        "L055",
+        "I083",
+        "L067",
+        "L022",
+        "K107",
+        "L076"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P04",
+      "title": "[Data] House party-list batch 04: KAPUSO PM through PHILRECA",
+      "sourceType": "Party-list",
+      "groups": [
+        "KAPUSO PM",
+        "KM NGAYON NA",
+        "KUSUG TAUSUG",
+        "LPGMA",
+        "MAGBUBUKID",
+        "MALASAKIT@BAYANIHAN",
+        "MANILA TEACHERS",
+        "ML",
+        "MURANG KURYENTE",
+        "NANAY",
+        "ONE COOP",
+        "PHILRECA"
+      ],
+      "sourceMemberIds": [
+        "L009",
+        "L082",
+        "L081",
+        "J125",
+        "L011",
+        "L087",
+        "L049",
+        "I401",
+        "G101",
+        "L021",
+        "L038",
+        "K136"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P05",
+      "title": "[Data] House party-list batch 05: PINOY WORKERS through TINGOG",
+      "sourceType": "Party-list",
+      "groups": [
+        "PINOY WORKERS",
+        "PPP",
+        "PUSONG PINOY",
+        "SAGIP",
+        "SENIOR CITIZENS",
+        "SOLID NORTH PARTY",
+        "SSS-GSIS PENSYONADO",
+        "SWERTE",
+        "TGP",
+        "TINGOG"
+      ],
+      "sourceMemberIds": [
+        "L106",
+        "L033",
+        "K135",
+        "L060",
+        "J127",
+        "K016",
+        "L058",
+        "L006",
+        "J114",
+        "I059",
+        "K119",
+        "L069"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    },
+    {
+      "id": "HOUSE-P06",
+      "title": "[Data] House party-list batch 06: TRABAHO through USWAG ILONGGO",
+      "sourceType": "Party-list",
+      "groups": [
+        "TRABAHO",
+        "TUCP",
+        "UNITED SENIOR CITIZENS",
+        "USWAG ILONGGO"
+      ],
+      "sourceMemberIds": [
+        "L010",
+        "F123",
+        "I109",
+        "K108"
+      ],
+      "blockedBy": [
+        "#66",
+        "#68",
+        "HOUSE-00",
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P01"
+      ],
+      "acceptanceCriteria": [
+        "evidence",
+        "manifest",
+        "profile",
+        "document",
+        "reconciliation",
+        "staging",
+        "approval"
+      ]
+    }
+  ],
+  "integrationTickets": [
+    {
+      "id": "HOUSE-D-ACCEPT",
+      "title": "[Integration] Reconcile all House district batches",
+      "blockedBy": [
+        "HOUSE-D01",
+        "HOUSE-D02",
+        "HOUSE-D03",
+        "HOUSE-D04",
+        "HOUSE-D05",
+        "HOUSE-D06",
+        "HOUSE-D07",
+        "HOUSE-D08",
+        "HOUSE-D09",
+        "HOUSE-D10",
+        "HOUSE-D11",
+        "HOUSE-D12",
+        "HOUSE-D13",
+        "HOUSE-D14",
+        "HOUSE-D15",
+        "HOUSE-D16",
+        "HOUSE-D17",
+        "HOUSE-D18",
+        "HOUSE-D19",
+        "HOUSE-D20",
+        "HOUSE-D21",
+        "HOUSE-D22",
+        "HOUSE-D23"
+      ],
+      "acceptance": [
+        "Accept every district batch; reconcile all 253 source IDs, profiles, ledger and exact document bytes. Review expected shared snapshot changes. Authorize the party-list pilot after district reconciliation."
+      ]
+    },
+    {
+      "id": "HOUSE-P-ACCEPT",
+      "title": "[Integration] Reconcile all House party-list batches",
+      "blockedBy": [
+        "HOUSE-P01",
+        "HOUSE-P02",
+        "HOUSE-P03",
+        "HOUSE-P04",
+        "HOUSE-P05",
+        "HOUSE-P06"
+      ],
+      "acceptance": [
+        "Accept every party-list batch; reconcile all 64 source IDs, shared party-list Constituencies and exact document bytes. Check that no seat numbers or duplicate People were invented."
+      ]
+    },
+    {
+      "id": "HOUSE-FINAL",
+      "title": "[Integration] Accept and publish the complete reviewed House Roster Snapshot",
+      "blockedBy": [
+        "HOUSE-D-ACCEPT",
+        "HOUSE-P-ACCEPT"
+      ],
+      "acceptance": [
+        "Recheck the House source at the release date. Resolve membership changes through reviewed follow-up manifests; retain this historical capture unchanged.",
+        "Reconcile exactly the complete current dated set against reviewed membership Tenures, not Speaker Tenures. Only then create one complete House Roster Snapshot with citations.",
+        "Run the exact deployed acceptance and recovery workflow; obtain explicit production approval and publish without dual writing. Publish a verification report. Provincial rollout stays blocked until this ticket is accepted."
+      ]
+    }
+  ]
+}
