@@ -1,50 +1,18 @@
-import { Header } from "~/components/layout/Header";
-import type { Route } from "./+types/resources";
-import { Footer } from "~/components/layout/Footer";
-import { Hashtags } from "~/components/ui/Hashtags";
-import { ResourcesGrid } from "~/components/ResourcesGrid";
-import { getResourceRecords } from "~/data/resources";
+import { Link } from 'react-router';
+import { Header } from '../components/layout/Header';
+import { Footer } from '../components/layout/Footer';
 
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "SALN Resources - SALN Tracker Philippines"},
-    { name: "description", content: "Content and Links Related to SALN - Promoting Transparency Through Accessible Resources"},
-  ];
+export function meta() {
+  return [{ title: 'Resources | SALN Tracker PH' }, { name: 'description', content: 'SALN reference pages and the Archive methodology.' }];
 }
-
-export async function loader({}: Route.LoaderArgs) {
-  const resources = await getResourceRecords();
-  return { resources };
-}
-
-export default function Resources({ loaderData }: Route.ComponentProps) {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-
-      <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        <div className="space-y-6 sm:space-y-8">
-          <div className="text-center py-8 sm:py-12 px-4 sm:px-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-white">
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4 leading-tight">
-              SALN Resources
-            </h1>
-            <p className="text-base sm:text-xl text-primary-100 mb-2 px-2">
-              Content and Links Related to SALN
-            </p>
-            <p className="text-sm sm:text-base text-primary-200 mb-4 sm:mb-6 px-2 leading-relaxed">
-              Promoting Transparency Through Accessible Resources
-            </p>
-            <Hashtags variant="glass" size="md" className="sm:hidden" />
-            <Hashtags variant="glass" size="lg" className="hidden sm:inline-block" />
-          </div>
-
-          <ResourcesGrid resources={ loaderData.resources }/>
-
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
+export default function Resources() {
+  return <><Header /><main className="archive-container max-w-3xl py-8 space-y-6">
+    <h1>Resources</h1><p>These reference pages provide context. An external link is not an acquired Source Document or a reviewed Transcription.</p>
+    <ul className="divide-y divide-gray-300">
+      <li className="py-5 space-y-2"><h2 className="text-xl"><a className="text-primary-700 underline" href="https://csc.gov.ph/downloads/forms">Civil Service Commission forms</a></h2><p>Find SALN forms and other civil service forms on the Commission's website. Check its current guidance before using a form.</p></li>
+      <li className="py-5 space-y-2"><h2 className="text-xl"><a className="text-primary-700 underline" href="https://www.ombudsman.gov.ph/request-for-copy-of-salns/">Office of the Ombudsman: request a SALN copy</a></h2><p>The Office publishes its request guidance and forms. Check the source page for its current process.</p></li>
+      <li className="py-5 space-y-2"><h2 className="text-xl"><Link className="text-primary-700 underline" to="/about">Archive methodology</Link></h2><p>Read the eligibility rules, provenance categories, transcription limits and correction process.</p></li>
+    </ul>
+    <p className="archive-muted">Person profiles show Related Reporting separately, with a publisher and citation. Financial claims in articles are not imported as SALN totals.</p>
+  </main><Footer /></>;
 }
