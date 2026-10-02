@@ -6,13 +6,20 @@ An open-ended Archive of acquired SALN Source Documents and reviewed Transcripti
 
 ```bash
 npm ci
-ARCHIVE_ADAPTER=local npm run dev
+# For a new checkout only; preserve an existing .env.
+cp -n .env.example .env
+# Set TURSO_AUTH_TOKEN in .env to a read-only database token.
+npm run dev -- --host 127.0.0.1 --port 5177 --strictPort
 npm test
 npm run typecheck
 npm run build
 ```
 
-Use the fixture adapter for an empty evidence-safe preview. Use a named local SQL database and explicit reviewed imports for a populated preview. Production and staging are separate resources. No build performs a migration or import.
+Open http://localhost:5177. The app reads the hosted Turso Archive named in `.env`; React Router loads the server environment without exposing database credentials to the browser. The example uses `saln-tracker-ph-jhoenil.aws-ap-northeast-1.turso.io`. A missing URL fails instead of falling back to Firebase or fixtures. No build or app start performs a migration or import.
+
+The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. Public pages read the reviewed Archive. Raw legacy values retain their unreviewed status. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
+
+For an empty fixture preview, explicitly use `ARCHIVE_ADAPTER=local npm run dev`. Use a `file:` database only for isolated imports and tests, as described below.
 
 The app uses React Router, system sans-serif text, white and cool-gray surfaces, blue links, thin rules and evidence tables. Advocacy stays in its labeled contribution area.
 
@@ -44,7 +51,7 @@ The redesign follows the compact navigation and table layout of the [BetterGov B
 
 ### Local reviewed Archive
 
-The public app requires a named Turso/libSQL Archive. The local fixture adapter is available with `ARCHIVE_ADAPTER=local`. There is no Firebase runtime fallback. Use a local SQLite file through libSQL to inspect the first reviewed Person:
+The public app requires a named Turso/libSQL Archive. Normal development uses the hosted database above. To run an isolated import rehearsal, use a local SQLite file through libSQL:
 
 ```bash
 npm ci
