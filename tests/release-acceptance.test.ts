@@ -7,6 +7,8 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createServer } from 'node:http';
 import test from 'node:test';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { serializePublicSnapshot } from '../app/archive/snapshot.server';
 import { rehearseStageOne, verifyReleaseHttp } from '../scripts/verify-release';
 
 test('release rehearsal reconciles the fixed baseline and HTTP acceptance rejects a mismatched public snapshot', async () => {
@@ -49,11 +51,14 @@ test('release rehearsal verifies acquired Filing bytes on import and unchanged r
 });
 
 test('HTTP acceptance requires aliases to stay on the named deployment', async () => {
-  const { artifacts } = await rehearseStageOne();
+  const rehearsal = await rehearseStageOne();
+  const artifacts = serializePublicSnapshot({ ...rehearsal.artifacts.snapshot.data, people: rehearsal.artifacts.snapshot.data.people.map((person, i) => i === 0 ? { ...person, canonicalName: 'Synthetic <Name> & "Identity"' } : person) });
   let crossOrigin = false;
   let redirectedPath = '';
   let sameOriginRedirect: [string, string] | null = null;
   let badPing = false;
+  let badPage = '';
+  const pageHeadings = new Map([['/', 'Find and inspect declared SALNs'], ['/people', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}`, person.canonicalName] as const)]);
   const other = createServer((_request, response) => response.end('Another deployment'));
   other.listen(0, '127.0.0.1'); await once(other, 'listening');
   const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
@@ -73,7 +78,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
         response.statusCode = 301;
         response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}`);
       }
-      response.end('<html>synthetic</html>');
+      response.end(`<html><h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></html>`);
     }
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -95,5 +100,10 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     }
     sameOriginRedirect = null; badPing = true;
     await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
+    badPing = false;
+    for (const path of ['/', '/people', '/about', '/resources', '/source-tip', `/official/${artifacts.snapshot.data.people[0].slug}`]) {
+      badPage = path;
+      await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Unexpected page heading/);
+    }
   } finally { await Promise.all([server, other].map(server => new Promise<void>(resolve => server.close(() => resolve())))); }
 });
