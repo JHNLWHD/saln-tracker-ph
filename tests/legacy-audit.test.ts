@@ -103,6 +103,13 @@ test("audit keeps legacy dates, statuses, amounts, contacts and Source Tips outs
     assert.deepEqual(reviewed.entries.find(row => row.classification === "acquired_source_document")?.sourceDocumentIds, ["reviewed-document"]);
     assert.equal(reviewed.entries.find(row => row.classification === "acquired_source_document")?.candidateReportingPeriod, "2024");
     assert.ok(!JSON.stringify(reviewed).includes(privateCanary));
+    for (const host of ['saln.bettergov.ph', 'saln-tracker-ph.netlify.app']) {
+      for (const [origin, acquired] of [[`https://${host}:8443`, false], [`http://${host}:8080`, false], [`https://${host}:443`, true], [`http://${host}:80`, true]] as const) {
+        const report = await buildLegacyAudit([{ path: 'officials/profile', data: { saln_records: [{ source_url: `${origin}/saln/test.pdf` }] } }], directory, identities, snapshot);
+        assert.equal(report.counts.acquiredSourceDocumentEntries, acquired ? 1 : 0);
+        assert.equal(report.entries[0].repositoryPdfPath, acquired ? '/saln/test.pdf' : null);
+      }
+    }
     await assert.rejects(buildLegacyAudit(documents, directory, identities, { ...snapshot, version: "a".repeat(64) }), /integrity/);
     assert.deepEqual(await buildLegacyAudit(documents, directory, identities, snapshot), reviewed);
   } finally { await rm(directory, { recursive: true, force: true }); }
