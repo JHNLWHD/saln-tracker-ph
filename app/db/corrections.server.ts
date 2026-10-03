@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { Citation, CorrectionTargetType, EditorialCorrection, Filing, Person, SourceDocument, Tenure } from "../archive/types";
 import type { ArchiveReader, ArchiveWriter } from "./client.server";
 import { canonicalJson } from "./canonical";
@@ -102,8 +102,14 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     if (!filing || !document) throw new Error("Correction target has no original Filing and Source Document");
     const effectiveFiling = projectCorrections("filing", filingRecord(filing), history);
     const { storageKey: _key, ...effectiveDocument } = projectCorrections("source_document", documentRecord(document), history);
-    // The original publication event keeps its original review date. The correction has its own review.
-    validateReviewedFiling({ review: { reviewedAt: filing.reviewedAt, reviewedBy: filing.reviewedBy },
+    // Each Document's immutable manifest retains its own review, including later pages of a Filing.
+    // SQLite rowid preserves application order even when two applications share a timestamp.
+    const [application] = await db.select({ payload: schema.manifestApplications.canonicalPayload }).from(schema.manifestApplications)
+      .where(and(eq(schema.manifestApplications.kind, 'filing'), sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.document.id') = ${document.id}`))
+      .orderBy(sql`rowid`).limit(1);
+    if (!application) throw new Error('Source Document needs an applied Filing manifest before correction');
+    const originalReview = validateReviewedFiling(JSON.parse(application.payload).payload).review;
+    validateReviewedFiling({ review: originalReview,
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
   }

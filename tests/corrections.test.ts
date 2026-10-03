@@ -51,6 +51,27 @@ async function setup() {
   return { ...connection, storage, archive: createDbArchive(connection.db), async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
 }
 
+test('later Source Documents keep their own first applied review date during correction', async () => {
+  const state = await setup();
+  try {
+    const later = structuredClone(filing);
+    later.id = 'filing:later-page'; later.payload.document.id = 'later-page';
+    later.payload.review.reviewedAt = '2026-09-28';
+    later.payload.document.archivePublicationDate = '2026-09-30T12:00:00.000Z';
+    await applyReviewedManifest(state.db, later, { bytes, storage: state.storage });
+    const patch = correction('publication', 'source_document', 'later-page', { archivePublicationDate: '2026-09-27T12:00:00.000Z' });
+    patch.payload.review.reviewedAt = '2026-10-01';
+    await assert.rejects(applyReviewedManifest(state.db, patch), /reviewed before publication/);
+    const repeated = structuredClone(later);
+    repeated.id = 'filing:another-review'; repeated.payload.review.reviewedAt = '2026-09-30';
+    await applyReviewedManifest(state.db, repeated, { bytes, storage: state.storage });
+    patch.payload.changes.archivePublicationDate = '2026-09-29T12:00:00.000Z';
+    await applyReviewedManifest(state.db, patch);
+    assert.equal((await applyReviewedManifest(state.db, patch)).status, 'unchanged');
+    assert.equal((await state.db.select().from(filings))[0].reviewedAt, review.reviewedAt);
+  } finally { await state.close(); }
+});
+
 test("corrections project current metadata and history while original manifests and bytes replay unchanged", async () => {
   const state = await setup();
   try {
