@@ -101,7 +101,8 @@ export function productionDatabase(url: unknown, approvedUrl: unknown, env: Node
   const parsed = new URL(url);
   if (!['libsql:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.port || parsed.search || parsed.hash || (parsed.pathname && parsed.pathname !== '/')) throw new Error('Expected a credential-free production Turso URL');
   const hostname = (value: string) => value.toLowerCase().replace(/\.$/, '');
-  if (env.STAGING_TURSO_HOST && hostname(parsed.hostname) === hostname(env.STAGING_TURSO_HOST)) throw new Error('The staging database cannot be a production recovery target');
+  if (!env.STAGING_TURSO_HOST || !/^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.?$/i.test(env.STAGING_TURSO_HOST)) throw new Error('A reviewed staging database hostname is required');
+  if (hostname(parsed.hostname) === hostname(env.STAGING_TURSO_HOST)) throw new Error('The staging database cannot be a production recovery target');
   return { url, authToken: env.TURSO_AUTH_TOKEN, intMode: 'bigint' as const };
 }
 
@@ -112,11 +113,12 @@ export function productionBuckets(targets: ProductionBuckets, approved: Producti
   if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket && documentJurisdiction === backupJurisdiction || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
   if (![documentJurisdiction, backupJurisdiction].every(value => ['default', 'eu', 'us', 'fedramp'].includes(value))) throw new Error('Each production bucket requires an explicit supported jurisdiction');
   const endpoint = (jurisdiction: string) => `https://${accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`;
-  const staging = env.STAGING_R2_ENDPOINT ? new URL(env.STAGING_R2_ENDPOINT) : null;
-  if (staging && (staging.protocol !== 'https:' || staging.username || staging.password || staging.port || staging.pathname !== '/' || staging.search || staging.hash || !/^[a-f0-9]{32}(?:\.(?:eu|us|fedramp))?\.r2\.cloudflarestorage\.com\.?$/.test(staging.hostname))) throw new Error('A reviewed staging R2 account and jurisdiction endpoint is required');
-  if (staging) staging.hostname = staging.hostname.replace(/\.$/, '');
+  if (!env.STAGING_R2_BUCKET || !/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(env.STAGING_R2_BUCKET) || !env.STAGING_R2_ENDPOINT) throw new Error('The reviewed staging bucket and endpoint are required for production recovery');
+  const staging = new URL(env.STAGING_R2_ENDPOINT);
+  if (staging.protocol !== 'https:' || staging.username || staging.password || staging.port || staging.pathname !== '/' || staging.search || staging.hash || !/^[a-f0-9]{32}(?:\.(?:eu|us|fedramp))?\.r2\.cloudflarestorage\.com\.?$/.test(staging.hostname)) throw new Error('A reviewed staging R2 account and jurisdiction endpoint is required');
+  staging.hostname = staging.hostname.replace(/\.$/, '');
   for (const [bucket, jurisdiction] of [[documentBucket, documentJurisdiction], [backupBucket, backupJurisdiction]]) {
-    if (bucket === env.STAGING_R2_BUCKET && (!staging || staging.origin === endpoint(jurisdiction))) throw new Error('The staging bucket cannot be a production recovery target; its full endpoint is required to establish separation');
+    if (bucket === env.STAGING_R2_BUCKET && staging.origin === endpoint(jurisdiction)) throw new Error('The staging bucket cannot be a production recovery target');
   }
   return { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction,
     backupEndpoint: endpoint(backupJurisdiction) };

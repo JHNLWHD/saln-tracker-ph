@@ -21,18 +21,21 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
   for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
 });
 
+const stagingR2 = { STAGING_R2_BUCKET: 'staging-documents', STAGING_R2_ENDPOINT: `https://${'b'.repeat(32)}.r2.cloudflarestorage.com` };
+
 test('R2 recovery targets must match the independently accepted production inventory', () => {
   const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', documentJurisdiction: 'default', backupBucket: 'production-backups', backupJurisdiction: 'default' };
-  assert.deepEqual(productionBuckets(approved, approved, {}), { ...approved, backupEndpoint: `https://${approved.accountId}.r2.cloudflarestorage.com` });
-  for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, {}), /accepted release plan/);
+  assert.deepEqual(productionBuckets(approved, approved, stagingR2), { ...approved, backupEndpoint: `https://${approved.accountId}.r2.cloudflarestorage.com` });
+  for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, stagingR2), /accepted release plan/);
   for (const changed of [{ documentJurisdiction: 'eu' }, { backupJurisdiction: 'us' }, { accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
-    assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, {}), /accepted release plan/);
+    assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, stagingR2), /accepted release plan/);
   }
-  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket }), /staging bucket/);
+  for (const missing of [{}, { ...stagingR2, STAGING_R2_BUCKET: '' }, { ...stagingR2, STAGING_R2_ENDPOINT: '' }, { ...stagingR2, STAGING_R2_BUCKET: ' ' }]) assert.throws(() => productionBuckets(approved, approved, missing), /reviewed staging bucket/);
+  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket, STAGING_R2_ENDPOINT: `https://${approved.accountId}.r2.cloudflarestorage.com` }), /staging bucket/);
   const shared = { ...approved, backupBucket: approved.documentBucket };
-  assert.throws(() => productionBuckets(shared, shared, {}), /separate production buckets/);
+  assert.throws(() => productionBuckets(shared, shared, stagingR2), /separate production buckets/);
   const separate = { ...shared, backupJurisdiction: 'eu' };
-  assert.equal(productionBuckets(separate, separate, {}).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
+  assert.equal(productionBuckets(separate, separate, stagingR2).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
   const staging = { STAGING_R2_BUCKET: approved.documentBucket, STAGING_R2_ENDPOINT: `https://${approved.accountId}.eu.r2.cloudflarestorage.com` };
   assert.doesNotThrow(() => productionBuckets(approved, approved, staging));
   assert.doesNotThrow(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: `https://${'b'.repeat(32)}.r2.cloudflarestorage.com` }));
@@ -49,15 +52,15 @@ test('R2 lock reads and backup endpoints identify each accepted bucket jurisdict
   });
   for (const jurisdiction of ['default', 'eu', 'us', 'fedramp']) {
     const approved = { accountId: 'a'.repeat(32), documentBucket: 'documents', documentJurisdiction: 'eu', backupBucket: 'backups', backupJurisdiction: jurisdiction };
-    const targets = productionBuckets(approved, approved, {});
+    const targets = productionBuckets(approved, approved, stagingR2);
     assert.equal(targets.backupEndpoint, `https://${approved.accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`);
     await verifyBucketLocks(targets, 'synthetic-token');
     assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['documents', 'eu'], ['backups', jurisdiction]]);
     const missing = { ...approved, backupJurisdiction: '' };
-    assert.throws(() => productionBuckets(missing, missing, {}), /explicit supported jurisdiction/);
+    assert.throws(() => productionBuckets(missing, missing, stagingR2), /explicit supported jurisdiction/);
   }
   const sameName = { accountId: 'a'.repeat(32), documentBucket: 'archive', documentJurisdiction: 'default', backupBucket: 'archive', backupJurisdiction: 'eu' };
-  await verifyBucketLocks(productionBuckets(sameName, sameName, {}), 'synthetic-token');
+  await verifyBucketLocks(productionBuckets(sameName, sameName, stagingR2), 'synthetic-token');
   assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['archive', 'default'], ['archive', 'eu']]);
 });
 
@@ -90,8 +93,9 @@ test('production verification binds actual checkout and authenticated database s
   assert.throws(() => assertProductionCheckout('0'.repeat(40)), /Running checkout/);
   if (execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], { encoding: 'utf8' }).trim()) assert.throws(() => assertProductionCheckout(revision), /clean checkout/);
   else assert.doesNotThrow(() => assertProductionCheckout(revision));
-  const url = 'libsql://production.example.invalid', env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token' };
+  const url = 'libsql://production.example.invalid', env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'staging.example.invalid' };
   assert.equal(productionDatabase(url, url, env).url, url);
+  for (const missing of [undefined, '', ' ', 'https://staging.example.invalid', 'staging.example.invalid:443']) assert.throws(() => productionDatabase(url, url, { ...env, STAGING_TURSO_HOST: missing }), /reviewed staging database hostname/);
   assert.throws(() => productionDatabase('libsql://staging.example.invalid', url, env));
   assert.throws(() => productionDatabase(url, url, { TURSO_DATABASE_URL: url }));
   for (const approved of [undefined, null, '']) assert.throws(() => productionDatabase(url, approved, env), /accepted release plan/);
