@@ -18,7 +18,7 @@ export function sourceTipDestination(env: NodeJS.ProcessEnv = process.env) {
   const normalized = (value: string) => value.startsWith('file:') ? fileURLToPath(new URL(value.slice(5), pathToFileURL(`${process.cwd()}/`))) : new URL(value).hostname.toLowerCase().replace(/\.$/, '');
   if (normalized(url) === normalized(env.TURSO_DATABASE_URL || 'file:.data/archive.db')) throw new Error('Source Tips require a separate private database');
   if (url.startsWith('file:')) {
-    if (env.NETLIFY === 'true') throw new Error('Netlify Source Tips require a hosted private database');
+    if (env.NETLIFY === 'true' || env.SITE_ID || env.NODE_ENV === 'production') throw new Error('Deployed Source Tips require a hosted private database');
     return { url };
   }
   const parsed = new URL(url);
