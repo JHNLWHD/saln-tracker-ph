@@ -14,9 +14,11 @@
     "test": "node --import tsx --test tests/*.test.ts",
     "archive:migrate": "node --import tsx scripts/migrate.ts",
     "archive:import-person": "node --import tsx scripts/import-person.ts",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "archive:import-filing": "node --import tsx scripts/import-filing.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1141.0",
     "@libsql/client": "^0.15.15",
     "@react-router/node": "^7.5.2",
     "@react-router/serve": "^7.5.2",

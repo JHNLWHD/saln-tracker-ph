@@ -1,0 +1,84 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { createHash } from "node:crypto";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { eq } from "drizzle-orm";
+import { S3Client, S3ServiceException } from '@aws-sdk/client-s3';
+import { closeArchive } from "../app/archive/archive.server";
+import { connectArchive } from "../app/db/client.server";
+import { importReviewedPerson } from "../app/db/people.server";
+import { importReviewedFiling } from "../app/db/filings.server";
+import type { ReviewedFiling } from "../app/db/filing-validation";
+import { tenures } from "../app/db/schema";
+import { createLocalDocumentStorage, documentStorageKey } from "../app/storage/objects.server";
+import { migrateArchive } from "../scripts/migrate";
+import { loader } from "../app/routes/documents.$sha256";
+
+test("public document route serves reviewed exact bytes, download headers and conditional requests while hiding orphan objects", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "saln-document-route-"));
+  const url = `file:${join(directory, "archive.db")}`;
+  const objects = join(directory, "objects");
+  const { client, db } = connectArchive({ url });
+  const env = { ARCHIVE_ADAPTER: "turso", TURSO_DATABASE_URL: url, ARCHIVE_STORAGE: "local", ARCHIVE_OBJECT_DIR: objects,
+    R2_ENDPOINT: 'https://storage.example.test', R2_BUCKET: 'test', R2_ACCESS_KEY_ID: 'synthetic', R2_SECRET_ACCESS_KEY: 'synthetic' };
+  const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
+  const bytes = Buffer.from("%PDF-1.7\nSynthetic route test document.\n%%EOF\n");
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const source: ReviewedFiling = {
+    review: { reviewedAt: "2026-09-26", reviewedBy: "Synthetic route check" },
+    filing: { id: "test-filing", personId: "person-ferdinand-marcos-jr", filerName: "SYNTHETIC TEST ONLY", reportingDate: { value: "2020", precision: "year" }, executionDate: null, receiptDate: null, supersedesFilingId: null },
+    document: { id: "test-document", filingId: "test-filing", fileName: "test source.pdf", mediaType: "application/pdf", byteSize: bytes.byteLength, sha256, originalUrl: "https://example.org/test-source.pdf", provenanceType: "official_download", provenanceNote: "Synthetic fixture, never public source evidence.", officialReleaseDate: null, acquisitionDate: { value: "2026-09-26", precision: "day" }, archivePublicationDate: "2026-09-26T00:00:00.000Z", transcriptionLevel: "document_only" },
+  };
+  const request = (hash = sha256, query = "", options: RequestInit = {}) => loader({ request: new Request(`http://localhost/documents/${hash}${query}`, options), params: { sha256: hash }, context: {} });
+  const status = (expected: number) => (error: unknown) => error instanceof Response && error.status === expected;
+  try {
+    Object.assign(process.env, env);
+    await migrateArchive(db);
+    const storage = createLocalDocumentStorage(objects);
+    await storage.put(bytes, sha256, "application/pdf");
+    await assert.rejects(request(), status(404)); // Storage alone does not publish an object.
+    await assert.rejects(request("not-a-checksum"), status(404));
+    await importReviewedPerson(db, JSON.parse(await readFile(new URL("../data/reviewed/0001-ferdinand-marcos-jr.json", import.meta.url), "utf8")));
+    await importReviewedFiling(db, source, bytes, storage);
+    const response = await request();
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("Content-Type"), "application/pdf");
+    assert.equal(response.headers.get("X-Content-Type-Options"), "nosniff");
+    assert.equal(response.headers.get("Content-Disposition"), `inline; filename*=UTF-8''saln-${sha256}.pdf`);
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes);
+    const duplicate = structuredClone(source);
+    duplicate.filing.id = 'another-filing'; duplicate.document.filingId = duplicate.filing.id;
+    duplicate.document.id = 'a-first-sorting-copy'; duplicate.document.fileName = 'another-source-name.pdf';
+    await importReviewedFiling(db, duplicate, bytes, storage);
+    assert.equal((await request()).headers.get('Content-Disposition'), response.headers.get('Content-Disposition'));
+    assert.match((await request(sha256, "?download=1")).headers.get("Content-Disposition")!, /^attachment;/);
+    assert.equal((await request(sha256, "", { method: "HEAD" })).body, null);
+    assert.equal((await request(sha256, "", { headers: { "If-None-Match": `"${sha256}"` } })).status, 304);
+    await db.update(tenures).set({ verificationStatus: "unverified" });
+    await assert.rejects(request(), status(404));
+    await db.update(tenures).set({ verificationStatus: "verified" }).where(eq(tenures.personId, source.filing.personId));
+    await rm(join(objects, documentStorageKey(sha256)));
+    for (const validator of [`"${sha256}"`, `W/"${sha256}"`, `"other", W/"${sha256}"`, '*']) {
+      for (const method of ['GET', 'HEAD']) assert.equal((await request(sha256, "", { method, headers: { "If-None-Match": validator } })).status, 304);
+    }
+    assert.equal((await request(sha256, "", { method: "HEAD" })).headers.get("Content-Length"), String(bytes.byteLength));
+    await assert.rejects(request(sha256, '', { headers: { 'If-None-Match': '"different"' } }), status(503));
+    process.env.ARCHIVE_STORAGE = 'r2';
+    const transport = t.mock.method(S3Client.prototype, 'send');
+    for (const error of [new S3ServiceException({ name: 'ServiceUnavailable', $fault: 'server', $metadata: { httpStatusCode: 503 } }), new Error('connection reset')]) {
+      transport.mock.mockImplementation(async () => { throw error; });
+      await assert.rejects(request(), error => error instanceof Response && error.status === 503 && error.headers.get('Retry-After') === '60');
+    }
+    transport.mock.mockImplementation(async () => ({ Body: { transformToByteArray: async () => Buffer.from('corrupt') } }));
+    await assert.rejects(request(), /checksum mismatch/);
+  } finally {
+    await closeArchive();
+    client.close();
+    await rm(directory, { recursive: true, force: true });
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  }
+});
