@@ -4,7 +4,8 @@ import { Footer } from "../components/layout/Footer";
 import { OfficialsGrid } from "../components/OfficialsGrid";
 import { Hashtags } from "../components/ui/Hashtags";
 import { CallToActionBanner } from "../components/CallToActionBanner";
-import { readLegacyHome } from "../archive/archive.server";
+import { Link } from 'react-router';
+import { getArchive, readLegacyHome } from "../archive/archive.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,6 +15,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({}: Route.LoaderArgs) {
+  if (process.env.ARCHIVE_ADAPTER === "turso") {
+    const records = await (await getArchive()).listPeople();
+    return { people: records, officials: [] };
+  }
   const { people, legacyPresentation } = await readLegacyHome();
   return { people, officials: legacyPresentation };
 }
@@ -44,7 +49,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <CallToActionBanner />
           
           {/* Officials Grid */}
-          <OfficialsGrid officials={loaderData.officials} />
+          {loaderData.people.length > 0 && loaderData.officials.length === 0 ? <section aria-label="Reviewed People" className="archive-card p-6 space-y-3">
+            <h2>Reviewed People</h2>
+            <ul className="space-y-2">{loaderData.people.map(record => <li key={record.person.id}><Link className="text-primary-700 underline" to={`/official/${record.person.slug}`}>{record.person.canonicalName}</Link></li>)}</ul>
+          </section> : <OfficialsGrid officials={loaderData.officials} />}
         </div>
       </main>
 
