@@ -76,6 +76,7 @@ test("malformed or unreviewed publication metadata fails the manifest boundary",
     { ...valid, privateContact: "not public metadata" },
     { ...valid, review: { ...valid.review, reviewedAt: "2026" } },
     { ...valid, review: { ...valid.review, reviewedAt: "2026-09-27" } },
+    { ...valid, review: { ...valid.review, reviewedAt: "2026-01-01" } },
     { ...valid, filing: { ...filing, filerName: "" } },
     { ...valid, filing: { ...filing, reportingDate: null } },
     { ...valid, filing: { ...filing, reportingDate: { value: "2020", precision: "day" } } },
@@ -98,6 +99,9 @@ test("malformed or unreviewed publication metadata fails the manifest boundary",
     { ...valid, document: { ...document, totalAssets: 0 } },
   ];
   for (const item of invalid) assert.throws(() => validateReviewedFiling(item));
+  for (const acquisitionDate of [{ value: '2026', precision: 'year' }, { value: '2026-09', precision: 'month' }]) {
+    assert.doesNotThrow(() => validateReviewedFiling({ ...valid, document: { ...document, acquisitionDate } }));
+  }
   assert.equal(validateReviewedFiling({ ...valid, document: { ...document, provenanceType: "formal_release", originalUrl: null } }).document.originalUrl, null);
 });
 

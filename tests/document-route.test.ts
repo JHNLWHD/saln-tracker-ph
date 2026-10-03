@@ -46,8 +46,13 @@ test("public document route serves reviewed exact bytes, download headers and co
     assert.equal(response.status, 200);
     assert.equal(response.headers.get("Content-Type"), "application/pdf");
     assert.equal(response.headers.get("X-Content-Type-Options"), "nosniff");
-    assert.match(response.headers.get("Content-Disposition")!, /^inline; filename\*=UTF-8''test%20source.pdf$/);
+    assert.equal(response.headers.get("Content-Disposition"), `inline; filename*=UTF-8''saln-${sha256}.pdf`);
     assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes);
+    const duplicate = structuredClone(source);
+    duplicate.filing.id = 'another-filing'; duplicate.document.filingId = duplicate.filing.id;
+    duplicate.document.id = 'a-first-sorting-copy'; duplicate.document.fileName = 'another-source-name.pdf';
+    await importReviewedFiling(db, duplicate, bytes, storage);
+    assert.equal((await request()).headers.get('Content-Disposition'), response.headers.get('Content-Disposition'));
     assert.match((await request(sha256, "?download=1")).headers.get("Content-Disposition")!, /^attachment;/);
     assert.equal((await request(sha256, "", { method: "HEAD" })).body, null);
     assert.equal((await request(sha256, "", { headers: { "If-None-Match": `"${sha256}"` } })).status, 304);
