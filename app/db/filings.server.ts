@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import type { SourceDocument } from "../archive/types";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
 import type { ArchiveDatabase, ArchiveWriter } from "./client.server";
 import { personIsEligible } from "./eligibility";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { missingRows } from "./canonical";
-import { filings, people, sourceDocuments } from "./schema";
+import { filings, manifestApplications, people, sourceDocuments } from "./schema";
 import { parsePartialDate } from "./validation";
 
 export function sourceDocumentFromRow(row: typeof sourceDocuments.$inferSelect): SourceDocument {
@@ -42,7 +42,11 @@ export async function requireEligiblePerson(db: ArchiveWriter, personId: string)
 /** Read-only comparison also permits another original page for the same immutable Filing. */
 export async function inspectReviewedFiling(db: ArchiveWriter, manifest: ReviewedFiling, verifyOnly = false) {
   const { filing, document } = manifest;
-  const filingRow = { ...filing, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null };
+  const [original] = await db.select({ payload: manifestApplications.canonicalPayload }).from(manifestApplications)
+    .where(and(eq(manifestApplications.kind, 'filing'), sql`json_extract(${manifestApplications.canonicalPayload}, '$.payload.filing.id') = ${filing.id}`)).orderBy(sql`rowid`).limit(1);
+  // Later Documents have their own review, while the original Filing review stays immutable.
+  const review = original ? validateReviewedFiling(JSON.parse(original.payload).payload).review : manifest.review;
+  const filingRow = { ...filing, ...review, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null };
   const documentRow = { ...document, storageKey: documentStorageKey(document.sha256), acquisitionDate: document.acquisitionDate.value, officialReleaseDate: document.officialReleaseDate?.value ?? null };
   const [savedFilings, savedDocuments] = await Promise.all([
     db.select().from(filings).where(eq(filings.id, filing.id)),
@@ -58,7 +62,7 @@ export async function inspectReviewedFiling(db: ArchiveWriter, manifest: Reviewe
 export async function writeReviewedFiling(tx: ArchiveWriter, manifest: ReviewedFiling, verifyOnly = false) {
   if (!verifyOnly) await requireEligiblePerson(tx, manifest.filing.personId);
   const { filingRows, documentRows } = await inspectReviewedFiling(tx, manifest, verifyOnly);
-  if (filingRows.length) await tx.insert(filings).values(filingRows.map(row => ({ ...row, ...manifest.review })));
+  if (filingRows.length) await tx.insert(filings).values(filingRows);
   if (documentRows.length) await tx.insert(sourceDocuments).values(documentRows);
 }
 

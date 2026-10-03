@@ -59,6 +59,11 @@ test("canonical manifest reruns verify saved rows and bytes without ledger or ob
     assert.equal((await applyReviewedManifest(state.db, filing, { bytes: firstBytes, storage: state.storage })).status, "unchanged");
     assert.deepEqual(await state.db.select().from(manifestApplications), before);
     assert.equal(state.puts, 1);
+    for (const change of [{ reviewedAt: '2026-09-25' }, { reviewedBy: 'Out-of-band reviewer' }]) {
+      await state.db.update(filings).set(change).where(eq(filings.id, 'filing-1'));
+      await assert.rejects(applyReviewedManifest(state.db, filing, { bytes: firstBytes, storage: state.storage }), /different metadata/);
+      await state.db.update(filings).set(review).where(eq(filings.id, 'filing-1'));
+    }
     await assert.rejects(applyReviewedManifest(state.db, { ...person, payload: { ...person.payload, person: { ...person.payload.person, canonicalName: "Changed Name" } } }), /different content/);
     await state.db.delete(personNames).where(eq(personNames.personId, "person-1"));
     await assert.rejects(applyReviewedManifest(state.db, person), /missing from an applied manifest/);
@@ -76,8 +81,12 @@ test("new pages share one Filing, exact copies share a checksum, and distinct de
   try {
     await applyReviewedManifest(state.db, personManifest());
     const page2 = Buffer.from("%PDF-1.7\nSynthetic declaration page 2.\n%%EOF\n");
-    for (const [manifest, bytes] of [[filingManifest(), firstBytes], [filingManifest("page-2", page2), page2], [filingManifest("page-1-copy"), firstBytes]] as const) {
+    const later = filingManifest('page-2', page2);
+    later.payload.review = { reviewedAt: '2026-09-27', reviewedBy: 'Later Document reviewer' };
+    later.payload.document.archivePublicationDate = '2026-09-27T12:00:00.000Z';
+    for (const [manifest, bytes] of [[filingManifest(), firstBytes], [later, page2], [filingManifest("page-1-copy"), firstBytes]] as const) {
       await applyReviewedManifest(state.db, manifest, { bytes, storage: state.storage });
+      assert.equal((await applyReviewedManifest(state.db, manifest, { bytes, storage: state.storage })).status, 'unchanged');
     }
     assert.equal((await state.db.select().from(filings)).length, 1);
     assert.equal((await state.db.select().from(sourceDocuments)).length, 3);
@@ -117,6 +126,8 @@ test("matching pre-ledger records can be adopted without rewriting source metada
     const person = personManifest(), filing = filingManifest();
     await importReviewedPerson(state.db, person.payload);
     await importReviewedFiling(state.db, filing.payload, firstBytes, state.storage);
+    const differentReview = structuredClone(filing); differentReview.payload.review.reviewedBy = 'Different reviewer';
+    await assert.rejects(applyReviewedManifest(state.db, differentReview, { bytes: firstBytes, storage: state.storage }), /different metadata/);
     const before = await state.db.select().from(sourceDocuments);
     assert.equal((await applyReviewedManifest(state.db, person)).status, "applied");
     assert.equal((await applyReviewedManifest(state.db, filing, { bytes: firstBytes, storage: state.storage })).status, "applied");
