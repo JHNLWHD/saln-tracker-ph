@@ -20,6 +20,7 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   const version = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, data: snapshotData })).digest('hex');
   let corrupt = false, redirectCanonical = false, corruptSnapshot = false;
   let redirectedPath = '', badPing = false;
+  let legacyLocation = `/documents/${hash}`;
   const other = createServer((request, response) => {
     response.setHeader('X-Archive-Revision', commit);
     response.end(request.url === '/ping' ? 'pong' : JSON.stringify({ schemaVersion: 1, version, data: snapshotData }));
@@ -30,7 +31,7 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
     if (request.url === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${request.url}`); response.end(); return; }
     if (request.url === '/ping') { response.setHeader('X-Archive-Revision', commit); response.end(badPing ? 'wrong response' : 'pong'); }
     else if (request.url === '/data/archive.json') response.end(JSON.stringify({ schemaVersion: 1, version, data: corruptSnapshot ? { ...snapshotData, tampered: true } : snapshotData }));
-    else if (request.url === '/saln/test.pdf') { response.statusCode = 301; response.setHeader('Location', `/documents/${hash}`); response.end(); }
+    else if (request.url === '/saln/test.pdf') { response.statusCode = 301; response.setHeader('Location', legacyLocation); response.end(); }
     else if (request.url === `/documents/${hash}`) {
       if (redirectCanonical) { response.statusCode = 302; response.setHeader('Location', '/backing-copy.pdf'); response.end(); }
       else response.end(corrupt ? 'wrong bytes' : bytes);
@@ -43,6 +44,13 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   try {
     const result = await verifyRetirement(record, origin, directory); assert.equal(result.status, 'verified_removal_plan_no_files_changed'); assert.deepEqual(result.paths, ['public/saln/test.pdf']);
     assert.deepEqual(await readFile(join(directory, result.paths[0])), bytes);
+    for (const location of [`/documents/${hash}?different=1`, `/documents/${hash}#fragment`, `documents/${hash}`]) {
+      legacyLocation = location;
+      await assert.rejects(verifyRetirement(record, origin, directory), /exact canonical document/);
+    }
+    legacyLocation = `../documents/${hash}`;
+    assert.equal((await verifyRetirement(record, origin, directory)).status, 'verified_removal_plan_no_files_changed');
+    legacyLocation = `/documents/${hash}`;
     for (const path of ['/ping', '/data/archive.json']) {
       redirectedPath = path;
       await assert.rejects(verifyRetirement(record, origin, directory), /escaped the named deployment/);

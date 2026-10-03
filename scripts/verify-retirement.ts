@@ -42,7 +42,7 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
     const source = snapshot.data.sourceDocuments.find((entry: { id: string; sha256: string }) => entry.id === document.sourceDocumentId);
     assert.ok(source); assert.equal(source.sha256, document.sha256);
     const legacy = await get(entry.path); assert.equal(legacy.status, 301);
-    const target = new URL(legacy.headers.get('Location')!, base); assert.equal(target.origin, base.origin); assert.equal(target.pathname, `/documents/${document.sha256}`);
+    const target = new URL(legacy.headers.get('Location')!, new URL(entry.path, base)); assert.equal(target.href, new URL(`/documents/${document.sha256}`, base).href, 'Legacy URL must identify the exact canonical document');
     const bytes = await get(target.pathname); assert.equal(bytes.status, 200); assert.equal(hash(new Uint8Array(await bytes.arrayBuffer())), document.sha256);
     removed.push(document.path);
   }
