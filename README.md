@@ -1,96 +1,37 @@
-# SALN Tracker Philippines 🇵🇭
+# SALN Tracker PH
 
-A modern web platform dedicated to tracking and monitoring the Statement of Assets, Liabilities, and Net Worth (SALN) of Philippine public officials, promoting transparency and accountability in government service.
+An open-ended Archive of acquired SALN Source Documents and reviewed Transcriptions for People who hold or held included elected Offices in the Philippines. The Archive does not verify real-world wealth, establish complete coverage or determine compliance.
 
-**#OpenSALN #PublicSALNNow**
-
-## About
-
-The SALN Tracker Philippines is designed to aggregate and display SALN records from official government channels, making it easier for citizens to access public financial disclosure information. This platform serves as a centralized hub for transparency data, helping promote good governance and public accountability.
-
-## Features
-
-- 📋 **Official Database** - Comprehensive list of current Philippine public officials (President, Vice President, Senators)
-- 🔍 **SALN Records View** - Detailed display of financial declarations when available
-- 🏛️ **Government Transparency** - Promotes accountability through public access to SALN data
-- 📱 **Responsive Design** - Modern Filipino election website design with Philippine flag colors
-- 🚀 **Fast Performance** - Built with React Router 7 and optimized for speed
-- 🔒 **TypeScript** - Type-safe development for reliability
-- 🎨 **TailwindCSS** - Beautiful, accessible styling with shadcn/ui patterns
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
+## Development
 
 ```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Project Structure
-
-```
-app/
-├── components/          # Reusable UI components
-│   ├── ui/             # Base UI components (Button, Card, Badge, Hashtags)
-│   ├── layout/         # Layout components (Header, Footer)
-│   ├── OfficialsGrid.tsx    # Main officials listing
-│   └── SALNRecordsView.tsx  # SALN records display
-├── data/               # Data management
-│   └── officials.ts    # Officials data and SALN helpers
-├── routes/             # Application routes
-│   ├── home.tsx       # Homepage with officials grid
-│   ├── about.tsx      # About page with platform info
-│   ├── official.$slug.tsx  # Individual official pages
-│   └── $.tsx          # 404 Not Found page
-└── app.css            # Global styles and Tailwind config
-```
-
-## Key Technologies
-
-- **React Router 7** - Modern routing and server-side rendering
-- **TypeScript** - Type safety and better developer experience
-- **TailwindCSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and development server
-- **Philippine Design System** - Custom theme with flag colors and cultural elements
-
-## Building for Production
-
-Create a production build:
-
-```bash
+npm ci
+# For a new checkout only; preserve an existing .env.
+cp -n .env.example .env
+# Set TURSO_AUTH_TOKEN in .env to a read-only database token.
+npm run dev -- --host 127.0.0.1 --port 5177 --strictPort
+npm test
+npm run typecheck
 npm run build
 ```
 
-## Previewing a Production build
+Open http://localhost:5177. The app reads the hosted Turso Archive named in `.env`; React Router loads the server environment without exposing database credentials to the browser. The example uses `saln-tracker-ph-jhoenil.aws-ap-northeast-1.turso.io`. A missing URL fails instead of falling back to Firebase or fixtures. No build or app start performs a migration or import.
 
-To preview a production build locally, use the [Netlify CLI](https://cli.netlify.com):
+The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. Public pages read the reviewed Archive. Raw legacy values retain their unreviewed status. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
 
-```bash
-npx netlify-cli serve
-```
+For an empty fixture preview, explicitly use `ARCHIVE_ADAPTER=local npm run dev`. Use a `file:` database only for isolated imports and tests, as described below.
 
-```bash
-npm run build
-```
+The app uses React Router, system sans-serif text, white and cool-gray surfaces, blue links, thin rules and evidence tables. Advocacy stays in its labeled contribution area.
 
-## Deployment
+## Release and operator guides
 
-This template is preconfigured for deployment to Netlify.
+- [Isolated develop deployment](ops/develop.md)
+- [Develop acceptance](ops/develop-acceptance.md)
+- [Private Source Tips](ops/source-tips.md)
+- [Production cutover and locked recovery](ops/production-cutover.md)
+- [Runtime and Git-held document retirement](ops/runtime-retirement.md)
 
-Follow <https://docs.netlify.com/welcome/add-new-site/> to add this project as a site
-in your Netlify account.
+`npm run archive:verify-release -- .data/acceptance/report.json` rehearses reviewed stage-one metadata in an empty temporary local database and verifies unchanged replay. Its report stays `not_accepted` until the live and user acceptance gates are resolved. Do not treat the rehearsal as a production deployment.
 
 ## Data Sources
 
@@ -110,9 +51,7 @@ The redesign follows the compact navigation and table layout of the [BetterGov B
 
 ### Local reviewed Archive
 
-The redesigned public routes use Turso by default and require `TURSO_DATABASE_URL`. Set `ARCHIVE_ADAPTER=turso` and use a read-only token for a hosted database. The Firebase adapter cannot serve this interface. Keep the existing production release until the reviewed Turso cutover is accepted; merging this code is not a production cutover. Use `ARCHIVE_ADAPTER=local` only for an empty fixture preview.
-
-Use a local SQLite file through libSQL for an isolated import rehearsal:
+The public app requires a named Turso/libSQL Archive. Normal development uses the hosted database above. To run an isolated import rehearsal, use a local SQLite file through libSQL:
 
 ```bash
 npm ci
@@ -121,7 +60,7 @@ npm run archive:import-person -- data/reviewed/0001-ferdinand-marcos-jr.json
 ARCHIVE_ADAPTER=turso TURSO_DATABASE_URL=file:.data/archive.db npm run dev
 ```
 
-Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Canonical directory pages arrive in the later directory slice.
+Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Browse reviewed identities at `/people`; filters stay in the URL.
 
 The import validates reviewed metadata and records its application in one transaction. An identical rerun verifies stored rows and is a no-op. To remove the current schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
 
@@ -144,7 +83,7 @@ For staging, set `ARCHIVE_STORAGE=r2`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KE
 
 ### Repeatable manifests and Public Data Snapshots
 
-Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing" | "correction", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
+Use `npm run archive:import -- manifest.json [source-file]` for a versioned manifest. Its envelope is `{ "id": "unique-review-id", "version": 1, "kind": "person" | "filing" | "correction" | "identities" | "roster" | "summary" | "report", "payload": { ... } }`. The payload uses the reviewed metadata format above. Unknown fields are rejected. After application, that ID and its canonical content cannot change; corrections use a new manifest in the correction workflow.
 
 The compatibility commands `archive:import-person` and `archive:import-filing` use this same ledger with stable IDs derived from the Person or Source Document ID. A rerun checks the stored metadata and, for a Filing, verifies the stored bytes without uploading them again. New pages can join an existing Filing only when its metadata matches exactly. Same-period Filings remain distinct.
 
@@ -158,23 +97,12 @@ This read-only export produces `<content-version>/archive.json` and `<content-ve
 
 ### Editorial Corrections and Disputed Facts
 
-Apply a correction with `npm run archive:import -- correction.json`. Its payload records the review, a public reason, the target record type and ID, the target's `previousCorrectionId` (null for the first), a `changes` object, and attributable citations supporting each changed fact. Supported targets are Person, Tenure, Filing, and Source Document metadata. A stale predecessor or changed manifest ID is rejected. A correction cannot replace identity links, source checksums, file bytes, storage keys, or file size/type.
+Apply a correction with `npm run archive:import -- correction.json`. Its payload records the review, a public reason, the target record type and ID, the target's `previousCorrectionId` (null for the first), a `changes` object, and attributable citations supporting each changed fact. Supported targets are Person, Tenure, Filing, Source Document, Summary Transcription and Related Reporting metadata. A stale predecessor or changed manifest ID is rejected. A correction cannot replace identity links, source checksums, file bytes, storage keys, or file size/type.
 
 Profiles and Public Data Snapshots use corrected metadata and show the correction history. The underlying records stay unchanged, so an original manifest can still replay after a correction. All conflict citations remain visible. A dispute about the Person or included Office removes that Tenure as an eligibility basis; a date-only dispute does not. A Person with another Verified Tenure can remain eligible. A direct profile link shows a scope notice when eligibility is unresolved.
 
-We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
+## Historical capture
 
-## Legal Framework
+`archive:capture-legacy` and `archive:audit-legacy` are explicit operator audit commands. Their Firebase SDKs are development dependencies under `scripts/`, with no public app import path. Raw captures remain private and ignored. The complete database capture remains unverified until read-authorized ADC is available; a public collection capture is not a database backup. Firestore write/deploy commands have been retired. No remote Firestore data is deleted by this cleanup.
 
-The Statement of Assets, Liabilities, and Net Worth (SALN) is required under Philippine law for all public officials. This platform supports the constitutional right of citizens to access information on matters of public concern.
-
-## See also
-
-- [Guide: how to deploy a React Router 7 site to Netlify](https://developers.netlify.com/guides/how-to-deploy-a-react-router-7-site-to-netlify/)
-- [React Router Documentation](https://reactrouter.com/)
-- [TailwindCSS Documentation](https://tailwindcss.com/)
-
----
-
-Built with ❤️ for Philippine transparency and accountability.
-**#OpenSALN #PublicSALNNow**
+Current Git-held PDFs remain until the rollback deadline and complete R2 URL/recovery verification pass. Normal file removal must preserve Git history.
