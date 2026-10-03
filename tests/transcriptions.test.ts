@@ -87,6 +87,10 @@ test("Secondary Reports neither create Filings nor close gaps, and sparse timeli
   const state = await setup();
   try {
     await applyReviewedManifest(state.db, report);
+    await assert.rejects(applyReviewedManifest(state.db, { id: "report-future-correction", version: 1, kind: "correction", payload: {
+      review, target: { type: "secondary_report", id: "report" }, previousCorrectionId: null, reason: "Synthetic future publication date",
+      changes: { publishedDate: { value: "2027", precision: "year" } }, citations: [{ id: "future-report-proof", title: "Synthetic publication evidence", url: "https://example.org/future", publisher: "Test", type: "public_article", supports: ["publishedDate"], publishedDate: null }],
+    } }), /publication follows its review/);
     const archive = createDbArchive(state.db), empty = (await archive.findPersonBySlug("sample-person"))!;
     assert.equal(empty.filings.length, 0); assert.equal(empty.sourceDocuments.length, 0); assert.equal(empty.financialSummaries.length, 0);
     const emptyHtml = renderToStaticMarkup(createElement(PersonProfile, { record: empty }));

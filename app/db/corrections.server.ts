@@ -6,7 +6,7 @@ import type { ReviewedCorrection } from "./correction-validation";
 import { validateReviewedFiling } from "./filing-validation";
 import * as schema from "./schema";
 import { parsePartialDate, validateReviewedPerson, validateTenureEvidence } from "./validation";
-import { checkSummarySources, validateReport, validateSummary } from "./transcription-validation";
+import { checkSummarySources, validateReviewedReport, validateSummary } from "./transcription-validation";
 
 export async function readEditorialCorrections(db: ArchiveReader): Promise<EditorialCorrection[]> {
   const table = schema.editorialCorrections;
@@ -137,7 +137,7 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     await checkSummarySources(db, summary);
   } else if (target.type === "secondary_report") {
     const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
-    validateReport({ ...record, ...patch.changes });
+    validateReviewedReport({ review: patch.review, report: { ...record, ...patch.changes } });
   }
 }
 
