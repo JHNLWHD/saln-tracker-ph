@@ -1,7 +1,8 @@
+import { createHash } from "node:crypto";
 import { and, count, desc, eq, inArray, ne, sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import type { ArchiveHome, Citation, CorrectionTargetType, RosterSnapshot } from "../archive/types";
 import type { ArchiveReader, ArchiveWriter } from "./client.server";
-import { missingRows } from "./canonical";
+import { canonicalJson, missingRows } from "./canonical";
 import { checkCitationMetadata, projectCorrections, readEditorialCorrections } from "./corrections.server";
 import { personIsEligible, tenureIsVerified as publicTenure } from "./eligibility";
 import { canonicalPersonId } from "./identities.server";
@@ -60,10 +61,22 @@ const nationalRosterOffices = {
   senate: ['office-senator-ph', 'office-senate-president-ph'], speaker: ['office-house-speaker-ph'], house: ['office-house-representative-ph'],
 };
 
+// These two immutable Senate manifests predate exact review timestamps. Permit only
+// their recorded digests to retain the original, deterministic complete-roster choice.
+const historicalRosterDigests = new Map([
+  ['roster-senate-2026-09-21-a-2022-cohort', 'ab2f8f4dfc586992b89072f9a22c3523542f8c6a2f955728f9ec5b21c0a0d96f'],
+  ['roster-senate-2026-09-21', 'c11a2221f69bc8fcda9e5635c6d564c4445e2651c36fc8e3f5642e79a625b30a'],
+]);
+
 export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record: ReviewedRoster, verifyOnly = false) {
   if (!verifyOnly) {
-    const [sameTime] = await tx.select({ id: schema.rosterSnapshots.id }).from(schema.rosterSnapshots).where(and(ne(schema.rosterSnapshots.id, id), eq(schema.rosterSnapshots.scope, record.scope), eq(schema.rosterSnapshots.verifiedAsOf, record.verifiedAsOf), eq(schema.rosterSnapshots.reviewedAt, record.review.reviewedAt))).limit(1);
-    if (sameTime) throw new Error('A same-day replacement needs a distinct reviewed timestamp');
+    const sameTime = await tx.select({ id: schema.rosterSnapshots.id, digest: schema.manifestApplications.digest }).from(schema.rosterSnapshots)
+      .leftJoin(schema.manifestApplications, eq(schema.manifestApplications.id, schema.rosterSnapshots.id))
+      .where(and(ne(schema.rosterSnapshots.id, id), eq(schema.rosterSnapshots.scope, record.scope), eq(schema.rosterSnapshots.verifiedAsOf, record.verifiedAsOf), eq(schema.rosterSnapshots.reviewedAt, record.review.reviewedAt)));
+    if (sameTime.length) {
+      const digest = createHash('sha256').update(canonicalJson({ id, version: 1, kind: 'roster', payload: record })).digest('hex');
+      if (historicalRosterDigests.get(id) !== digest || sameTime.some(row => historicalRosterDigests.get(row.id) !== row.digest)) throw new Error('A same-day replacement needs a distinct reviewed timestamp');
+    }
   }
   const corrections = await readEditorialCorrections(tx);
   await checkCitationMetadata(tx, record.members.flatMap(row => row.citations), corrections);
