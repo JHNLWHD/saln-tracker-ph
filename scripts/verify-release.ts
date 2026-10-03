@@ -11,6 +11,7 @@ import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { createDbArchive } from '../app/db/people.server';
 import { migrateArchive } from './migrate';
 import { createLocalDocumentStorage } from '../app/storage/objects.server';
+import { readReleaseRoute } from './release-http';
 
 export async function rehearseStageOne(sourceFiles: Record<string, string> = {}, planFile = new URL('../data/release/stage-one.json', import.meta.url)) {
   const plan = JSON.parse(await readFile(planFile, 'utf8'));
@@ -50,12 +51,8 @@ export async function rehearseStageOne(sourceFiles: Record<string, string> = {},
 export async function verifyReleaseHttp(base: string, revision: string, artifacts: Awaited<ReturnType<typeof exportPublicSnapshot>>) {
   const url = new URL(base);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash || url.pathname !== '/') throw new Error('Use the deployment origin without credentials or a path');
-  const get = async (path: string, init?: RequestInit) => {
-    const response = await fetch(new URL(path, url), { signal: AbortSignal.timeout(30000), ...init });
-    assert.equal(new URL(response.url).origin, url.origin, 'HTTP check escaped the named deployment');
-    return response;
-  };
-  const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), revision);
+  const get = (path: string) => readReleaseRoute(url, path, artifacts.snapshot.version);
+  const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), revision); assert.equal(await ping.text(), 'pong');
   const metadata = await get('/data/archive.json'); assert.equal(metadata.status, 200); assert.equal(await metadata.text(), artifacts.snapshotJson);
   const checksums = await get('/data/source-checksums.json'); assert.equal(checksums.status, 200); assert.equal(await checksums.text(), artifacts.checksumManifestJson);
   for (const [file, contents] of [['archive.json', artifacts.snapshotJson], ['source-checksums.json', artifacts.checksumManifestJson]]) {
@@ -71,7 +68,7 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
   for (const alias of artifacts.snapshot.data.personAliases) {
     const person = artifacts.snapshot.data.people.find(person => person.id === alias.personId)!;
     if (alias.value === person.slug) continue;
-    const response = await get(`/official/${encodeURIComponent(alias.value)}`, { redirect: 'manual' });
+    const response = await get(`/official/${encodeURIComponent(alias.value)}`);
     assert.equal(response.status, 301);
     const target = new URL(response.headers.get('Location')!, url);
     assert.equal(target.origin, url.origin); assert.equal(target.pathname, `/official/${person.slug}`);
