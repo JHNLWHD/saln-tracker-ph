@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
-import { readFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createServer } from 'node:http';
 import test from 'node:test';
 import { rehearseStageOne, verifyReleaseHttp } from '../scripts/verify-release';
@@ -19,4 +23,27 @@ test('release rehearsal reconciles the fixed baseline and HTTP acceptance reject
   const address = server.address(); assert.ok(address && typeof address === 'object');
   try { await assert.rejects(verifyReleaseHttp(`http://127.0.0.1:${address.port}`, 'synthetic-test-revision', result.artifacts), /Expected values/); }
   finally { await new Promise<void>(resolve => server.close(() => resolve())); }
+});
+
+test('release rehearsal verifies acquired Filing bytes on import and unchanged replay', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-release-filing-'));
+  try {
+    await cp(new URL('../data/reviewed/', import.meta.url), join(directory, 'reviewed'), { recursive: true });
+    await mkdir(join(directory, 'release'));
+    const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
+    const filing = JSON.parse(await readFile(new URL('../data/examples/hontiveros-2024-local-verification/0002-hontiveros-2024-page-1.json', import.meta.url), 'utf8'));
+    const bytes = Buffer.from('%PDF-1.7\nSynthetic release rehearsal document\n%%EOF\n'), hash = createHash('sha256').update(bytes).digest('hex');
+    Object.assign(filing.payload.document, { fileName: 'synthetic.pdf', mediaType: 'application/pdf', byteSize: bytes.byteLength, sha256: hash });
+    await writeFile(join(directory, 'reviewed/synthetic-filing.json'), JSON.stringify(filing));
+    plan.manifests.push('synthetic-filing.json');
+    const planFile = pathToFileURL(join(directory, 'release/stage-one.json')), sourceFile = join(directory, 'synthetic.pdf');
+    await writeFile(planFile, JSON.stringify(plan)); await writeFile(sourceFile, bytes);
+    await assert.rejects(rehearseStageOne({}, planFile), /requires its local acquired source file/);
+    const result = await rehearseStageOne({ 'synthetic-filing.json': sourceFile }, planFile);
+    assert.equal(result.expectation.counts.filings, 1); assert.equal(result.expectation.counts.sourceDocuments, 1);
+    assert.equal(result.artifacts.checksumManifest.documents[0].sha256, hash);
+    assert.equal(result.artifacts.checksumManifest.documents[0].byteSize, bytes.byteLength);
+    await writeFile(sourceFile, Buffer.from('incorrect source bytes'));
+    await assert.rejects(rehearseStageOne({ 'synthetic-filing.json': sourceFile }, planFile), /byte size|checksum|signature/i);
+  } finally { await rm(directory, { recursive: true, force: true }); }
 });
