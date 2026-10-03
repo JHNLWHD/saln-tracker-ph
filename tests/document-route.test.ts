@@ -53,6 +53,8 @@ test("public document route serves reviewed exact bytes, download headers and co
     await assert.rejects(request(), status(404));
     await db.update(tenures).set({ verificationStatus: "verified" }).where(eq(tenures.personId, source.filing.personId));
     await rm(join(objects, documentStorageKey(sha256)));
+    assert.equal((await request(sha256, "", { headers: { "If-None-Match": `"${sha256}"` } })).status, 304);
+    assert.equal((await request(sha256, "", { method: "HEAD" })).headers.get("Content-Length"), String(bytes.byteLength));
     await assert.rejects(request(), status(503));
   } finally {
     await closeArchive();
