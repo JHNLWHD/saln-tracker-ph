@@ -100,13 +100,13 @@ This platform is designed to aggregate SALN data from official government channe
 
 ## Design System
 
-The platform features a modern Filipino election website design system:
+The redesign follows the compact navigation and table layout of the [BetterGov Budget Tracker](https://2026-budget.bettergov.ph/table) and the source metadata order of [BetterGov Open Data](https://data.bettergov.ph/datasets/4).
 
-- **Colors**: Philippine flag colors (Red #F70000, Blue #0038A8, Yellow #FCD116)
-- **Typography**: Bold headings with tight tracking, medium weight text
-- **Components**: Clean cards with rounded corners, multi-variant buttons, glass effects
-- **Layout**: Container-based, responsive grid, mobile-first approach
-- **Branding**: Flag-inspired gradients and patriotic color schemes
+- **Colors**: White and cool-gray surfaces, dark text, blue links and active controls, and thin neutral rules.
+- **Typography**: System sans-serif text, compact bold headings, and aligned tabular figures.
+- **Layout**: A compact responsive masthead, visible search and filters, and dense evidence rows with clear Open and Download actions.
+- **Accessibility**: Visible keyboard focus, labeled controls, native disclosures, and tables that scroll within their own region.
+- **Records and advocacy**: Source Documents, Provenance, and reviewed Transcriptions stay neutral. Advocacy uses a separate labeled surface. Unknown dates and absent reviewed totals remain explicit.
 
 ## Contributing
 
