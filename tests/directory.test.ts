@@ -4,7 +4,7 @@ import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { directoryFilters, directoryHref } from '../app/archive/directory';
+import { directoryFilters, directoryFromRecords, directoryHref } from '../app/archive/directory';
 import { connectArchive } from '../app/db/client.server';
 import { applyReviewedManifest } from '../app/db/manifests.server';
 import { createDbArchive } from '../app/db/people.server';
@@ -40,6 +40,18 @@ test('native directory searches only public identity/office fields and applies r
     const correction = { id: 'correct-directory-name', version: 1, kind: 'correction', payload: { review, target: { type: 'person', id: 'person-risa-hontiveros' }, previousCorrectionId: null, reason: 'Synthetic approved identity correction', changes: { canonicalName: 'Reviewed Person Name', nameVariants: ['NewAliasUnique'] }, citations: [{ id: 'name-proof', title: 'Synthetic name evidence', url: 'https://example.org/name', publisher: 'Test', type: 'official_record', supports: ['canonicalName', 'nameVariants'], publishedDate: null }] } };
     await applyReviewedManifest(db, correction);
     assert.equal((await browse('q=NewAliasUnique')).rows[0].canonicalName, 'Reviewed Person Name'); assert.equal((await browse('q=Ana+Theresia')).total, 0);
+    await applyReviewedManifest(db, { ...correction, id: 'unicode-directory-name', payload: { ...correction.payload, previousCorrectionId: correction.id, changes: { canonicalName: 'MUÑOZ', nameVariants: ['NewAliasUnique'] } } });
+    const unicodeRecord = (await archive.findPersonBySlug('risa-hontiveros'))!;
+    for (const q of ['muñoz', 'MUN\u0303OZ']) {
+      const query = new URLSearchParams({ q }).toString();
+      assert.equal((await browse(query)).rows[0]?.canonicalName, 'MUÑOZ');
+      assert.equal(directoryFromRecords([unicodeRecord], filters(query)).total, 1);
+    }
+    const speaker = (await archive.findPersonBySlug('faustino-bojie-dy-iii'))!;
+    assert.equal(directoryFromRecords([speaker], filters('office=office-senator-ph&jurisdiction=jurisdiction-isabela')).total, 0);
+    const unrelated = structuredClone(unicodeRecord);
+    unrelated.jurisdictions.push({ id: 'unrelated-place', name: 'Unrelated place', kind: 'province' });
+    assert.equal(directoryFromRecords([unrelated], filters('jurisdiction=unrelated-place')).total, 0);
     const boundary = { id: 'actual-end', version: 1, kind: 'correction', payload: { review, target: { type: 'tenure', id: 'tenure-marcos-president-2022' }, previousCorrectionId: null, reason: 'Synthetic actual end review', changes: { endDate: { value: '2024', precision: 'year' } }, citations: [{ id: 'end-proof', title: 'Synthetic actual end', url: 'https://example.org/end', publisher: 'Test', type: 'official_record', supports: ['endDate'], publishedDate: null }] } };
     await applyReviewedManifest(db, boundary);
     assert.equal((await browse('tenure=former')).total, 1); assert.equal((await browse('tenure=current')).total, 26);
