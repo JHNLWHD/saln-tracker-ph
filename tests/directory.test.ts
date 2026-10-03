@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { directoryFilters, directoryFromRecords, directoryHref } from '../app/archive/directory';
+import { createLocalArchive } from '../app/archive/local';
 import { connectArchive } from '../app/db/client.server';
 import { applyReviewedManifest } from '../app/db/manifests.server';
 import { createDbArchive } from '../app/db/people.server';
@@ -76,12 +77,22 @@ test('native directory searches only public identity/office fields and applies r
     assert.equal((await browse()).total, 26); assert.equal((await browse('q=Ferdinand')).total, 0); assert.equal((await browse('tenure=current')).total, 26);
 
     await client.batch([
-      "INSERT INTO jurisdictions (id, name, kind) VALUES ('unrelated-place', 'Unrelated', 'province'), ('synthetic-region', 'Synthetic region', 'region')",
-      "INSERT INTO jurisdiction_relationships (from_id, to_id, kind) VALUES ('jurisdiction-isabela', 'synthetic-region', 'geographic')",
+      "INSERT INTO jurisdictions (id, name, kind) VALUES ('unrelated-place', 'Unrelated', 'province'), ('synthetic-region', 'Synthetic region', 'region'), ('synthetic-parent', 'Synthetic parent', 'country')",
+      "INSERT INTO jurisdiction_relationships (from_id, to_id, kind) VALUES ('jurisdiction-isabela', 'synthetic-region', 'geographic'), ('synthetic-region', 'synthetic-parent', 'administrative'), ('synthetic-parent', 'synthetic-region', 'geographic')",
     ], 'write');
     const choices = (await browse()).jurisdictions.map(row => row.id);
     assert.ok(!choices.includes('unrelated-place')); assert.ok(choices.includes('synthetic-region'));
     assert.equal((await browse('jurisdiction=synthetic-region')).total, 1);
+    const fixture = structuredClone(speaker);
+    fixture.jurisdictions.push({ id: 'synthetic-region', name: 'Synthetic region', kind: 'region' }, { id: 'synthetic-parent', name: 'Synthetic parent', kind: 'country' }, { id: 'unrelated-place', name: 'Unrelated', kind: 'province' });
+    fixture.jurisdictionRelationships = [{ fromId: 'jurisdiction-isabela', toId: 'synthetic-region', kind: 'geographic' }, { fromId: 'synthetic-region', toId: 'synthetic-parent', kind: 'administrative' }, { fromId: 'synthetic-parent', toId: 'synthetic-region', kind: 'geographic' }];
+    const local = createLocalArchive([fixture]);
+    const localChoices = (await local.browsePeople(filters())).jurisdictions.map(row => row.id);
+    assert.ok(localChoices.includes('synthetic-region') && localChoices.includes('synthetic-parent'));
+    assert.ok(!localChoices.includes('unrelated-place'));
+    for (const query of ['jurisdiction=synthetic-region', 'jurisdiction=synthetic-parent', 'office=office-senator-ph&jurisdiction=synthetic-region', 'q=Synthetic']) {
+      assert.equal((await local.browsePeople(filters(query))).total, (await browse(query)).total);
+    }
     const replacement = JSON.parse(await readFile(new URL('stage-one-completion/13-senate-roster.json', root), 'utf8'));
     replacement.id = 'z-later-senate-review'; replacement.payload.review.reviewedAt = '2026-10-03';
     replacement.payload.members = [replacement.payload.members[0]];
