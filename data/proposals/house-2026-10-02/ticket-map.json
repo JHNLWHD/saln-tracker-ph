@@ -81,12 +81,12 @@
     "fullItemization": "deferred"
   },
   "acceptanceCriteria": {
-    "evidence": "Review attributable Person and Office evidence for each member; retain exact source names as Name Variants only after an Identity Match. Preserve unknown actual Tenure dates and Assumption Method. Resolve source conflicts with citations.",
+    "evidence": "Review attributable Person and Office evidence for each member; retain exact source names as Name Variants only after an Identity Match. Each member also needs at least one citation supporting person, office and holdsOffice, with a day-precision publishedDate on or before the agreed Roster Snapshot verifiedAsOf date. It must establish holding the membership Office as of that date and pass validateReviewedRoster. The undated live directory and its capture date alone do not meet this requirement. Preserve unknown actual Tenure dates and Assumption Method. Resolve source conflicts with citations; block batch acceptance if dated holding evidence is missing.",
     "manifest": "Use reviewed immutable Person and Filing manifests, fixed shared IDs and the legacy identity index from HOUSE-00, plus reviewed batch Person/Tenure IDs and append-only corrections. Reuse the House membership Office and existing People/Tenures. Import once and replay without a data change.",
     "profile": "Check each canonical profile and direct legacy/alias redirect. Show citations, constituency, date precision and an honest Archive Gap. Keep Chamber Leadership Tenures separate from membership.",
     "document": "Inventory candidate SALNs. Acquire at most 12 original Source Documents for at most 12 initial Filings in this ticket. Verify provenance, Filer Name, Reporting Date, checksum, byte size and immutable R2 key; bind any summary to exact pages. Record zero trustworthy documents explicitly. Propose a separate approved follow-up for overflow; no reencoded scans or rebuilt PDFs.",
     "reconciliation": "Account for every sourceMemberId exactly once against the dated source capture and reviewed Person/Tenure mapping. Compare manifest ledger, snapshot counts, source checksums, rejected candidates and profile resolutions. Document expected changes separately from shared baseline totals.",
-    "staging": "Import into isolated develop with operator credentials. Verify exact release revision, database/R2 separation, read-only runtime, snapshot replay, profile routes, document open/download bytes and private Source Tip exclusion. Do not publish a partial House Roster Snapshot as the complete House scope.",
+    "staging": "Import into isolated develop with operator credentials. Verify exact release revision, database/R2 separation, read-only runtime, snapshot replay, profile routes, document open/download bytes and private Source Tip exclusion. Do not publish a partial House Roster Snapshot as the complete House scope. Validate the batch membership payload with validateReviewedRoster before batch acceptance, without publishing a partial House Roster Snapshot. Missing dated holding evidence blocks acceptance.",
     "approval": "Attach the reconciliation and staging evidence. Obtain explicit user acceptance before production publication. Follow the proven #65/#66 recovery and cutover workflow. Serialize shared imports and release approval; parallel work is evidence/manifest preparation only."
   },
   "foundation": {
@@ -100,7 +100,7 @@
       "Refresh and manually review the complete dated source projection; record all active and inactive changes and account for the 317/318 difference without inventing a holder.",
       "Resolve L042/J013 constituency labels with attributable evidence; assign typed Jurisdictions, Constituencies and separate geographic/administrative relationships.",
       "Freeze shared Office/Jurisdiction/Constituency IDs and publish the existing approved Person/legacy identity index. Reuse D027 explicitly. Each bounded batch reviews at most 12 Person/Tenure mappings, canonical names and aliases against this baseline. Source member IDs are source keys, never Person IDs. An ambiguous cross-batch identity creates a blocking edge before parallel preparation resumes.",
-      "Store a reviewed shared geography mapping, legacy identity index and source citation plan. Preserve actual Tenure start/end dates as unknown unless separately evidenced; scheduled Electoral Term dates do not prove actual Tenure bounds.",
+      "Store a reviewed shared geography mapping, legacy identity index and source citation plan. Preserve actual Tenure start/end dates as unknown unless separately evidenced; scheduled Electoral Term dates do not prove actual Tenure bounds. Agree the Roster Snapshot verification date and a dated holding-evidence plan for every member, including reused D027. A shared source is sufficient only when it establishes each named member and supplies a supported publication day; otherwise each batch must find member-specific dated evidence. Never use the directory capture date as its publication date.",
       "Obtain user acceptance of the source roster and shared mapping before any batch import. This proposal does not supply that acceptance."
     ]
   },
@@ -1352,7 +1352,7 @@
       ],
       "acceptance": [
         "Recheck the House source at the release date. Resolve membership changes through reviewed follow-up manifests; retain this historical capture unchanged.",
-        "Reconcile exactly the complete current dated set against reviewed membership Tenures, not Speaker Tenures. Only then create one complete House Roster Snapshot with citations.",
+        "Reconcile exactly the complete current dated set against reviewed membership Tenures, not Speaker Tenures. Only then create one complete House Roster Snapshot with citations. Revalidate every member citation for person, office and holdsOffice support and a day-precision publication date on or before the final verifiedAsOf date. If evidence no longer supports membership on that date, obtain reviewed follow-up evidence before publication.",
         "Run the exact deployed acceptance and recovery workflow; obtain explicit production approval and publish without dual writing. Publish a verification report. Provincial rollout stays blocked until this ticket is accepted."
       ]
     }
