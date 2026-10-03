@@ -18,8 +18,12 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
   if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('A credential-free production origin is required');
   // ponytail: verify one buffered Git blob at a time, capped at 256 MiB; stream if larger originals are acquired.
   const git = (args: string[]) => execFileSync('git', args, { cwd: repository, maxBuffer: 256 * 1024 * 1024 });
-  const paths = git(['ls-files', '-z', 'public/saln/']).toString().split('\0').filter(path => path.toLowerCase().endsWith('.pdf')).sort();
+  const pdfPaths = (commit: string) => git(['ls-tree', '-r', '--name-only', '-z', commit, '--', 'public/saln/']).toString().split('\0').filter(path => path.toLowerCase().endsWith('.pdf')).sort();
+  const paths = pdfPaths(record.recoveryCommit);
+  assert.ok(paths.length, 'Recovery commit must contain Git-held PDFs');
   assert.deepEqual(record.documents.map(row => row.path).sort(), paths, 'Every tracked PDF needs one reviewed mapping');
+  assert.deepEqual(pdfPaths('HEAD'), paths, 'Current checkout must retain the recovery PDF set before removal');
+  assert.equal(git(['status', '--porcelain', '--untracked-files=all', '--', 'public/saln/']).toString().trim(), '', 'PDF retirement requires a clean pre-removal state');
   const get = (path: string, init?: RequestInit) => fetch(new URL(path, base), { signal: AbortSignal.timeout(30000), ...init });
   const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), record.productionCommit);
   const response = await get('/data/archive.json'); assert.equal(response.status, 200); const snapshot = await response.json();
