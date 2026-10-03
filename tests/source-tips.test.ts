@@ -7,7 +7,7 @@ import { connectArchive } from '../app/db/client.server';
 import { initializeSourceTipDestination, queueSourceTip, readSourceTipBody, sourceTipDestination, validateSourceTip } from '../app/db/source-tips.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { migrateArchive } from '../scripts/migrate';
-import { action } from '../app/routes/source-tip';
+import { action, headers } from '../app/routes/source-tip';
 
 const valid = { sourceUrl: 'https://example.invalid/reviewed-source', explanation: 'Synthetic source for private reviewer verification.', contact: 'private@example.invalid', personHint: 'person-risa-hontiveros', website: '' };
 test('Source Tip boundary rejects credentials, uploads and public database aliases and bounds Unicode bodies', async () => {
@@ -39,7 +39,8 @@ test('anonymous Source Tip action commits only to its private destination, with 
     assert.equal((await submit(valid, { 'Content-Type': 'multipart/form-data' })).init?.status, 415);
     assert.equal((await submit({ ...valid, website: 'bot' })).data.success, true); assert.equal((await privateDb.client.execute('select * from source_tips')).rows.length, 1);
     delete process.env.SOURCE_TIPS_DATABASE_URL;
-    const failure = await submit(); assert.equal(failure.init?.status, 503); assert.ok(!JSON.stringify(failure).includes(valid.contact));
+    const failure = await submit(); assert.equal(failure.init?.status, 503); assert.ok(!failure.data.success); assert.deepEqual(failure.data.values, validateSourceTip(new URLSearchParams(valid)).values);
+    assert.equal(new Headers(failure.init?.headers).get('Cache-Control'), 'no-store');
     process.env.SOURCE_TIPS_DATABASE_URL = privateUrl;
     await privateDb.client.execute("with recursive n(i) as (select 1 union all select i+1 from n where i < 999) insert into source_tips (id, source_url, explanation, contact, person_hint, received_at) select 'test-' || i, 'https://example.invalid', 'Synthetic queue item', null, null, '2026-10-02T00:00:00.000Z' from n");
     assert.equal((await submit()).init?.status, 503); assert.equal((await privateDb.client.execute('select count(*) as total from source_tips')).rows[0].total, 1000);
@@ -60,6 +61,9 @@ test('private queue throttles one trusted client atomically without storing addr
     const stored = await client.execute('SELECT * FROM source_tips'); assert.equal(stored.rows.length, 5); assert.ok(!JSON.stringify(stored.rows).includes('192.0.2.1'));
     const response = await action({ request: new Request('http://localhost/source-tip.data', { method: 'POST', body: new URLSearchParams(valid), headers: { Origin: 'http://localhost', 'X-Forwarded-For': '192.0.2.99' } }), params: {}, context: { ip: '192.0.2.1' } });
     assert.equal(response.init?.status, 429); assert.equal(new Headers(response.init?.headers).get('Retry-After'), '600');
+    assert.ok(!response.data.success); assert.deepEqual(response.data.values, tip);
+    const documentHeaders = new Headers(headers({ actionHeaders: new Headers(response.init?.headers) }));
+    assert.equal(documentHeaders.get('Retry-After'), '600'); assert.equal(documentHeaders.get('Cache-Control'), 'no-store');
     assert.ok(await queueSourceTip(tip, '192.0.2.2', env));
     await assert.rejects(queueSourceTip(tip, undefined, { ...env, NETLIFY: 'true' }));
     await client.execute("UPDATE source_tips SET received_at = '2000-01-01T00:00:00.000Z'");
