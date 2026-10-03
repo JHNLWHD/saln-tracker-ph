@@ -43,5 +43,12 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
     corrupt = false; redirectCanonical = true;
     await assert.rejects(verifyRetirement(record, origin, directory), /Expected values/);
     assert.equal(git(['ls-files', 'public/saln/test.pdf']).toString().trim(), 'public/saln/test.pdf');
+    redirectCanonical = false;
+    git(['rm', '-q', 'public/saln/test.pdf']);
+    await assert.rejects(verifyRetirement({ ...record, documents: [] }, origin, directory), /Every tracked PDF/);
+    await assert.rejects(verifyRetirement(record, origin, directory), /clean pre-removal state/);
+    git(['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'Synthetic premature removal']);
+    await assert.rejects(verifyRetirement({ ...record, documents: [] }, origin, directory), /Every tracked PDF/);
+    await assert.rejects(verifyRetirement(record, origin, directory), /recovery PDF set/);
   } finally { await new Promise<void>(resolve => server.close(() => resolve())); await rm(directory, { recursive: true, force: true }); }
 });
