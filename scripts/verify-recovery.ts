@@ -93,7 +93,7 @@ interface ProductionBuckets { accountId: string; documentBucket: string; documen
 export function productionBuckets(targets: ProductionBuckets, approved: ProductionBuckets | null | undefined, env: NodeJS.ProcessEnv = process.env) {
   if (!approved || !['accountId', 'documentBucket', 'documentJurisdiction', 'backupBucket', 'backupJurisdiction'].every(key => Reflect.get(targets, key) === Reflect.get(approved, key))) throw new Error('Production R2 targets must match the accepted release plan');
   const { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction } = targets;
-  if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
+  if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket && documentJurisdiction === backupJurisdiction || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
   if (![documentJurisdiction, backupJurisdiction].every(value => ['default', 'eu', 'us', 'fedramp'].includes(value))) throw new Error('Each production bucket requires an explicit supported jurisdiction');
   if ([documentBucket, backupBucket].includes(env.STAGING_R2_BUCKET ?? '')) throw new Error('The staging bucket cannot be a production recovery target');
   return { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction,
