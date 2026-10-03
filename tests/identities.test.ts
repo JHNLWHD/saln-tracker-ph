@@ -51,7 +51,7 @@ test("reviewed merge chains retain source rows, dates, correction history, docum
   const env = { ARCHIVE_ADAPTER: "turso", TURSO_DATABASE_URL: state.url, ARCHIVE_STORAGE: "local", ARCHIVE_OBJECT_DIR: join(state.directory, "objects") };
   const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   try {
-    await importReviewedPerson(state.db, person("a", true));
+    await applyReviewedManifest(state.db, { id: 'person:a', version: 1, kind: 'person', payload: person('a', true) });
     await importReviewedPerson(state.db, person("b"));
     await importReviewedPerson(state.db, person("c"));
     assert.deepEqual((await state.archive.listPeople()).map(row => row.person.id), ["a"]); // Names never merge.
@@ -200,7 +200,7 @@ test("identity migration preserves a populated correction ledger and restores fo
   const state = await setup();
   const statements = async (file: string) => (await readFile(new URL(`../drizzle/${file}`, import.meta.url), "utf8")).split(/--> statement-breakpoint|;/).map(sql => sql.trim()).filter(Boolean);
   try {
-    await importReviewedPerson(state.db, person("a"));
+    await applyReviewedManifest(state.db, { id: 'person:a', version: 1, kind: 'person', payload: person('a') });
     await applyReviewedManifest(state.db, { id: "correct-a", version: 1, kind: "correction", payload: { review, target: { type: "person", id: "a" }, previousCorrectionId: null,
       reason: "Synthetic name correction", changes: { canonicalName: "Corrected" }, citations: [{ ...citation, supports: ["canonicalName"] }] } });
     const ledger = await state.db.select().from(schema.manifestApplications), history = await state.db.select().from(schema.editorialCorrections);
