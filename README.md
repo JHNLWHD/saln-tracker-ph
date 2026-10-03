@@ -110,7 +110,9 @@ The redesign follows the compact navigation and table layout of the [BetterGov B
 
 ### Local reviewed Archive
 
-The relational Archive is opt-in while the legacy site remains the default. Use a local SQLite file through libSQL to inspect the first reviewed Person:
+The redesigned public routes use Turso by default and require `TURSO_DATABASE_URL`. Set `ARCHIVE_ADAPTER=turso` and use a read-only token for a hosted database. The Firebase adapter cannot serve this interface. Keep the existing production release until the reviewed Turso cutover is accepted; merging this code is not a production cutover. Use `ARCHIVE_ADAPTER=local` only for an empty fixture preview.
+
+Use a local SQLite file through libSQL for an isolated import rehearsal:
 
 ```bash
 npm ci
