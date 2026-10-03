@@ -9,6 +9,7 @@ export default [
   route("resources", "routes/resources.tsx"),
   route("people", "routes/people.tsx"),
   route("source-tip", "routes/source-tip.tsx"),
+  route("data/:file", "routes/data.$file.ts"),
   route("ping", "routes/ping.tsx"), // Ping endpoint for monitoring
   route("*", "routes/$.tsx") // Catch-all route for 404
 ] satisfies RouteConfig;
