@@ -7,7 +7,10 @@ import { Button } from '../components/ui/Button';
 import { queueSourceTip, readSourceTipBody, sourceTipsConfigured, validateSourceTip } from '../db/source-tips.server';
 
 const privateHeaders = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' };
-export function headers() { return privateHeaders; }
+export function headers({ actionHeaders }: Pick<Route.HeadersArgs, 'actionHeaders'>) {
+  const retryAfter = actionHeaders.get('Retry-After');
+  return { ...privateHeaders, ...(retryAfter ? { 'Retry-After': retryAfter } : {}) };
+}
 export function meta() { return [{ title: 'Suggest a source | SALN Tracker PH' }, { name: 'description', content: 'Privately suggest a source for Archive review.' }, { name: 'robots', content: 'noindex,nofollow' }]; }
 export function loader({ request }: Route.LoaderArgs) {
   const hint = new URL(request.url).searchParams.get('person') ?? '';
@@ -25,10 +28,10 @@ export async function action({ request, context }: Route.ActionArgs) {
   if (Object.keys(checked.errors).length) return data({ success: false as const, error: '', errors: checked.errors, values: checked.values }, { status: 400, headers: privateHeaders });
   try {
     // Netlify supplies context.ip. Request headers cannot select or reset the client's bucket.
-    if (!await queueSourceTip(checked.values, context.ip)) return data({ success: false as const, error: 'Too many Source Tips. Try again in ten minutes.', errors: {}, values: undefined }, { status: 429, headers: { ...privateHeaders, 'Retry-After': '600' } });
+    if (!await queueSourceTip(checked.values, context.ip)) return data({ success: false as const, error: 'Too many Source Tips. Try again in ten minutes.', errors: checked.errors, values: checked.values }, { status: 429, headers: { ...privateHeaders, 'Retry-After': '600' } });
     return data({ success: true as const }, { headers: privateHeaders });
   }
-  catch { return fail('Source Tips are temporarily unavailable. Please try again later.', 503); }
+  catch { return data({ success: false as const, error: 'Source Tips are temporarily unavailable. Please try again later.', errors: checked.errors, values: checked.values }, { status: 503, headers: privateHeaders }); }
 }
 
 export default function SourceTip({ loaderData, actionData }: Route.ComponentProps) {
