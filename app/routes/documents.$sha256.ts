@@ -1,6 +1,6 @@
 import type { Route } from "./+types/documents.$sha256";
 import { getArchive } from "../archive/archive.server";
-import { createDocumentStorage } from "../storage/objects.server";
+import { createDocumentStorage, DocumentStorageUnavailableError } from "../storage/objects.server";
 
 export async function loader({ params, request }: Route.LoaderArgs) {
   if (!/^[a-f0-9]{64}$/.test(params.sha256)) throw new Response("Not Found", { status: 404 });
@@ -17,10 +17,14 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     "Cache-Control": "public, max-age=0, must-revalidate",
     ETag: `"${document.sha256}"`,
   };
-  if (request.headers.get("If-None-Match") === headers.ETag) return new Response(null, { status: 304, headers });
+  const validators = request.headers.get("If-None-Match");
+  if (validators?.trim() === '*' || validators?.split(',').some(value => value.trim().replace(/^W\//, '') === headers.ETag)) return new Response(null, { status: 304, headers });
   if (request.method === "HEAD") return new Response(null, { headers });
   // ponytail: buffers one file; stream from storage before serving files above the host response limit.
-  const bytes = await createDocumentStorage().get(document.sha256);
+  const bytes = await createDocumentStorage().get(document.sha256).catch(error => {
+    if (!(error instanceof DocumentStorageUnavailableError)) throw error;
+    return null;
+  });
   if (!bytes) throw new Response("Source Document is temporarily unavailable", { status: 503, headers: { "Retry-After": "60" } });
   return new Response(Uint8Array.from(bytes), { headers });
 }
