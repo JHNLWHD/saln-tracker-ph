@@ -9,6 +9,8 @@ export interface DocumentStorage {
   get(sha256: string): Promise<Uint8Array | null>;
 }
 
+export class DocumentStorageUnavailableError extends Error {}
+
 export function documentStorageKey(sha256: SourceDocument['sha256']): string {
   if (!/^[a-f0-9]{64}$/.test(sha256)) throw new Error('A lowercase SHA-256 checksum is required');
   return `documents/sha256/${sha256}`;
@@ -68,16 +70,17 @@ export function createR2DocumentStorage(client: S3Client, bucket: string): Docum
   const storage: DocumentStorage = {
     async get(sha256) {
       const Key = documentStorageKey(sha256);
+      let bytes: Uint8Array;
       try {
         const result = await client.send(new GetObjectCommand({ Bucket: bucket, Key }));
         if (!result.Body) throw new Error('Source Document response has no body');
-        const bytes = await result.Body.transformToByteArray();
-        verifyChecksum(bytes, sha256);
-        return bytes;
+        bytes = await result.Body.transformToByteArray();
       } catch (error) {
         if (error instanceof S3ServiceException && error.$metadata.httpStatusCode === 404) return null;
-        throw error;
+        throw new DocumentStorageUnavailableError('Source Document storage is unavailable', { cause: error });
       }
+      verifyChecksum(bytes, sha256);
+      return bytes;
     },
     async put(bytes, sha256, mediaType) {
       const storageKey = documentStorageKey(sha256);

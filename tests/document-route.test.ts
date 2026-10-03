@@ -5,6 +5,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { eq } from "drizzle-orm";
+import { S3Client, S3ServiceException } from '@aws-sdk/client-s3';
 import { closeArchive } from "../app/archive/archive.server";
 import { connectArchive } from "../app/db/client.server";
 import { importReviewedPerson } from "../app/db/people.server";
@@ -15,12 +16,13 @@ import { createLocalDocumentStorage, documentStorageKey } from "../app/storage/o
 import { migrateArchive } from "../scripts/migrate";
 import { loader } from "../app/routes/documents.$sha256";
 
-test("public document route serves reviewed exact bytes, download headers and conditional requests while hiding orphan objects", async () => {
+test("public document route serves reviewed exact bytes, download headers and conditional requests while hiding orphan objects", async (t) => {
   const directory = await mkdtemp(join(tmpdir(), "saln-document-route-"));
   const url = `file:${join(directory, "archive.db")}`;
   const objects = join(directory, "objects");
   const { client, db } = connectArchive({ url });
-  const env = { ARCHIVE_ADAPTER: "turso", TURSO_DATABASE_URL: url, ARCHIVE_STORAGE: "local", ARCHIVE_OBJECT_DIR: objects };
+  const env = { ARCHIVE_ADAPTER: "turso", TURSO_DATABASE_URL: url, ARCHIVE_STORAGE: "local", ARCHIVE_OBJECT_DIR: objects,
+    R2_ENDPOINT: 'https://storage.example.test', R2_BUCKET: 'test', R2_ACCESS_KEY_ID: 'synthetic', R2_SECRET_ACCESS_KEY: 'synthetic' };
   const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   const bytes = Buffer.from("%PDF-1.7\nSynthetic route test document.\n%%EOF\n");
   const sha256 = createHash("sha256").update(bytes).digest("hex");
@@ -53,9 +55,19 @@ test("public document route serves reviewed exact bytes, download headers and co
     await assert.rejects(request(), status(404));
     await db.update(tenures).set({ verificationStatus: "verified" }).where(eq(tenures.personId, source.filing.personId));
     await rm(join(objects, documentStorageKey(sha256)));
-    assert.equal((await request(sha256, "", { headers: { "If-None-Match": `"${sha256}"` } })).status, 304);
+    for (const validator of [`"${sha256}"`, `W/"${sha256}"`, `"other", W/"${sha256}"`, '*']) {
+      for (const method of ['GET', 'HEAD']) assert.equal((await request(sha256, "", { method, headers: { "If-None-Match": validator } })).status, 304);
+    }
     assert.equal((await request(sha256, "", { method: "HEAD" })).headers.get("Content-Length"), String(bytes.byteLength));
-    await assert.rejects(request(), status(503));
+    await assert.rejects(request(sha256, '', { headers: { 'If-None-Match': '"different"' } }), status(503));
+    process.env.ARCHIVE_STORAGE = 'r2';
+    const transport = t.mock.method(S3Client.prototype, 'send');
+    for (const error of [new S3ServiceException({ name: 'ServiceUnavailable', $fault: 'server', $metadata: { httpStatusCode: 503 } }), new Error('connection reset')]) {
+      transport.mock.mockImplementation(async () => { throw error; });
+      await assert.rejects(request(), error => error instanceof Response && error.status === 503 && error.headers.get('Retry-After') === '60');
+    }
+    transport.mock.mockImplementation(async () => ({ Body: { transformToByteArray: async () => Buffer.from('corrupt') } }));
+    await assert.rejects(request(), /checksum mismatch/);
   } finally {
     await closeArchive();
     client.close();
