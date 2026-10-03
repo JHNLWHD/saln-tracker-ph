@@ -1,13 +1,14 @@
-import { randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
+import { isIP } from 'node:net';
 import { resolve } from 'node:path';
-import { count } from 'drizzle-orm';
+import { and, count, eq, gte } from 'drizzle-orm';
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import type { Client } from '@libsql/client';
 import { connectArchive } from './client.server';
 
 /** This table exists only in the separate private destination, never in the Archive schema. */
 const tips = sqliteTable('source_tips', {
-  id: text('id').primaryKey(), sourceUrl: text('source_url').notNull(), explanation: text('explanation').notNull(), contact: text('contact'), personHint: text('person_hint'), receivedAt: text('received_at').notNull(),
+  id: text('id').primaryKey(), sourceUrl: text('source_url').notNull(), explanation: text('explanation').notNull(), contact: text('contact'), personHint: text('person_hint'), receivedAt: text('received_at').notNull(), rateKey: text('rate_key'),
 });
 export interface SourceTipInput { sourceUrl: string; explanation: string; contact: string; personHint: string }
 
@@ -23,7 +24,14 @@ export function sourceTipDestination(env: NodeJS.ProcessEnv = process.env) {
 }
 
 export function sourceTipsConfigured() {
-  try { sourceTipDestination(); return true; } catch { return false; }
+  try { const config = sourceTipDestination(); return config.url.startsWith('file:') && process.env.NETLIFY !== 'true' || (process.env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) >= 32; } catch { return false; }
+}
+
+function sourceTipRateKey(trustedIp: unknown, env: NodeJS.ProcessEnv) {
+  const local = env.SOURCE_TIPS_DATABASE_URL?.startsWith('file:') && env.NETLIFY !== 'true';
+  if (local && trustedIp === undefined) return 'local-development';
+  if (typeof trustedIp !== 'string' || !isIP(trustedIp) || (env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) < 32) throw new Error('Trusted client address and private rate-limit key are required');
+  return createHmac('sha256', env.SOURCE_TIPS_RATE_LIMIT_SECRET!).update(trustedIp).digest('hex');
 }
 
 export function validateSourceTip(form: URLSearchParams) {
@@ -40,23 +48,30 @@ export function validateSourceTip(form: URLSearchParams) {
 }
 
 /** Never fetch the submitted URL or write to a public Archive table. */
-export async function queueSourceTip(tip: SourceTipInput, env: NodeJS.ProcessEnv = process.env) {
+export async function queueSourceTip(tip: SourceTipInput, trustedIp: unknown, env: NodeJS.ProcessEnv = process.env) {
+  const rateKey = sourceTipRateKey(trustedIp, env);
   const { client, db } = connectArchive(sourceTipDestination(env));
   const id = randomUUID();
   try {
-    await db.transaction(async tx => {
+    const queued = await db.transaction(async tx => {
+      const [recent] = await tx.select({ total: count() }).from(tips).where(and(eq(tips.rateKey, rateKey), gte(tips.receivedAt, new Date(Date.now() - 10 * 60_000).toISOString())));
+      if (recent.total >= 5) return false;
       const [queue] = await tx.select({ total: count() }).from(tips);
       // ponytail: bound the first private queue to 1,000 tips; add reviewed retention when volume needs it.
       if (queue.total >= 1000) throw new Error('Private review queue is full');
-      await tx.insert(tips).values({ id, ...tip, contact: tip.contact || null, personHint: tip.personHint || null, receivedAt: new Date().toISOString() });
+      await tx.insert(tips).values({ id, ...tip, contact: tip.contact || null, personHint: tip.personHint || null, receivedAt: new Date().toISOString(), rateKey });
+      return true;
     });
-    return id;
+    return queued ? id : null;
   } finally { client.close(); }
 }
 
 /** Operators initialize the named destination separately; the public app cannot create its schema. */
 export async function initializeSourceTipDestination(client: Client) {
   await client.execute(`CREATE TABLE IF NOT EXISTS source_tips (id text PRIMARY KEY NOT NULL, source_url text NOT NULL, explanation text NOT NULL, contact text, person_hint text, received_at text NOT NULL)`);
+  const columns = await client.execute('PRAGMA table_info(source_tips)');
+  if (!columns.rows.some(row => row.name === 'rate_key')) await client.execute('ALTER TABLE source_tips ADD COLUMN rate_key text');
+  await client.execute('CREATE INDEX IF NOT EXISTS source_tips_rate_key_received_at ON source_tips(rate_key, received_at)');
 }
 
 export async function readSourceTipBody(request: Request) {
