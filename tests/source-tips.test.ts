@@ -11,6 +11,9 @@ import { action } from '../app/routes/source-tip';
 
 const valid = { sourceUrl: 'https://example.invalid/reviewed-source', explanation: 'Synthetic source for private reviewer verification.', contact: 'private@example.invalid', personHint: 'person-risa-hontiveros', website: '' };
 test('Source Tip boundary rejects credentials, uploads and public database aliases and bounds Unicode bodies', async () => {
+  const remote = { SOURCE_TIPS_DATABASE_URL: 'libsql://private.example.invalid', TURSO_DATABASE_URL: 'libsql://archive.example.invalid', TURSO_AUTH_TOKEN: 'synthetic-archive-token', SOURCE_TIPS_AUTH_TOKEN: 'synthetic-private-token' };
+  assert.equal(sourceTipDestination(remote).authToken, remote.SOURCE_TIPS_AUTH_TOKEN);
+  assert.throws(() => sourceTipDestination({ ...remote, SOURCE_TIPS_AUTH_TOKEN: remote.TURSO_AUTH_TOKEN }), /separate private database token/);
   for (const env of [{ SOURCE_TIPS_DATABASE_URL: 'file:.data/archive.db' }, { SOURCE_TIPS_DATABASE_URL: 'libsql://same-host', TURSO_DATABASE_URL: 'https://same-host', SOURCE_TIPS_AUTH_TOKEN: 'test' }, { SOURCE_TIPS_DATABASE_URL: 'https://user:secret@example.org', SOURCE_TIPS_AUTH_TOKEN: 'test' }]) assert.throws(() => sourceTipDestination(env));
   assert.throws(() => validateSourceTip(new URLSearchParams({ ...valid, upload: 'file' })));
   assert.throws(() => validateSourceTip(new URLSearchParams('sourceUrl=https://example.org&sourceUrl=https://example.org')));

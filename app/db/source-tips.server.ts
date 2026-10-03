@@ -20,6 +20,7 @@ export function sourceTipDestination(env: NodeJS.ProcessEnv = process.env) {
   if (url.startsWith('file:')) return { url };
   const parsed = new URL(url);
   if (!['libsql:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || !env.SOURCE_TIPS_AUTH_TOKEN) throw new Error('A private SQL destination and token are required');
+  if (env.SOURCE_TIPS_AUTH_TOKEN === env.TURSO_AUTH_TOKEN) throw new Error('Source Tips require a separate private database token');
   return { url, authToken: env.SOURCE_TIPS_AUTH_TOKEN };
 }
 
