@@ -50,7 +50,11 @@ export async function rehearseStageOne(sourceFiles: Record<string, string> = {},
 export async function verifyReleaseHttp(base: string, revision: string, artifacts: Awaited<ReturnType<typeof exportPublicSnapshot>>) {
   const url = new URL(base);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash || url.pathname !== '/') throw new Error('Use the deployment origin without credentials or a path');
-  const get = (path: string, init?: RequestInit) => fetch(new URL(path, url), { signal: AbortSignal.timeout(30000), ...init });
+  const get = async (path: string, init?: RequestInit) => {
+    const response = await fetch(new URL(path, url), { signal: AbortSignal.timeout(30000), ...init });
+    assert.equal(new URL(response.url).origin, url.origin, 'HTTP check escaped the named deployment');
+    return response;
+  };
   const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), revision);
   const metadata = await get('/data/archive.json'); assert.equal(metadata.status, 200); assert.equal(await metadata.text(), artifacts.snapshotJson);
   const checksums = await get('/data/source-checksums.json'); assert.equal(checksums.status, 200); assert.equal(await checksums.text(), artifacts.checksumManifestJson);

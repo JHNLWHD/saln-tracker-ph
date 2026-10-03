@@ -51,9 +51,15 @@ test('release rehearsal verifies acquired Filing bytes on import and unchanged r
 test('HTTP acceptance requires aliases to stay on the named deployment', async () => {
   const { artifacts } = await rehearseStageOne();
   let crossOrigin = false;
+  let redirectedPath = '';
+  const other = createServer((_request, response) => response.end('Another deployment'));
+  other.listen(0, '127.0.0.1'); await once(other, 'listening');
+  const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
   const server = createServer((request, response) => {
     const path = request.url!;
+    if (path === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${path}`); response.end(); return; }
     if (path === '/ping') { response.setHeader('X-Archive-Revision', 'synthetic'); response.end('pong'); }
+    else if (path === '/data/archive.json') { response.statusCode = 307; response.setHeader('Location', `/data/${artifacts.snapshot.version}/archive.json`); response.end(); }
     else if (path.endsWith('/archive.json')) response.end(artifacts.snapshotJson);
     else if (path.endsWith('/source-checksums.json')) response.end(artifacts.checksumManifestJson);
     else if (path === '/unknown-release-check-path') { response.statusCode = 404; response.end(); }
@@ -74,5 +80,10 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     assert.ok((await verifyReleaseHttp(origin, 'synthetic', artifacts)).checkedAliases > 0);
     crossOrigin = true;
     await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
-  } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
+    crossOrigin = false;
+    for (const path of ['/ping', '/data/archive.json', '/data/source-checksums.json', '/', `/official/${artifacts.snapshot.data.people[0].slug}`]) {
+      redirectedPath = path;
+      await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
+    }
+  } finally { await Promise.all([server, other].map(server => new Promise<void>(resolve => server.close(() => resolve())))); }
 });
