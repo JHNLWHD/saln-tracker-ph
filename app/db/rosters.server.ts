@@ -43,14 +43,32 @@ export function effectiveField<T>(type: CorrectionTargetType, id: SQLWrapper, fi
       order by ${schema.editorialCorrections.revision} desc limit 1) else ${original} end`;
 }
 
+/** Corrected actual boundaries must still contain the historical Snapshot date. */
+export function tenureCoversRosterDate(date: SQLWrapper) {
+  const start = sql`json_extract(${effectiveField('tenure', schema.tenures.id, 'startDate', sql`json_object('value', ${schema.tenures.startDate})`)}, '$.value')`;
+  const end = sql`json_extract(${effectiveField('tenure', schema.tenures.id, 'endDate', sql`json_object('value', ${schema.tenures.endDate})`)}, '$.value')`;
+  return sql`(${start} is null or ${start} <= substr(${date}, 1, length(${start}))) and (${end} is null or ${end} >= substr(${date}, 1, length(${end})))`;
+}
+
+// National scopes refer to the durable Office IDs used by the reviewed manifests.
+const nationalRosterOffices = {
+  executive: ['office-president-ph', 'office-vice-president-ph'],
+  senate: ['office-senator-ph'], speaker: ['office-house-speaker-ph'], house: ['office-house-representative-ph'],
+};
+
 export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record: ReviewedRoster, verifyOnly = false) {
   const corrections = await readEditorialCorrections(tx);
   await checkCitationMetadata(tx, record.members.flatMap(row => row.citations), corrections);
   for (const member of record.members) {
-    const [row] = await tx.select({ tenure: schema.tenures, included: schema.offices.included }).from(schema.tenures)
+    const [row] = await tx.select({ tenure: schema.tenures, office: schema.offices, jurisdictionKind: schema.jurisdictions.kind }).from(schema.tenures)
       .innerJoin(schema.offices, eq(schema.offices.id, schema.tenures.officeId)).innerJoin(schema.people, eq(schema.people.id, canonicalPersonId(schema.tenures.personId)))
+      .leftJoin(schema.jurisdictions, eq(schema.jurisdictions.id, schema.offices.jurisdictionId))
       .where(and(eq(schema.tenures.id, member.tenureId), verifyOnly ? undefined : personIsEligible(), verifyOnly ? undefined : publicTenure()));
-    if (!row?.included) throw new Error("Roster member needs a reviewed Tenure in an included Office and an Archive-Eligible Person");
+    if (!row?.office.included) throw new Error("Roster member needs a reviewed Tenure in an included Office and an Archive-Eligible Person");
+    const matchesScope = record.scope === 'local'
+      ? row.office.kind === 'elected' && row.jurisdictionKind !== null && row.jurisdictionKind !== 'country' && !Object.values(nationalRosterOffices).flat().includes(row.office.id)
+      : nationalRosterOffices[record.scope].includes(row.office.id);
+    if (!matchesScope) throw new Error('Roster member Office does not match the declared scope');
     const sources = await tx.select({ citation: schema.citations, supports: schema.tenureCitations.supports }).from(schema.tenureCitations)
       .innerJoin(schema.citations, eq(schema.citations.id, schema.tenureCitations.citationId)).where(eq(schema.tenureCitations.tenureId, member.tenureId));
     const tenure = projectCorrections("tenure", { ...row.tenure, startDate: parsePartialDate(row.tenure.startDate), endDate: parsePartialDate(row.tenure.endDate),
@@ -82,7 +100,7 @@ export async function readArchiveHome(tx: ArchiveReader): Promise<ArchiveHome> {
       documentCount: sql<number>`(select count(distinct ${schema.sourceDocuments.sha256}) from ${schema.sourceDocuments} inner join ${schema.filings} on ${schema.filings.id} = ${schema.sourceDocuments.filingId} where ${canonicalPersonId(schema.filings.personId)} = ${schema.people.id})`.mapWith(Number),
     }).from(schema.tenures).innerJoin(schema.people, eq(schema.people.id, canonicalPersonId(schema.tenures.personId))).innerJoin(schema.offices, eq(schema.offices.id, schema.tenures.officeId))
       .innerJoin(schema.rosterMembers, and(eq(schema.rosterMembers.tenureId, schema.tenures.id), eq(schema.rosterMembers.snapshotId, snapshot.id)))
-      .where(and(inArray(schema.tenures.id, snapshot.members.map(member => member.tenureId)), personIsEligible(), publicTenure(), eq(schema.offices.included, true))).orderBy(schema.rosterMembers.position);
+      .where(and(inArray(schema.tenures.id, snapshot.members.map(member => member.tenureId)), personIsEligible(), publicTenure(), eq(schema.offices.included, true), tenureCoversRosterDate(sql`${snapshot.verifiedAsOf}`))).orderBy(schema.rosterMembers.position);
     rosters.push({ snapshot, rows: rows.map(row => ({ ...row, latestSummary: null })) });
   }
   const recent = tx.select({ id: schema.sourceDocuments.id, sha256: schema.sourceDocuments.sha256, fileName: effectiveField<string>("source_document", schema.sourceDocuments.id, "fileName", schema.sourceDocuments.fileName).as("file_name"),

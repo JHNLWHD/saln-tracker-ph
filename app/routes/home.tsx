@@ -7,7 +7,11 @@ import { CallToActionBanner } from "../components/CallToActionBanner";
 import { getArchive, readLegacyHome } from "../archive/archive.server";
 import { ArchiveHome } from "../components/ArchiveHome";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ data }: Route.MetaArgs) {
+  if (!data?.archive) return [
+    { title: "SALN Tracker Philippines - Public Officials Transparency" },
+    { name: "description", content: "Track and monitor Statement of Assets, Liabilities, and Net Worth (SALN) of Philippine public officials. Promoting transparency and accountability in government." },
+  ];
   return [
     { title: "SALN Archive | SALN Tracker PH" },
     { name: "description", content: "Find and inspect acquired SALN Source Documents and reviewed Transcriptions for Philippine elected officeholders." },
