@@ -19,8 +19,10 @@ test('Source Tip boundary rejects credentials, uploads and public database alias
   }
   const local = { SOURCE_TIPS_DATABASE_URL: 'file:.data/private-tips.db', SOURCE_TIPS_RATE_LIMIT_SECRET: 'synthetic-key-with-at-least-32-characters' };
   assert.equal(sourceTipsConfigured(local), true);
-  assert.equal(sourceTipsConfigured({ ...local, NETLIFY: 'true' }), false);
-  assert.throws(() => sourceTipDestination({ ...local, NETLIFY: 'true' }), /hosted private database/);
+  for (const deployed of [{ NETLIFY: 'true' }, { SITE_ID: 'synthetic-function-site' }, { NODE_ENV: 'production' }]) {
+    assert.equal(sourceTipsConfigured({ ...local, ...deployed }), false);
+    assert.throws(() => sourceTipDestination({ ...local, ...deployed }), /hosted private database/);
+  }
   for (const env of [{ SOURCE_TIPS_DATABASE_URL: 'file:.data/archive.db' }, { SOURCE_TIPS_DATABASE_URL: 'libsql://same-host', TURSO_DATABASE_URL: 'https://same-host', SOURCE_TIPS_AUTH_TOKEN: 'test' }, { SOURCE_TIPS_DATABASE_URL: 'https://user:secret@example.org', SOURCE_TIPS_AUTH_TOKEN: 'test' }]) assert.throws(() => sourceTipDestination(env));
   assert.throws(() => validateSourceTip(new URLSearchParams({ ...valid, upload: 'file' })));
   assert.throws(() => validateSourceTip(new URLSearchParams('sourceUrl=https://example.org&sourceUrl=https://example.org')));
