@@ -16,7 +16,7 @@ export function ArchiveHome({ data }: { data: HomeData }) {
     {data.rosters.map(({ snapshot, rows, omittedMemberCount }) => <section key={snapshot.id} aria-labelledby={`roster-${snapshot.scope}`} className="space-y-3">
       <h2 id={`roster-${snapshot.scope}`}>{scopeLabels[snapshot.scope]}</h2>
       <p className="text-sm">Roster Snapshot · Verified as of <time dateTime={snapshot.verifiedAsOf}>{snapshot.verifiedAsOf}</time>. Manually reviewed; this is not a live roster.</p>
-      <p className="archive-muted text-sm">This Snapshot lists {new Set(rows.map(row => row.personId)).size} People. A reviewed cohort can cover only part of an Office's membership.</p>
+      <p className="archive-muted text-sm">People shown from this Snapshot: {new Set(rows.map(row => row.personId)).size}. A reviewed cohort can cover only part of an Office's membership.</p>
       {(omittedMemberCount ?? snapshot.members.length - rows.length) > 0 && <p className="archive-muted">Some roster entries are not shown because their Archive eligibility or Tenure evidence is unresolved.</p>}
       <ArchiveTable caption={`${scopeLabels[snapshot.scope]} · ${snapshot.verifiedAsOf}`}>
         <thead><tr><th scope="col">Person and Office</th><th scope="col">Archive Source Documents</th><th scope="col">Declared Financial Summary</th></tr></thead>
