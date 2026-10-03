@@ -31,6 +31,8 @@ test('R2 recovery targets must match the independently accepted production inven
   for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket }), /staging bucket/);
   const shared = { ...approved, backupBucket: approved.documentBucket };
   assert.throws(() => productionBuckets(shared, shared, {}), /separate production buckets/);
+  const separate = { ...shared, backupJurisdiction: 'eu' };
+  assert.equal(productionBuckets(separate, separate, {}).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
 });
 
 test('R2 lock reads and backup endpoints identify each accepted bucket jurisdiction', async t => {
@@ -48,6 +50,9 @@ test('R2 lock reads and backup endpoints identify each accepted bucket jurisdict
     const missing = { ...approved, backupJurisdiction: '' };
     assert.throws(() => productionBuckets(missing, missing, {}), /explicit supported jurisdiction/);
   }
+  const sameName = { accountId: 'a'.repeat(32), documentBucket: 'archive', documentJurisdiction: 'default', backupBucket: 'archive', backupJurisdiction: 'eu' };
+  await verifyBucketLocks(productionBuckets(sameName, sameName, {}), 'synthetic-token');
+  assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['archive', 'default'], ['archive', 'eu']]);
 });
 
 test('SQL recovery restores exact bound bytes and rejects corruption and external database attachment', async () => {
