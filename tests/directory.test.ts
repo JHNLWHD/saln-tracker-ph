@@ -52,6 +52,18 @@ test('native directory searches only public identity/office fields and applies r
     const unrelated = structuredClone(unicodeRecord);
     unrelated.jurisdictions.push({ id: 'unrelated-place', name: 'Unrelated place', kind: 'province' });
     assert.equal(directoryFromRecords([unrelated], filters('jurisdiction=unrelated-place')).total, 0);
+    assert.equal(directoryFromRecords([unrelated], filters('q=Unrelated')).total, 0);
+    for (const verificationStatus of ['unverified', 'disputed'] as const) {
+      const unreviewed = structuredClone(unicodeRecord);
+      unreviewed.jurisdictions.push({ id: 'unreviewed-place', name: 'Unreviewed place', kind: 'province' });
+      unreviewed.offices.push({ id: 'unreviewed-office', name: 'Unreviewed Office', kind: 'elected', included: true, jurisdictionId: 'unreviewed-place' });
+      unreviewed.tenures.push({ ...unreviewed.tenures[0], id: 'unreviewed-tenure', officeId: 'unreviewed-office', verificationStatus, disputedFacts: verificationStatus === 'disputed' ? ['office'] : [] });
+      assert.equal(directoryFromRecords([unreviewed], filters('q=Unreviewed')).total, 0);
+      const all = directoryFromRecords([unreviewed], filters());
+      assert.ok(!all.rows[0].offices.includes('Unreviewed Office'));
+      assert.ok(!all.offices.some(office => office.id === 'unreviewed-office'));
+      assert.equal(directoryFromRecords([unreviewed], filters('q=Philippines')).total, 1);
+    }
     const boundary = { id: 'actual-end', version: 1, kind: 'correction', payload: { review, target: { type: 'tenure', id: 'tenure-marcos-president-2022' }, previousCorrectionId: null, reason: 'Synthetic actual end review', changes: { endDate: { value: '2024', precision: 'year' } }, citations: [{ id: 'end-proof', title: 'Synthetic actual end', url: 'https://example.org/end', publisher: 'Test', type: 'official_record', supports: ['endDate'], publishedDate: null }] } };
     await applyReviewedManifest(db, boundary);
     assert.equal((await browse('tenure=former')).total, 1); assert.equal((await browse('tenure=current')).total, 26);

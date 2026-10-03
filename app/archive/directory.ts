@@ -20,14 +20,18 @@ export function directoryHref(filters: DirectoryFilters, page: number) {
 /** The fixture adapter uses the same public fields; deployed directories use native SQL. */
 export function directoryFromRecords(records: PersonRecord[], filters: DirectoryFilters): DirectoryResult {
   const eligible = records.filter(record => record.person.eligibility === 'eligible');
+  const publicTenures = (record: PersonRecord) => record.tenures.filter(t => t.verificationStatus !== 'unverified' && !t.disputedFacts.some(fact => ['person', 'office'].includes(fact)) && record.offices.some(o => o.id === t.officeId && o.included));
+  const publicOffices = (record: PersonRecord) => record.offices.filter(o => publicTenures(record).some(t => t.officeId === o.id));
   const matches = eligible.filter(record => {
-    const tenures = record.tenures.filter(t => t.verificationStatus !== 'unverified' && !t.disputedFacts.some(fact => ['person', 'office'].includes(fact)) && record.offices.some(o => o.id === t.officeId && o.included));
+    const tenures = publicTenures(record);
     const current = (id: string) => record.rosterMemberships?.some(m => m.tenureId === id);
-    const fields = [record.person.canonicalName, ...record.person.nameVariants, ...record.filings.map(f => f.filerName), ...record.offices.filter(o => tenures.some(t => t.officeId === o.id)).map(o => o.name), ...record.constituencies.filter(c => tenures.some(t => t.constituencyId === c.id)).map(c => c.name), ...record.jurisdictions.map(j => j.name)];
+    const offices = publicOffices(record), constituencies = record.constituencies.filter(c => tenures.some(t => t.constituencyId === c.id));
+    const jurisdictions = record.jurisdictions.filter(j => offices.some(o => o.jurisdictionId === j.id) || constituencies.some(c => c.jurisdictionId === j.id));
+    const fields = [record.person.canonicalName, ...record.person.nameVariants, ...record.filings.map(f => f.filerName), ...offices.map(o => o.name), ...constituencies.map(c => c.name), ...jurisdictions.map(j => j.name)];
     return (!filters.q || fields.some(value => searchText(value).includes(searchText(filters.q)))) &&
       tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || record.offices.some(o => o.id === t.officeId && o.jurisdictionId === filters.jurisdiction) || record.constituencies.some(c => c.id === t.constituencyId && c.jurisdictionId === filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
       (!filters.documents || (record.sourceDocuments.length > 0) === (filters.documents === 'available')) && (!filters.year || record.filings.some(f => f.reportingDate.value.startsWith(filters.year)));
   }).sort((a, b) => a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
   const page = Math.min(filters.page, Math.max(1, Math.ceil(matches.length / 30)));
-  return { total: matches.length, page, pageSize: 30, rows: matches.slice((page - 1) * 30, page * 30).map(record => ({ id: record.person.id, slug: record.person.slug, canonicalName: record.person.canonicalName, documentCount: new Set(record.sourceDocuments.map(d => d.sha256)).size, offices: record.offices.filter(o => o.included).map(o => o.name) })), offices: [...new Map(eligible.flatMap(r => r.offices.filter(o => o.included).map(o => [o.id, { id: o.id, name: o.name }]))).values()], jurisdictions: [...new Map(eligible.flatMap(r => r.jurisdictions.map(j => [j.id, { id: j.id, name: j.name }]))).values()] };
+  return { total: matches.length, page, pageSize: 30, rows: matches.slice((page - 1) * 30, page * 30).map(record => ({ id: record.person.id, slug: record.person.slug, canonicalName: record.person.canonicalName, documentCount: new Set(record.sourceDocuments.map(d => d.sha256)).size, offices: publicOffices(record).map(o => o.name) })), offices: [...new Map(eligible.flatMap(r => publicOffices(r).map(o => [o.id, { id: o.id, name: o.name }]))).values()], jurisdictions: [...new Map(eligible.flatMap(r => r.jurisdictions.map(j => [j.id, { id: j.id, name: j.name }]))).values()] };
 }
