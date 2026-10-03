@@ -14,7 +14,7 @@ export function loader({ request }: Route.LoaderArgs) {
   return data({ configured: sourceTipsConfigured(), personHint: /^[A-Za-z0-9:._-]{1,128}$/.test(hint) ? hint : '' }, { headers: privateHeaders });
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
   const fail = (error: string, status: number) => data({ success: false as const, error, errors: {}, values: undefined }, { status, headers: privateHeaders });
   if (request.method !== 'POST') return fail('Use the Source Tip form to submit a source.', 405);
   if (request.headers.get('Origin') !== new URL(request.url).origin) return fail('Reload the form and submit it from this site.', 403);
@@ -23,7 +23,11 @@ export async function action({ request }: Route.ActionArgs) {
   try { checked = validateSourceTip(await readSourceTipBody(request)); } catch { return fail('The Source Tip could not be read. Check its fields and size.', 400); }
   if (checked.spam) return data({ success: true as const }, { headers: privateHeaders });
   if (Object.keys(checked.errors).length) return data({ success: false as const, error: '', errors: checked.errors, values: checked.values }, { status: 400, headers: privateHeaders });
-  try { await queueSourceTip(checked.values); return data({ success: true as const }, { headers: privateHeaders }); }
+  try {
+    // Netlify supplies context.ip. Request headers cannot select or reset the client's bucket.
+    if (!await queueSourceTip(checked.values, context.ip)) return data({ success: false as const, error: 'Too many Source Tips. Try again in ten minutes.', errors: {}, values: undefined }, { status: 429, headers: { ...privateHeaders, 'Retry-After': '600' } });
+    return data({ success: true as const }, { headers: privateHeaders });
+  }
   catch { return fail('Source Tips are temporarily unavailable. Please try again later.', 503); }
 }
 
