@@ -14,3 +14,6 @@
 .firebase/
 firebase-debug.log
 firestore-debug.log
+
+# Local archive database and document store
+/.data/

@@ -1,0 +1,11 @@
+DROP TABLE tenure_citations;
+DROP TABLE tenures;
+DROP TABLE citations;
+DROP TABLE electoral_terms;
+DROP TABLE person_names;
+DROP TABLE people;
+DROP TABLE jurisdiction_relationships;
+DROP TABLE constituencies;
+DROP TABLE offices;
+DROP TABLE jurisdictions;
+DROP TABLE __drizzle_migrations;
