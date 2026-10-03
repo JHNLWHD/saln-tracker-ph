@@ -4,7 +4,7 @@ import { Footer } from "../components/layout/Footer";
 import { OfficialsGrid } from "../components/OfficialsGrid";
 import { Hashtags } from "../components/ui/Hashtags";
 import { CallToActionBanner } from "../components/CallToActionBanner";
-import { getOfficialsWithSALNData } from "../data/officials";
+import { readLegacyHome } from "../archive/archive.server";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,8 +14,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({}: Route.LoaderArgs) {
-  const officials = await getOfficialsWithSALNData();
-  return { officials };
+  const { people, legacyPresentation } = await readLegacyHome();
+  return { people, officials: legacyPresentation };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
