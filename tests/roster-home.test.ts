@@ -79,6 +79,7 @@ test('review timestamps order same-day replacements independently of IDs and imp
   const state = await setup();
   try {
     const later = await json('0005-executive-roster-2026-09-28.json');
+    await assert.rejects(applyReviewedManifest(state.db, { ...later, id: 'ambiguous-day' }), /distinct reviewed timestamp/);
     later.id = 'z-same-day'; later.payload.review.reviewedAt = '2026-10-02T14:00:00.000Z';
     later.payload.members = [later.payload.members[1]];
     const earlier = await json('0005-executive-roster-2026-09-28.json');
@@ -154,6 +155,7 @@ test("Roster trust boundary rejects unsupported dates, private fields and inelig
   const state = await setup();
   try {
     const manifest = await json("0005-executive-roster-2026-09-28.json"), payload = manifest.payload;
+    payload.review.reviewedAt = '2026-10-02T10:30:00.000Z';
     for (const scope of ['senate', 'speaker', 'house', 'local']) {
       await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: `wrong-scope-${scope}`, payload: { ...payload, scope } }), /declared scope/);
       assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, `wrong-scope-${scope}`))).length, 0);
