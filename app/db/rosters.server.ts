@@ -53,7 +53,7 @@ export function tenureCoversRosterDate(date: SQLWrapper) {
 // National scopes refer to the durable Office IDs used by the reviewed manifests.
 const nationalRosterOffices = {
   executive: ['office-president-ph', 'office-vice-president-ph'],
-  senate: ['office-senator-ph'], speaker: ['office-house-speaker-ph'], house: ['office-house-representative-ph'],
+  senate: ['office-senator-ph', 'office-senate-president-ph'], speaker: ['office-house-speaker-ph'], house: ['office-house-representative-ph'],
 };
 
 export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record: ReviewedRoster, verifyOnly = false) {
