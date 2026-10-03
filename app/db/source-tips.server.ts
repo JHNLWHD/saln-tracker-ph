@@ -1,6 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { isIP } from 'node:net';
-import { resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { and, count, eq, gte } from 'drizzle-orm';
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import type { Client } from '@libsql/client';
@@ -15,17 +15,20 @@ export interface SourceTipInput { sourceUrl: string; explanation: string; contac
 export function sourceTipDestination(env: NodeJS.ProcessEnv = process.env) {
   const url = env.SOURCE_TIPS_DATABASE_URL;
   if (!url) throw new Error('Source Tips destination is not configured');
-  const normalized = (value: string) => value.startsWith('file:') ? resolve(value.slice(5)) : new URL(value).hostname.toLowerCase();
+  const normalized = (value: string) => value.startsWith('file:') ? fileURLToPath(new URL(value.slice(5), pathToFileURL(`${process.cwd()}/`))) : new URL(value).hostname.toLowerCase().replace(/\.$/, '');
   if (normalized(url) === normalized(env.TURSO_DATABASE_URL || 'file:.data/archive.db')) throw new Error('Source Tips require a separate private database');
-  if (url.startsWith('file:')) return { url };
+  if (url.startsWith('file:')) {
+    if (env.NETLIFY === 'true') throw new Error('Netlify Source Tips require a hosted private database');
+    return { url };
+  }
   const parsed = new URL(url);
   if (!['libsql:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || !env.SOURCE_TIPS_AUTH_TOKEN) throw new Error('A private SQL destination and token are required');
   if (env.SOURCE_TIPS_AUTH_TOKEN === env.TURSO_AUTH_TOKEN) throw new Error('Source Tips require a separate private database token');
   return { url, authToken: env.SOURCE_TIPS_AUTH_TOKEN };
 }
 
-export function sourceTipsConfigured() {
-  try { const config = sourceTipDestination(); return config.url.startsWith('file:') && process.env.NETLIFY !== 'true' || (process.env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) >= 32; } catch { return false; }
+export function sourceTipsConfigured(env: NodeJS.ProcessEnv = process.env) {
+  try { const config = sourceTipDestination(env); return config.url.startsWith('file:') || (env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) >= 32; } catch { return false; }
 }
 
 function sourceTipRateKey(trustedIp: unknown, env: NodeJS.ProcessEnv) {

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { connectArchive } from '../app/db/client.server';
-import { initializeSourceTipDestination, queueSourceTip, readSourceTipBody, sourceTipDestination, validateSourceTip } from '../app/db/source-tips.server';
+import { initializeSourceTipDestination, queueSourceTip, readSourceTipBody, sourceTipDestination, sourceTipsConfigured, validateSourceTip } from '../app/db/source-tips.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { migrateArchive } from '../scripts/migrate';
 import { action, headers } from '../app/routes/source-tip';
@@ -14,6 +14,13 @@ test('Source Tip boundary rejects credentials, uploads and public database alias
   const remote = { SOURCE_TIPS_DATABASE_URL: 'libsql://private.example.invalid', TURSO_DATABASE_URL: 'libsql://archive.example.invalid', TURSO_AUTH_TOKEN: 'synthetic-archive-token', SOURCE_TIPS_AUTH_TOKEN: 'synthetic-private-token' };
   assert.equal(sourceTipDestination(remote).authToken, remote.SOURCE_TIPS_AUTH_TOKEN);
   assert.throws(() => sourceTipDestination({ ...remote, SOURCE_TIPS_AUTH_TOKEN: remote.TURSO_AUTH_TOKEN }), /separate private database token/);
+  for (const url of ['file:.data/archive.db?tls=0', 'file:.data/archive.db?cache=shared', 'file:.data/%61rchive.db', `file://${process.cwd()}/.data/archive.db`]) {
+    assert.throws(() => sourceTipDestination({ SOURCE_TIPS_DATABASE_URL: url }), /separate private database/);
+  }
+  const local = { SOURCE_TIPS_DATABASE_URL: 'file:.data/private-tips.db', SOURCE_TIPS_RATE_LIMIT_SECRET: 'synthetic-key-with-at-least-32-characters' };
+  assert.equal(sourceTipsConfigured(local), true);
+  assert.equal(sourceTipsConfigured({ ...local, NETLIFY: 'true' }), false);
+  assert.throws(() => sourceTipDestination({ ...local, NETLIFY: 'true' }), /hosted private database/);
   for (const env of [{ SOURCE_TIPS_DATABASE_URL: 'file:.data/archive.db' }, { SOURCE_TIPS_DATABASE_URL: 'libsql://same-host', TURSO_DATABASE_URL: 'https://same-host', SOURCE_TIPS_AUTH_TOKEN: 'test' }, { SOURCE_TIPS_DATABASE_URL: 'https://user:secret@example.org', SOURCE_TIPS_AUTH_TOKEN: 'test' }]) assert.throws(() => sourceTipDestination(env));
   assert.throws(() => validateSourceTip(new URLSearchParams({ ...valid, upload: 'file' })));
   assert.throws(() => validateSourceTip(new URLSearchParams('sourceUrl=https://example.org&sourceUrl=https://example.org')));
