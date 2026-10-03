@@ -71,5 +71,9 @@ test('House proposal preserves the dated source set in bounded independent batch
   const reviewed = JSON.parse(await readFile(new URL(`../${reuse.evidenceManifest}`, import.meta.url), 'utf8'));
   assert.equal(reuse.personId, reviewed.payload.person.id);
   assert.ok(reviewed.payload.tenures.some((tenure: { id: string }) => tenure.id === reuse.tenureId));
+  const exception = plan.typing.District.existingMappingExceptions.find(row => row.sourceMemberId === reuse.sourceMemberId); assert.ok(exception);
+  const constituency = reviewed.payload.constituencies.find((row: { id: string }) => row.id === reuse.constituencyId); assert.ok(constituency);
+  const jurisdiction = reviewed.payload.jurisdictions.find((row: { id: string }) => row.id === constituency.jurisdictionId); assert.ok(jurisdiction);
+  assert.equal(exception.constituencyId, constituency.id); assert.equal(exception.jurisdictionId, jurisdiction.id); assert.equal(exception.jurisdictionKind, jurisdiction.kind);
   assert.notEqual(members.find(row => row.id === 'D027')?.name, members.find(row => row.id === 'J027')?.name);
 });

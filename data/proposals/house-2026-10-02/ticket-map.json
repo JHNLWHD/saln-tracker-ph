@@ -24,7 +24,15 @@
     "District": {
       "constituencyKind": "legislative_district",
       "jurisdictionKind": "legislative_district",
-      "parentRule": "Review province/city Jurisdictions and geographic/administrative relationships separately. Reuse existing approved IDs; do not derive parents from the source string."
+      "existingMappingExceptions": [
+        {
+          "sourceMemberId": "D027",
+          "constituencyId": "constituency-isabela-6",
+          "jurisdictionId": "jurisdiction-isabela",
+          "jurisdictionKind": "province"
+        }
+      ],
+      "parentRule": "Use the district Jurisdiction default for new mappings. Preserve the listed approved mapping exceptions unchanged. Review province/city Jurisdictions and geographic/administrative relationships separately; do not derive parents from the source string."
     },
     "Party-list": {
       "constituencyKind": "party_list",
