@@ -15,11 +15,13 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   await mkdir(join(directory, 'public/saln'), { recursive: true }); await writeFile(join(directory, 'public/saln/test.pdf'), bytes);
   const git = (args: string[]) => execFileSync('git', args, { cwd: directory });
   git(['init', '-q']); git(['add', 'public/saln/test.pdf']); git(['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'Synthetic fixture']);
-  const commit = git(['rev-parse', 'HEAD']).toString().trim(), version = 'a'.repeat(64);
-  let corrupt = false, redirectCanonical = false;
+  const commit = git(['rev-parse', 'HEAD']).toString().trim();
+  const snapshotData = { legacyDocuments: [{ path: '/saln/test.pdf', sourceDocumentId: 'source-test', sha256: hash }], sourceDocuments: [{ id: 'source-test', sha256: hash }] };
+  const version = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, data: snapshotData })).digest('hex');
+  let corrupt = false, redirectCanonical = false, corruptSnapshot = false;
   const server = createServer((request, response) => {
     if (request.url === '/ping') { response.setHeader('X-Archive-Revision', commit); response.end('pong'); }
-    else if (request.url === '/data/archive.json') response.end(JSON.stringify({ version, data: { legacyDocuments: [{ path: '/saln/test.pdf', sourceDocumentId: 'source-test', sha256: hash }], sourceDocuments: [{ id: 'source-test', sha256: hash }] } }));
+    else if (request.url === '/data/archive.json') response.end(JSON.stringify({ schemaVersion: 1, version, data: corruptSnapshot ? { ...snapshotData, tampered: true } : snapshotData }));
     else if (request.url === '/saln/test.pdf') { response.statusCode = 301; response.setHeader('Location', `/documents/${hash}`); response.end(); }
     else if (request.url === `/documents/${hash}`) {
       if (redirectCanonical) { response.statusCode = 302; response.setHeader('Location', '/backing-copy.pdf'); response.end(); }
@@ -36,6 +38,7 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
     await assert.rejects(verifyRetirement({ ...record, documents: [] }, origin, directory), /Every tracked PDF/);
     await assert.rejects(verifyRetirement({ ...record, rollbackUntil: new Date(Date.now() + 3600000).toISOString() }, origin, directory), /closed rollback/);
     await assert.rejects(verifyRetirement({ ...record, productionReportRef: 'pending' }, origin, directory), /Successful production/);
+    corruptSnapshot = true; await assert.rejects(verifyRetirement(record, origin, directory), /content digest/); corruptSnapshot = false;
     corrupt = true; await assert.rejects(verifyRetirement(record, origin, directory), /Expected values/);
     corrupt = false; redirectCanonical = true;
     await assert.rejects(verifyRetirement(record, origin, directory), /Expected values/);

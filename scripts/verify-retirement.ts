@@ -24,6 +24,8 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
   const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), record.productionCommit);
   const response = await get('/data/archive.json'); assert.equal(response.status, 200); const snapshot = await response.json();
   assert.equal(snapshot.version, record.snapshotVersion);
+  assert.equal(snapshot.schemaVersion, 1, 'Unsupported public snapshot schema');
+  assert.equal(createHash('sha256').update(JSON.stringify({ schemaVersion: snapshot.schemaVersion, data: snapshot.data })).digest('hex'), record.snapshotVersion, 'Public snapshot content digest differs from the accepted version');
   const removed = [];
   for (const document of record.documents) {
     if (!/^public\/saln\/.+\.pdf$/i.test(document.path) || document.path.split('/').some(part => part === '..' || part === '.') || !/^[a-f0-9]{64}$/.test(document.sha256)) throw new Error('Invalid retirement path or checksum');
