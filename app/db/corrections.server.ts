@@ -5,7 +5,7 @@ import { canonicalJson } from "./canonical";
 import type { ReviewedCorrection } from "./correction-validation";
 import { validateReviewedFiling } from "./filing-validation";
 import * as schema from "./schema";
-import { parsePartialDate, validateTenureEvidence } from "./validation";
+import { parsePartialDate, validateReviewedPerson, validateTenureEvidence } from "./validation";
 
 export async function readEditorialCorrections(db: ArchiveReader): Promise<EditorialCorrection[]> {
   const table = schema.editorialCorrections;
@@ -97,19 +97,23 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     validateTenureEvidence({ ...before, ...patch.changes, citations: [...before.citations, ...patch.citations] });
   } else if (target.type === "filing" || target.type === "source_document") {
     const filingId = target.type === "filing" ? target.record.id : target.record.filingId;
+    // A Filing may be adopted through a later page. Documents still require their own adoption.
+    // SQLite rowid preserves application order even when two applications share a timestamp.
+    const adoptedTarget = target.type === 'filing'
+      ? sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.filing.id') = ${filingId}`
+      : sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.document.id') = ${target.record.id}`;
+    const [application] = await db.select({ payload: schema.manifestApplications.canonicalPayload }).from(schema.manifestApplications)
+      .where(and(eq(schema.manifestApplications.kind, 'filing'), adoptedTarget))
+      .orderBy(sql`rowid`).limit(1);
+    if (!application) throw new Error('Filing and Source Document corrections require an applied Filing manifest');
+    const original = validateReviewedFiling(JSON.parse(application.payload).payload);
+    if (patch.review.reviewedAt < original.review.reviewedAt) throw new Error('Correction review date precedes its original review');
     const [filing] = await db.select().from(schema.filings).where(eq(schema.filings.id, filingId));
-    const [document] = await db.select().from(schema.sourceDocuments).where(target.type === "filing" ? eq(schema.sourceDocuments.filingId, filingId) : eq(schema.sourceDocuments.id, target.record.id));
+    const [document] = await db.select().from(schema.sourceDocuments).where(eq(schema.sourceDocuments.id, original.document.id));
     if (!filing || !document) throw new Error("Correction target has no original Filing and Source Document");
     const effectiveFiling = projectCorrections("filing", filingRecord(filing), history);
     const { storageKey: _key, ...effectiveDocument } = projectCorrections("source_document", documentRecord(document), history);
-    // Each Document's immutable manifest retains its own review, including later pages of a Filing.
-    // SQLite rowid preserves application order even when two applications share a timestamp.
-    const [application] = await db.select({ payload: schema.manifestApplications.canonicalPayload }).from(schema.manifestApplications)
-      .where(and(eq(schema.manifestApplications.kind, 'filing'), sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.document.id') = ${document.id}`))
-      .orderBy(sql`rowid`).limit(1);
-    if (!application) throw new Error('Source Document needs an applied Filing manifest before correction');
-    const originalReview = validateReviewedFiling(JSON.parse(application.payload).payload).review;
-    validateReviewedFiling({ review: originalReview,
+    validateReviewedFiling({ review: original.review,
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
   }
@@ -130,9 +134,11 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
     const target = original.type === 'person'
       ? sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.person.id') = ${original.record.id}`
       : sql`exists (select 1 from json_each(${schema.manifestApplications.canonicalPayload}, '$.payload.tenures') where json_extract(value, '$.id') = ${original.record.id})`;
-    const [application] = await db.select({ id: schema.manifestApplications.id }).from(schema.manifestApplications)
-      .where(and(eq(schema.manifestApplications.kind, 'person'), target)).limit(1);
+    const [application] = await db.select({ payload: schema.manifestApplications.canonicalPayload }).from(schema.manifestApplications)
+      .where(and(eq(schema.manifestApplications.kind, 'person'), target)).orderBy(sql`rowid`).limit(1);
     if (!application) throw new Error('Person and Tenure corrections require an applied Person manifest');
+    const source = validateReviewedPerson(JSON.parse(application.payload).payload);
+    if (patch.review.reviewedAt < source.review.reviewedAt) throw new Error('Correction review date precedes its original review');
   }
   const before = projectCorrections(original.type, original.record, previousHistory);
   const previousValues = Object.fromEntries(Object.keys(patch.changes).map(key => [key, Reflect.get(before, key)]));
