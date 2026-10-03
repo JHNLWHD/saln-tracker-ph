@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
+import { connectArchive } from '../app/db/client.server';
+import { importReviewedPerson } from '../app/db/people.server';
+import { exportPublicSnapshot } from '../app/archive/snapshot.server';
+import { migrateArchive } from '../scripts/migrate';
 
 test('production evidence requires exact approval and whole-bucket indefinite locks', () => {
   const lock = { success: true, result: { rules: [{ enabled: true, condition: { type: 'Indefinite' } }] } };
@@ -21,9 +26,54 @@ test('SQL recovery restores exact bound bytes and rejects corruption and externa
   try {
     const sql = 'CREATE TABLE recovered (id text PRIMARY KEY); INSERT INTO recovered VALUES (\'synthetic\');';
     const checksum = createHash('sha256').update(sql).digest('hex'); await writeFile(file, sql);
-    assert.deepEqual(await verifySqlRecovery(file, checksum, null), { sha256: checksum, byteSize: Buffer.byteLength(sql), restored: true, snapshotVersion: null });
+    const restored = await verifySqlRecovery(file, checksum, null);
+    assert.equal(restored.restored, true); assert.equal(restored.byteSize, Buffer.byteLength(sql)); assert.match(restored.databaseDigest, /^[a-f0-9]{64}$/);
     await assert.rejects(verifySqlRecovery(file, '0'.repeat(64), null), /checksum mismatch/);
-    const unsafe = 'ATTACH DATABASE \'another.db\' AS other;'; await writeFile(file, unsafe);
-    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null), /self-contained/);
+    const outside = join(directory, 'escaped.db');
+    for (const unsafe of [`ATTACH DATABASE '${outside}' AS other;`, `${sql} /* comment */ ATTACH DATABASE '${outside}' AS other; CREATE TABLE other.escape(id);`, `${sql} VACUUM INTO '${outside}';`, `${sql} SELECT "writefile"('${outside}', 'escape');`, `${sql} SELECT readfile('${file}');`, `${sql} SELECT data FROM "fsdir"('${file}');`, `${sql} SELECT data FROM 'fsdir'('${file}');`, `${sql} PRAGMA temp_store_directory='${directory}';`, `BEGIN; ${sql}`, `BEGIN; ${sql} /* interrupted`, `${sql}\n.quit\n`]) {
+      await writeFile(file, unsafe);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null));
+      await assert.rejects(access(outside));
+    }
+    const complete = `PRAGMA foreign_keys=OFF; BEGIN; ${sql} INSERT INTO recovered VALUES ('ATTACH is quoted text'); COMMIT; -- complete`;
+    await writeFile(file, complete);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(complete).digest('hex'), null)).restored, true);
   } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('production verification binds actual checkout and authenticated database state, including non-public rows', async () => {
+  const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  assert.throws(() => assertProductionCheckout('0'.repeat(40)), /Running checkout/);
+  if (execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], { encoding: 'utf8' }).trim()) assert.throws(() => assertProductionCheckout(revision), /clean checkout/);
+  else assert.doesNotThrow(() => assertProductionCheckout(revision));
+  const url = 'libsql://production.example.invalid', env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token' };
+  assert.equal(productionDatabase(url, env).url, url);
+  assert.throws(() => productionDatabase('libsql://staging.example.invalid', env));
+  assert.throws(() => productionDatabase(url, { TURSO_DATABASE_URL: url }));
+  const directory = await mkdtemp(join(tmpdir(), 'saln-production-binding-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const sql = "CREATE TABLE private_archive (id INTEGER, raw BLOB); INSERT INTO private_archive VALUES (9007199254740993, X'00ff');";
+  try {
+    await client.executeMultiple(sql); await writeFile(file, sql);
+    const checksum = createHash('sha256').update(sql).digest('hex'), digest = await databaseFingerprint(client);
+    assert.equal((await verifySqlRecovery(file, checksum, null, digest)).databaseDigest, digest);
+    await client.execute('UPDATE private_archive SET id = 9007199254740994');
+    await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('a complete native Archive dump reopens with the accepted public snapshot', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-native-recovery-')), path = join(directory, 'archive.db'), file = join(directory, 'backup.sql');
+  const { client, db } = connectArchive({ url: `file:${path}` });
+  try {
+    await migrateArchive(db);
+    await importReviewedPerson(db, JSON.parse(await readFile(new URL('../data/reviewed/0001-ferdinand-marcos-jr.json', import.meta.url), 'utf8')));
+    const expected = (await exportPublicSnapshot(db)).snapshot.version;
+    const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
+    await writeFile(file, dump);
+    const production = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
+    let digest: string;
+    try { digest = await databaseFingerprint(production.client); } finally { production.client.close(); }
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(dump).digest('hex'), expected, digest)).snapshotVersion, expected);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
