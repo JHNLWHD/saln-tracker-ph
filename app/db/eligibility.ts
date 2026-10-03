@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import * as schema from "./schema";
+import { canonicalPersonId } from "./identities.server";
 
 function effectiveTenureField(field: "verificationStatus" | "disputedFacts") {
   const original = field === "verificationStatus" ? schema.tenures.verificationStatus : schema.tenures.disputedFacts;
@@ -13,10 +14,10 @@ function effectiveTenureField(field: "verificationStatus" | "disputedFacts") {
 
 /** Correlated with the outer People row; used for directories, imports, and document access. */
 export function personIsEligible() {
-  return sql`exists (
+  return sql`not exists (select 1 from ${schema.identityMatches} where ${schema.identityMatches.fromPersonId} = ${schema.people.id}) and exists (
     select 1 from ${schema.tenures}
     inner join ${schema.offices} on ${schema.offices.id} = ${schema.tenures.officeId}
-    where ${schema.tenures.personId} = ${schema.people.id}
+    where ${canonicalPersonId(schema.tenures.personId)} = ${schema.people.id}
       and ${schema.offices.included} = 1 and ${schema.offices.kind} = 'elected'
       and ${effectiveTenureField("verificationStatus")} != 'unverified'
       and not exists (select 1 from json_each(${effectiveTenureField("disputedFacts")}) where value in ('person','office'))

@@ -13,6 +13,7 @@ const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
 
 const factLabels: Record<string, string> = {
   person: 'Person',
+  identity: 'Identity Match',
   office: 'Office',
   startDate: 'Start date',
   endDate: 'End date',
@@ -107,7 +108,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
       {person.eligibility !== 'eligible' && (
         <aside className="border-l-4 border-gray-500 bg-white p-4" aria-labelledby={`${id}-scope`}>
           <h2 id={`${id}-scope`} className="text-xl">{person.eligibility === 'disputed' ? 'Archive eligibility is disputed' : 'Archive eligibility is not verified'}</h2>
-          <p>This legacy profile remains available for link continuity. This Person is excluded from public directories, search, and coverage counts until eligibility is established through a Verified Tenure in an included Elected Office.</p>
+          <p>This profile remains available for link continuity. This Person is excluded from public directories, search, and coverage counts until eligibility is established through a Verified Tenure in an included Elected Office.</p>
         </aside>
       )}
 
@@ -207,6 +208,22 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
           );
         })}
       </section>
+
+      {(record.identityMatches?.length ?? 0) > 0 && (
+        <section aria-labelledby={`${id}-identities`} className="space-y-4">
+          <h2 id={`${id}-identities`}>Identity Matches</h2>
+          <p>Reviewed matches preserve former profile links. Filings and Source Documents remain unchanged.</p>
+          <ul className="space-y-6">
+            {record.identityMatches?.map(match => (
+              <li key={match.id} className="space-y-3 border-b border-gray-300 pb-6">
+                <p>{match.reason}</p>
+                <p className="text-sm archive-muted">Reviewed <time dateTime={match.reviewedAt}>{match.reviewedAt}</time></p>
+                <EvidenceCitations citations={match.citations} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {(record.editorialCorrections?.length ?? 0) > 0 && (
         <section aria-labelledby={`${id}-corrections`} className="space-y-4">
