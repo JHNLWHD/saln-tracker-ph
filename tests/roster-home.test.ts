@@ -62,6 +62,22 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
   } finally { await closeArchive(); await state.close(); for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } }
 });
 
+test('Roster reads exclude Tenures whose corrected boundaries no longer include the Snapshot date', async () => {
+  for (const changes of [{ startDate: { value: '2027', precision: 'year' } }, { endDate: { value: '2025', precision: 'year' } }]) {
+    const state = await setup();
+    try {
+      await applyReviewedManifest(state.db, { id: 'corrected-boundary', version: 1, kind: 'correction', payload: {
+        review: { reviewedAt: '2026-10-02', reviewedBy: 'Synthetic reviewer' }, target: { type: 'tenure', id: 'tenure-marcos-president-2022' },
+        reason: 'Synthetic boundary correction', previousCorrectionId: null, changes,
+        citations: [{ id: 'boundary-evidence', title: 'Synthetic evidence', url: 'https://example.org/boundary', publisher: 'Test', type: 'official_record', supports: Object.keys(changes), publishedDate: null }],
+      } });
+      const home = await createDbArchive(state.db).readHome();
+      assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
+      assert.equal((await state.db.select().from(rosterMembers)).length, 2);
+    } finally { await state.close(); }
+  }
+});
+
 test("Recently Added uses corrected publication dates, groups exact copies and excludes unresolved Persons", async () => {
   const state = await setup();
   const objects = new Map<string, Uint8Array>();
@@ -97,6 +113,10 @@ test("Roster trust boundary rejects unsupported dates, private fields and inelig
   const state = await setup();
   try {
     const manifest = await json("0005-executive-roster-2026-09-28.json"), payload = manifest.payload;
+    for (const scope of ['senate', 'speaker', 'house', 'local']) {
+      await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: `wrong-scope-${scope}`, payload: { ...payload, scope } }), /declared scope/);
+      assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, `wrong-scope-${scope}`))).length, 0);
+    }
     for (const invalid of [{ ...payload, privateContact: "private" }, { ...payload, verifiedAsOf: "2026" }, { ...payload, verifiedAsOf: "2027-01-01" }, { ...payload, members: [] }, { ...payload, members: [payload.members[0], payload.members[0]] }, { ...payload, members: [{ ...payload.members[0], citations: [] }] }]) assert.throws(() => validateReviewedRoster(invalid));
     await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: "missing-tenure", payload: { ...payload, members: [{ ...payload.members[0], tenureId: "absent" }] } }), /reviewed Tenure/);
     assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, "missing-tenure"))).length, 0);
