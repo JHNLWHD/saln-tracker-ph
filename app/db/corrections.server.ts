@@ -21,7 +21,10 @@ export async function readEditorialCorrections(db: ArchiveReader): Promise<Edito
 export function projectCorrections<T extends { id: string; citations?: Citation[] }>(type: CorrectionTargetType, record: T, history: EditorialCorrection[]): T {
   const corrections = history.filter(row => row.target.type === type && row.target.id === record.id).sort((a, b) => a.revision - b.revision);
   let result = { ...record };
-  for (const correction of corrections) result = { ...result, ...correction.changes };
+  for (const correction of corrections) {
+    result = { ...result, ...correction.changes };
+    if (type === 'financial_summary' || type === 'secondary_report') result = { ...result, reviewedAt: correction.reviewedAt };
+  }
   if (type === "tenure" && record.citations) {
     const sources = new Map<string, Citation>();
     for (const source of [...record.citations, ...corrections.flatMap(row => row.citations)]) {
@@ -131,10 +134,17 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     validateReviewedFiling({ review: original.review,
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
+    if (target.type === 'source_document' && patch.changes.acquisitionDate) {
+      const summaries = await db.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.filingId, filingId));
+      for (const row of summaries) {
+        const summary = projectCorrections('financial_summary', row, history);
+        if (Object.values(summary.sources).some(source => source.sourceDocumentId === target.record.id) && patch.changes.acquisitionDate.value > summary.reviewedAt) throw new Error('Acquisition Date follows a reviewed summary; review the summary before this correction');
+      }
+    }
   } else if (target.type === "financial_summary") {
     const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
     const summary = validateSummary({ ...record, ...patch.changes });
-    await checkSummarySources(db, summary, patch.review.reviewedAt);
+    await checkSummarySources(db, summary, patch.review.reviewedAt, history);
   } else if (target.type === "secondary_report") {
     const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
     validateReviewedReport({ review: patch.review, report: { ...record, ...patch.changes } });
