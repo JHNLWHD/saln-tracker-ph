@@ -8,7 +8,7 @@ import { personIsEligible, tenureIsVerified } from "./eligibility";
 import { findPublicSourceDocument, readPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 import { checkCitationMetadata, projectCorrections, readEditorialCorrections } from "./corrections.server";
 import { checkPersonIdentifiers, findPersonIdentifier, identityLineage, readIdentityMatches } from "./identities.server";
-import { readArchiveHome } from "./rosters.server";
+import { isLatestRosterSnapshot, readArchiveHome, tenureCoversRosterDate } from "./rosters.server";
 import { readFinancialSummaries, readSecondaryReports, withTranscriptionLevels } from "./transcriptions.server";
 
 /** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
@@ -135,8 +135,8 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
       record.sourceDocuments = withTranscriptionLevels(record.sourceDocuments, record.financialSummaries);
       record.relatedReports = (await readSecondaryReports(db, lineage, corrections)).map(report => ({ ...report, personId: person.id }));
       record.rosterMemberships = await db.select({ snapshotId: schema.rosterSnapshots.id, scope: schema.rosterSnapshots.scope, verifiedAsOf: schema.rosterSnapshots.verifiedAsOf, tenureId: schema.rosterMembers.tenureId }).from(schema.rosterMembers)
-        .innerJoin(schema.rosterSnapshots, eq(schema.rosterSnapshots.id, schema.rosterMembers.snapshotId)).innerJoin(schema.tenures, eq(schema.tenures.id, schema.rosterMembers.tenureId)).where(and(inArray(schema.rosterMembers.tenureId, record.tenures.map(tenure => tenure.id)), tenureIsVerified(),
-          sql`not exists (select 1 from roster_snapshots newer where newer.scope = ${schema.rosterSnapshots.scope} and (newer.verified_as_of > ${schema.rosterSnapshots.verifiedAsOf} or (newer.verified_as_of = ${schema.rosterSnapshots.verifiedAsOf} and newer.id < ${schema.rosterSnapshots.id})))`)).orderBy(schema.rosterSnapshots.scope, schema.rosterMembers.position);
+        .innerJoin(schema.rosterSnapshots, eq(schema.rosterSnapshots.id, schema.rosterMembers.snapshotId)).innerJoin(schema.tenures, eq(schema.tenures.id, schema.rosterMembers.tenureId)).where(and(inArray(schema.rosterMembers.tenureId, record.tenures.map(tenure => tenure.id)), tenureIsVerified(), tenureCoversRosterDate(schema.rosterSnapshots.verifiedAsOf),
+          isLatestRosterSnapshot())).orderBy(schema.rosterSnapshots.scope, schema.rosterMembers.position);
     }
     record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? lineage.includes(row.target.id) :
       row.target.type === "tenure" ? record.tenures.some(tenure => tenure.id === row.target.id) :
