@@ -33,6 +33,12 @@ test('R2 recovery targets must match the independently accepted production inven
   assert.throws(() => productionBuckets(shared, shared, {}), /separate production buckets/);
   const separate = { ...shared, backupJurisdiction: 'eu' };
   assert.equal(productionBuckets(separate, separate, {}).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
+  const staging = { STAGING_R2_BUCKET: approved.documentBucket, STAGING_R2_ENDPOINT: `https://${approved.accountId}.eu.r2.cloudflarestorage.com` };
+  assert.doesNotThrow(() => productionBuckets(approved, approved, staging));
+  assert.doesNotThrow(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: `https://${'b'.repeat(32)}.r2.cloudflarestorage.com` }));
+  for (const endpoint of [`https://${approved.accountId}.r2.cloudflarestorage.com`, `https://${approved.accountId.toUpperCase()}.R2.CLOUDFLARESTORAGE.COM./`]) assert.throws(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: endpoint }), /staging bucket/);
+  assert.throws(() => productionBuckets(separate, separate, staging), /staging bucket/);
+  for (const endpoint of ['https://example.org', `${staging.STAGING_R2_ENDPOINT}/path`, `${staging.STAGING_R2_ENDPOINT}:8443`]) assert.throws(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: endpoint }), /reviewed staging R2/);
 });
 
 test('R2 lock reads and backup endpoints identify each accepted bucket jurisdiction', async t => {
@@ -69,7 +75,11 @@ test('SQL recovery restores exact bound bytes and rejects corruption and externa
       await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null));
       await assert.rejects(access(outside));
     }
-    const complete = `PRAGMA foreign_keys=OFF; BEGIN; ${sql} INSERT INTO recovered VALUES ('ATTACH is quoted text'); COMMIT; -- complete`;
+    for (const unsafe of [`${sql} SELECT name FROM 'fsdir' WHERE dir = '${directory}';`, `${sql} SELECT name FROM recovered, 'fsdir' WHERE dir = '${directory}';`, `${sql} SELECT data FROM 'zipfile'('${outside}');`]) {
+      await writeFile(file, unsafe);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null), /filesystem modules/);
+    }
+    const complete = `PRAGMA foreign_keys=OFF; BEGIN; ${sql} INSERT INTO recovered VALUES ('ATTACH, fsdir and zipfile are quoted text'); INSERT INTO recovered VALUES ('fsdir'), ('zipfile'); COMMIT; -- fsdir in a comment\n/* zipfile in a comment */`;
     await writeFile(file, complete);
     assert.equal((await verifySqlRecovery(file, createHash('sha256').update(complete).digest('hex'), null)).restored, true);
   } finally { await rm(directory, { recursive: true, force: true }); }
