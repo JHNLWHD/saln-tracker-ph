@@ -32,6 +32,22 @@ export async function databaseFingerprint(client: Client) {
   } finally { await tx.rollback(); tx.close(); }
 }
 
+function usesFilesystemModule(sql: string) {
+  const tokens = (sql.match(/'(?:''|[^'])*'|"(?:""|[^"])*"|`(?:``|[^`])*`|\[[^\]]*\]|--[^\r\n]*|\/\*[\s\S]*?\*\/|[A-Za-z_][A-Za-z_0-9$]*|[^\s]/g) ?? []).filter(token => !token.startsWith('--') && !token.startsWith('/*'));
+  const fromClause = [false];
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i], name = /^["'`\[]/.test(token) ? token.slice(1, -1) : token;
+    // SQLite also accepts single-quoted table/function names. Keep those distinct
+    // from string values, including values whose entire text is a module name.
+    if (/^(?:fsdir|zipfile)$/i.test(name) && (token[0] !== "'" || tokens[i + 1] === '(' || /^(?:from|join|using|\.)$/i.test(tokens[i - 1] ?? '') || tokens[i - 1] === ',' && fromClause.at(-1))) return true;
+    if (token === '(') fromClause.push(false);
+    else if (token === ')') { if (fromClause.length > 1) fromClause.pop(); }
+    else if (/^from$/i.test(token)) fromClause[fromClause.length - 1] = true;
+    else if (/^(?:where|group|having|order|limit|union|intersect|except|returning|;)$/i.test(token)) fromClause[fromClause.length - 1] = false;
+  }
+  return false;
+}
+
 /** Restore only a checksum-bound SQL artifact into a fresh temporary local database. */
 export async function verifySqlRecovery(file: string, checksum: string, expectedSnapshot: string | null, expectedDatabase?: string) {
   if (!/^[a-f0-9]{64}$/.test(checksum)) throw new Error('A backup checksum is required');
@@ -41,7 +57,7 @@ export async function verifySqlRecovery(file: string, checksum: string, expected
   // Safe mode blocks external writes. Also exclude filesystem scans and non-dump PRAGMAs.
   const commands = sql.replace(/'(?:''|[^'])*'|--[^\r\n]*|\/\*[\s\S]*?\*\//g, ' ');
   const unsafePragmas = commands.replace(/\bPRAGMA\s+foreign_keys\s*=\s*(?:OFF|ON|0|1)\s*;/gi, '');
-  if (!commands.trim() || sql.includes('\0') || /\b(?:FSDIR|ZIPFILE)\b/i.test(sql) || /\bPRAGMA\b/i.test(unsafePragmas)) throw new Error('Expected a complete, self-contained SQL dump without filesystem modules');
+  if (!commands.trim() || sql.includes('\0') || usesFilesystemModule(sql) || /\bPRAGMA\b/i.test(unsafePragmas)) throw new Error('Expected a complete, self-contained SQL dump without filesystem modules');
   const directory = await mkdtemp(join(tmpdir(), 'saln-recovery-')), config = { url: `file:${join(directory, 'restore.db')}`, intMode: 'bigint' as const };
   let connection: ReturnType<typeof connectArchive> | undefined;
   try {
@@ -95,9 +111,15 @@ export function productionBuckets(targets: ProductionBuckets, approved: Producti
   const { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction } = targets;
   if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket && documentJurisdiction === backupJurisdiction || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
   if (![documentJurisdiction, backupJurisdiction].every(value => ['default', 'eu', 'us', 'fedramp'].includes(value))) throw new Error('Each production bucket requires an explicit supported jurisdiction');
-  if ([documentBucket, backupBucket].includes(env.STAGING_R2_BUCKET ?? '')) throw new Error('The staging bucket cannot be a production recovery target');
+  const endpoint = (jurisdiction: string) => `https://${accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`;
+  const staging = env.STAGING_R2_ENDPOINT ? new URL(env.STAGING_R2_ENDPOINT) : null;
+  if (staging && (staging.protocol !== 'https:' || staging.username || staging.password || staging.port || staging.pathname !== '/' || staging.search || staging.hash || !/^[a-f0-9]{32}(?:\.(?:eu|us|fedramp))?\.r2\.cloudflarestorage\.com\.?$/.test(staging.hostname))) throw new Error('A reviewed staging R2 account and jurisdiction endpoint is required');
+  if (staging) staging.hostname = staging.hostname.replace(/\.$/, '');
+  for (const [bucket, jurisdiction] of [[documentBucket, documentJurisdiction], [backupBucket, backupJurisdiction]]) {
+    if (bucket === env.STAGING_R2_BUCKET && (!staging || staging.origin === endpoint(jurisdiction))) throw new Error('The staging bucket cannot be a production recovery target; its full endpoint is required to establish separation');
+  }
   return { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction,
-    backupEndpoint: `https://${accountId}${backupJurisdiction === 'default' ? '' : `.${backupJurisdiction}`}.r2.cloudflarestorage.com` };
+    backupEndpoint: endpoint(backupJurisdiction) };
 }
 
 export async function verifyBucketLocks(targets: ProductionBuckets, token: string) {
