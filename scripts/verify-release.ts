@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { connectArchive } from '../app/db/client.server';
 import { applyReviewedManifest, manifestDigest, validateReviewedManifest } from '../app/db/manifests.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
@@ -58,11 +59,13 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
   for (const [file, contents] of [['archive.json', artifacts.snapshotJson], ['source-checksums.json', artifacts.checksumManifestJson]]) {
     const canonical = await get(`/data/${artifacts.snapshot.version}/${file}`); assert.equal(canonical.status, 200); assert.equal(await canonical.text(), contents);
   }
-  const paths = ['/', '/people', '/about', '/resources', '/source-tip'];
-  for (const person of artifacts.snapshot.data.people) paths.push(`/official/${encodeURIComponent(person.slug)}`);
-  for (const path of paths) {
+  const pages: [string, string][] = [['/', 'Find and inspect declared SALNs'], ['/people', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source']];
+  for (const person of artifacts.snapshot.data.people) pages.push([`/official/${encodeURIComponent(person.slug)}`, person.canonicalName]);
+  for (const [path, heading] of pages) {
     const response = await get(path); assert.equal(response.status, 200, path);
     const html = await response.text(); assert.doesNotMatch(html, /"reviewedBy"|documents\/sha256\//, path);
+    const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(match => match[1].replace(/<[^>]*>/g, '').trim());
+    assert.deepEqual(headings, [renderToStaticMarkup(heading)], `Unexpected page heading: ${path}`);
   }
   assert.equal((await get('/unknown-release-check-path')).status, 404);
   for (const alias of artifacts.snapshot.data.personAliases) {
@@ -77,7 +80,7 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
     const response = await get(`/documents/${document.sha256}`); assert.equal(response.status, 200);
     const bytes = new Uint8Array(await response.arrayBuffer()); assert.equal(bytes.byteLength, document.byteSize); assert.equal(createHash('sha256').update(bytes).digest('hex'), document.sha256);
   }
-  return { revision, origin: url.origin, checkedRoutes: paths.length, checkedAliases: artifacts.snapshot.data.personAliases.length, checkedChecksums: artifacts.checksumManifest.documents.length };
+  return { revision, origin: url.origin, checkedRoutes: pages.length, checkedAliases: artifacts.snapshot.data.personAliases.length, checkedChecksums: artifacts.checksumManifest.documents.length };
 }
 
 async function main() {
