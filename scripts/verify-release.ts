@@ -68,7 +68,9 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
     const person = artifacts.snapshot.data.people.find(person => person.id === alias.personId)!;
     if (alias.value === person.slug) continue;
     const response = await get(`/official/${encodeURIComponent(alias.value)}`, { redirect: 'manual' });
-    assert.equal(response.status, 301); assert.equal(new URL(response.headers.get('Location')!, url).pathname, `/official/${person.slug}`);
+    assert.equal(response.status, 301);
+    const target = new URL(response.headers.get('Location')!, url);
+    assert.equal(target.origin, url.origin); assert.equal(target.pathname, `/official/${person.slug}`);
   }
   for (const document of artifacts.checksumManifest.documents) {
     const response = await get(`/documents/${document.sha256}`); assert.equal(response.status, 200);
