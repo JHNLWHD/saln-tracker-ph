@@ -16,8 +16,8 @@ function orderedChanges(changes: CorrectionChanges) {
 }
 
 /** Read only named public fields. New private tables or columns are never exported implicitly. */
-export async function exportPublicSnapshot(db: ArchiveDatabase) {
-  const data = await readArchiveTransaction(db, async tx => {
+async function readSnapshotData(db: ArchiveDatabase) {
+  return readArchiveTransaction(db, async tx => {
     const corrections = await readEditorialCorrections(tx);
     const matches = await readIdentityMatches(tx);
     const personRows = await tx.select({ id: schema.people.id, slug: schema.people.slug, canonicalName: schema.people.canonicalName })
@@ -135,6 +135,13 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
     return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments: withTranscriptionLevels(sourceDocuments, financialSummaries), editorialCorrections, identityMatches, personAliases, legacyDocuments, rosterSnapshots, financialSummaries, secondaryReports };
   });
 
+}
+
+export async function exportPublicSnapshot(db: ArchiveDatabase) {
+  return serializePublicSnapshot(await readSnapshotData(db));
+}
+
+export function serializePublicSnapshot(data: Awaited<ReturnType<typeof readSnapshotData>>) {
   // The digest covers the schema version and ordered public content, without a clock or itself.
   const content = { schemaVersion: 1 as const, data };
   const version = createHash("sha256").update(JSON.stringify(content)).digest("hex");
