@@ -4,26 +4,30 @@ import { Footer } from "../components/layout/Footer";
 import { OfficialsGrid } from "../components/OfficialsGrid";
 import { Hashtags } from "../components/ui/Hashtags";
 import { CallToActionBanner } from "../components/CallToActionBanner";
-import { Link } from 'react-router';
 import { getArchive, readLegacyHome } from "../archive/archive.server";
+import { ArchiveHome } from "../components/ArchiveHome";
 
-export function meta({}: Route.MetaArgs) {
-  return [
+export function meta({ data }: Route.MetaArgs) {
+  if (!data?.archive) return [
     { title: "SALN Tracker Philippines - Public Officials Transparency" },
     { name: "description", content: "Track and monitor Statement of Assets, Liabilities, and Net Worth (SALN) of Philippine public officials. Promoting transparency and accountability in government." },
+  ];
+  return [
+    { title: "SALN Archive | SALN Tracker PH" },
+    { name: "description", content: "Find and inspect acquired SALN Source Documents and reviewed Transcriptions for Philippine elected officeholders." },
   ];
 }
 
 export async function loader({}: Route.LoaderArgs) {
-  if (process.env.ARCHIVE_ADAPTER === "turso") {
-    const records = await (await getArchive()).listPeople();
-    return { people: records, officials: [] };
+  if (process.env.ARCHIVE_ADAPTER && process.env.ARCHIVE_ADAPTER !== "firebase") {
+    return { archive: await (await getArchive()).readHome(), officials: null };
   }
   const { people, legacyPresentation } = await readLegacyHome();
-  return { people, officials: legacyPresentation };
+  return { archive: null, people, officials: legacyPresentation };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
+  if (loaderData.archive) return <><Header /><main className="archive-container py-8 sm:py-12"><ArchiveHome data={loaderData.archive} /></main><Footer /></>;
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -49,10 +53,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           <CallToActionBanner />
           
           {/* Officials Grid */}
-          {loaderData.people.length > 0 && loaderData.officials.length === 0 ? <section aria-label="Reviewed People" className="archive-card p-6 space-y-3">
-            <h2>Reviewed People</h2>
-            <ul className="space-y-2">{loaderData.people.map(record => <li key={record.person.id}><Link className="text-primary-700 underline" to={`/official/${record.person.slug}`}>{record.person.canonicalName}</Link></li>)}</ul>
-          </section> : <OfficialsGrid officials={loaderData.officials} />}
+          <OfficialsGrid officials={loaderData.officials} />
         </div>
       </main>
 

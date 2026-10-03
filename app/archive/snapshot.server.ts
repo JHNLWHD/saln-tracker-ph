@@ -7,6 +7,7 @@ import { identityLineage, readIdentityMatches, resolveIdentity } from "../db/ide
 import * as schema from "../db/schema";
 import { parsePartialDate } from "../db/validation";
 import type { CorrectionChanges } from "./types";
+import { readRosterSnapshots } from "../db/rosters.server";
 
 function orderedChanges(changes: CorrectionChanges) {
   return Object.fromEntries(Object.entries(changes).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
@@ -127,7 +128,8 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
     const personAliases = [...new Map(aliases.map(row => [`${row.kind}:${row.value}`, row])).values()].sort((a, b) => a.kind < b.kind ? -1 : a.kind > b.kind ? 1 : a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
     const legacyDocuments = await tx.select({ path: schema.legacyDocuments.path, sourceDocumentId: schema.legacyDocuments.sourceDocumentId, sha256: schema.legacyDocuments.sha256 })
       .from(schema.legacyDocuments).where(inArray(schema.legacyDocuments.sourceDocumentId, sourceDocuments.map(row => row.id))).orderBy(schema.legacyDocuments.path);
-    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments, editorialCorrections, identityMatches, personAliases, legacyDocuments };
+    const rosterSnapshots = (await readRosterSnapshots(tx)).map(snapshot => ({ ...snapshot, members: snapshot.members.filter(member => tenures.some(tenure => tenure.id === member.tenureId)).map(member => ({ ...member, citations: [...member.citations].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(source => ({ ...source, supports: [...source.supports].sort() })) })) }));
+    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments, editorialCorrections, identityMatches, personAliases, legacyDocuments, rosterSnapshots };
   });
 
   // The digest covers the schema version and ordered public content, without a clock or itself.

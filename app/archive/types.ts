@@ -148,8 +148,32 @@ export interface IdentityMatch {
 }
 
 export interface Archive {
+  readHome(): Promise<ArchiveHome>;
   listPeople(): Promise<PersonRecord[]>;
   findPersonBySlug(slug: string): Promise<PersonRecord | null>;
   findSourceDocument(sha256: string): Promise<SourceDocument | null>;
   findLegacyDocument(path: string): Promise<SourceDocument | null>;
+}
+
+export interface RosterSnapshot {
+  id: string;
+  scope: "executive" | "senate" | "speaker" | "house" | "local";
+  verifiedAsOf: string;
+  reviewedAt: string;
+  members: { tenureId: string; citations: Citation[] }[];
+}
+
+export interface RosterRow {
+  tenureId: string;
+  personId: string;
+  slug: string;
+  canonicalName: string;
+  officeName: string;
+  documentCount: number;
+  latestSummary: DeclaredFinancialSummary | null;
+}
+
+export interface ArchiveHome {
+  rosters: { snapshot: RosterSnapshot; rows: RosterRow[]; omittedMemberCount?: number }[];
+  recentlyAdded: { id: string; sha256: string; fileName: string; archivePublicationDate: string; reportingDate: PartialDate; canonicalName: string; slug: string }[];
 }

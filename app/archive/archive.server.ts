@@ -47,7 +47,7 @@ export async function closeArchive() {
 }
 
 export async function readLegacyHome() {
-  return (await legacyArchive()).readHome();
+  return (await legacyArchive()).readLegacyHome();
 }
 
 export async function readLegacyProfile(slug: string) {
