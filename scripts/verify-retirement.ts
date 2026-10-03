@@ -36,7 +36,7 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
     assert.ok(source); assert.equal(source.sha256, document.sha256);
     const legacy = await get(entry.path, { redirect: 'manual' }); assert.equal(legacy.status, 301);
     const target = new URL(legacy.headers.get('Location')!, base); assert.equal(target.origin, base.origin); assert.equal(target.pathname, `/documents/${document.sha256}`);
-    const bytes = await get(target.pathname); assert.equal(bytes.status, 200); assert.equal(hash(new Uint8Array(await bytes.arrayBuffer())), document.sha256);
+    const bytes = await get(target.pathname, { redirect: 'manual' }); assert.equal(bytes.status, 200); assert.equal(hash(new Uint8Array(await bytes.arrayBuffer())), document.sha256);
     removed.push(document.path);
   }
   return { status: 'verified_removal_plan_no_files_changed', recoveryCommit: record.recoveryCommit, productionCommit: record.productionCommit, paths: removed };
