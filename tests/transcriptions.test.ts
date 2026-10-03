@@ -40,12 +40,12 @@ async function setup() {
   await migrateArchive(connection.db); await applyReviewedManifest(connection.db, person);
   const objects = new Map<string, Uint8Array>();
   const storage: DocumentStorage = { get: async hash => objects.get(hash) ?? null, async put(bytes, hash) { objects.set(hash, bytes); return { storageKey: `documents/sha256/${hash}`, created: true }; } };
-  async function filing(id: string, date: string) {
+  async function filing(id: string, date: string, acquisitionDate = '2026-10-02') {
     for (const page of ["a", "b"]) {
       const bytes = Buffer.from(`%PDF-1.7\nSynthetic ${id} ${page}\n%%EOF\n`), documentId = `${id}-${page}`;
       await applyReviewedManifest(connection.db, { id: `document:${documentId}`, version: 1, kind: "filing", payload: { review,
         filing: { id, personId: "p", filerName: "PERSON, SAMPLE", reportingDate: { value: date, precision: date.length === 4 ? "year" : "day" }, executionDate: null, receiptDate: null, supersedesFilingId: null },
-        document: { id: documentId, filingId: id, fileName: `${documentId}.pdf`, mediaType: "application/pdf", byteSize: bytes.byteLength, sha256: createHash("sha256").update(bytes).digest("hex"), originalUrl: "https://example.org/source.pdf", provenanceType: "official_download", provenanceNote: "Synthetic fixture", officialReleaseDate: null, acquisitionDate: { value: "2026-10-02", precision: "day" }, archivePublicationDate: "2026-10-02T00:00:00.000Z", transcriptionLevel: "document_only" },
+        document: { id: documentId, filingId: id, fileName: `${documentId}.pdf`, mediaType: "application/pdf", byteSize: bytes.byteLength, sha256: createHash("sha256").update(bytes).digest("hex"), originalUrl: "https://example.org/source.pdf", provenanceType: "official_download", provenanceNote: "Synthetic fixture", officialReleaseDate: null, acquisitionDate: { value: acquisitionDate, precision: "day" }, archivePublicationDate: "2026-10-02T00:00:00.000Z", transcriptionLevel: "document_only" },
       } }, { bytes, storage });
     }
   }
@@ -99,6 +99,33 @@ test('summary reviews follow source acquisition and corrections follow their ori
         citations: [{ id: `proof-${target.type}`, title: 'Synthetic proof', url: 'https://example.org/proof', publisher: 'Test', type: 'official_record', supports: Object.keys(changes), publishedDate: null }],
       } }), /precedes its original review/);
     }
+  } finally { await state.close(); }
+});
+
+test('corrected acquisition dates and summary reviews stay consistent without breaking original replay', async () => {
+  const state = await setup();
+  try {
+    await state.filing('f1', '2024', '2026-09-25');
+    const original = summary('f1'); original.payload.review = { ...review, reviewedAt: '2026-09-26' };
+    await applyReviewedManifest(state.db, original);
+    const correction: ReviewedManifest & { kind: 'correction' } = { id: 'later-acquisition', version: 1, kind: 'correction', payload: {
+      review: { ...review, reviewedAt: '2026-10-03' }, target: { type: 'source_document', id: 'f1-a' }, previousCorrectionId: null, reason: 'Synthetic corrected acquisition',
+      changes: { acquisitionDate: { value: '2026-09-28', precision: 'day' } }, citations: [{ id: 'acquisition-proof', title: 'Synthetic source evidence', url: 'https://example.org/acquisition', publisher: 'Test', type: 'official_record', supports: ['acquisitionDate'], publishedDate: null }],
+    } };
+    await assert.rejects(applyReviewedManifest(state.db, correction), /review the summary before this correction/);
+    await applyReviewedManifest(state.db, { id: 'summary-rereview', version: 1, kind: 'correction', payload: {
+      review, target: { type: 'financial_summary', id: 'summary-f1' }, previousCorrectionId: null, reason: 'Synthetic reviewed reading', changes: { declaredNetWorth: '2.02' },
+      citations: [{ id: 'rereview-proof', title: 'Synthetic source evidence', url: 'https://example.org/review', publisher: 'Test', type: 'official_record', supports: ['declaredNetWorth'], publishedDate: null }],
+    } });
+    await applyReviewedManifest(state.db, correction);
+    const outdated = structuredClone(original); outdated.id = 'summary:outdated'; outdated.payload.summary.id = 'summary-outdated';
+    await assert.rejects(applyReviewedManifest(state.db, outdated), /Acquisition Date/);
+    const profile = (await createDbArchive(state.db).findPersonBySlug('sample-person'))!;
+    assert.equal(profile.financialSummaries[0].reviewedAt, review.reviewedAt);
+    assert.equal(profile.sourceDocuments.find(row => row.id === 'f1-a')!.acquisitionDate.value, '2026-09-28');
+    assert.equal((await state.db.select().from(schema.financialSummaries))[0].reviewedAt, '2026-09-26');
+    assert.equal((await applyReviewedManifest(state.db, original)).status, 'unchanged');
+    assert.equal((await applyReviewedManifest(state.db, correction)).status, 'unchanged');
   } finally { await state.close(); }
 });
 

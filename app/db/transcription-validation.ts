@@ -1,8 +1,9 @@
-import type { DeclaredFinancialSummary, FinancialSummarySources, SecondaryReport } from "../archive/types";
+import type { DeclaredFinancialSummary, EditorialCorrection, FinancialSummarySources, SecondaryReport } from "../archive/types";
 import { choice, date, object, parsePartialDate, text } from "./validation";
 import { inArray } from "drizzle-orm";
 import type { ArchiveReader } from "./client.server";
 import { sourceDocuments } from "./schema";
+import { projectCorrections, readEditorialCorrections } from './corrections.server';
 
 export const summaryFields = ["totalAssets", "totalLiabilities", "declaredNetWorth"] as const;
 
@@ -36,11 +37,12 @@ function review(value: unknown) {
 export interface ReviewedSummary { review: ReturnType<typeof review>; summary: Omit<DeclaredFinancialSummary, "reviewedAt"> }
 export interface ReviewedReport { review: ReturnType<typeof review>; report: Omit<SecondaryReport, "reviewedAt"> }
 
-export async function checkSummarySources(tx: ArchiveReader, summary: ReviewedSummary["summary"], reviewedAt: string) {
+export async function checkSummarySources(tx: ArchiveReader, summary: ReviewedSummary["summary"], reviewedAt: string, history?: EditorialCorrection[]) {
   const ids = [...new Set(Object.values(summary.sources).map(source => source.sourceDocumentId))];
   const documents = await tx.select({ id: sourceDocuments.id, filingId: sourceDocuments.filingId, acquisitionDate: sourceDocuments.acquisitionDate }).from(sourceDocuments).where(inArray(sourceDocuments.id, ids));
   if (documents.length !== ids.length || documents.some(document => document.filingId !== summary.filingId)) throw new Error("Every summary value needs an acquired Source Document from its own Filing");
-  if (documents.some(document => document.acquisitionDate > reviewedAt)) throw new Error('Summary review precedes a Source Document Acquisition Date');
+  const corrections = history ?? await readEditorialCorrections(tx);
+  if (documents.some(document => projectCorrections('source_document', { ...document, acquisitionDate: parsePartialDate(document.acquisitionDate)! }, corrections).acquisitionDate.value > reviewedAt)) throw new Error('Summary review precedes a Source Document Acquisition Date');
 }
 
 export function validateSummary(value: unknown): ReviewedSummary["summary"] {
