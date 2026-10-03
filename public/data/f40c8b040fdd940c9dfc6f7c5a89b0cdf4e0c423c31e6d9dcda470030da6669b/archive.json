@@ -1,0 +1,2359 @@
+{
+  "schemaVersion": 1,
+  "version": "f40c8b040fdd940c9dfc6f7c5a89b0cdf4e0c423c31e6d9dcda470030da6669b",
+  "data": {
+    "people": [
+      {
+        "id": "person-faustino-bojie-dy-iii",
+        "slug": "faustino-bojie-dy-iii",
+        "canonicalName": "Faustino G. Dy III"
+      },
+      {
+        "id": "person-ferdinand-marcos-jr",
+        "slug": "ferdinand-marcos-jr",
+        "canonicalName": "Ferdinand R. Marcos Jr."
+      },
+      {
+        "id": "person-legacy-09e4c78f1db94c85",
+        "slug": "pia-cayetano",
+        "canonicalName": "Pia Cayetano"
+      },
+      {
+        "id": "person-legacy-11c2cbd87a3ec403",
+        "slug": "loren-legarda",
+        "canonicalName": "Loren Legarda"
+      },
+      {
+        "id": "person-legacy-18eff8b6ce250cae",
+        "slug": "win-gatchalian",
+        "canonicalName": "Win Gatchalian"
+      },
+      {
+        "id": "person-legacy-27b9527c086d299e",
+        "slug": "camille-villar",
+        "canonicalName": "Camille Villar"
+      },
+      {
+        "id": "person-legacy-28bc045d892f40fc",
+        "slug": "jinggoy-estrada",
+        "canonicalName": "Jinggoy Estrada"
+      },
+      {
+        "id": "person-legacy-319cde5c2477b5ad",
+        "slug": "juan-miguel-zubiri",
+        "canonicalName": "Juan Miguel Zubiri"
+      },
+      {
+        "id": "person-legacy-3552a05784065a37",
+        "slug": "tito-sotto",
+        "canonicalName": "Tito Sotto"
+      },
+      {
+        "id": "person-legacy-445ac73019df28d3",
+        "slug": "joel-villanueva",
+        "canonicalName": "Joel Villanueva"
+      },
+      {
+        "id": "person-legacy-498f481747da4da4",
+        "slug": "bam-aquino",
+        "canonicalName": "Bam Aquino"
+      },
+      {
+        "id": "person-legacy-5fdbed715ac5baaf",
+        "slug": "alan-peter-cayetano",
+        "canonicalName": "Alan Peter Cayetano"
+      },
+      {
+        "id": "person-legacy-63f7c9b3ea4750c9",
+        "slug": "panfilo-lacson",
+        "canonicalName": "Panfilo Lacson"
+      },
+      {
+        "id": "person-legacy-678dfc767b7c77c0",
+        "slug": "erwin-tulfo",
+        "canonicalName": "Erwin Tulfo"
+      },
+      {
+        "id": "person-legacy-793207aa53cc4fc1",
+        "slug": "jv-ejercito",
+        "canonicalName": "JV Ejercito"
+      },
+      {
+        "id": "person-legacy-86726305bdc8e680",
+        "slug": "sara-zimmerman-duterte",
+        "canonicalName": "Sara Zimmerman Duterte"
+      },
+      {
+        "id": "person-legacy-868d59f645633c01",
+        "slug": "bong-go",
+        "canonicalName": "Bong Go"
+      },
+      {
+        "id": "person-legacy-86abb38806e8baaa",
+        "slug": "robin-padilla",
+        "canonicalName": "Robin Padilla"
+      },
+      {
+        "id": "person-legacy-8dc1199ade527d22",
+        "slug": "rodante-marcoleta",
+        "canonicalName": "Rodante Marcoleta"
+      },
+      {
+        "id": "person-legacy-aac2513583abdb68",
+        "slug": "ronald-bato-dela-rosa",
+        "canonicalName": "Ronald \"Bato\" dela Rosa"
+      },
+      {
+        "id": "person-legacy-b70bfe6aad6f3fcd",
+        "slug": "francis-escudero",
+        "canonicalName": "Francis Escudero"
+      },
+      {
+        "id": "person-legacy-b91afebaee5afaa9",
+        "slug": "mark-villar",
+        "canonicalName": "Mark Villar"
+      },
+      {
+        "id": "person-legacy-bf0fa9d802600fe1",
+        "slug": "raffy-tulfo",
+        "canonicalName": "Raffy Tulfo"
+      },
+      {
+        "id": "person-legacy-c3231e185dd22e33",
+        "slug": "lito-lapid",
+        "canonicalName": "Lito Lapid"
+      },
+      {
+        "id": "person-legacy-e330e30061a8e05b",
+        "slug": "kiko-pangilinan",
+        "canonicalName": "Kiko Pangilinan"
+      },
+      {
+        "id": "person-legacy-ebbe54bb4c7facba",
+        "slug": "imee-marcos",
+        "canonicalName": "Imee Marcos"
+      },
+      {
+        "id": "person-risa-hontiveros",
+        "slug": "risa-hontiveros",
+        "canonicalName": "Risa Hontiveros"
+      }
+    ],
+    "personNames": [
+      {
+        "personId": "person-faustino-bojie-dy-iii",
+        "value": "Bojie Dy"
+      },
+      {
+        "personId": "person-faustino-bojie-dy-iii",
+        "value": "Faustino \"Bojie\" G. Dy III"
+      },
+      {
+        "personId": "person-ferdinand-marcos-jr",
+        "value": "Ferdinand \"Bongbong\" Romualdez Marcos Jr."
+      },
+      {
+        "personId": "person-legacy-18eff8b6ce250cae",
+        "value": "Sherwin Gatchalian"
+      },
+      {
+        "personId": "person-legacy-319cde5c2477b5ad",
+        "value": "Miguel Zubiri"
+      },
+      {
+        "personId": "person-legacy-86726305bdc8e680",
+        "value": "Sara Duterte"
+      },
+      {
+        "personId": "person-legacy-86726305bdc8e680",
+        "value": "Sara Z. Duterte"
+      },
+      {
+        "personId": "person-legacy-b70bfe6aad6f3fcd",
+        "value": "Chiz Escudero"
+      },
+      {
+        "personId": "person-risa-hontiveros",
+        "value": "Ana Theresia N. Hontiveros-Baraquel"
+      }
+    ],
+    "offices": [
+      {
+        "id": "office-house-representative-ph",
+        "name": "Member of the House of Representatives",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-house-speaker-ph",
+        "name": "Speaker of the House",
+        "kind": "chamber_leadership",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-president-ph",
+        "name": "President of the Philippines",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-senate-president-ph",
+        "name": "Senate President",
+        "kind": "chamber_leadership",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-senator-ph",
+        "name": "Senator of the Philippines",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-vice-president-ph",
+        "name": "Vice President of the Philippines",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      }
+    ],
+    "tenures": [
+      {
+        "id": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+        "personId": "person-legacy-5fdbed715ac5baaf",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-bam-aquino-senator-evidenced-2026",
+        "personId": "person-legacy-498f481747da4da4",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-bong-go-senator-evidenced-2026",
+        "personId": "person-legacy-868d59f645633c01",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-camille-villar-senator-evidenced-2026",
+        "personId": "person-legacy-27b9527c086d299e",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-dy-isabela-6-representative-evidenced-2025",
+        "personId": "person-faustino-bojie-dy-iii",
+        "officeId": "office-house-representative-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-isabela-6",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-dy-speaker-2025",
+        "personId": "person-faustino-bojie-dy-iii",
+        "officeId": "office-house-speaker-ph",
+        "electoralTermId": null,
+        "constituencyId": null,
+        "startDate": {
+          "value": "2025-09-17",
+          "precision": "day"
+        },
+        "endDate": null,
+        "assumptionMethod": "chamber_selection",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-erwin-tulfo-senator-evidenced-2026",
+        "personId": "person-legacy-678dfc767b7c77c0",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-francis-escudero-senator-evidenced-2026",
+        "personId": "person-legacy-b70bfe6aad6f3fcd",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-gatchalian-senate-president-2026",
+        "personId": "person-legacy-18eff8b6ce250cae",
+        "officeId": "office-senate-president-ph",
+        "electoralTermId": null,
+        "constituencyId": null,
+        "startDate": {
+          "value": "2026-06-17",
+          "precision": "day"
+        },
+        "endDate": null,
+        "assumptionMethod": "chamber_selection",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-imee-marcos-senator-evidenced-2026",
+        "personId": "person-legacy-ebbe54bb4c7facba",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-jinggoy-estrada-senator-evidenced-2026",
+        "personId": "person-legacy-28bc045d892f40fc",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-joel-villanueva-senator-evidenced-2026",
+        "personId": "person-legacy-445ac73019df28d3",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+        "personId": "person-legacy-319cde5c2477b5ad",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-jv-ejercito-senator-evidenced-2026",
+        "personId": "person-legacy-793207aa53cc4fc1",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-kiko-pangilinan-senator-evidenced-2026",
+        "personId": "person-legacy-e330e30061a8e05b",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-lito-lapid-senator-evidenced-2026",
+        "personId": "person-legacy-c3231e185dd22e33",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-loren-legarda-senator-evidenced-2026",
+        "personId": "person-legacy-11c2cbd87a3ec403",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-marcos-president-2022",
+        "personId": "person-ferdinand-marcos-jr",
+        "officeId": "office-president-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": {
+          "value": "2022-06-30",
+          "precision": "day"
+        },
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-mark-villar-senator-evidenced-2026",
+        "personId": "person-legacy-b91afebaee5afaa9",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-panfilo-lacson-senator-evidenced-2026",
+        "personId": "person-legacy-63f7c9b3ea4750c9",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-pia-cayetano-senator-evidenced-2026",
+        "personId": "person-legacy-09e4c78f1db94c85",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-raffy-tulfo-senator-evidenced-2026",
+        "personId": "person-legacy-bf0fa9d802600fe1",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-risa-hontiveros-senator-evidenced-2025",
+        "personId": "person-risa-hontiveros",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": null,
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-robin-padilla-senator-evidenced-2026",
+        "personId": "person-legacy-86abb38806e8baaa",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-rodante-marcoleta-senator-evidenced-2026",
+        "personId": "person-legacy-8dc1199ade527d22",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-ronald-bato-dela-rosa-senator-evidenced-2026",
+        "personId": "person-legacy-aac2513583abdb68",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-sara-vice-president-2022",
+        "personId": "person-legacy-86726305bdc8e680",
+        "officeId": "office-vice-president-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": {
+          "value": "2022-06-30",
+          "precision": "day"
+        },
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-tito-sotto-senator-evidenced-2026",
+        "personId": "person-legacy-3552a05784065a37",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      },
+      {
+        "id": "tenure-win-gatchalian-senator-evidenced-2026",
+        "personId": "person-legacy-18eff8b6ce250cae",
+        "officeId": "office-senator-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-ph-nation",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "election",
+        "verificationStatus": "verified",
+        "disputedFacts": []
+      }
+    ],
+    "constituencies": [
+      {
+        "id": "constituency-isabela-6",
+        "name": "Isabela 6th District",
+        "kind": "legislative_district",
+        "jurisdictionId": "jurisdiction-isabela"
+      },
+      {
+        "id": "constituency-ph-nation",
+        "name": "Philippines",
+        "kind": "nation",
+        "jurisdictionId": "jurisdiction-ph"
+      }
+    ],
+    "jurisdictions": [
+      {
+        "id": "jurisdiction-isabela",
+        "name": "Isabela",
+        "kind": "province"
+      },
+      {
+        "id": "jurisdiction-ph",
+        "name": "Philippines",
+        "kind": "country"
+      }
+    ],
+    "jurisdictionRelationships": [
+      {
+        "fromId": "jurisdiction-isabela",
+        "toId": "jurisdiction-ph",
+        "kind": "administrative"
+      }
+    ],
+    "electoralTerms": [],
+    "citations": [
+      {
+        "id": "evidence-dy-house-member-d027",
+        "title": "20th Congress: Dy, Faustino \"Bojie\" III G., Isabela 6th District",
+        "url": "https://congress.gov.ph/house-members/view/D027",
+        "publisher": "House of Representatives",
+        "type": "official_record",
+        "publishedDate": null
+      },
+      {
+        "id": "evidence-dy-speaker-election-2025-09-17-house",
+        "title": "ISABELA REP. FAUSTINO \"BOJIE\" DY III IS NEW SPEAKER",
+        "url": "https://www.congress.gov.ph/media/photojournal/5972",
+        "publisher": "House of Representatives, Press and Public Affairs Bureau",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2025-09-17",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-dy-speaker-house-2026-09-25",
+        "title": "Speaker Dy: From doctor of Batanes to national lawmaker, Rep. Gato leaves legacy of service",
+        "url": "https://congress.gov.ph/media/press-releases/10250",
+        "publisher": "House of Representatives, Press and Public Affairs Bureau",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2026-09-25",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-gatchalian-senate-election-2026-06-17-house",
+        "title": "Dy congratulates Gatchalian on election as Senate President, vows continued House-Senate cooperation",
+        "url": "https://www.congress.gov.ph/media/press-releases/9847",
+        "publisher": "House of Representatives, Press and Public Affairs Bureau",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2026-06-17",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-hontiveros-senator-pna-2025-10-20",
+        "title": "Senate outlines procedures for requesting SALN",
+        "url": "https://www.pna.gov.ph/articles/1261401",
+        "publisher": "Philippine News Agency",
+        "type": "public_article",
+        "publishedDate": {
+          "value": "2025-10-20",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-marcos-inauguration-2022",
+        "title": "Inauguration of Ferdinand Romualdez Marcos Jr.",
+        "url": "https://pco.gov.ph/inauguration/pbbm/",
+        "publisher": "Presidential Communications Office",
+        "type": "official_record",
+        "publishedDate": null
+      },
+      {
+        "id": "evidence-marcos-office-2026-09-22",
+        "title": "PBBM, ASEAN-BAC discuss preparations for 2026 Business and Investment Summit",
+        "url": "https://pco.gov.ph/news_releases/pbbm-asean-bac-discuss-preparations-for-2026-business-and-investment-summit/",
+        "publisher": "Presidential Communications Office",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2026-09-22",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-sara-assumption-2022-house-2026",
+        "title": "Alonto Adiong: VP Sara staying on private company board a clear violation of Constitution",
+        "url": "https://www.congress.gov.ph/media/press-releases/10223",
+        "publisher": "House of Representatives, Press and Public Affairs Bureau",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2026-09-21",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-sara-inauguration-2022",
+        "title": "Sara takes oath as VP, commits to serve nation",
+        "url": "https://www.pna.gov.ph/articles/1177042",
+        "publisher": "Philippine News Agency",
+        "type": "public_article",
+        "publishedDate": {
+          "value": "2022-06-19",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-senate-cohort-2022-proclamation",
+        "title": "12 SENATORS PROCLAIMED",
+        "url": "https://www.pna.gov.ph/photos/54640",
+        "publisher": "Philippine News Agency",
+        "type": "public_article",
+        "publishedDate": {
+          "value": "2022-05-19",
+          "precision": "day"
+        }
+      },
+      {
+        "id": "evidence-senate-roll-call-2026-09-21",
+        "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+        "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+        "publisher": "Legislative Journal Service, Senate of the Philippines",
+        "type": "official_record",
+        "publishedDate": {
+          "value": "2026-09-21",
+          "precision": "day"
+        }
+      }
+    ],
+    "tenureCitations": [
+      {
+        "tenureId": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-bam-aquino-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-bong-go-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-camille-villar-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-dy-isabela-6-representative-evidenced-2025",
+        "citationId": "evidence-dy-house-member-d027",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-dy-isabela-6-representative-evidenced-2025",
+        "citationId": "evidence-dy-speaker-election-2025-09-17-house",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-dy-speaker-2025",
+        "citationId": "evidence-dy-speaker-election-2025-09-17-house",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person",
+          "startDate"
+        ]
+      },
+      {
+        "tenureId": "tenure-dy-speaker-2025",
+        "citationId": "evidence-dy-speaker-house-2026-09-25",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-erwin-tulfo-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-francis-escudero-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-francis-escudero-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-gatchalian-senate-president-2026",
+        "citationId": "evidence-gatchalian-senate-election-2026-06-17-house",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person",
+          "startDate"
+        ]
+      },
+      {
+        "tenureId": "tenure-gatchalian-senate-president-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-imee-marcos-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-jinggoy-estrada-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-jinggoy-estrada-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-joel-villanueva-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-joel-villanueva-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-jv-ejercito-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-jv-ejercito-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-kiko-pangilinan-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-lito-lapid-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-loren-legarda-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-loren-legarda-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-marcos-president-2022",
+        "citationId": "evidence-marcos-inauguration-2022",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person",
+          "startDate"
+        ]
+      },
+      {
+        "tenureId": "tenure-marcos-president-2022",
+        "citationId": "evidence-marcos-office-2026-09-22",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-mark-villar-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-mark-villar-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-panfilo-lacson-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-pia-cayetano-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-raffy-tulfo-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-raffy-tulfo-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+        "citationId": "evidence-hontiveros-senator-pna-2025-10-20",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-robin-padilla-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-robin-padilla-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-rodante-marcoleta-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-ronald-bato-dela-rosa-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-sara-vice-president-2022",
+        "citationId": "evidence-sara-assumption-2022-house-2026",
+        "supports": [
+          "office",
+          "person",
+          "startDate"
+        ]
+      },
+      {
+        "tenureId": "tenure-sara-vice-president-2022",
+        "citationId": "evidence-sara-inauguration-2022",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-tito-sotto-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-win-gatchalian-senator-evidenced-2026",
+        "citationId": "evidence-senate-cohort-2022-proclamation",
+        "supports": [
+          "assumptionMethod",
+          "office",
+          "person"
+        ]
+      },
+      {
+        "tenureId": "tenure-win-gatchalian-senator-evidenced-2026",
+        "citationId": "evidence-senate-roll-call-2026-09-21",
+        "supports": [
+          "office",
+          "person"
+        ]
+      }
+    ],
+    "filings": [],
+    "sourceDocuments": [],
+    "editorialCorrections": [],
+    "identityMatches": [
+      {
+        "id": "identity-legacy-ferdinand-marcos-jr",
+        "fromPersonId": "person-legacy-ce5248cf109dbbb8",
+        "toPersonId": "person-ferdinand-marcos-jr",
+        "reason": "The exact legacy record names Ferdinand \"Bongbong\" Romualdez Marcos Jr. The PCO inauguration page explicitly uses that full name and the canonical Ferdinand R. Marcos Jr. for the same President. This match preserves identity and former URLs only; it does not approve legacy Filings or totals.",
+        "reviewedAt": "2026-10-02",
+        "citations": [
+          {
+            "id": "evidence-marcos-inauguration-2022",
+            "title": "Inauguration of Ferdinand Romualdez Marcos Jr.",
+            "url": "https://pco.gov.ph/inauguration/pbbm/",
+            "publisher": "Presidential Communications Office",
+            "type": "official_record",
+            "supports": [
+              "identity"
+            ],
+            "publishedDate": null
+          }
+        ]
+      },
+      {
+        "id": "identity-legacy-risa-hontiveros",
+        "fromPersonId": "person-legacy-3eb6409efdf5b940",
+        "toPersonId": "person-risa-hontiveros",
+        "reason": "The exact legacy record names Risa Hontiveros. The attributable PNA report identifies Senator Risa Hontiveros and her SALN release. This reviewed Person match preserves the former record and identifiers only; its stored SALN share link is not treated as the acquired release scans.",
+        "reviewedAt": "2026-10-02",
+        "citations": [
+          {
+            "id": "evidence-hontiveros-senator-pna-2025-10-20",
+            "title": "Senate outlines procedures for requesting SALN",
+            "url": "https://www.pna.gov.ph/articles/1261401",
+            "publisher": "Philippine News Agency",
+            "type": "public_article",
+            "supports": [
+              "identity"
+            ],
+            "publishedDate": {
+              "value": "2025-10-20",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ],
+    "personAliases": [
+      {
+        "kind": "identifier",
+        "value": "person-legacy-3eb6409efdf5b940",
+        "personId": "person-risa-hontiveros"
+      },
+      {
+        "kind": "identifier",
+        "value": "person-legacy-ce5248cf109dbbb8",
+        "personId": "person-ferdinand-marcos-jr"
+      },
+      {
+        "kind": "identifier",
+        "value": "pres-001",
+        "personId": "person-ferdinand-marcos-jr"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-001",
+        "personId": "person-legacy-5fdbed715ac5baaf"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-002",
+        "personId": "person-legacy-793207aa53cc4fc1"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-003",
+        "personId": "person-legacy-b70bfe6aad6f3fcd"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-004",
+        "personId": "person-legacy-28bc045d892f40fc"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-005",
+        "personId": "person-legacy-18eff8b6ce250cae"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-006",
+        "personId": "person-risa-hontiveros"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-007",
+        "personId": "person-legacy-11c2cbd87a3ec403"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-008",
+        "personId": "person-legacy-86abb38806e8baaa"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-009",
+        "personId": "person-legacy-bf0fa9d802600fe1"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-010",
+        "personId": "person-legacy-445ac73019df28d3"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-011",
+        "personId": "person-legacy-b91afebaee5afaa9"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-012",
+        "personId": "person-legacy-319cde5c2477b5ad"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-013",
+        "personId": "person-legacy-868d59f645633c01"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-014",
+        "personId": "person-legacy-498f481747da4da4"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-015",
+        "personId": "person-legacy-aac2513583abdb68"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-016",
+        "personId": "person-legacy-678dfc767b7c77c0"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-017",
+        "personId": "person-legacy-e330e30061a8e05b"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-018",
+        "personId": "person-legacy-8dc1199ade527d22"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-019",
+        "personId": "person-legacy-63f7c9b3ea4750c9"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-020",
+        "personId": "person-legacy-3552a05784065a37"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-021",
+        "personId": "person-legacy-09e4c78f1db94c85"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-022",
+        "personId": "person-legacy-27b9527c086d299e"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-023",
+        "personId": "person-legacy-c3231e185dd22e33"
+      },
+      {
+        "kind": "identifier",
+        "value": "sen-024",
+        "personId": "person-legacy-ebbe54bb4c7facba"
+      },
+      {
+        "kind": "identifier",
+        "value": "vp-001",
+        "personId": "person-legacy-86726305bdc8e680"
+      },
+      {
+        "kind": "slug",
+        "value": "alan-peter-cayetano",
+        "personId": "person-legacy-5fdbed715ac5baaf"
+      },
+      {
+        "kind": "slug",
+        "value": "bam-aquino",
+        "personId": "person-legacy-498f481747da4da4"
+      },
+      {
+        "kind": "slug",
+        "value": "bong-go",
+        "personId": "person-legacy-868d59f645633c01"
+      },
+      {
+        "kind": "slug",
+        "value": "camille-villar",
+        "personId": "person-legacy-27b9527c086d299e"
+      },
+      {
+        "kind": "slug",
+        "value": "erwin-tulfo",
+        "personId": "person-legacy-678dfc767b7c77c0"
+      },
+      {
+        "kind": "slug",
+        "value": "ferdinand-bongbong-romualdez-marcos-jr",
+        "personId": "person-ferdinand-marcos-jr"
+      },
+      {
+        "kind": "slug",
+        "value": "francis-escudero",
+        "personId": "person-legacy-b70bfe6aad6f3fcd"
+      },
+      {
+        "kind": "slug",
+        "value": "imee-marcos",
+        "personId": "person-legacy-ebbe54bb4c7facba"
+      },
+      {
+        "kind": "slug",
+        "value": "jinggoy-estrada",
+        "personId": "person-legacy-28bc045d892f40fc"
+      },
+      {
+        "kind": "slug",
+        "value": "joel-villanueva",
+        "personId": "person-legacy-445ac73019df28d3"
+      },
+      {
+        "kind": "slug",
+        "value": "juan-miguel-zubiri",
+        "personId": "person-legacy-319cde5c2477b5ad"
+      },
+      {
+        "kind": "slug",
+        "value": "jv-ejercito",
+        "personId": "person-legacy-793207aa53cc4fc1"
+      },
+      {
+        "kind": "slug",
+        "value": "kiko-pangilinan",
+        "personId": "person-legacy-e330e30061a8e05b"
+      },
+      {
+        "kind": "slug",
+        "value": "legacy-risa-hontiveros",
+        "personId": "person-risa-hontiveros"
+      },
+      {
+        "kind": "slug",
+        "value": "lito-lapid",
+        "personId": "person-legacy-c3231e185dd22e33"
+      },
+      {
+        "kind": "slug",
+        "value": "loren-legarda",
+        "personId": "person-legacy-11c2cbd87a3ec403"
+      },
+      {
+        "kind": "slug",
+        "value": "mark-villar",
+        "personId": "person-legacy-b91afebaee5afaa9"
+      },
+      {
+        "kind": "slug",
+        "value": "panfilo-lacson",
+        "personId": "person-legacy-63f7c9b3ea4750c9"
+      },
+      {
+        "kind": "slug",
+        "value": "pia-cayetano",
+        "personId": "person-legacy-09e4c78f1db94c85"
+      },
+      {
+        "kind": "slug",
+        "value": "raffy-tulfo",
+        "personId": "person-legacy-bf0fa9d802600fe1"
+      },
+      {
+        "kind": "slug",
+        "value": "risa-hontiveros",
+        "personId": "person-risa-hontiveros"
+      },
+      {
+        "kind": "slug",
+        "value": "robin-padilla",
+        "personId": "person-legacy-86abb38806e8baaa"
+      },
+      {
+        "kind": "slug",
+        "value": "rodante-marcoleta",
+        "personId": "person-legacy-8dc1199ade527d22"
+      },
+      {
+        "kind": "slug",
+        "value": "ronald-bato-dela-rosa",
+        "personId": "person-legacy-aac2513583abdb68"
+      },
+      {
+        "kind": "slug",
+        "value": "sara-zimmerman-duterte",
+        "personId": "person-legacy-86726305bdc8e680"
+      },
+      {
+        "kind": "slug",
+        "value": "tito-sotto",
+        "personId": "person-legacy-3552a05784065a37"
+      },
+      {
+        "kind": "slug",
+        "value": "win-gatchalian",
+        "personId": "person-legacy-18eff8b6ce250cae"
+      }
+    ],
+    "legacyDocuments": [],
+    "rosterSnapshots": [
+      {
+        "id": "roster-executive-2026-09-28",
+        "scope": "executive",
+        "verifiedAsOf": "2026-09-28",
+        "reviewedAt": "2026-10-02",
+        "members": [
+          {
+            "tenureId": "tenure-marcos-president-2022",
+            "citations": [
+              {
+                "id": "evidence-executive-roster-2026-09-28",
+                "title": "Marcos dismisses VP Sara's accusations as 'nonsense,' 'fake news'",
+                "url": "https://www.pna.gov.ph/index.php/articles/1284958",
+                "publisher": "Philippine News Agency",
+                "type": "public_article",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-28",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-sara-vice-president-2022",
+            "citations": [
+              {
+                "id": "evidence-executive-roster-2026-09-28",
+                "title": "Marcos dismisses VP Sara's accusations as 'nonsense,' 'fake news'",
+                "url": "https://www.pna.gov.ph/index.php/articles/1284958",
+                "publisher": "Philippine News Agency",
+                "type": "public_article",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-28",
+                  "precision": "day"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "roster-senate-2026-09-21",
+        "scope": "senate",
+        "verifiedAsOf": "2026-09-21",
+        "reviewedAt": "2026-10-02",
+        "members": [
+          {
+            "tenureId": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-jv-ejercito-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-francis-escudero-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-jinggoy-estrada-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-win-gatchalian-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-gatchalian-senate-president-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-loren-legarda-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-robin-padilla-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-raffy-tulfo-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-joel-villanueva-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-mark-villar-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-bam-aquino-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-pia-cayetano-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-ronald-bato-dela-rosa-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-bong-go-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-panfilo-lacson-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-lito-lapid-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-rodante-marcoleta-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-imee-marcos-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-kiko-pangilinan-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-tito-sotto-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-erwin-tulfo-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-camille-villar-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "roster-senate-2026-09-21-a-2022-cohort",
+        "scope": "senate",
+        "verifiedAsOf": "2026-09-21",
+        "reviewedAt": "2026-10-02",
+        "members": [
+          {
+            "tenureId": "tenure-alan-peter-cayetano-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-jv-ejercito-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-francis-escudero-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-jinggoy-estrada-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-win-gatchalian-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-gatchalian-senate-president-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-risa-hontiveros-senator-evidenced-2025",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-loren-legarda-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-robin-padilla-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-raffy-tulfo-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-joel-villanueva-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-mark-villar-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          },
+          {
+            "tenureId": "tenure-juan-miguel-zubiri-senator-evidenced-2026",
+            "citations": [
+              {
+                "id": "evidence-senate-roll-call-2026-09-21",
+                "title": "Senate Sitting as an Impeachment Court - Journal No. 28, Monday, 21 September 2026 (PDF page 4; preserved public mirror)",
+                "url": "https://github.com/tordecilla/duterte-impeachment-working-draft/releases/download/senate-journal-2026-09-25/VPSD.Impeachment.Trial.-.Journal.No.28.September.21.2026.-84945965b692.pdf",
+                "publisher": "Legislative Journal Service, Senate of the Philippines",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-21",
+                  "precision": "day"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "roster-speaker-2026-09-25",
+        "scope": "speaker",
+        "verifiedAsOf": "2026-09-25",
+        "reviewedAt": "2026-10-02",
+        "members": [
+          {
+            "tenureId": "tenure-dy-speaker-2025",
+            "citations": [
+              {
+                "id": "evidence-dy-speaker-house-2026-09-25",
+                "title": "Speaker Dy: From doctor of Batanes to national lawmaker, Rep. Gato leaves legacy of service",
+                "url": "https://congress.gov.ph/media/press-releases/10250",
+                "publisher": "House of Representatives, Press and Public Affairs Bureau",
+                "type": "official_record",
+                "supports": [
+                  "holdsOffice",
+                  "office",
+                  "person"
+                ],
+                "publishedDate": {
+                  "value": "2026-09-25",
+                  "precision": "day"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "financialSummaries": [],
+    "secondaryReports": []
+  }
+}

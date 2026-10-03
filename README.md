@@ -154,7 +154,7 @@ The examples in [the Hontiveros local verification directory](data/examples/hont
 npm run archive:export -- .data/snapshots
 ```
 
-This read-only export produces `<content-version>/archive.json` and `<content-version>/source-checksums.json`. Both share a content-derived version, and repeated exports are byte-identical. Existing artifacts are verified, not overwritten. The checksum file groups exact duplicate bytes while retaining each Source Document ID and Filing relationship in the snapshot. Only explicit public fields for Archive-Eligible People are exported; private tips, unverified queue tables, credentials, storage keys and import audit details are excluded. Exporting locally does not publish or deploy the files. Release packaging must use the validated pair together.
+This read-only export produces `<content-version>/archive.json` and `<content-version>/source-checksums.json`. Both share a content-derived version, and repeated exports are byte-identical. Existing artifacts are verified, not overwritten. The checksum file groups exact duplicate bytes while retaining each Source Document ID and Filing relationship in the snapshot. Only explicit public fields for Archive-Eligible People are exported; private tips, unverified queue tables, credentials, storage keys and import audit details are excluded. Exporting locally does not publish or deploy the files. Release packaging must use the validated pair together. The public download aliases select the reviewed version in `data/release/public-snapshot.json`; its immutable pair is checked into `public/data/<version>/`. Preparing a new pair and updating this selector are explicit release steps. Live Turso imports do not change a published snapshot.
 
 ### Editorial Corrections and Disputed Facts
 
