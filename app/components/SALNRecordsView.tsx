@@ -29,7 +29,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
       case 'submitted': return 'Submitted';
       case 'under_review': return 'Under Review';
       case 'flagged': return 'Flagged';
-      default: return status;
+      default: return status || 'Status not recorded';
     }
   };
 
@@ -66,11 +66,11 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
                       SALN {record.year}
                     </CardTitle>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                      Filed: {new Date(record.date_filed).toLocaleDateString('en-PH', {
+                      Filed: {record.date_filed && Number.isFinite(Date.parse(record.date_filed)) ? new Date(record.date_filed).toLocaleDateString('en-PH', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
-                      })}
+                      }) : 'Not recorded'}
                     </p>
                   </div>
                   <Badge variant={getStatusVariant(record.status)} className="text-xs flex-shrink-0">
