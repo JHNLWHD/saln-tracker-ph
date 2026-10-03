@@ -19,8 +19,16 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   const snapshotData = { legacyDocuments: [{ path: '/saln/test.pdf', sourceDocumentId: 'source-test', sha256: hash }], sourceDocuments: [{ id: 'source-test', sha256: hash }] };
   const version = createHash('sha256').update(JSON.stringify({ schemaVersion: 1, data: snapshotData })).digest('hex');
   let corrupt = false, redirectCanonical = false, corruptSnapshot = false;
+  let redirectedPath = '', badPing = false;
+  const other = createServer((request, response) => {
+    response.setHeader('X-Archive-Revision', commit);
+    response.end(request.url === '/ping' ? 'pong' : JSON.stringify({ schemaVersion: 1, version, data: snapshotData }));
+  });
+  other.listen(0, '127.0.0.1'); await once(other, 'listening');
+  const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
   const server = createServer((request, response) => {
-    if (request.url === '/ping') { response.setHeader('X-Archive-Revision', commit); response.end('pong'); }
+    if (request.url === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${request.url}`); response.end(); return; }
+    if (request.url === '/ping') { response.setHeader('X-Archive-Revision', commit); response.end(badPing ? 'wrong response' : 'pong'); }
     else if (request.url === '/data/archive.json') response.end(JSON.stringify({ schemaVersion: 1, version, data: corruptSnapshot ? { ...snapshotData, tampered: true } : snapshotData }));
     else if (request.url === '/saln/test.pdf') { response.statusCode = 301; response.setHeader('Location', `/documents/${hash}`); response.end(); }
     else if (request.url === `/documents/${hash}`) {
@@ -35,6 +43,13 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   try {
     const result = await verifyRetirement(record, origin, directory); assert.equal(result.status, 'verified_removal_plan_no_files_changed'); assert.deepEqual(result.paths, ['public/saln/test.pdf']);
     assert.deepEqual(await readFile(join(directory, result.paths[0])), bytes);
+    for (const path of ['/ping', '/data/archive.json']) {
+      redirectedPath = path;
+      await assert.rejects(verifyRetirement(record, origin, directory), /escaped the named deployment/);
+    }
+    redirectedPath = ''; badPing = true;
+    await assert.rejects(verifyRetirement(record, origin, directory), /Expected values/);
+    badPing = false;
     await assert.rejects(verifyRetirement({ ...record, documents: [] }, origin, directory), /Every tracked PDF/);
     await assert.rejects(verifyRetirement({ ...record, rollbackUntil: new Date(Date.now() + 3600000).toISOString() }, origin, directory), /closed rollback/);
     await assert.rejects(verifyRetirement({ ...record, productionReportRef: 'pending' }, origin, directory), /Successful production/);
@@ -50,5 +65,5 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
     git(['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'Synthetic premature removal']);
     await assert.rejects(verifyRetirement({ ...record, documents: [] }, origin, directory), /Every tracked PDF/);
     await assert.rejects(verifyRetirement(record, origin, directory), /recovery PDF set/);
-  } finally { await new Promise<void>(resolve => server.close(() => resolve())); await rm(directory, { recursive: true, force: true }); }
+  } finally { await Promise.all([server, other].map(server => new Promise<void>(resolve => server.close(() => resolve())))); await rm(directory, { recursive: true, force: true }); }
 });
