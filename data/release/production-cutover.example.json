@@ -4,7 +4,7 @@
   "productionApprovalRef": null,
   "snapshotVersion": null,
   "rollbackUntil": null,
-  "targets": { "accountId": null, "documentBucket": null, "backupBucket": null },
+  "targets": { "tursoDatabaseUrl": null, "accountId": null, "documentBucket": null, "backupBucket": null },
   "backups": {
     "pre": { "file": null, "sha256": null, "key": null },
     "post": { "file": null, "sha256": null, "key": null }
