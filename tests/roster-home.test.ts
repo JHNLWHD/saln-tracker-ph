@@ -75,17 +75,24 @@ test('a later review replaces an equal-date Snapshot even when its ID sorts last
   } finally { await state.close(); }
 });
 
-test('Roster reads exclude Tenures whose corrected boundaries no longer include the Snapshot date', async () => {
-  for (const changes of [{ startDate: { value: '2027', precision: 'year' } }, { endDate: { value: '2025', precision: 'year' } }]) {
+test('Roster reads and exports exclude Tenures whose corrected dates or verification no longer support membership', async () => {
+  for (const changes of [{ startDate: { value: '2027', precision: 'year' } }, { endDate: { value: '2025', precision: 'year' } }, { verificationStatus: 'unverified' }, { verificationStatus: 'disputed', disputedFacts: ['office'] }]) {
     const state = await setup();
     try {
+      const person = await json('0001-ferdinand-marcos-jr.json');
+      person.tenures.push({ ...person.tenures[0], id: 'another-eligible-tenure' });
+      await applyReviewedManifest(state.db, { id: 'person:another-eligible-tenure', version: 1, kind: 'person', payload: person });
       await applyReviewedManifest(state.db, { id: 'corrected-boundary', version: 1, kind: 'correction', payload: {
         review: { reviewedAt: '2026-10-02', reviewedBy: 'Synthetic reviewer' }, target: { type: 'tenure', id: 'tenure-marcos-president-2022' },
         reason: 'Synthetic boundary correction', previousCorrectionId: null, changes,
-        citations: [{ id: 'boundary-evidence', title: 'Synthetic evidence', url: 'https://example.org/boundary', publisher: 'Test', type: 'official_record', supports: Object.keys(changes), publishedDate: null }],
+        citations: [{ id: 'boundary-evidence', title: 'Synthetic evidence', url: 'https://example.org/boundary', publisher: 'Test', type: 'official_record', supports: [...Object.keys(changes), 'person', 'office'], publishedDate: null }],
       } });
       const home = await createDbArchive(state.db).readHome();
       assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
+      const exported = await exportPublicSnapshot(state.db);
+      assert.ok(exported.snapshot.data.tenures.some(row => row.id === 'tenure-marcos-president-2022'));
+      assert.deepEqual(exported.snapshot.data.rosterSnapshots[0].members.map(row => row.tenureId), home.rosters[0].snapshot.members.map(row => row.tenureId));
+      assert.equal(exported.snapshot.data.rosterSnapshots[0].members.length, 1);
       assert.equal((await state.db.select().from(rosterMembers)).length, 2);
     } finally { await state.close(); }
   }
