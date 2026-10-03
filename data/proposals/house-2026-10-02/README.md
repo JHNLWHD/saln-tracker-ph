@@ -12,7 +12,7 @@ These TSV files are visible-table projections, not preserved HTML or SALN Source
 
 HOUSE-00 resolves shared source/geography/identity rules. District pilot HOUSE-D01 precedes the other district batches. HOUSE-D-ACCEPT precedes party-list pilot HOUSE-P01. The remaining party-list batches follow the accepted pilot. HOUSE-P-ACCEPT and HOUSE-D-ACCEPT block HOUSE-FINAL. #66 and approval of #68 block all work.
 
-There are 29 member batches, with at most 12 People each. No district area group or party-list organization is split. Every batch declares evidence, manifest, profile, document, reconciliation, staging and approval criteria in the map. Source group labels remain provisional; L042/J013 requires source resolution in HOUSE-00.
+There are 29 member batches, with at most 12 People each. No district area group or party-list organization is split. Every batch declares evidence, manifest, profile, document, reconciliation, staging and approval criteria in the map. Batch acceptance requires dated evidence that each member held the membership Office as of the agreed Snapshot date, with `person`, `office` and `holdsOffice` support and a day-precision publication date accepted by `validateReviewedRoster`. The undated live directory and its capture date do not supply this evidence. HOUSE-00 must plan a qualifying shared source or member-specific sources, including reused D027; missing evidence blocks the batch. Source group labels remain provisional; L042/J013 requires source resolution in HOUSE-00.
 
 | Proposed ticket | Members | Captured area or organization groups |
 | --- | ---: | --- |
