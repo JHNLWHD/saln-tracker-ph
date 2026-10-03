@@ -94,7 +94,12 @@ export async function readRosterSnapshots(tx: ArchiveReader, homepage = false): 
   const snapshots = await tx.select({ id: schema.rosterSnapshots.id, scope: schema.rosterSnapshots.scope, verifiedAsOf: schema.rosterSnapshots.verifiedAsOf, reviewedAt: schema.rosterSnapshots.reviewedAt })
     .from(schema.rosterSnapshots).where(homepage ? and(inArray(schema.rosterSnapshots.scope, ["executive", "senate", "speaker"]), isLatestRosterSnapshot()) : undefined)
     .orderBy(schema.rosterSnapshots.scope, desc(schema.rosterSnapshots.verifiedAsOf), desc(schema.rosterSnapshots.reviewedAt), schema.rosterSnapshots.id);
-  const members = await tx.select().from(schema.rosterMembers).where(inArray(schema.rosterMembers.snapshotId, snapshots.map(row => row.id))).orderBy(schema.rosterMembers.snapshotId, schema.rosterMembers.position);
+  const members = await tx.select({ snapshotId: schema.rosterMembers.snapshotId, tenureId: schema.rosterMembers.tenureId, citations: schema.rosterMembers.citations })
+    .from(schema.rosterMembers).innerJoin(schema.rosterSnapshots, eq(schema.rosterSnapshots.id, schema.rosterMembers.snapshotId))
+    .innerJoin(schema.tenures, eq(schema.tenures.id, schema.rosterMembers.tenureId)).innerJoin(schema.offices, eq(schema.offices.id, schema.tenures.officeId))
+    .innerJoin(schema.people, eq(schema.people.id, canonicalPersonId(schema.tenures.personId)))
+    .where(and(inArray(schema.rosterMembers.snapshotId, snapshots.map(row => row.id)), personIsEligible(), publicTenure(), tenureCoversRosterDate(schema.rosterSnapshots.verifiedAsOf), eq(schema.offices.included, true)))
+    .orderBy(schema.rosterMembers.snapshotId, schema.rosterMembers.position);
   return snapshots.map(snapshot => ({ ...snapshot, members: members.filter(member => member.snapshotId === snapshot.id).map(({ tenureId, citations }) => ({ tenureId, citations })) }));
 }
 
