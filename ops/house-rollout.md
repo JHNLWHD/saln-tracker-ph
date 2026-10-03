@@ -21,7 +21,7 @@ The captured member set is complete as an observed source candidate. It is **not
 
 Use `office-house-representative-ph` for House membership. Keep `office-house-speaker-ph` separate. Reuse the reviewed D027 Person (`person-faustino-bojie-dy-iii`) and representative Tenure. J027 remains a different Person. Review other identities against the existing legacy audit and approved People; a similar name is insufficient.
 
-District representatives use a `legislative_district` Constituency. Assign a reviewed legislative district Jurisdiction and province/city relationships where the source supports them. Reuse existing approved IDs. A source area label is not a verified parent relationship. The existing Isabela Constituency mapping must be reused or changed through a reviewed correction, not replaced in place.
+District representatives use a `legislative_district` Constituency. Assign a reviewed legislative district Jurisdiction and province/city relationships where the source supports them. Reuse existing approved IDs. A source area label is not a verified parent relationship. Reuse the existing `constituency-isabela-6` mapping to `jurisdiction-isabela` unchanged. A source discrepancy blocks that import until a separate supported migration is designed and approved; the current Editorial Correction workflow does not change Constituencies or Jurisdictions.
 
 Party-list representatives use a `party_list` Constituency and the country Jurisdiction `jurisdiction-ph`. Members of the same organization share the reviewed Constituency. Do not invent numbered seats or a new Jurisdiction kind for an organization.
 
