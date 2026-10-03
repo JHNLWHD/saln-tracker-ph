@@ -9,9 +9,10 @@ import { exportPublicSnapshot } from "../app/archive/snapshot.server";
 import type { CorrectionChanges, EditorialCorrection } from "../app/archive/types";
 import { connectArchive } from "../app/db/client.server";
 import { importReviewedPerson } from "../app/db/people.server";
-import { applyReviewedManifest } from "../app/db/manifests.server";
+import { applyReviewedManifest, manifestDigest, validateReviewedManifest } from "../app/db/manifests.server";
+import { canonicalJson } from '../app/db/canonical';
 import * as schema from "../app/db/schema";
-import type { ReviewedPerson } from "../app/db/validation";
+import { parsePartialDate, type ReviewedPerson } from "../app/db/validation";
 import { migrateArchive } from "../scripts/migrate";
 
 const checksum = "a".repeat(64);
@@ -57,6 +58,16 @@ async function setup(reverse = false) {
     officialReleaseDate: null, acquisitionDate: "2026-09", archivePublicationDate: "2026-09-26T10:00:00.000Z", transcriptionLevel: "document_only" as const,
   }));
   await connection.db.insert(schema.sourceDocuments).values(reverse ? documents.reverse() : documents);
+  // These SQL projection fixtures include the immutable review for each Source Document.
+  for (const { storageKey: _key, ...document } of documents) {
+    const { reviewedAt, reviewedBy, ...filing } = filingRows.find(row => row.id === document.filingId)!;
+    const manifest = validateReviewedManifest({ id: `source:${document.id}`, kind: 'filing', version: 1, payload: {
+      review: { reviewedAt, reviewedBy },
+      filing: { ...filing, reportingDate: parsePartialDate(filing.reportingDate), executionDate: parsePartialDate(filing.executionDate) },
+      document: { ...document, acquisitionDate: parsePartialDate(document.acquisitionDate) },
+    } });
+    await connection.db.insert(schema.manifestApplications).values({ id: manifest.id, version: manifest.version, kind: manifest.kind, digest: manifestDigest(manifest), canonicalPayload: canonicalJson(manifest), appliedAt: '2026-09-26T10:00:00.000Z' });
+  }
   return { ...connection, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
 }
 
