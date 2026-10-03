@@ -84,7 +84,8 @@ export function productionDatabase(url: unknown, approvedUrl: unknown, env: Node
   if (typeof url !== 'string' || url !== env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) throw new Error('Named production Turso target and read-only credentials are required');
   const parsed = new URL(url);
   if (!['libsql:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.port || parsed.search || parsed.hash || (parsed.pathname && parsed.pathname !== '/')) throw new Error('Expected a credential-free production Turso URL');
-  if (parsed.hostname.toLowerCase() === env.STAGING_TURSO_HOST?.toLowerCase()) throw new Error('The staging database cannot be a production recovery target');
+  const hostname = (value: string) => value.toLowerCase().replace(/\.$/, '');
+  if (env.STAGING_TURSO_HOST && hostname(parsed.hostname) === hostname(env.STAGING_TURSO_HOST)) throw new Error('The staging database cannot be a production recovery target');
   return { url, authToken: env.TURSO_AUTH_TOKEN, intMode: 'bigint' as const };
 }
 
