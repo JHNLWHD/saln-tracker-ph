@@ -89,6 +89,15 @@ export function productionDatabase(url: unknown, approvedUrl: unknown, env: Node
   return { url, authToken: env.TURSO_AUTH_TOKEN, intMode: 'bigint' as const };
 }
 
+interface ProductionBuckets { accountId: string; documentBucket: string; backupBucket: string }
+export function productionBuckets(targets: ProductionBuckets, approved: ProductionBuckets | null | undefined, env: NodeJS.ProcessEnv = process.env) {
+  if (!approved || !['accountId', 'documentBucket', 'backupBucket'].every(key => Reflect.get(targets, key) === Reflect.get(approved, key))) throw new Error('Production R2 targets must match the accepted release plan');
+  const { accountId, documentBucket, backupBucket } = targets;
+  if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
+  if ([documentBucket, backupBucket].includes(env.STAGING_R2_BUCKET ?? '')) throw new Error('The staging bucket cannot be a production recovery target');
+  return { accountId, documentBucket, backupBucket };
+}
+
 export function assertProductionApproval(record: { acceptedCommit?: string; developAcceptanceRef?: string; productionApprovalRef?: string; rollbackUntil?: string }, revision: string) {
   if (!/^[a-f0-9]{40}$/.test(revision) || record.acceptedCommit !== revision) throw new Error('Approval must identify the exact accepted commit');
   for (const ref of [record.developAcceptanceRef, record.productionApprovalRef]) if (!ref?.trim() || /^(?:pending|unapproved|example)$/i.test(ref.trim())) throw new Error('Develop acceptance and explicit production approval references are required');
@@ -104,9 +113,8 @@ async function main() {
   assertProductionCheckout(revision);
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
   if (plan.publicationReviewPending.length || record.snapshotVersion !== plan.expected.snapshotVersion) throw new Error('Release publication review must pass before production verification');
-  const { accountId, documentBucket, backupBucket } = record.targets;
+  const { accountId, documentBucket, backupBucket } = productionBuckets(record.targets, plan.productionR2);
   const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl);
-  if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
   const token = process.env.R2_CONFIG_READ_TOKEN;
   if (!token || !process.env.BACKUP_R2_ACCESS_KEY_ID || !process.env.BACKUP_R2_SECRET_ACCESS_KEY) throw new Error('Read-only lock and backup credentials are required');
   for (const bucket of [documentBucket, backupBucket]) {

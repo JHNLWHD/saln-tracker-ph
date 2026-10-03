@@ -12,6 +12,8 @@ Run the verifier from the clean checkout at the exact accepted commit. It reject
 
 Before accepting the release commit, review and commit the production libSQL URL as `productionTursoDatabaseUrl` in `data/release/stage-one.json`. Its current `null` value keeps production verification blocked until the target is approved. Copy that exact URL to `targets.tursoDatabaseUrl` and `TURSO_DATABASE_URL`, and set a production read-only `TURSO_AUTH_TOKEN` in the private operator shell. The verifier binds both operator values to the release plan in the accepted clean checkout and rejects `STAGING_TURSO_HOST`. It reads the database in one transaction and compares the restored schema and all table contents, including non-public records and the migration ledger. A matching public snapshot alone is insufficient.
 
+Also review and commit `productionR2` with the approved `accountId`, `documentBucket` and `backupBucket` in that release plan. Its current `null` value blocks verification. The private record must name those exact identifiers. The verifier rejects either bucket if it matches `STAGING_R2_BUCKET` before it reads any lock or backup object. Credentials remain private.
+
 ## Backup and import sequence
 
 1. Stop competing editorial imports. Take an immediate live Turso **SQL dump** through the native `turso db shell <production-database> .dump` command into a new private file. Do not use `turso db export` as this SQL recovery artifact: that command produces a SQLite generation snapshot and its documentation warns that it may lag recent changes. Record the dump checksum and time. Keep all SQL dumps private.

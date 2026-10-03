@@ -5,7 +5,7 @@ import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionBuckets, productionDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
 import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
@@ -19,6 +19,18 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
   const revision = 'a'.repeat(40), record = { acceptedCommit: revision, developAcceptanceRef: 'Synthetic acceptance', productionApprovalRef: 'Synthetic explicit approval', rollbackUntil: new Date(Date.now() + 3600000).toISOString() };
   assert.doesNotThrow(() => assertProductionApproval(record, revision));
   for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
+});
+
+test('R2 recovery targets must match the independently accepted production inventory', () => {
+  const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', backupBucket: 'production-backups' };
+  assert.deepEqual(productionBuckets(approved, approved, {}), approved);
+  for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, {}), /accepted release plan/);
+  for (const changed of [{ accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
+    assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, {}), /accepted release plan/);
+  }
+  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket }), /staging bucket/);
+  const shared = { ...approved, backupBucket: approved.documentBucket };
+  assert.throws(() => productionBuckets(shared, shared, {}), /separate production buckets/);
 });
 
 test('SQL recovery restores exact bound bytes and rejects corruption and external database attachment', async () => {
