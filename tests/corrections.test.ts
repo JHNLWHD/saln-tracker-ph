@@ -10,7 +10,7 @@ import type { Citation, CorrectionChanges, CorrectionTargetType } from "../app/a
 import { connectArchive } from "../app/db/client.server";
 import { personIsEligible } from "../app/db/eligibility";
 import { applyReviewedManifest, validateReviewedManifest, type ReviewedManifest } from "../app/db/manifests.server";
-import { createDbArchive } from "../app/db/people.server";
+import { createDbArchive, importReviewedPerson } from "../app/db/people.server";
 import { editorialCorrections, filings, manifestApplications, people, sourceDocuments, tenureCitations, tenures } from "../app/db/schema";
 import { createLocalDocumentStorage } from "../app/storage/objects.server";
 import { migrateArchive, rollbackArchive } from "../scripts/migrate";
@@ -70,6 +70,19 @@ test('later Source Documents keep their own first applied review date during cor
     assert.equal((await applyReviewedManifest(state.db, patch)).status, 'unchanged');
     assert.equal((await state.db.select().from(filings))[0].reviewedAt, review.reviewedAt);
   } finally { await state.close(); }
+});
+
+test('pre-ledger People and Tenures must be adopted before a correction', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-correction-adoption-'));
+  const { client, db } = connectArchive({ url: `file:${join(directory, 'archive.db')}` });
+  try {
+    await migrateArchive(db); await importReviewedPerson(db, person.payload);
+    const changes = [correction('name-adoption', 'person', 'person', { canonicalName: 'Reviewed name' }), correction('tenure-adoption', 'tenure', 'tenure', { startDate: { value: '2020', precision: 'year' } })];
+    for (const patch of changes) await assert.rejects(applyReviewedManifest(db, patch), /applied Person manifest/);
+    assert.deepEqual(await db.select().from(manifestApplications), []);
+    await applyReviewedManifest(db, person);
+    for (const patch of changes) await applyReviewedManifest(db, patch);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
 test("corrections project current metadata and history while original manifests and bytes replay unchanged", async () => {

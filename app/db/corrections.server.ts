@@ -126,6 +126,14 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
   if ((head?.id ?? null) !== patch.previousCorrectionId) throw new Error("Editorial Correction predecessor does not match the target's latest correction");
   if (head && patch.review.reviewedAt < head.reviewedAt) throw new Error("Correction review date precedes its predecessor");
   const original = await loadTarget(db, patch.target);
+  if (original.type === 'person' || original.type === 'tenure') {
+    const target = original.type === 'person'
+      ? sql`json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.person.id') = ${original.record.id}`
+      : sql`exists (select 1 from json_each(${schema.manifestApplications.canonicalPayload}, '$.payload.tenures') where json_extract(value, '$.id') = ${original.record.id})`;
+    const [application] = await db.select({ id: schema.manifestApplications.id }).from(schema.manifestApplications)
+      .where(and(eq(schema.manifestApplications.kind, 'person'), target)).limit(1);
+    if (!application) throw new Error('Person and Tenure corrections require an applied Person manifest');
+  }
   const before = projectCorrections(original.type, original.record, previousHistory);
   const previousValues = Object.fromEntries(Object.keys(patch.changes).map(key => [key, Reflect.get(before, key)]));
   const existingCitations = [...(original.type === "tenure" ? original.record.citations : []), ...previousHistory.flatMap(row => row.citations)];
