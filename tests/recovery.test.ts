@@ -54,6 +54,9 @@ test('production verification binds actual checkout and authenticated database s
   const staging = 'libsql://staging.example.invalid';
   assert.throws(() => productionDatabase(staging, url, { ...env, TURSO_DATABASE_URL: staging }), /accepted release plan/);
   assert.throws(() => productionDatabase(url, url, { ...env, STAGING_TURSO_HOST: 'production.example.invalid' }), /staging database/);
+  const dotted = `${staging}.`;
+  assert.throws(() => productionDatabase(dotted, dotted, { ...env, TURSO_DATABASE_URL: dotted, STAGING_TURSO_HOST: 'STAGING.EXAMPLE.INVALID' }), /staging database/);
+  assert.throws(() => productionDatabase(staging, staging, { ...env, TURSO_DATABASE_URL: staging, STAGING_TURSO_HOST: 'staging.example.invalid.' }), /staging database/);
   const directory = await mkdtemp(join(tmpdir(), 'saln-production-binding-')), file = join(directory, 'backup.sql');
   const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
   const sql = "CREATE TABLE private_archive (id INTEGER, raw BLOB); INSERT INTO private_archive VALUES (9007199254740993, X'00ff');";
