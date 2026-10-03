@@ -113,14 +113,23 @@ test("private capture checksums, counts and provenance are checked before audit 
   try {
     const tree = { format: "firestore-document-tree/v1", databaseRoot: root, readTime, collections: [`${root}/officials`], documents: [
       { name: `${root}/officials/profile`, fields: { name: { stringValue: "Public Name" }, saln_records: { arrayValue: { values: [] } }, contact: { stringValue: privateCanary } } },
+      { name: `${root}/officials/missing-parent` },
+      { name: `${root}/officials/missing-parent/nested/child`, fields: { contact: { stringValue: privateCanary } } },
+      { name: `${root}/officials/empty`, createTime: { seconds: '1700000000' } },
     ] };
     const body = JSON.stringify(tree);
     await writeFile(join(directory, "database-documents.json"), body);
     const capture = { format: "legacy-capture/v1", projectId: "saln-tracker-ph", database: "(default)", writesPerformed: false, scope: "database_document_tree", completeDatabaseDocumentTree: true,
-      startedAt: readTime, finishedAt: readTime, readTime, documentCount: 1, dataSha256: sha256(canonicalJson(tree)), rawFiles: [{ file: "database-documents.json", sha256: sha256(body), byteSize: Buffer.byteLength(body) }] };
+      startedAt: readTime, finishedAt: readTime, readTime, documentCount: 4, dataSha256: sha256(canonicalJson(tree)), rawFiles: [{ file: "database-documents.json", sha256: sha256(body), byteSize: Buffer.byteLength(body) }] };
     await writeFile(join(directory, "capture.json"), JSON.stringify(capture));
     const result = await captureDocuments(directory);
-    assert.equal(result.documents.length, 1);
+    assert.equal(result.documents.length, 3);
+    assert.ok(!result.documents.some(row => row.path === 'officials/missing-parent'));
+    assert.ok(result.documents.some(row => row.path === 'officials/missing-parent/nested/child'));
+    assert.deepEqual(result.documents.find(row => row.path === 'officials/empty')?.data, {});
+    await mkdir(join(directory, 'public/saln'), { recursive: true });
+    const audit = await buildLegacyAudit(result.documents, join(directory, 'public'), identities);
+    assert.equal(audit.counts.legacyPeople, 2); assert.equal(audit.documentReviewQueue.length, 1);
     assert.equal(result.acquisition.completeDatabaseDocumentTree, true);
     assert.ok(!JSON.stringify(result.acquisition).includes(privateCanary));
     await writeFile(join(directory, "database-documents.json"), body + " ");
