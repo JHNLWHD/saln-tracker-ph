@@ -10,6 +10,13 @@ interface SALNRecordsViewProps {
   salnRecords?: SALNRecord[];
 }
 
+function filingDate(value: unknown): string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Not recorded';
+  const date = new Date(`${value}T00:00:00Z`);
+  if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) return 'Not recorded';
+  return date.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+}
+
 export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewProps) {
 
 
@@ -29,7 +36,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
       case 'submitted': return 'Submitted';
       case 'under_review': return 'Under Review';
       case 'flagged': return 'Flagged';
-      default: return status || 'Status not recorded';
+      default: return 'Status not recorded';
     }
   };
 
@@ -66,11 +73,7 @@ export function SALNRecordsView({ official, salnRecords = [] }: SALNRecordsViewP
                       SALN {record.year}
                     </CardTitle>
                     <p className="text-xs sm:text-sm text-gray-600 mt-1">
-                      Filed: {record.date_filed && Number.isFinite(Date.parse(record.date_filed)) ? new Date(record.date_filed).toLocaleDateString('en-PH', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      }) : 'Not recorded'}
+                      Filed: {filingDate(record.date_filed)}
                     </p>
                   </div>
                   <Badge variant={getStatusVariant(record.status)} className="text-xs flex-shrink-0">
