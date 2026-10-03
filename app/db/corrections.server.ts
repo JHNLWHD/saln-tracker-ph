@@ -134,7 +134,7 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
   } else if (target.type === "financial_summary") {
     const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
     const summary = validateSummary({ ...record, ...patch.changes });
-    await checkSummarySources(db, summary);
+    await checkSummarySources(db, summary, patch.review.reviewedAt);
   } else if (target.type === "secondary_report") {
     const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
     validateReviewedReport({ review: patch.review, report: { ...record, ...patch.changes } });
@@ -161,6 +161,8 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
     if (!application) throw new Error('Person and Tenure corrections require an applied Person manifest');
     const source = validateReviewedPerson(JSON.parse(application.payload).payload);
     if (patch.review.reviewedAt < source.review.reviewedAt) throw new Error('Correction review date precedes its original review');
+  } else if ((original.type === 'financial_summary' || original.type === 'secondary_report') && patch.review.reviewedAt < original.record.reviewedAt) {
+    throw new Error('Correction review date precedes its original review');
   }
   const before = projectCorrections(original.type, original.record, previousHistory);
   const previousValues = Object.fromEntries(Object.keys(patch.changes).map(key => [key, Reflect.get(before, key)]));
