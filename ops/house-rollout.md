@@ -30,11 +30,11 @@ Keep actual Tenure start/end dates and Assumption Method unknown until supported
 ## Blocking edges and work order
 
 1. Close #66 with the proven production workflow and explicit acceptance. Obtain approval of this #68 ticket map before creating any batch issues or importing House data.
-2. HOUSE-00 reviews the full source projection, exclusions, disputed labels and shared geography IDs. It freezes the existing Person/legacy identity index and shared Office/Constituency/Jurisdiction IDs.
+2. HOUSE-00 reviews the full source projection, exclusions, disputed labels and shared geography IDs. It freezes the existing Person/legacy identity index and shared Office/Constituency/Jurisdiction IDs. Agree the Snapshot verification date and qualifying dated holding evidence for every member, including reused D027. Plan a shared source that identifies each member or member-specific sources. The undated directory and its capture date do not supply a publication date.
 3. Prepare and accept HOUSE-D01 as the district pilot. Then prepare HOUSE-D02 through HOUSE-D23 from the same accepted baseline.
 4. HOUSE-D-ACCEPT reconciles all 253 district source IDs. Its acceptance permits the party-list pilot HOUSE-P01.
 5. Accept HOUSE-P01. Then prepare HOUSE-P02 through HOUSE-P06. HOUSE-P-ACCEPT reconciles all 64 party-list source IDs.
-6. HOUSE-FINAL rechecks the release-date source and accepts all 317 mapped membership Tenures. Publish the complete reviewed House Roster Snapshot through the proven staging and production approval workflow. Provincial rollout follows this acceptance.
+6. HOUSE-FINAL rechecks the release-date source and accepts all 317 mapped membership Tenures. Revalidate dated holding evidence against the final Snapshot date and obtain reviewed follow-up evidence for changed membership. Publish the complete reviewed House Roster Snapshot through the proven staging and production approval workflow. Provincial rollout follows this acceptance.
 
 Only evidence and manifest preparation for disjoint batches can run in parallel after their pilot and shared review. A shared identity or geography conflict adds a blocking edge. Serialize operator imports, immutable ledger reconciliation, staging releases and production approval. An issue closes only after its explicit acceptance, so native issue dependencies can represent the pilot and review gates.
 
@@ -44,12 +44,12 @@ Each batch contains **at most 12 People**. District area groups and party-list o
 
 Each batch in the JSON map declares all seven criteria below. Copy these criteria, its exact member IDs, source checksums and blocking edges into the proposed issue. Use GitHub native dependencies when the user approves publication. No publication command is part of this proposal.
 
-1. **Evidence:** Review attributable Person/Office evidence for every listed source ID. Resolve conflicts with citations. Preserve exact source names and unknown date precision.
+1. **Evidence:** Review attributable Person/Office evidence for every listed source ID. Each member needs a citation supporting `person`, `office` and `holdsOffice`, with a day-precision `publishedDate` on or before the agreed Snapshot `verifiedAsOf` date. The evidence must establish holding the membership Office as of that date and pass `validateReviewedRoster`. The undated live directory and its capture date alone do not qualify. Resolve conflicts with citations. Preserve exact source names and unknown actual Tenure date precision. Missing dated holding evidence blocks batch acceptance.
 2. **Manifest:** Use reviewed immutable manifests with the accepted shared IDs and reviewed batch Person/Tenure IDs. Keep corrections append-only. Import once and prove unchanged replay. Reuse existing People and Tenures.
 3. **Profile:** Check every canonical route, alias/legacy redirect, citation, Constituency and date precision. Show an honest Archive Gap when no Source Document is acquired. Keep Chamber Leadership separate.
 4. **Document:** Inventory candidate SALNs. Preserve exact acquired bytes, provenance, Filer Name, Reporting Date, checksums and sizes. Verify immutable R2 keys and open/download responses. Bind each declared summary to exact pages. Zero trustworthy documents is an explicit archive finding, not a missing-file allegation. Record rejected candidates and overflow.
 5. **Reconciliation:** Account for every batch source ID exactly once. Compare reviewed Person/Tenure mappings, manifest ledger, counts, source checksums, accepted/rejected candidates and route resolution. Review expected changes to the shared baseline separately from batch totals.
-6. **Staging:** Use the isolated develop environment and operator credentials. Verify the exact revision, database/R2 separation, read-only runtime, snapshot replay, profile/document routes and Source Tip exclusion. A partial House batch must not replace the complete House Roster Snapshot scope.
+6. **Staging:** Use the isolated develop environment and operator credentials. Verify the exact revision, database/R2 separation, read-only runtime, snapshot replay, profile/document routes and Source Tip exclusion. Validate the batch membership payload with `validateReviewedRoster` before acceptance; missing dated holding evidence blocks the batch. A partial House batch must not replace the complete House Roster Snapshot scope.
 7. **Approval:** Attach source review, reconciliation and exact deployed acceptance evidence. Obtain explicit user acceptance before production publication. Use #65/#66 recovery and cutover steps. Do not infer approval from a passing test or issue label.
 
 ## Fresh-context packet
