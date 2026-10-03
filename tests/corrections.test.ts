@@ -109,6 +109,8 @@ test("canonical Archive reads request native read transactions while imports ret
 test("effective disputes control SQL eligibility and document reads while all contradictory citations remain", async () => {
   const state = await setup();
   try {
+    await applyReviewedManifest(state.db, correction("private-filing-history", "filing", "filing", { filerName: "Corrected filer name" }));
+    await applyReviewedManifest(state.db, correction("private-document-history", "source_document", "document", { fileName: "corrected-source.pdf" }));
     const disputed = correction("dispute", "tenure", "tenure", { verificationStatus: "disputed", disputedFacts: ["office"] }, ["person", "office"]);
     await applyReviewedManifest(state.db, disputed);
     assert.deepEqual(await state.db.select().from(people).where(personIsEligible()), []);
@@ -118,6 +120,7 @@ test("effective disputes control SQL eligibility and document reads while all co
     assert.equal(profile?.person.eligibility, "disputed");
     assert.equal(profile?.tenures[0].citations.length, 2);
     assert.deepEqual(profile?.filings, []);
+    assert.deepEqual(profile?.editorialCorrections?.map(row => row.target.type), ["tenure"]);
     assert.equal((await state.db.select().from(sourceDocuments)).length, 1);
     const newPage = structuredClone(filing);
     newPage.id = "filing:after-dispute";
@@ -130,6 +133,7 @@ test("effective disputes control SQL eligibility and document reads while all co
     assert.equal((await state.db.select().from(people).where(personIsEligible())).length, 1);
     assert.equal((await state.archive.listPeople()).length, 1);
     assert.ok(await state.archive.findSourceDocument(filing.payload.document.sha256));
+    assert.equal((await state.archive.findPersonBySlug("synthetic"))?.editorialCorrections?.filter(row => ["filing", "source_document"].includes(row.target.type)).length, 2);
     // A later patch of another field must not hide the prior effective disputed facts.
     await applyReviewedManifest(state.db, correction("date", "tenure", "tenure", { startDate: { value: "2020", precision: "year" } }, ["startDate"], "date-dispute"));
     profile = await state.archive.findPersonBySlug("synthetic");
