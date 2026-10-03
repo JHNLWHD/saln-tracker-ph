@@ -1,6 +1,7 @@
 {
   "version": 1,
   "scope": "stage-one-reviewed-metadata",
+  "productionTursoDatabaseUrl": null,
   "manifests": [
     "0001-ferdinand-marcos-jr.json",
     "0002-risa-hontiveros.json",
