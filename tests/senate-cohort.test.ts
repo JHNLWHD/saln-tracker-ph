@@ -43,6 +43,6 @@ test("reviewed Senate batch A reconciles 12 stable People and 13 Tenures without
     for (const path of [...initial, ...paths]) assert.equal((await apply(path)).status, 'unchanged');
     assert.equal((await exportPublicSnapshot(db)).snapshotJson, before.snapshotJson);
     const html = renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, createElement(ArchiveHome, { data: home })));
-    assert.match(html, /This Snapshot lists 12 People/); assert.match(html, /Totals not transcribed/); assert.doesNotMatch(html, /₱/);
+    assert.match(html, /People shown from this Snapshot: 12/); assert.match(html, /Totals not transcribed/); assert.doesNotMatch(html, /₱/);
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
