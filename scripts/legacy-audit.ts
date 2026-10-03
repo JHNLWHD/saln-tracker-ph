@@ -108,7 +108,7 @@ export async function buildLegacyAudit(documents: LegacyAuditDocument[], publicD
       try {
         const url = new URL(sourceUrl, "https://saln.bettergov.ph");
         if (["https:", "http:"].includes(url.protocol) && !url.username && !url.password) {
-          if (["saln.bettergov.ph", "saln-tracker-ph.netlify.app"].includes(url.hostname) && url.pathname.startsWith("/saln/")) {
+          if (!url.port && ["saln.bettergov.ph", "saln-tracker-ph.netlify.app"].includes(url.hostname) && url.pathname.startsWith("/saln/")) {
             candidateKind = "repository_pdf";
             candidatePdf = pdfs.find(row => row.publicPath === decodeURIComponent(url.pathname));
           } else if (["www.abs-cbn.com", "www.rappler.com", "www.gmanetwork.com", "pcij.org"].includes(url.hostname)) candidateKind = "report_link";
