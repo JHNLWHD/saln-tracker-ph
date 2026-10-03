@@ -89,13 +89,23 @@ export function productionDatabase(url: unknown, approvedUrl: unknown, env: Node
   return { url, authToken: env.TURSO_AUTH_TOKEN, intMode: 'bigint' as const };
 }
 
-interface ProductionBuckets { accountId: string; documentBucket: string; backupBucket: string }
+interface ProductionBuckets { accountId: string; documentBucket: string; documentJurisdiction: string; backupBucket: string; backupJurisdiction: string }
 export function productionBuckets(targets: ProductionBuckets, approved: ProductionBuckets | null | undefined, env: NodeJS.ProcessEnv = process.env) {
-  if (!approved || !['accountId', 'documentBucket', 'backupBucket'].every(key => Reflect.get(targets, key) === Reflect.get(approved, key))) throw new Error('Production R2 targets must match the accepted release plan');
-  const { accountId, documentBucket, backupBucket } = targets;
+  if (!approved || !['accountId', 'documentBucket', 'documentJurisdiction', 'backupBucket', 'backupJurisdiction'].every(key => Reflect.get(targets, key) === Reflect.get(approved, key))) throw new Error('Production R2 targets must match the accepted release plan');
+  const { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction } = targets;
   if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
+  if (![documentJurisdiction, backupJurisdiction].every(value => ['default', 'eu', 'us', 'fedramp'].includes(value))) throw new Error('Each production bucket requires an explicit supported jurisdiction');
   if ([documentBucket, backupBucket].includes(env.STAGING_R2_BUCKET ?? '')) throw new Error('The staging bucket cannot be a production recovery target');
-  return { accountId, documentBucket, backupBucket };
+  return { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction,
+    backupEndpoint: `https://${accountId}${backupJurisdiction === 'default' ? '' : `.${backupJurisdiction}`}.r2.cloudflarestorage.com` };
+}
+
+export async function verifyBucketLocks(targets: ProductionBuckets, token: string) {
+  for (const [bucket, jurisdiction] of [[targets.documentBucket, targets.documentJurisdiction], [targets.backupBucket, targets.backupJurisdiction]]) {
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${targets.accountId}/r2/buckets/${bucket}/lock`, { headers: { Authorization: `Bearer ${token}`, 'cf-r2-jurisdiction': jurisdiction }, signal: AbortSignal.timeout(30000), redirect: 'error' });
+    if (!response.ok) throw new Error('Bucket lock lookup failed');
+    assertIndefiniteLock(await response.json());
+  }
 }
 
 export function assertProductionApproval(record: { acceptedCommit?: string; developAcceptanceRef?: string; productionApprovalRef?: string; rollbackUntil?: string }, revision: string) {
@@ -113,16 +123,12 @@ async function main() {
   assertProductionCheckout(revision);
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
   if (plan.publicationReviewPending.length || record.snapshotVersion !== plan.expected.snapshotVersion) throw new Error('Release publication review must pass before production verification');
-  const { accountId, documentBucket, backupBucket } = productionBuckets(record.targets, plan.productionR2);
+  const buckets = productionBuckets(record.targets, plan.productionR2);
   const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl);
   const token = process.env.R2_CONFIG_READ_TOKEN;
   if (!token || !process.env.BACKUP_R2_ACCESS_KEY_ID || !process.env.BACKUP_R2_SECRET_ACCESS_KEY) throw new Error('Read-only lock and backup credentials are required');
-  for (const bucket of [documentBucket, backupBucket]) {
-    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${bucket}/lock`, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(30000), redirect: 'error' });
-    if (!response.ok) throw new Error('Bucket lock lookup failed');
-    assertIndefiniteLock(await response.json());
-  }
-  const storage = new S3Client({ region: 'auto', endpoint: `https://${accountId}.r2.cloudflarestorage.com`, credentials: { accessKeyId: process.env.BACKUP_R2_ACCESS_KEY_ID, secretAccessKey: process.env.BACKUP_R2_SECRET_ACCESS_KEY }, responseChecksumValidation: 'WHEN_REQUIRED' });
+  await verifyBucketLocks(buckets, token);
+  const storage = new S3Client({ region: 'auto', endpoint: buckets.backupEndpoint, credentials: { accessKeyId: process.env.BACKUP_R2_ACCESS_KEY_ID, secretAccessKey: process.env.BACKUP_R2_SECRET_ACCESS_KEY }, responseChecksumValidation: 'WHEN_REQUIRED' });
   try {
     const production = connectArchive(databaseConfig);
     let productionDigest: string;
@@ -133,7 +139,7 @@ async function main() {
       if (!backup || typeof backup.key !== 'string' || !backup.key.startsWith(`releases/${revision}/`) || !backup.key.endsWith(`/${name}.sql`)) throw new Error('Backup keys must identify this release and phase');
       const currentPhase = name === (phase === 'before' ? 'pre' : 'post');
       const restored = await verifySqlRecovery(backup.file, backup.sha256, name === 'post' ? record.snapshotVersion : null, currentPhase ? productionDigest : undefined);
-      const object = await storage.send(new GetObjectCommand({ Bucket: backupBucket, Key: backup.key }));
+      const object = await storage.send(new GetObjectCommand({ Bucket: buckets.backupBucket, Key: backup.key }));
       if (!object.Body) throw new Error('Locked backup has no body');
       const bytes = await object.Body.transformToByteArray();
       assert.equal(bytes.byteLength, restored.byteSize); assert.equal(createHash('sha256').update(bytes).digest('hex'), backup.sha256);
