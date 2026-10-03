@@ -95,30 +95,28 @@ export function assertProductionCheckout(revision: string, directory = fileURLTo
   assert.equal(git('status', '--porcelain', '--untracked-files=normal'), '', 'Production verification requires a clean checkout');
 }
 
-export function productionDatabase(url: unknown, approvedUrl: unknown, env: NodeJS.ProcessEnv = process.env) {
+export function productionDatabase(url: unknown, approvedUrl: unknown, stagingHost: unknown, env: NodeJS.ProcessEnv = process.env) {
   if (typeof approvedUrl !== 'string' || !approvedUrl.trim() || url !== approvedUrl) throw new Error('Production Turso target must match the accepted release plan');
   if (typeof url !== 'string' || url !== env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) throw new Error('Named production Turso target and read-only credentials are required');
   const parsed = new URL(url);
   if (!['libsql:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password || parsed.port || parsed.search || parsed.hash || (parsed.pathname && parsed.pathname !== '/')) throw new Error('Expected a credential-free production Turso URL');
   const hostname = (value: string) => value.toLowerCase().replace(/\.$/, '');
-  if (!env.STAGING_TURSO_HOST || !/^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.?$/i.test(env.STAGING_TURSO_HOST)) throw new Error('A reviewed staging database hostname is required');
-  if (hostname(parsed.hostname) === hostname(env.STAGING_TURSO_HOST)) throw new Error('The staging database cannot be a production recovery target');
+  if (typeof stagingHost !== 'string' || !/^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.?$/i.test(stagingHost)) throw new Error('A staging database hostname from the accepted release plan is required');
+  if (hostname(parsed.hostname) === hostname(stagingHost)) throw new Error('The staging database cannot be a production recovery target');
   return { url, authToken: env.TURSO_AUTH_TOKEN, intMode: 'bigint' as const };
 }
 
 interface ProductionBuckets { accountId: string; documentBucket: string; documentJurisdiction: string; backupBucket: string; backupJurisdiction: string }
-export function productionBuckets(targets: ProductionBuckets, approved: ProductionBuckets | null | undefined, env: NodeJS.ProcessEnv = process.env) {
+interface StagingBucket { accountId: string; bucket: string; jurisdiction: string }
+export function productionBuckets(targets: ProductionBuckets, approved: ProductionBuckets | null | undefined, staging: StagingBucket | null | undefined) {
   if (!approved || !['accountId', 'documentBucket', 'documentJurisdiction', 'backupBucket', 'backupJurisdiction'].every(key => Reflect.get(targets, key) === Reflect.get(approved, key))) throw new Error('Production R2 targets must match the accepted release plan');
   const { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction } = targets;
-  if (!/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket && documentJurisdiction === backupJurisdiction || ![documentBucket, backupBucket].every(bucket => /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
+  if (typeof accountId !== 'string' || !/^[a-f0-9]{32}$/.test(accountId) || documentBucket === backupBucket && documentJurisdiction === backupJurisdiction || ![documentBucket, backupBucket].every(bucket => typeof bucket === 'string' && /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket))) throw new Error('Named separate production buckets are required');
   if (![documentJurisdiction, backupJurisdiction].every(value => ['default', 'eu', 'us', 'fedramp'].includes(value))) throw new Error('Each production bucket requires an explicit supported jurisdiction');
   const endpoint = (jurisdiction: string) => `https://${accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`;
-  if (!env.STAGING_R2_BUCKET || !/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(env.STAGING_R2_BUCKET) || !env.STAGING_R2_ENDPOINT) throw new Error('The reviewed staging bucket and endpoint are required for production recovery');
-  const staging = new URL(env.STAGING_R2_ENDPOINT);
-  if (staging.protocol !== 'https:' || staging.username || staging.password || staging.port || staging.pathname !== '/' || staging.search || staging.hash || !/^[a-f0-9]{32}(?:\.(?:eu|us|fedramp))?\.r2\.cloudflarestorage\.com\.?$/.test(staging.hostname)) throw new Error('A reviewed staging R2 account and jurisdiction endpoint is required');
-  staging.hostname = staging.hostname.replace(/\.$/, '');
+  if (!staging || typeof staging.accountId !== 'string' || !/^[a-f0-9]{32}$/.test(staging.accountId) || typeof staging.bucket !== 'string' || !/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(staging.bucket) || !['default', 'eu', 'us', 'fedramp'].includes(staging.jurisdiction)) throw new Error('A staging R2 identity from the accepted release plan is required');
   for (const [bucket, jurisdiction] of [[documentBucket, documentJurisdiction], [backupBucket, backupJurisdiction]]) {
-    if (bucket === env.STAGING_R2_BUCKET && staging.origin === endpoint(jurisdiction)) throw new Error('The staging bucket cannot be a production recovery target');
+    if (bucket === staging.bucket && accountId === staging.accountId && jurisdiction === staging.jurisdiction) throw new Error('The staging bucket cannot be a production recovery target');
   }
   return { accountId, documentBucket, documentJurisdiction, backupBucket, backupJurisdiction,
     backupEndpoint: endpoint(backupJurisdiction) };
@@ -147,8 +145,8 @@ async function main() {
   assertProductionCheckout(revision);
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
   if (plan.publicationReviewPending.length || record.snapshotVersion !== plan.expected.snapshotVersion) throw new Error('Release publication review must pass before production verification');
-  const buckets = productionBuckets(record.targets, plan.productionR2);
-  const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl);
+  const buckets = productionBuckets(record.targets, plan.productionR2, plan.stagingR2);
+  const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl, plan.stagingTursoHost);
   const token = process.env.R2_CONFIG_READ_TOKEN;
   if (!token || !process.env.BACKUP_R2_ACCESS_KEY_ID || !process.env.BACKUP_R2_SECRET_ACCESS_KEY) throw new Error('Read-only lock and backup credentials are required');
   await verifyBucketLocks(buckets, token);

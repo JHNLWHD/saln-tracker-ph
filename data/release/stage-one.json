@@ -3,6 +3,8 @@
   "scope": "stage-one-reviewed-metadata",
   "productionTursoDatabaseUrl": null,
   "productionR2": null,
+  "stagingTursoHost": null,
+  "stagingR2": null,
   "manifests": [
     "0001-ferdinand-marcos-jr.json",
     "0002-risa-hontiveros.json",

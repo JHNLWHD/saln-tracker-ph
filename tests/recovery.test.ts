@@ -21,27 +21,31 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
   for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
 });
 
-const stagingR2 = { STAGING_R2_BUCKET: 'staging-documents', STAGING_R2_ENDPOINT: `https://${'b'.repeat(32)}.r2.cloudflarestorage.com` };
+const stagingR2 = { accountId: 'b'.repeat(32), bucket: 'staging-documents', jurisdiction: 'default' };
 
-test('R2 recovery targets must match the independently accepted production inventory', () => {
+test('R2 recovery targets must differ from the staging identity in the accepted release plan', () => {
   const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', documentJurisdiction: 'default', backupBucket: 'production-backups', backupJurisdiction: 'default' };
   assert.deepEqual(productionBuckets(approved, approved, stagingR2), { ...approved, backupEndpoint: `https://${approved.accountId}.r2.cloudflarestorage.com` });
   for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, stagingR2), /accepted release plan/);
   for (const changed of [{ documentJurisdiction: 'eu' }, { backupJurisdiction: 'us' }, { accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
     assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, stagingR2), /accepted release plan/);
   }
-  for (const missing of [{}, { ...stagingR2, STAGING_R2_BUCKET: '' }, { ...stagingR2, STAGING_R2_ENDPOINT: '' }, { ...stagingR2, STAGING_R2_BUCKET: ' ' }]) assert.throws(() => productionBuckets(approved, approved, missing), /reviewed staging bucket/);
-  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket, STAGING_R2_ENDPOINT: `https://${approved.accountId}.r2.cloudflarestorage.com` }), /staging bucket/);
+  for (const missing of [null, undefined, { ...stagingR2, bucket: '' }, { ...stagingR2, accountId: '' }, { ...stagingR2, jurisdiction: '' }, { ...stagingR2, bucket: ' ' }, { ...stagingR2, accountId: 'unreviewed' }]) assert.throws(() => productionBuckets(approved, approved, missing), /staging R2 identity from the accepted release plan/);
+  for (const bucket of [null, undefined, 123]) {
+    const staging = JSON.parse(JSON.stringify({ ...stagingR2, bucket }));
+    assert.throws(() => productionBuckets(approved, approved, staging), /staging R2 identity from the accepted release plan/);
+    const production = JSON.parse(JSON.stringify({ ...approved, documentBucket: bucket }));
+    assert.throws(() => productionBuckets(production, production, stagingR2), /separate production buckets/);
+  }
+  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { accountId: approved.accountId, bucket, jurisdiction: 'default' }), /staging bucket/);
   const shared = { ...approved, backupBucket: approved.documentBucket };
   assert.throws(() => productionBuckets(shared, shared, stagingR2), /separate production buckets/);
   const separate = { ...shared, backupJurisdiction: 'eu' };
   assert.equal(productionBuckets(separate, separate, stagingR2).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
-  const staging = { STAGING_R2_BUCKET: approved.documentBucket, STAGING_R2_ENDPOINT: `https://${approved.accountId}.eu.r2.cloudflarestorage.com` };
+  const staging = { accountId: approved.accountId, bucket: approved.documentBucket, jurisdiction: 'eu' };
   assert.doesNotThrow(() => productionBuckets(approved, approved, staging));
-  assert.doesNotThrow(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: `https://${'b'.repeat(32)}.r2.cloudflarestorage.com` }));
-  for (const endpoint of [`https://${approved.accountId}.r2.cloudflarestorage.com`, `https://${approved.accountId.toUpperCase()}.R2.CLOUDFLARESTORAGE.COM./`]) assert.throws(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: endpoint }), /staging bucket/);
+  assert.doesNotThrow(() => productionBuckets(approved, approved, { ...staging, accountId: 'b'.repeat(32), jurisdiction: 'default' }));
   assert.throws(() => productionBuckets(separate, separate, staging), /staging bucket/);
-  for (const endpoint of ['https://example.org', `${staging.STAGING_R2_ENDPOINT}/path`, `${staging.STAGING_R2_ENDPOINT}:8443`]) assert.throws(() => productionBuckets(approved, approved, { ...staging, STAGING_R2_ENDPOINT: endpoint }), /reviewed staging R2/);
 });
 
 test('R2 lock reads and backup endpoints identify each accepted bucket jurisdiction', async t => {
@@ -93,18 +97,19 @@ test('production verification binds actual checkout and authenticated database s
   assert.throws(() => assertProductionCheckout('0'.repeat(40)), /Running checkout/);
   if (execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], { encoding: 'utf8' }).trim()) assert.throws(() => assertProductionCheckout(revision), /clean checkout/);
   else assert.doesNotThrow(() => assertProductionCheckout(revision));
-  const url = 'libsql://production.example.invalid', env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'staging.example.invalid' };
-  assert.equal(productionDatabase(url, url, env).url, url);
-  for (const missing of [undefined, '', ' ', 'https://staging.example.invalid', 'staging.example.invalid:443']) assert.throws(() => productionDatabase(url, url, { ...env, STAGING_TURSO_HOST: missing }), /reviewed staging database hostname/);
-  assert.throws(() => productionDatabase('libsql://staging.example.invalid', url, env));
-  assert.throws(() => productionDatabase(url, url, { TURSO_DATABASE_URL: url }));
-  for (const approved of [undefined, null, '']) assert.throws(() => productionDatabase(url, approved, env), /accepted release plan/);
+  const url = 'libsql://production.example.invalid', stagingHost = 'staging.example.invalid';
+  const env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'operator-override.example.invalid' };
+  assert.equal(productionDatabase(url, url, stagingHost, env).url, url);
+  for (const missing of [undefined, null, '', ' ', 'https://staging.example.invalid', 'staging.example.invalid:443']) assert.throws(() => productionDatabase(url, url, missing, env), /staging database hostname from the accepted release plan/);
+  assert.throws(() => productionDatabase('libsql://staging.example.invalid', url, stagingHost, env));
+  assert.throws(() => productionDatabase(url, url, stagingHost, { TURSO_DATABASE_URL: url }));
+  for (const approved of [undefined, null, '']) assert.throws(() => productionDatabase(url, approved, stagingHost, env), /accepted release plan/);
   const staging = 'libsql://staging.example.invalid';
-  assert.throws(() => productionDatabase(staging, url, { ...env, TURSO_DATABASE_URL: staging }), /accepted release plan/);
-  assert.throws(() => productionDatabase(url, url, { ...env, STAGING_TURSO_HOST: 'production.example.invalid' }), /staging database/);
+  assert.throws(() => productionDatabase(staging, url, stagingHost, { ...env, TURSO_DATABASE_URL: staging }), /accepted release plan/);
+  assert.throws(() => productionDatabase(staging, staging, stagingHost, { ...env, TURSO_DATABASE_URL: staging }), /staging database/);
   const dotted = `${staging}.`;
-  assert.throws(() => productionDatabase(dotted, dotted, { ...env, TURSO_DATABASE_URL: dotted, STAGING_TURSO_HOST: 'STAGING.EXAMPLE.INVALID' }), /staging database/);
-  assert.throws(() => productionDatabase(staging, staging, { ...env, TURSO_DATABASE_URL: staging, STAGING_TURSO_HOST: 'staging.example.invalid.' }), /staging database/);
+  assert.throws(() => productionDatabase(dotted, dotted, 'STAGING.EXAMPLE.INVALID', { ...env, TURSO_DATABASE_URL: dotted }), /staging database/);
+  assert.throws(() => productionDatabase(staging, staging, `${stagingHost}.`, { ...env, TURSO_DATABASE_URL: staging }), /staging database/);
   const directory = await mkdtemp(join(tmpdir(), 'saln-production-binding-')), file = join(directory, 'backup.sql');
   const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
   const sql = "CREATE TABLE private_archive (id INTEGER, raw BLOB); INSERT INTO private_archive VALUES (9007199254740993, X'00ff');";
