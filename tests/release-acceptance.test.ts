@@ -47,3 +47,32 @@ test('release rehearsal verifies acquired Filing bytes on import and unchanged r
     await assert.rejects(rehearseStageOne({ 'synthetic-filing.json': sourceFile }, planFile), /byte size|checksum|signature/i);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
+
+test('HTTP acceptance requires aliases to stay on the named deployment', async () => {
+  const { artifacts } = await rehearseStageOne();
+  let crossOrigin = false;
+  const server = createServer((request, response) => {
+    const path = request.url!;
+    if (path === '/ping') { response.setHeader('X-Archive-Revision', 'synthetic'); response.end('pong'); }
+    else if (path.endsWith('/archive.json')) response.end(artifacts.snapshotJson);
+    else if (path.endsWith('/source-checksums.json')) response.end(artifacts.checksumManifestJson);
+    else if (path === '/unknown-release-check-path') { response.statusCode = 404; response.end(); }
+    else {
+      const alias = artifacts.snapshot.data.personAliases.find(row => path === `/official/${encodeURIComponent(row.value)}`);
+      const person = alias && artifacts.snapshot.data.people.find(row => row.id === alias.personId);
+      if (person && alias!.value !== person.slug) {
+        response.statusCode = 301;
+        response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}`);
+      }
+      response.end('<html>synthetic</html>');
+    }
+  });
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  const address = server.address(); assert.ok(address && typeof address === 'object');
+  try {
+    const origin = `http://127.0.0.1:${address.port}`;
+    assert.ok((await verifyReleaseHttp(origin, 'synthetic', artifacts)).checkedAliases > 0);
+    crossOrigin = true;
+    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
+  } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
+});
