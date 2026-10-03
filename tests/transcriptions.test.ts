@@ -106,6 +106,12 @@ test("Secondary Reports neither create Filings nor close gaps, and sparse timeli
     assert.ok(html.indexOf('Related reporting - not a SALN filing') > html.indexOf('SALN Filings'));
     assert.match(html, /Source Tip|Suggest a source/);
     const snapshot = await exportPublicSnapshot(state.db); assert.equal(snapshot.snapshot.data.secondaryReports.length, 1); assert.equal(snapshot.snapshot.data.filings.length, 3);
+    await applyReviewedManifest(state.db, { id: 'corrected-tenure-end', version: 1, kind: 'correction', payload: {
+      review, target: { type: 'tenure', id: 'tenure' }, previousCorrectionId: null, reason: 'Synthetic corrected actual end',
+      changes: { endDate: { value: '2026-09', precision: 'month' } }, citations: [{ id: 'end-proof', title: 'Synthetic end evidence', publisher: 'Test', type: 'official_record', url: 'https://example.org/end', supports: ['endDate'], publishedDate: null }],
+    } });
+    assert.equal((await archive.findPersonBySlug('sample-person'))?.rosterMemberships?.length, 0);
+    assert.equal((await archive.readHome()).rosters[0].rows.length, 0);
   } finally { await state.close(); }
 });
 
