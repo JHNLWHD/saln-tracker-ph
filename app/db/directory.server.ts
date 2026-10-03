@@ -4,15 +4,14 @@ import { searchText } from '../archive/directory';
 import type { ArchiveReader } from './client.server';
 import { canonicalPersonId } from './identities.server';
 import { personIsEligible, tenureIsVerified } from './eligibility';
-import { effectiveField, tenureCoversRosterDate } from './rosters.server';
+import { effectiveField, isLatestRosterSnapshot, tenureCoversRosterDate } from './rosters.server';
 import * as s from './schema';
 
 const anyTenure = (condition: SQL = sql`1`) => sql`exists (select 1 from ${s.tenures} inner join ${s.offices} on ${s.offices.id} = ${s.tenures.officeId}
   left join ${s.constituencies} on ${s.constituencies.id} = ${s.tenures.constituencyId}
   where ${canonicalPersonId(s.tenures.personId)} = ${s.people.id} and ${s.offices.included} = 1 and ${tenureIsVerified()} and ${condition})`;
 const currentTenure = sql`exists (select 1 from ${s.rosterMembers} inner join ${s.rosterSnapshots} on ${s.rosterSnapshots.id} = ${s.rosterMembers.snapshotId}
-  where ${s.rosterMembers.tenureId} = ${s.tenures.id} and ${tenureCoversRosterDate(s.rosterSnapshots.verifiedAsOf)} and not exists (select 1 from roster_snapshots newer where newer.scope = ${s.rosterSnapshots.scope}
-  and (newer.verified_as_of > ${s.rosterSnapshots.verifiedAsOf} or (newer.verified_as_of = ${s.rosterSnapshots.verifiedAsOf} and newer.id < ${s.rosterSnapshots.id}))))`;
+  where ${s.rosterMembers.tenureId} = ${s.tenures.id} and ${tenureCoversRosterDate(s.rosterSnapshots.verifiedAsOf)} and ${isLatestRosterSnapshot()})`;
 const hasDocuments = sql`exists (select 1 from ${s.filings} inner join ${s.sourceDocuments} on ${s.sourceDocuments.filingId} = ${s.filings.id} where ${canonicalPersonId(s.filings.personId)} = ${s.people.id})`;
 
 export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters): Promise<DirectoryResult> {
@@ -52,7 +51,17 @@ export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters
   }).from(s.people).where(where).orderBy(name, s.people.id).limit(pageSize).offset((page - 1) * pageSize);
   const offices = await tx.select({ id: s.offices.id, name: s.offices.name }).from(s.offices).innerJoin(s.tenures, eq(s.tenures.officeId, s.offices.id)).innerJoin(s.people, eq(s.people.id, canonicalPersonId(s.tenures.personId)))
     .where(and(personIsEligible(), tenureIsVerified(), eq(s.offices.included, true))).groupBy(s.offices.id).orderBy(s.offices.name, s.offices.id);
-  const jurisdictions = await tx.select({ id: s.jurisdictions.id, name: s.jurisdictions.name }).from(s.jurisdictions).orderBy(s.jurisdictions.name, s.jurisdictions.id);
+  const publicJurisdictionIds = sql`with recursive public_places(id) as (
+    select place.value from ${s.tenures} inner join ${s.offices} on ${s.offices.id} = ${s.tenures.officeId}
+      inner join ${s.people} on ${s.people.id} = ${canonicalPersonId(s.tenures.personId)}
+      left join ${s.constituencies} on ${s.constituencies.id} = ${s.tenures.constituencyId}
+      inner join json_each(json_array(${s.offices.jurisdictionId}, ${s.constituencies.jurisdictionId})) place
+      where ${personIsEligible()} and ${tenureIsVerified()} and ${s.offices.included} = 1 and place.value is not null
+    union select ${s.jurisdictionRelationships.toId} from ${s.jurisdictionRelationships}
+      inner join public_places on ${s.jurisdictionRelationships.fromId} = public_places.id
+  ) select id from public_places`;
+  const jurisdictions = await tx.select({ id: s.jurisdictions.id, name: s.jurisdictions.name }).from(s.jurisdictions)
+    .where(sql`${s.jurisdictions.id} in (${publicJurisdictionIds})`).orderBy(s.jurisdictions.name, s.jurisdictions.id);
   const memberships = await tx.select({ personId: canonicalPersonId(s.tenures.personId).as('person_id'), name: s.offices.name }).from(s.tenures).innerJoin(s.offices, eq(s.offices.id, s.tenures.officeId))
     .where(and(inArray(canonicalPersonId(s.tenures.personId), rows.map(row => row.id)), tenureIsVerified(), eq(s.offices.included, true))).groupBy(canonicalPersonId(s.tenures.personId), s.offices.name).orderBy(s.offices.name);
   return { rows: rows.map(row => ({ ...row, offices: memberships.filter(member => member.personId === row.id).map(member => member.name) })), total, page, pageSize, offices, jurisdictions };

@@ -62,6 +62,7 @@ test('native directory searches only public identity/office fields and applies r
       const all = directoryFromRecords([unreviewed], filters());
       assert.ok(!all.rows[0].offices.includes('Unreviewed Office'));
       assert.ok(!all.offices.some(office => office.id === 'unreviewed-office'));
+      assert.ok(!all.jurisdictions.some(jurisdiction => jurisdiction.id === 'unreviewed-place'));
       assert.equal(directoryFromRecords([unreviewed], filters('q=Philippines')).total, 1);
     }
     const boundary = { id: 'actual-end', version: 1, kind: 'correction', payload: { review, target: { type: 'tenure', id: 'tenure-marcos-president-2022' }, previousCorrectionId: null, reason: 'Synthetic actual end review', changes: { endDate: { value: '2024', precision: 'year' } }, citations: [{ id: 'end-proof', title: 'Synthetic actual end', url: 'https://example.org/end', publisher: 'Test', type: 'official_record', supports: ['endDate'], publishedDate: null }] } };
@@ -73,6 +74,21 @@ test('native directory searches only public identity/office fields and applies r
     assert.equal((await browse('tenure=former')).total, 0); assert.equal((await browse('tenure=current')).total, 27);
     await applyReviewedManifest(db, { id: 'dispute-president', version: 1, kind: 'correction', payload: { review, target: { type: 'tenure', id: 'tenure-marcos-president-2022' }, previousCorrectionId: 'clear-end', reason: 'Synthetic eligibility dispute', changes: { verificationStatus: 'disputed', disputedFacts: ['office'] }, citations: [{ id: 'office-dispute-proof', title: 'Synthetic dispute', url: 'https://example.org/dispute', publisher: 'Test', type: 'public_article', supports: ['person', 'office', 'verificationStatus', 'disputedFacts'], publishedDate: null }] } });
     assert.equal((await browse()).total, 26); assert.equal((await browse('q=Ferdinand')).total, 0); assert.equal((await browse('tenure=current')).total, 26);
+
+    await client.batch([
+      "INSERT INTO jurisdictions (id, name, kind) VALUES ('unrelated-place', 'Unrelated', 'province'), ('synthetic-region', 'Synthetic region', 'region')",
+      "INSERT INTO jurisdiction_relationships (from_id, to_id, kind) VALUES ('jurisdiction-isabela', 'synthetic-region', 'geographic')",
+    ], 'write');
+    const choices = (await browse()).jurisdictions.map(row => row.id);
+    assert.ok(!choices.includes('unrelated-place')); assert.ok(choices.includes('synthetic-region'));
+    assert.equal((await browse('jurisdiction=synthetic-region')).total, 1);
+    const replacement = JSON.parse(await readFile(new URL('stage-one-completion/13-senate-roster.json', root), 'utf8'));
+    replacement.id = 'z-later-senate-review'; replacement.payload.review.reviewedAt = '2026-10-03';
+    replacement.payload.members = [replacement.payload.members[0]];
+    await applyReviewedManifest(db, replacement);
+    assert.equal((await archive.readHome()).rosters.find(roster => roster.snapshot.scope === 'senate')?.snapshot.id, replacement.id);
+    assert.equal((await browse('tenure=current')).total, 3);
+    assert.equal((await archive.findPersonBySlug('risa-hontiveros'))?.rosterMemberships?.length, 0);
     const plan = await client.execute({ sql: 'EXPLAIN QUERY PLAN SELECT * FROM tenures WHERE constituency_id = ?', args: ['constituency-isabela-6'] });
     assert.ok(plan.rows.some(row => String(row.detail).includes('tenures_constituency')));
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
