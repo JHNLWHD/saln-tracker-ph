@@ -174,6 +174,6 @@ export interface RosterRow {
 }
 
 export interface ArchiveHome {
-  rosters: { snapshot: RosterSnapshot; rows: RosterRow[] }[];
+  rosters: { snapshot: RosterSnapshot; rows: RosterRow[]; omittedMemberCount?: number }[];
   recentlyAdded: { id: string; sha256: string; fileName: string; archivePublicationDate: string; reportingDate: PartialDate; canonicalName: string; slug: string }[];
 }

@@ -12,10 +12,10 @@ export function ArchiveHome({ data }: { data: HomeData }) {
       <p>Read acquired Source Documents and reviewed Transcriptions. Archive coverage does not establish compliance or verify real-world wealth.</p>
     </header>
     {data.rosters.length === 0 && <EmptyState title="No reviewed Roster Snapshot is available"><p>Officeholders will appear after their Tenures and roster membership are reviewed.</p></EmptyState>}
-    {data.rosters.map(({ snapshot, rows }) => <section key={snapshot.id} aria-labelledby={`roster-${snapshot.scope}`} className="space-y-3">
+    {data.rosters.map(({ snapshot, rows, omittedMemberCount }) => <section key={snapshot.id} aria-labelledby={`roster-${snapshot.scope}`} className="space-y-3">
       <h2 id={`roster-${snapshot.scope}`}>{scopeLabels[snapshot.scope]}</h2>
       <p className="text-sm">Roster Snapshot · Verified as of <time dateTime={snapshot.verifiedAsOf}>{snapshot.verifiedAsOf}</time>. Manually reviewed; this is not a live roster.</p>
-      {rows.length < snapshot.members.length && <p className="archive-muted">Some roster entries are not shown because their Archive eligibility or Tenure evidence is unresolved.</p>}
+      {(omittedMemberCount ?? snapshot.members.length - rows.length) > 0 && <p className="archive-muted">Some roster entries are not shown because their Archive eligibility or Tenure evidence is unresolved.</p>}
       <ArchiveTable caption={`${scopeLabels[snapshot.scope]} · ${snapshot.verifiedAsOf}`}>
         <thead><tr><th scope="col">Person and Office</th><th scope="col">Archive Source Documents</th><th scope="col">Declared Financial Summary</th></tr></thead>
         <tbody>{rows.map(row => <tr key={row.tenureId}>
