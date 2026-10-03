@@ -6,15 +6,11 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   if (!/^[a-f0-9]{64}$/.test(params.sha256)) throw new Response("Not Found", { status: 404 });
   const document = await (await getArchive()).findSourceDocument(params.sha256);
   if (!document) throw new Response("Not Found", { status: 404 });
-  // ponytail: buffers one file; stream from storage before serving files above the host response limit.
-  const bytes = await createDocumentStorage().get(document.sha256);
-  if (!bytes) throw new Response("Source Document is temporarily unavailable", { status: 503, headers: { "Retry-After": "60" } });
-
   const disposition = new URL(request.url).searchParams.get("download") === "1" ? "attachment" : "inline";
   const fileName = encodeURIComponent(document.fileName).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
   const headers = {
     "Content-Type": document.mediaType,
-    "Content-Length": String(bytes.byteLength),
+    "Content-Length": String(document.byteSize),
     "Content-Disposition": `${disposition}; filename*=UTF-8''${fileName}`,
     "X-Content-Type-Options": "nosniff",
     "Content-Security-Policy": "sandbox",
@@ -22,5 +18,9 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     ETag: `"${document.sha256}"`,
   };
   if (request.headers.get("If-None-Match") === headers.ETag) return new Response(null, { status: 304, headers });
-  return new Response(request.method === "HEAD" ? null : Uint8Array.from(bytes), { headers });
+  if (request.method === "HEAD") return new Response(null, { headers });
+  // ponytail: buffers one file; stream from storage before serving files above the host response limit.
+  const bytes = await createDocumentStorage().get(document.sha256);
+  if (!bytes) throw new Response("Source Document is temporarily unavailable", { status: 503, headers: { "Retry-After": "60" } });
+  return new Response(Uint8Array.from(bytes), { headers });
 }
