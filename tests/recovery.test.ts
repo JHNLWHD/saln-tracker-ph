@@ -5,7 +5,7 @@ import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionBuckets, productionDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionBuckets, productionDatabase, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
 import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
@@ -22,15 +22,32 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
 });
 
 test('R2 recovery targets must match the independently accepted production inventory', () => {
-  const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', backupBucket: 'production-backups' };
-  assert.deepEqual(productionBuckets(approved, approved, {}), approved);
+  const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', documentJurisdiction: 'default', backupBucket: 'production-backups', backupJurisdiction: 'default' };
+  assert.deepEqual(productionBuckets(approved, approved, {}), { ...approved, backupEndpoint: `https://${approved.accountId}.r2.cloudflarestorage.com` });
   for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, {}), /accepted release plan/);
-  for (const changed of [{ accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
+  for (const changed of [{ documentJurisdiction: 'eu' }, { backupJurisdiction: 'us' }, { accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
     assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, {}), /accepted release plan/);
   }
   for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { STAGING_R2_BUCKET: bucket }), /staging bucket/);
   const shared = { ...approved, backupBucket: approved.documentBucket };
   assert.throws(() => productionBuckets(shared, shared, {}), /separate production buckets/);
+});
+
+test('R2 lock reads and backup endpoints identify each accepted bucket jurisdiction', async t => {
+  const calls: { url: string; jurisdiction: string | null }[] = [];
+  t.mock.method(globalThis, 'fetch', async (url: string, init: RequestInit) => {
+    calls.push({ url, jurisdiction: new Headers(init.headers).get('cf-r2-jurisdiction') });
+    return Response.json({ success: true, result: { rules: [{ enabled: true, condition: { type: 'Indefinite' } }] } });
+  });
+  for (const jurisdiction of ['default', 'eu', 'us', 'fedramp']) {
+    const approved = { accountId: 'a'.repeat(32), documentBucket: 'documents', documentJurisdiction: 'eu', backupBucket: 'backups', backupJurisdiction: jurisdiction };
+    const targets = productionBuckets(approved, approved, {});
+    assert.equal(targets.backupEndpoint, `https://${approved.accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`);
+    await verifyBucketLocks(targets, 'synthetic-token');
+    assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['documents', 'eu'], ['backups', jurisdiction]]);
+    const missing = { ...approved, backupJurisdiction: '' };
+    assert.throws(() => productionBuckets(missing, missing, {}), /explicit supported jurisdiction/);
+  }
 });
 
 test('SQL recovery restores exact bound bytes and rejects corruption and external database attachment', async () => {
