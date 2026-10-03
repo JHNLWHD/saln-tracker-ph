@@ -21,7 +21,8 @@ export function checkDevelopEnvironment(env: NodeJS.ProcessEnv) {
   if (!env.STAGING_SOURCE_TIPS_HOST || host(env.SOURCE_TIPS_DATABASE_URL) !== env.STAGING_SOURCE_TIPS_HOST) throw new Error('Private database does not match the reviewed staging target');
   if (!env.STAGING_R2_BUCKET || env.R2_BUCKET !== env.STAGING_R2_BUCKET) throw new Error('Document bucket does not match the reviewed staging target');
   const endpoint = new URL(env.R2_ENDPOINT ?? '');
-  if (endpoint.protocol !== 'https:' || endpoint.username || endpoint.password) throw new Error('R2 requires a credential-free HTTPS endpoint');
+  if (endpoint.protocol !== 'https:' || endpoint.username || endpoint.password || endpoint.pathname !== '/' || endpoint.search || endpoint.hash) throw new Error('R2 requires a credential-free HTTPS endpoint');
+  if (!env.STAGING_R2_ENDPOINT || endpoint.href !== new URL(env.STAGING_R2_ENDPOINT).href) throw new Error('R2 endpoint does not match the reviewed staging account and jurisdiction');
   for (const key of ['TURSO_AUTH_TOKEN', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY']) if (!env[key]) throw new Error('Staging runtime credentials are missing');
   sourceTipDestination(env);
   if ((env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) < 32) throw new Error('A private Source Tip rate-limit key is required');

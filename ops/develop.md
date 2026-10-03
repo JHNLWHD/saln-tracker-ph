@@ -14,7 +14,7 @@ Record the actual Netlify site ID, branch URL, deployed commit, Turso database n
 | `ARCHIVE_ADAPTER`, `ARCHIVE_STORAGE` | `turso`, `r2`, set in netlify.toml |
 | `TURSO_DATABASE_URL`, `STAGING_TURSO_HOST` | Same reviewed staging Archive host |
 | `TURSO_AUTH_TOKEN` | Database-specific **read-only** staging Archive token |
-| `R2_ENDPOINT`, `R2_BUCKET`, `STAGING_R2_BUCKET` | Reviewed staging account endpoint and matching bucket name |
+| `R2_ENDPOINT`, `STAGING_R2_ENDPOINT`, `R2_BUCKET`, `STAGING_R2_BUCKET` | Exact reviewed staging endpoint (including jurisdiction) and matching bucket name |
 | `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Object-read-only credentials restricted to that bucket |
 | `SOURCE_TIPS_DATABASE_URL`, `STAGING_SOURCE_TIPS_HOST` | Matching private staging host, separate from Archive |
 | `SOURCE_TIPS_AUTH_TOKEN` | Separate private queue credential; restrict access to trusted reviewers and runtime |
