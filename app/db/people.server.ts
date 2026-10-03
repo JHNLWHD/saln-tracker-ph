@@ -68,12 +68,10 @@ export async function importReviewedPerson(db: ArchiveDatabase, input: unknown) 
 
 export function createDbArchive(db: ArchiveDatabase): Archive {
   async function readPerson(db: ArchiveReader, person: typeof schema.people.$inferSelect): Promise<PersonRecord> {
-    const [names, tenures, corrections, allFilings, allDocuments] = await Promise.all([
+    const [names, tenures, corrections] = await Promise.all([
       db.select().from(schema.personNames).where(eq(schema.personNames.personId, person.id)),
       db.select().from(schema.tenures).where(eq(schema.tenures.personId, person.id)),
       readEditorialCorrections(db),
-      db.select({ id: schema.filings.id }).from(schema.filings).where(eq(schema.filings.personId, person.id)),
-      db.select({ id: schema.sourceDocuments.id }).from(schema.sourceDocuments).innerJoin(schema.filings, eq(schema.filings.id, schema.sourceDocuments.filingId)).where(eq(schema.filings.personId, person.id)),
     ]);
     const officeIds = tenures.map(tenure => tenure.officeId);
     const constituencyIds = tenures.flatMap(tenure => tenure.constituencyId ? [tenure.constituencyId] : []);
@@ -97,9 +95,7 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
         citations: sources.filter(source => source.tenureId === tenure.id).map(({ source, supports }): Citation => ({ ...source, supports, publishedDate: parsePartialDate(source.publishedDate) })),
       })),
       filings: [], sourceDocuments: [], financialSummaries: [],
-      editorialCorrections: corrections.filter(row => row.target.type === "person" ? row.target.id === person.id :
-        row.target.type === "tenure" ? tenures.some(tenure => tenure.id === row.target.id) :
-          row.target.type === "filing" ? allFilings.some(filing => filing.id === row.target.id) : allDocuments.some(document => document.id === row.target.id)),
+
     };
     record.person = projectCorrections("person", record.person, corrections);
     record.tenures = record.tenures.map(tenure => projectCorrections("tenure", tenure, corrections));
@@ -121,6 +117,10 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
       });
       record.sourceDocuments = documentRows.map(({ document }) => projectCorrections("source_document", sourceDocumentFromRow(document), corrections));
     }
+    record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? row.target.id === person.id :
+      row.target.type === "tenure" ? record.tenures.some(tenure => tenure.id === row.target.id) :
+        row.target.type === "filing" ? record.filings.some(filing => filing.id === row.target.id) :
+          row.target.type === "source_document" && record.sourceDocuments.some(document => document.id === row.target.id));
     return record;
   }
   return {
