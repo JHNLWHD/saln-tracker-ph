@@ -11,6 +11,7 @@ import { connectArchive } from "../app/db/client.server";
 import { personIsEligible } from "../app/db/eligibility";
 import { applyReviewedManifest, validateReviewedManifest, type ReviewedManifest } from "../app/db/manifests.server";
 import { createDbArchive, importReviewedPerson } from "../app/db/people.server";
+import { importReviewedFiling } from "../app/db/filings.server";
 import { editorialCorrections, filings, manifestApplications, people, sourceDocuments, tenureCitations, tenures } from "../app/db/schema";
 import { createLocalDocumentStorage } from "../app/storage/objects.server";
 import { migrateArchive, rollbackArchive } from "../scripts/migrate";
@@ -83,6 +84,42 @@ test('pre-ledger People and Tenures must be adopted before a correction', async 
     await applyReviewedManifest(db, person);
     for (const patch of changes) await applyReviewedManifest(db, patch);
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('a Filing adopted through a later Document can be corrected without adopting its earlier Document', async () => {
+  const state = await setup();
+  try {
+    const original = structuredClone(filing);
+    original.payload.filing.id = 'pre-ledger'; original.payload.document.filingId = 'pre-ledger'; original.payload.document.id = 'unadopted-page';
+    await importReviewedFiling(state.db, original.payload, bytes, state.storage);
+    const adopted = structuredClone(original);
+    adopted.id = 'filing:adopted-page'; adopted.payload.document.id = 'adopted-page';
+    await applyReviewedManifest(state.db, adopted, { bytes, storage: state.storage });
+    const patch = correction('adopted-filing-correction', 'filing', 'pre-ledger', { filerName: 'Corrected filer name' });
+    await applyReviewedManifest(state.db, patch);
+    assert.equal((await applyReviewedManifest(state.db, patch)).status, 'unchanged');
+    await assert.rejects(applyReviewedManifest(state.db, correction('unadopted-page-correction', 'source_document', 'unadopted-page', { provenanceNote: 'Corrected note' })), /applied Filing manifest/);
+  } finally { await state.close(); }
+});
+
+test('the first correction cannot predate its original review, while the same date is allowed', async () => {
+  const state = await setup();
+  try {
+    const patches = [
+      correction('dated-person', 'person', 'person', { canonicalName: 'Corrected name' }),
+      correction('dated-tenure', 'tenure', 'tenure', { startDate: { value: '2020', precision: 'year' } }),
+      correction('dated-filing', 'filing', 'filing', { filerName: 'Corrected filer name' }),
+      correction('dated-document', 'source_document', 'document', { provenanceNote: 'Corrected note' }),
+    ];
+    for (const patch of patches) {
+      patch.payload.review.reviewedAt = '2026-09-24';
+      await assert.rejects(applyReviewedManifest(state.db, patch), /precedes its original review/);
+      assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, patch.id))).length, 0);
+      patch.payload.review.reviewedAt = review.reviewedAt;
+      await applyReviewedManifest(state.db, patch);
+      assert.equal((await applyReviewedManifest(state.db, patch)).status, 'unchanged');
+    }
+  } finally { await state.close(); }
 });
 
 test("corrections project current metadata and history while original manifests and bytes replay unchanged", async () => {
