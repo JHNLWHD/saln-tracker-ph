@@ -24,7 +24,7 @@ export async function runManifestImport(legacyKind?: "person" | "filing") {
   }
   const manifest = validateReviewedManifest(input);
   if (manifest.kind === "filing" && !documentPath) throw new Error("A Filing manifest requires its acquired source file");
-  if (manifest.kind === "person" && documentPath) throw new Error("A Person manifest does not accept a source file");
+  if (manifest.kind !== "filing" && documentPath) throw new Error("Only a Filing manifest accepts a source file");
   if (manifest.kind === "filing") {
     const expected = config.url.startsWith("file:") ? "local" : "r2";
     if (process.env.ARCHIVE_STORAGE !== expected) throw new Error(`This database target requires ARCHIVE_STORAGE=${expected}`);

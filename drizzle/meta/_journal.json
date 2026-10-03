@@ -22,6 +22,13 @@
       "when": 1790430738187,
       "tag": "0002_reviewed_manifests",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790431601055,
+      "tag": "0003_editorial_corrections",
+      "breakpoints": true
     }
   ]
 }

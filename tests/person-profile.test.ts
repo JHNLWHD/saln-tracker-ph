@@ -53,6 +53,8 @@ test('disputed eligibility remains explicit and retains each conflicting citatio
   assert.match(html, /href="https:\/\/example.org\/conflict"/);
   assert.match(html, /Other News · Public article/);
   assert.match(html, /Published: Not established/);
+  assert.match(html, /Source Documents are not shown while Archive eligibility is unresolved/);
+  assert.doesNotMatch(html, /No SALN currently in the archive|project has not acquired/);
 });
 
 test('unverified legacy profile does not display excluded Offices as evidence of eligibility', () => {
@@ -117,4 +119,39 @@ test('same-period Filings and their multiple Source Documents remain separate', 
   assert.match(secondTable, /Formally released copy/);
   assert.doesNotMatch(secondTable, /preserved-copy.pdf/);
   assert.doesNotMatch(html, /supersed|amendment|latest Filing/i);
+});
+
+test('corrected profile values show their history, reasons, date precision, and all conflict citations', () => {
+  const value = documentRecord();
+  const conflict = { ...value.tenures[0].citations[0], id: 'conflict-citation', title: 'Conflicting start-date report', publisher: 'Other News', url: 'https://example.org/corrected-date', supports: ['startDate'] };
+  value.person.canonicalName = 'Sample Corrected Person';
+  value.filings[0].reportingDate = { value: '2023-12', precision: 'month' };
+  value.tenures[0].startDate = null;
+  value.tenures[0].verificationStatus = 'disputed';
+  value.tenures[0].disputedFacts = ['startDate'];
+  value.tenures[0].citations.push(conflict);
+  value.editorialCorrections = [
+    { id: 'name-correction', target: { type: 'person', id: value.person.id }, previousCorrectionId: null, revision: 1, reason: 'Corrected the preferred display name after source review.', reviewedAt: '2026-09-26', previousValues: { canonicalName: 'Sample Person' }, changes: { canonicalName: value.person.canonicalName }, citations: [value.tenures[0].citations[0]] },
+    { id: 'filing-correction-1', target: { type: 'filing', id: 'filing-1' }, previousCorrectionId: null, revision: 1, reason: 'Corrected the transcribed Reporting Date.', reviewedAt: '2026-09-26', previousValues: { reportingDate: { value: '2024', precision: 'year' } }, changes: { reportingDate: { value: '2023', precision: 'year' } }, citations: [] },
+    { id: 'filing-correction-2', target: { type: 'filing', id: 'filing-1' }, previousCorrectionId: 'filing-correction-1', revision: 2, reason: 'Month precision is supported by the Source Document.', reviewedAt: '2026-09-27', previousValues: { reportingDate: { value: '2023', precision: 'year' } }, changes: { reportingDate: value.filings[0].reportingDate }, citations: [] },
+    { id: 'tenure-correction', target: { type: 'tenure', id: 'tenure-1' }, previousCorrectionId: null, revision: 1, reason: 'Attributable reports conflict about the start date.', reviewedAt: '2026-09-27', previousValues: { startDate: { value: '2022', precision: 'year' }, verificationStatus: 'verified', disputedFacts: [] }, changes: { startDate: null, verificationStatus: 'disputed', disputedFacts: ['startDate'] }, citations: [conflict] },
+  ];
+  const html = render(value);
+  assert.match(html, /<h1>Sample Corrected Person<\/h1>/);
+  assert.match(html, /Reporting Date: <time dateTime="2023-12">2023-12<\/time>.*\(month precision\)/);
+  assert.match(html, /Editorial Corrections/);
+  assert.match(html, /This page uses the latest reviewed metadata/);
+  assert.match(html, /Previously: Sample Person/);
+  assert.match(html, /Corrected: Sample Corrected Person/);
+  assert.match(html, /Corrected the transcribed Reporting Date/);
+  assert.match(html, /Month precision is supported by the Source Document/);
+  assert.match(html, /Filing metadata · Correction 2/);
+  assert.match(html, /Record: filing-1/);
+  assert.match(html, /Start date<\/dt><dd>Previously: <span>2022<\/span>.*<dd>Corrected: Not established/);
+  assert.match(html, /<li>Start date<\/li>/);
+  assert.match(html, /href="https:\/\/example.org\/tenure"/);
+  assert.match(html, /href="https:\/\/example.org\/corrected-date"/);
+  assert.match(html, /Other News · Public article/);
+  assert.ok(html.includes(`href="/documents/${'a'.repeat(64)}">Open`));
+  assert.doesNotMatch(html, /Archive eligibility is disputed|2023-12-01|>startDate</);
 });

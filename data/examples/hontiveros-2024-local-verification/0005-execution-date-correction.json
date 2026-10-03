@@ -1,0 +1,31 @@
+{
+  "id": "local-hontiveros-2024-execution-date-correction",
+  "version": 1,
+  "kind": "correction",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-09-26",
+      "reviewedBy": "SALN Archive local source review"
+    },
+    "reason": "The Document-only import left Execution Date untranscribed. The second released scan shows 10-Apr-25 beside the declarant signature. Record that date with day precision; do not use the separate oath stamp as the Execution Date.",
+    "target": {
+      "type": "filing",
+      "id": "filing-hontiveros-2024-12-31"
+    },
+    "previousCorrectionId": null,
+    "changes": {
+      "executionDate": { "value": "2025-04-10", "precision": "day" }
+    },
+    "citations": [
+      {
+        "id": "hontiveros-2024-released-scan-2-execution",
+        "title": "Risa Hontiveros 2024 SALN: second released scan",
+        "url": "https://www.facebook.com/photo/?fbid=1381337593358335&set=pcb.1381296843362410",
+        "publisher": "Senator Risa Hontiveros",
+        "type": "official_record",
+        "supports": ["executionDate"],
+        "publishedDate": null
+      }
+    ]
+  }
+}
