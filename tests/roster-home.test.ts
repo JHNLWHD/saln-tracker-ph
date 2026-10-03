@@ -75,6 +75,24 @@ test('a later review replaces an equal-date Snapshot even when its ID sorts last
   } finally { await state.close(); }
 });
 
+test('review timestamps order same-day replacements independently of IDs and import order', async () => {
+  const state = await setup();
+  try {
+    const later = await json('0005-executive-roster-2026-09-28.json');
+    later.id = 'z-same-day'; later.payload.review.reviewedAt = '2026-10-02T14:00:00.000Z';
+    later.payload.members = [later.payload.members[1]];
+    const earlier = await json('0005-executive-roster-2026-09-28.json');
+    earlier.id = 'a-same-day'; earlier.payload.review.reviewedAt = '2026-10-02T10:00:00.000Z';
+    for (const manifest of [later, earlier]) await applyReviewedManifest(state.db, manifest);
+    const home = await createDbArchive(state.db).readHome();
+    assert.equal(home.rosters[0].snapshot.id, later.id);
+    assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
+    await assert.rejects(applyReviewedManifest(state.db, { ...later, id: 'ambiguous-time' }), /distinct reviewed timestamp/);
+    for (const reviewedAt of ['2026-02-30T14:00:00.000Z', '2026-10-02T14:00:00+00:00', '2026-09-27T14:00:00.000Z']) assert.throws(() => validateReviewedRoster({ ...later.payload, review: { ...later.payload.review, reviewedAt } }));
+    assert.equal((await applyReviewedManifest(state.db, later)).status, 'unchanged');
+  } finally { await state.close(); }
+});
+
 test('Roster reads and exports exclude Tenures whose corrected dates or verification no longer support membership', async () => {
   for (const changes of [{ startDate: { value: '2027', precision: 'year' } }, { endDate: { value: '2025', precision: 'year' } }, { verificationStatus: 'unverified' }, { verificationStatus: 'disputed', disputedFacts: ['office'] }]) {
     const state = await setup();
@@ -89,6 +107,9 @@ test('Roster reads and exports exclude Tenures whose corrected dates or verifica
       } });
       const home = await createDbArchive(state.db).readHome();
       assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
+      assert.equal(home.rosters[0].omittedMemberCount, 1);
+      const html = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
+      assert.match(html, /Some roster entries are not shown/);
       const exported = await exportPublicSnapshot(state.db);
       assert.ok(exported.snapshot.data.tenures.some(row => row.id === 'tenure-marcos-president-2022'));
       assert.deepEqual(exported.snapshot.data.rosterSnapshots[0].members.map(row => row.tenureId), home.rosters[0].snapshot.members.map(row => row.tenureId));

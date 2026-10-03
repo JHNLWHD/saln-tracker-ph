@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, sql, type SQL, type SQLWrapper } from "drizzle-orm";
+import { and, count, desc, eq, inArray, ne, sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import type { ArchiveHome, Citation, CorrectionTargetType, RosterSnapshot } from "../archive/types";
 import type { ArchiveReader, ArchiveWriter } from "./client.server";
 import { missingRows } from "./canonical";
@@ -19,7 +19,9 @@ export function validateReviewedRoster(value: unknown): ReviewedRoster {
   const root = object(value, ["review", "scope", "verifiedAsOf", "members"], "roster");
   const review = object(root.review, ["reviewedAt", "reviewedBy"], "review");
   const reviewedAt = text(review.reviewedAt, "review.reviewedAt"), verifiedAsOf = text(root.verifiedAsOf, "verifiedAsOf");
-  if (parsePartialDate(reviewedAt)?.precision !== "day" || parsePartialDate(verifiedAsOf)?.precision !== "day" || verifiedAsOf > reviewedAt) throw new Error("Roster dates must be calendar dates with review on or after verification");
+  const reviewDay = reviewedAt.slice(0, 10), reviewed = new Date(reviewedAt);
+  const exactReview = reviewedAt === reviewDay || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(reviewedAt) && Number.isFinite(reviewed.getTime()) && reviewed.toISOString() === reviewedAt;
+  if (!exactReview || parsePartialDate(reviewDay)?.precision !== "day" || parsePartialDate(verifiedAsOf)?.precision !== "day" || verifiedAsOf > reviewDay) throw new Error("Roster review must be a calendar date or exact UTC timestamp on or after verification");
   if (!Array.isArray(root.members) || !root.members.length || root.members.length > 1000) throw new Error("A Roster Snapshot needs 1–1000 reviewed members");
   const members = root.members.map((value, i) => {
     const row = object(value, ["tenureId", "citations"], `members[${i}]`);
@@ -57,6 +59,10 @@ const nationalRosterOffices = {
 };
 
 export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record: ReviewedRoster, verifyOnly = false) {
+  if (!verifyOnly && record.review.reviewedAt.length > 10) {
+    const [sameTime] = await tx.select({ id: schema.rosterSnapshots.id }).from(schema.rosterSnapshots).where(and(ne(schema.rosterSnapshots.id, id), eq(schema.rosterSnapshots.scope, record.scope), eq(schema.rosterSnapshots.verifiedAsOf, record.verifiedAsOf), eq(schema.rosterSnapshots.reviewedAt, record.review.reviewedAt))).limit(1);
+    if (sameTime) throw new Error('A same-day replacement needs a distinct reviewed timestamp');
+  }
   const corrections = await readEditorialCorrections(tx);
   await checkCitationMetadata(tx, record.members.flatMap(row => row.citations), corrections);
   for (const member of record.members) {
@@ -107,13 +113,14 @@ export async function readArchiveHome(tx: ArchiveReader): Promise<ArchiveHome> {
   const latest = await readRosterSnapshots(tx, true);
   const rosters: ArchiveHome["rosters"] = [];
   for (const snapshot of latest) {
+    const [{ memberCount }] = await tx.select({ memberCount: count() }).from(schema.rosterMembers).where(eq(schema.rosterMembers.snapshotId, snapshot.id));
     const rows = await tx.select({ tenureId: schema.tenures.id, personId: schema.people.id, slug: schema.people.slug,
       canonicalName: effectiveField<string>("person", schema.people.id, "canonicalName", schema.people.canonicalName), officeName: schema.offices.name,
       documentCount: sql<number>`(select count(distinct ${schema.sourceDocuments.sha256}) from ${schema.sourceDocuments} inner join ${schema.filings} on ${schema.filings.id} = ${schema.sourceDocuments.filingId} where ${canonicalPersonId(schema.filings.personId)} = ${schema.people.id})`.mapWith(Number),
     }).from(schema.tenures).innerJoin(schema.people, eq(schema.people.id, canonicalPersonId(schema.tenures.personId))).innerJoin(schema.offices, eq(schema.offices.id, schema.tenures.officeId))
       .innerJoin(schema.rosterMembers, and(eq(schema.rosterMembers.tenureId, schema.tenures.id), eq(schema.rosterMembers.snapshotId, snapshot.id)))
       .where(and(inArray(schema.tenures.id, snapshot.members.map(member => member.tenureId)), personIsEligible(), publicTenure(), eq(schema.offices.included, true), tenureCoversRosterDate(sql`${snapshot.verifiedAsOf}`))).orderBy(schema.rosterMembers.position);
-    rosters.push({ snapshot, rows: rows.map(row => ({ ...row, latestSummary: null })) });
+    rosters.push({ snapshot, omittedMemberCount: memberCount - rows.length, rows: rows.map(row => ({ ...row, latestSummary: null })) });
   }
   const recent = tx.select({ id: schema.sourceDocuments.id, sha256: schema.sourceDocuments.sha256, fileName: effectiveField<string>("source_document", schema.sourceDocuments.id, "fileName", schema.sourceDocuments.fileName).as("file_name"),
     archivePublicationDate: effectiveField<string>("source_document", schema.sourceDocuments.id, "archivePublicationDate", schema.sourceDocuments.archivePublicationDate).as("publication_date"),
