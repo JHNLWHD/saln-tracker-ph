@@ -46,7 +46,15 @@ test("reviewed Senate cohorts and stage-one roster reconcile stable People and c
     assert.match(html, /People shown from this Snapshot: 12/); assert.match(html, /Totals not transcribed/); assert.doesNotMatch(html, /₱/);
     for (const name of ['0004-sara-duterte.json', '0005-executive-roster-2026-09-28.json']) await apply(name);
     const completion = (await readdir(new URL('stage-one-completion/', data))).filter(name => name.endsWith('.json')).sort().map(name => `stage-one-completion/${name}`);
-    for (const path of completion) assert.equal((await apply(path)).status, 'applied');
+    for (const path of completion) {
+      if (path.endsWith('/13-senate-roster.json')) {
+        const original = JSON.parse(await readFile(new URL(path, data), 'utf8'));
+        const changed = structuredClone(original); changed.payload.members = [changed.payload.members[0]];
+        await assert.rejects(applyReviewedManifest(db, changed), /distinct reviewed timestamp/);
+        await assert.rejects(applyReviewedManifest(db, { ...original, id: 'new-ambiguous-senate-review' }), /distinct reviewed timestamp/);
+      }
+      assert.equal((await apply(path)).status, 'applied');
+    }
     const completeHome = await archive.readHome(), completeSenate = completeHome.rosters.find(roster => roster.snapshot.scope === 'senate')!;
     assert.equal(completeHome.rosters.length, 3); assert.equal(completeSenate.snapshot.id, 'roster-senate-2026-09-21');
     assert.equal(new Set(completeSenate.rows.map(row => row.personId)).size, 24); assert.equal(completeSenate.rows.length, 25);
