@@ -71,7 +71,7 @@ test('unverified legacy profile does not display excluded Offices as evidence of
 function documentRecord(): PersonRecord {
   const value = structuredClone(record);
   value.filings = [{ id: 'filing-1', personId: value.person.id, filerName: 'PERSON, SAMPLE', reportingDate: { value: '2024', precision: 'year' }, executionDate: null, receiptDate: null, supersedesFilingId: null }];
-  value.sourceDocuments = [{ id: 'document-1', filingId: 'filing-1', fileName: 'sample-saln.pdf', mediaType: 'application/pdf', byteSize: 1234, sha256: 'a'.repeat(64), storageKey: 'private-storage-key', originalUrl: 'https://example.org/source.pdf', provenanceType: 'official_download', provenanceNote: 'Acquired from the custodian publication.', officialReleaseDate: null, acquisitionDate: { value: '2026-09', precision: 'month' }, archivePublicationDate: '2026-09-26T10:00:00.000Z', transcriptionLevel: 'document_only' }];
+  value.sourceDocuments = [{ id: 'document-1', filingId: 'filing-1', fileName: 'sample-saln.pdf', mediaType: 'application/pdf', byteSize: 1234, sha256: 'a'.repeat(64), originalUrl: 'https://example.org/source.pdf', provenanceType: 'official_download', provenanceNote: 'Acquired from the custodian publication.', officialReleaseDate: null, acquisitionDate: { value: '2026-09', precision: 'month' }, archivePublicationDate: '2026-09-26T10:00:00.000Z', transcriptionLevel: 'document_only' }];
   return value;
 }
 

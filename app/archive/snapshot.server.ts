@@ -8,6 +8,7 @@ import * as schema from "../db/schema";
 import { parsePartialDate } from "../db/validation";
 import type { CorrectionChanges } from "./types";
 import { readRosterSnapshots } from "../db/rosters.server";
+import { readFinancialSummaries, readSecondaryReports, withTranscriptionLevels } from "../db/transcriptions.server";
 
 function orderedChanges(changes: CorrectionChanges) {
   return Object.fromEntries(Object.entries(changes).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
@@ -106,7 +107,9 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
       if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
       return projectCorrections("source_document", { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(document.officialReleaseDate) }, corrections);
     });
-    const publicIds = { person: new Set(lineageIds), tenure: new Set(tenures.map(row => row.id)), filing: new Set(filings.map(row => row.id)), source_document: new Set(sourceDocuments.map(row => row.id)) };
+    const financialSummaries = await readFinancialSummaries(tx, filings.map(row => row.id), corrections);
+    const secondaryReports = (await readSecondaryReports(tx, lineageIds, corrections)).map(report => ({ ...report, personId: resolveIdentity(report.personId, matches) }));
+    const publicIds = { person: new Set(lineageIds), tenure: new Set(tenures.map(row => row.id)), filing: new Set(filings.map(row => row.id)), source_document: new Set(sourceDocuments.map(row => row.id)), financial_summary: new Set(financialSummaries.map(row => row.id)), secondary_report: new Set(secondaryReports.map(row => row.id)) };
     const editorialCorrections = corrections.filter(correction => publicIds[correction.target.type].has(correction.target.id))
       .sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(correction => ({
         id: correction.id, target: { type: correction.target.type, id: correction.target.id },
@@ -129,7 +132,7 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
     const legacyDocuments = await tx.select({ path: schema.legacyDocuments.path, sourceDocumentId: schema.legacyDocuments.sourceDocumentId, sha256: schema.legacyDocuments.sha256 })
       .from(schema.legacyDocuments).where(inArray(schema.legacyDocuments.sourceDocumentId, sourceDocuments.map(row => row.id))).orderBy(schema.legacyDocuments.path);
     const rosterSnapshots = (await readRosterSnapshots(tx)).map(snapshot => ({ ...snapshot, members: snapshot.members.filter(member => tenures.some(tenure => tenure.id === member.tenureId)).map(member => ({ ...member, citations: [...member.citations].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(source => ({ ...source, supports: [...source.supports].sort() })) })) }));
-    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments, editorialCorrections, identityMatches, personAliases, legacyDocuments, rosterSnapshots };
+    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments: withTranscriptionLevels(sourceDocuments, financialSummaries), editorialCorrections, identityMatches, personAliases, legacyDocuments, rosterSnapshots, financialSummaries, secondaryReports };
   });
 
   // The digest covers the schema version and ordered public content, without a clock or itself.

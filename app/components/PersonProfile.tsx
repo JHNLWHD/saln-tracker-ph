@@ -1,6 +1,8 @@
 import { useId } from 'react';
 import type { Citation, CorrectionChanges, CorrectionTargetType, PartialDate, PersonRecord, SourceDocument, Tenure } from '../archive/types';
 import { ArchiveTable, EmptyState } from './ui/Archive';
+import { FinancialSummary, SummarySourceLinks } from './FinancialSummary';
+import { formatAmount } from '../archive/financial';
 
 const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
   election: 'Election',
@@ -33,6 +35,8 @@ const factLabels: Record<string, string> = {
   officialReleaseDate: 'Official Release Date',
   acquisitionDate: 'Acquisition Date',
   archivePublicationDate: 'Archive Publication Date',
+  totalAssets: 'Total assets', totalLiabilities: 'Total liabilities', declaredNetWorth: 'Declared net worth', sources: 'Source Document references',
+  title: 'Title', url: 'Source URL', publisher: 'Publisher', publishedDate: 'Publication date', note: 'Note',
 };
 
 const provenanceLabels: Record<SourceDocument['provenanceType'], string> = {
@@ -68,10 +72,11 @@ function EvidenceCitations({ citations }: { citations: Citation[] }) {
   );
 }
 
-function CorrectionValue({ field, value }: { field: string; value: CorrectionChanges[keyof CorrectionChanges] }) {
+function CorrectionValue({ field, value, documents }: { field: string; value: CorrectionChanges[keyof CorrectionChanges]; documents: SourceDocument[] }) {
   if (value == null) return <>Not established</>;
   if (Array.isArray(value)) return <>{value.length ? value.map(item => field === 'disputedFacts' ? factLabels[item] ?? item : item).join(', ') : 'None recorded'}</>;
-  if (typeof value === 'object') return <EvidenceDate date={value} />;
+  if (typeof value === 'object') return 'precision' in value ? <EvidenceDate date={value} /> : <SummarySourceLinks sources={value} documents={documents} />;
+  if (['totalAssets', 'totalLiabilities', 'declaredNetWorth'].includes(field)) return <>{formatAmount(value)}</>;
   const labels: Record<string, Record<string, string>> = {
     assumptionMethod: assumptionLabels,
     provenanceType: provenanceLabels,
@@ -82,6 +87,7 @@ function CorrectionValue({ field, value }: { field: string; value: CorrectionCha
 
 const correctionTargetLabels: Record<CorrectionTargetType, string> = {
   person: 'Person metadata', tenure: 'Tenure evidence', filing: 'Filing metadata', source_document: 'Source Document metadata',
+  financial_summary: 'Summary Transcription', secondary_report: 'Related Reporting',
 };
 
 export function PersonProfile({ record }: { record: PersonRecord }) {
@@ -91,18 +97,30 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
     const office = record.offices.find(office => office.id === tenure.officeId && office.included);
     return office ? [{ tenure, office }] : [];
   });
+  const memberships = (record.rosterMemberships ?? []).filter(member => includedTenures.some(({ tenure }) => tenure.id === member.tenureId && tenure.verificationStatus !== 'unverified' && !tenure.disputedFacts.some(fact => fact === 'person' || fact === 'office')));
+  const years = [...new Set(record.filings.map(filing => filing.reportingDate.value.slice(0, 4)))].sort().reverse();
+  const sourceTipHref = `/source-tip?person=${encodeURIComponent(person.id)}`;
+  const timeline = record.financialSummaries.flatMap(summary => {
+    const filing = record.filings.find(filing => filing.id === summary.filingId);
+    return filing ? [{ summary, filing }] : [];
+  }).sort((a, b) => a.filing.reportingDate.value < b.filing.reportingDate.value ? -1 : a.filing.reportingDate.value > b.filing.reportingDate.value ? 1 : a.filing.id < b.filing.id ? -1 : 1);
 
   return (
     <article className="space-y-8">
       <header className="space-y-3 border-b border-gray-300 pb-6">
         <p className="archive-label">Person</p>
         <h1>{person.canonicalName}</h1>
+        <p className="archive-muted text-sm">Canonical Name</p>
         {person.nameVariants.length > 0 && (
           <div>
             <h2 className="text-lg">Name Variants</h2>
             <ul className="list-disc pl-5">{person.nameVariants.map(name => <li key={name}>{name}</li>)}</ul>
           </div>
         )}
+        {record.filings.length > 0 && <div><h2 className="text-lg">Filer Names</h2><ul className="list-disc pl-5">{[...new Set(record.filings.map(filing => filing.filerName))].map(name => <li key={name}>{name}</li>)}</ul><p className="archive-muted text-sm">Exact names recorded on acquired Source Documents.</p></div>}
+        {memberships.length > 0 && <div><h2 className="text-lg">Current included Tenures in reviewed rosters</h2><ul className="space-y-2">{memberships.map(membership => <li key={`${membership.snapshotId}-${membership.tenureId}`}>{record.offices.find(office => office.id === record.tenures.find(tenure => tenure.id === membership.tenureId)?.officeId)?.name}<p className="archive-muted text-sm">Roster Snapshot · Verified as of <time dateTime={membership.verifiedAsOf}>{membership.verifiedAsOf}</time></p></li>)}</ul></div>}
+        {includedTenures.some(({ tenure }) => tenure.endDate !== null && !memberships.some(member => member.tenureId === tenure.id)) && <div><h2 className="text-lg">Other included Tenures</h2><ul>{includedTenures.filter(({ tenure }) => tenure.endDate !== null && !memberships.some(member => member.tenureId === tenure.id)).map(({ tenure, office }) => <li key={tenure.id}>{office.name} · End date: <EvidenceDate date={tenure.endDate} /></li>)}</ul></div>}
+        {includedTenures.some(({ tenure }) => tenure.endDate === null && !memberships.some(member => member.tenureId === tenure.id)) && <p className="archive-muted text-sm">An unknown actual end does not establish current officeholding. See the Tenure evidence below.</p>}
       </header>
 
       {person.eligibility !== 'eligible' && (
@@ -120,34 +138,41 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
         {record.sourceDocuments.length === 0 && person.eligibility === 'eligible' && (
           <EmptyState>
             <p>The project has not acquired a Source Document for this Person. This does not establish that the Person failed to file a SALN.</p>
+            <p><a className="underline text-primary-700" href={sourceTipHref}>Suggest a Source Document</a></p>
           </EmptyState>
         )}
-        {record.filings.map(filing => {
+        {years.map(year => <section key={year} className="space-y-6" aria-labelledby={`${id}-year-${year}`}><h3 id={`${id}-year-${year}`}>Reporting periods in {year}</h3>{record.filings.filter(filing => filing.reportingDate.value.startsWith(year)).sort((a, b) => a.reportingDate.value < b.reportingDate.value ? 1 : a.reportingDate.value > b.reportingDate.value ? -1 : a.id < b.id ? -1 : 1).map(filing => {
           const documents = record.sourceDocuments.filter(document => document.filingId === filing.id);
           const hasReviewedTotals = record.financialSummaries.some(summary => summary.filingId === filing.id);
+          const summary = record.financialSummaries.find(summary => summary.filingId === filing.id);
           return (
             <section key={filing.id} aria-labelledby={`${id}-filing-${filing.id}`} className="space-y-4 border-b border-gray-300 pb-6">
               <div>
                 <p className="archive-label">Filing</p>
-                <h3 id={`${id}-filing-${filing.id}`}>Reporting Date: <EvidenceDate date={filing.reportingDate} /></h3>
+                <h4 id={`${id}-filing-${filing.id}`}>Reporting Date: <EvidenceDate date={filing.reportingDate} /></h4>
               </div>
               <dl className="grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[10rem_1fr]">
                 <dt className="font-semibold">Filer Name</dt><dd>{filing.filerName}</dd>
                 <dt className="font-semibold">Execution Date</dt><dd><EvidenceDate date={filing.executionDate} /></dd>
                 <dt className="font-semibold">Receipt Date</dt><dd><EvidenceDate date={filing.receiptDate} /></dd>
               </dl>
-              {!hasReviewedTotals && <p className="archive-muted">No reviewed summary totals are available for this Filing. Inspect the Source Document for the declared information.</p>}
+              {summary && <FinancialSummary summary={summary} documents={record.sourceDocuments} />}
+              {!hasReviewedTotals && <p className="archive-muted">Totals not transcribed. No reviewed summary totals are available for this Filing. Inspect the Source Document for the declared information.</p>}
               {documents.length === 0 ? <p>No Source Document is currently in the archive for this Filing.</p> : (
                 <ArchiveTable caption={`Source Documents for ${filing.filerName} (${filing.reportingDate.value})`}>
                   <thead><tr><th scope="col">Source Document</th><th scope="col">Provenance</th><th scope="col">Transcription Level</th><th scope="col">Actions</th></tr></thead>
                   <tbody>
                     {documents.map(document => {
+                      const copies = documents.filter(copy => copy.sha256 === document.sha256);
+                      if (copies[0].id !== document.id) return null;
                       const href = `/documents/${document.sha256}`;
                       return (
                         <tr key={document.id}>
                           <td className="min-w-[12rem]">
                             <p className="font-semibold break-words">{document.fileName}</p>
                             <p className="archive-muted">{document.mediaType} · {document.byteSize.toLocaleString('en-PH')} bytes</p>
+                            <p className="archive-muted">Availability: acquired copy</p>
+                            {copies.length > 1 && <details><summary>{copies.length} exact copies</summary><ul className="space-y-3">{copies.map(copy => <li key={copy.id}><p>{copy.fileName}: {copy.provenanceNote}</p>{copy.originalUrl && <a href={copy.originalUrl}>Original source</a>}<p>{provenanceLabels[copy.provenanceType]} · {transcriptionLabels[copy.transcriptionLevel]}</p><p>Acquisition Date: <EvidenceDate date={copy.acquisitionDate} /></p><p>Official Release Date: <EvidenceDate date={copy.officialReleaseDate} /></p><p>Archive Publication Date: {copy.archivePublicationDate}</p></li>)}</ul></details>}
                           </td>
                           <td className="min-w-[18rem] space-y-2">
                             <p className="font-semibold">{provenanceLabels[document.provenanceType]}</p>
@@ -174,8 +199,14 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
               )}
             </section>
           );
-        })}
+        })}</section>)}
       </section>
+
+      {timeline.length >= 2 && <section aria-labelledby={`${id}-timeline`} className="space-y-3"><h2 id={`${id}-timeline`}>Declared net-worth timeline</h2><p className="archive-muted">Only reviewed Summary Transcriptions are shown. Unrepresented periods have no implied value.</p><ol className="space-y-4 border-l-2 border-gray-300 pl-4">{timeline.map(({ summary, filing }) => <li key={filing.id}><a className="underline text-primary-700" href={`#${id}-filing-${filing.id}`}><EvidenceDate date={filing.reportingDate} /> · {formatAmount(summary.declaredNetWorth)}</a><p className="archive-muted text-sm">Filer Name: {filing.filerName}</p></li>)}</ol></section>}
+
+      {(record.relatedReports?.length ?? 0) > 0 && <section aria-labelledby={`${id}-reporting`} className="space-y-4"><h2 id={`${id}-reporting`}>Related reporting - not a SALN filing</h2><p className="archive-muted">These publications are Secondary Reports. They do not contribute to Filings, Archive counts, declared totals or coverage.</p><ul className="space-y-4">{record.relatedReports?.map(report => <li key={report.id}><h3><a className="underline text-primary-700" href={report.url}>{report.title}</a></h3><p className="archive-muted">{report.publisher} · Published: <EvidenceDate date={report.publishedDate} /></p><p>{report.note}</p></li>)}</ul></section>}
+
+      {person.eligibility === 'eligible' && <section aria-labelledby={`${id}-gaps`} className="space-y-3"><h2 id={`${id}-gaps`}>Archive Gaps</h2><p className="archive-label">Not currently in the archive</p><p>Coverage is limited to the acquired Source Documents listed here. An unrepresented reporting period does not establish a failure to file.</p><p><a className="underline text-primary-700" href={sourceTipHref}>Suggest a source for another reporting period</a></p></section>}
 
       <section aria-labelledby={`${id}-tenures`} className="space-y-4">
         <h2 id={`${id}-tenures`}>Public office and evidence</h2>
@@ -240,8 +271,8 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                   {Object.entries(correction.changes).map(([field, value]) => (
                     <div key={field}>
                       <dt className="font-semibold">{factLabels[field] ?? field}</dt>
-                      <dd>Previously: <CorrectionValue field={field} value={correction.previousValues[field as keyof CorrectionChanges]} /></dd>
-                      <dd>Corrected: <CorrectionValue field={field} value={value} /></dd>
+                      <dd>Previously: <CorrectionValue field={field} value={correction.previousValues[field as keyof CorrectionChanges]} documents={record.sourceDocuments} /></dd>
+                      <dd>Corrected: <CorrectionValue field={field} value={value} documents={record.sourceDocuments} /></dd>
                     </div>
                   ))}
                 </dl>

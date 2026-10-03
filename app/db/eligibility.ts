@@ -1,6 +1,12 @@
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
+import type { ArchiveReader } from "./client.server";
 import * as schema from "./schema";
 import { canonicalPersonId } from "./identities.server";
+
+export async function requireEligiblePerson(db: ArchiveReader, personId: string) {
+  const [person] = await db.select({ id: schema.people.id }).from(schema.people).where(and(eq(schema.people.id, canonicalPersonId(personId)), personIsEligible())).limit(1);
+  if (!person) throw new Error("A Filing requires an Archive-Eligible Person");
+}
 
 function effectiveTenureField(field: "verificationStatus" | "disputedFacts") {
   const original = field === "verificationStatus" ? schema.tenures.verificationStatus : schema.tenures.disputedFacts;

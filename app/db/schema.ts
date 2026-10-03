@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { check, index, integer, primaryKey, sqliteTable, text, uniqueIndex, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
-import type { Citation, Constituency, CorrectionChanges, CorrectionTargetType, Jurisdiction, Office, RosterSnapshot, SourceDocument, Tenure } from "../archive/types";
+import type { Citation, Constituency, CorrectionChanges, CorrectionTargetType, FinancialSummarySources, Jurisdiction, Office, RosterSnapshot, SourceDocument, Tenure } from "../archive/types";
 
 export const people = sqliteTable("people", {
   id: text("id").primaryKey(),
@@ -141,13 +141,13 @@ export const sourceDocuments = sqliteTable("source_documents", {
 export const manifestApplications = sqliteTable("manifest_applications", {
   id: text("id").primaryKey(),
   version: integer("version").notNull(),
-  kind: text("kind", { enum: ["person", "filing", "correction", "identities", "roster"] }).notNull(),
+  kind: text("kind", { enum: ["person", "filing", "correction", "identities", "roster", "summary", "report"] }).notNull(),
   digest: text("digest").notNull(),
   canonicalPayload: text("canonical_payload").notNull(),
   appliedAt: text("applied_at").notNull(),
 }, (t) => [
   check("manifest_version", sql`${t.version} = 1`),
-  check("manifest_kind", sql`${t.kind} in ('person','filing','correction','identities','roster')`),
+  check("manifest_kind", sql`${t.kind} in ('person','filing','correction','identities','roster','summary','report')`),
   check("manifest_digest", sql`length(${t.digest}) = 64 and ${t.digest} not glob '*[^0-9a-f]*'`),
   check("manifest_payload", sql`json_valid(${t.canonicalPayload}) and json_type(${t.canonicalPayload}) = 'object'`),
 ]);
@@ -166,7 +166,7 @@ export const editorialCorrections = sqliteTable("editorial_corrections", {
   citations: text("citations", { mode: "json" }).$type<Citation[]>().notNull(),
 }, (t) => [
   uniqueIndex("corrections_target_revision").on(t.targetType, t.targetId, t.revision),
-  check("correction_target_type", sql`${t.targetType} in ('person','tenure','filing','source_document')`),
+  check("correction_target_type", sql`${t.targetType} in ('person','tenure','filing','source_document','financial_summary','secondary_report')`),
   check("correction_revision", sql`${t.revision} > 0 and ((${t.revision} = 1 and ${t.previousCorrectionId} is null) or (${t.revision} > 1 and ${t.previousCorrectionId} is not null))`),
   check("correction_reason", sql`length(trim(${t.reason})) > 0`),
   check("correction_changes", sql`json_valid(${t.changes}) and json_type(${t.changes}) = 'object'`),
@@ -203,6 +203,30 @@ export const legacyDocuments = sqliteTable("legacy_documents", {
   sha256: text("sha256").notNull(),
   manifestId: text("manifest_id").notNull().references(() => manifestApplications.id),
 });
+
+export const financialSummaries = sqliteTable("financial_summaries", {
+  id: text("id").primaryKey(),
+  filingId: text("filing_id").notNull().references(() => filings.id),
+  sources: text("sources", { mode: "json" }).$type<FinancialSummarySources>().notNull(),
+  totalAssets: text("total_assets").notNull(),
+  totalLiabilities: text("total_liabilities").notNull(),
+  declaredNetWorth: text("declared_net_worth").notNull(),
+  currency: text("currency", { enum: ["PHP"] }).notNull(),
+  reviewedAt: text("reviewed_at").notNull(),
+  reviewedBy: text("reviewed_by").notNull(),
+}, (t) => [uniqueIndex("summary_filing").on(t.filingId), check("summary_currency", sql`${t.currency} = 'PHP'`), check("summary_sources", sql`json_valid(${t.sources}) and json_type(${t.sources}) = 'object'`)]);
+
+export const secondaryReports = sqliteTable("secondary_reports", {
+  id: text("id").primaryKey(),
+  personId: text("person_id").notNull().references(() => people.id),
+  title: text("title").notNull(),
+  url: text("url").notNull(),
+  publisher: text("publisher").notNull(),
+  publishedDate: text("published_date"),
+  note: text("note").notNull(),
+  reviewedAt: text("reviewed_at").notNull(),
+  reviewedBy: text("reviewed_by").notNull(),
+}, (t) => [index("reports_person").on(t.personId)]);
 
 export const rosterSnapshots = sqliteTable("roster_snapshots", {
   id: text("id").primaryKey().references(() => manifestApplications.id),

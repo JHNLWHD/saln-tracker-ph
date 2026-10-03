@@ -1,0 +1,23 @@
+{
+  "id": "report:pna-1261401",
+  "version": 1,
+  "kind": "report",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex source review"
+    },
+    "report": {
+      "id": "report-pna-1261401",
+      "personId": "person-risa-hontiveros",
+      "title": "Senate outlines procedures for requesting SALN",
+      "url": "https://www.pna.gov.ph/articles/1261401",
+      "publisher": "Philippine News Agency",
+      "publishedDate": {
+        "value": "2025-10-20",
+        "precision": "day"
+      },
+      "note": "PNA attributes the published SALN image to Senator Risa Hontiveros. This article is Related Reporting and is not the underlying Source Document."
+    }
+  }
+}
