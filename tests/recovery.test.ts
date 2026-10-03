@@ -47,9 +47,13 @@ test('production verification binds actual checkout and authenticated database s
   if (execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], { encoding: 'utf8' }).trim()) assert.throws(() => assertProductionCheckout(revision), /clean checkout/);
   else assert.doesNotThrow(() => assertProductionCheckout(revision));
   const url = 'libsql://production.example.invalid', env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token' };
-  assert.equal(productionDatabase(url, env).url, url);
-  assert.throws(() => productionDatabase('libsql://staging.example.invalid', env));
-  assert.throws(() => productionDatabase(url, { TURSO_DATABASE_URL: url }));
+  assert.equal(productionDatabase(url, url, env).url, url);
+  assert.throws(() => productionDatabase('libsql://staging.example.invalid', url, env));
+  assert.throws(() => productionDatabase(url, url, { TURSO_DATABASE_URL: url }));
+  for (const approved of [undefined, null, '']) assert.throws(() => productionDatabase(url, approved, env), /accepted release plan/);
+  const staging = 'libsql://staging.example.invalid';
+  assert.throws(() => productionDatabase(staging, url, { ...env, TURSO_DATABASE_URL: staging }), /accepted release plan/);
+  assert.throws(() => productionDatabase(url, url, { ...env, STAGING_TURSO_HOST: 'production.example.invalid' }), /staging database/);
   const directory = await mkdtemp(join(tmpdir(), 'saln-production-binding-')), file = join(directory, 'backup.sql');
   const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
   const sql = "CREATE TABLE private_archive (id INTEGER, raw BLOB); INSERT INTO private_archive VALUES (9007199254740993, X'00ff');";
