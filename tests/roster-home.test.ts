@@ -62,6 +62,19 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
   } finally { await closeArchive(); await state.close(); for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } }
 });
 
+test('a later review replaces an equal-date Snapshot even when its ID sorts last', async () => {
+  const state = await setup();
+  try {
+    const replacement = await json('0005-executive-roster-2026-09-28.json');
+    replacement.id = 'z-replacement'; replacement.payload.review.reviewedAt = '2026-10-03';
+    replacement.payload.members = [replacement.payload.members[1]];
+    await applyReviewedManifest(state.db, replacement);
+    const home = await createDbArchive(state.db).readHome();
+    assert.equal(home.rosters[0].snapshot.id, 'z-replacement');
+    assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
+  } finally { await state.close(); }
+});
+
 test('Roster reads exclude Tenures whose corrected boundaries no longer include the Snapshot date', async () => {
   for (const changes of [{ startDate: { value: '2027', precision: 'year' } }, { endDate: { value: '2025', precision: 'year' } }]) {
     const state = await setup();

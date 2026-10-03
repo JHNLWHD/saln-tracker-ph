@@ -83,10 +83,17 @@ export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record:
   if (entries.length) await tx.insert(schema.rosterMembers).values(entries);
 }
 
+/** Equal-date replacements use their later review before the stable ID tie-breaker. */
+export function isLatestRosterSnapshot() {
+  return sql`not exists (select 1 from roster_snapshots newer where newer.scope = ${schema.rosterSnapshots.scope}
+    and (newer.verified_as_of > ${schema.rosterSnapshots.verifiedAsOf} or (newer.verified_as_of = ${schema.rosterSnapshots.verifiedAsOf}
+      and (newer.reviewed_at > ${schema.rosterSnapshots.reviewedAt} or (newer.reviewed_at = ${schema.rosterSnapshots.reviewedAt} and newer.id < ${schema.rosterSnapshots.id})))))`;
+}
+
 export async function readRosterSnapshots(tx: ArchiveReader, homepage = false): Promise<RosterSnapshot[]> {
   const snapshots = await tx.select({ id: schema.rosterSnapshots.id, scope: schema.rosterSnapshots.scope, verifiedAsOf: schema.rosterSnapshots.verifiedAsOf, reviewedAt: schema.rosterSnapshots.reviewedAt })
-    .from(schema.rosterSnapshots).where(homepage ? and(inArray(schema.rosterSnapshots.scope, ["executive", "senate", "speaker"]), sql`not exists (select 1 from roster_snapshots newer where newer.scope = ${schema.rosterSnapshots.scope} and (newer.verified_as_of > ${schema.rosterSnapshots.verifiedAsOf} or (newer.verified_as_of = ${schema.rosterSnapshots.verifiedAsOf} and newer.id < ${schema.rosterSnapshots.id})))`) : undefined)
-    .orderBy(schema.rosterSnapshots.scope, desc(schema.rosterSnapshots.verifiedAsOf), schema.rosterSnapshots.id);
+    .from(schema.rosterSnapshots).where(homepage ? and(inArray(schema.rosterSnapshots.scope, ["executive", "senate", "speaker"]), isLatestRosterSnapshot()) : undefined)
+    .orderBy(schema.rosterSnapshots.scope, desc(schema.rosterSnapshots.verifiedAsOf), desc(schema.rosterSnapshots.reviewedAt), schema.rosterSnapshots.id);
   const members = await tx.select().from(schema.rosterMembers).where(inArray(schema.rosterMembers.snapshotId, snapshots.map(row => row.id))).orderBy(schema.rosterMembers.snapshotId, schema.rosterMembers.position);
   return snapshots.map(snapshot => ({ ...snapshot, members: members.filter(member => member.snapshotId === snapshot.id).map(({ tenureId, citations }) => ({ tenureId, citations })) }));
 }
