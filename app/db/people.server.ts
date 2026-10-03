@@ -115,7 +115,9 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
         if (!reportingDate) throw new Error("Stored Filing has no Reporting Date");
         return projectCorrections("filing", { ...filing, reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) }, corrections);
       });
-      record.sourceDocuments = documentRows.map(({ document }) => projectCorrections("source_document", sourceDocumentFromRow(document), corrections));
+      record.filings.sort((a, b) => a.reportingDate.value < b.reportingDate.value ? -1 : a.reportingDate.value > b.reportingDate.value ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+      record.sourceDocuments = documentRows.map(({ document }) => projectCorrections("source_document", sourceDocumentFromRow(document), corrections))
+        .sort((a, b) => a.archivePublicationDate < b.archivePublicationDate ? -1 : a.archivePublicationDate > b.archivePublicationDate ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
     }
     record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? row.target.id === person.id :
       row.target.type === "tenure" ? record.tenures.some(tenure => tenure.id === row.target.id) :

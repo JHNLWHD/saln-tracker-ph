@@ -122,6 +122,23 @@ test('the first correction cannot predate its original review, while the same da
   } finally { await state.close(); }
 });
 
+test('profile ordering follows corrected dates and stable IDs', async () => {
+  const state = await setup();
+  try {
+    const later = structuredClone(filing);
+    later.id = 'filing:second'; later.payload.filing.id = 'second'; later.payload.filing.reportingDate.value = '2025';
+    later.payload.document.id = 'second-document'; later.payload.document.filingId = 'second'; later.payload.document.archivePublicationDate = '2026-09-26T12:00:00.000Z';
+    await applyReviewedManifest(state.db, later, { bytes, storage: state.storage });
+    await applyReviewedManifest(state.db, correction('new-period', 'filing', 'filing', { reportingDate: { value: '2026', precision: 'year' } }));
+    await applyReviewedManifest(state.db, correction('new-publication', 'source_document', 'document', { archivePublicationDate: '2026-09-27T12:00:00.000Z' }));
+    const profile = (await state.archive.findPersonBySlug('synthetic'))!;
+    assert.deepEqual(profile.filings.map(row => row.id), ['second', 'filing']);
+    assert.deepEqual(profile.sourceDocuments.map(row => row.id), ['second-document', 'document']);
+    await applyReviewedManifest(state.db, correction('tied-period', 'filing', 'filing', { reportingDate: { value: '2025', precision: 'year' } }, ['reportingDate'], 'new-period'));
+    assert.deepEqual((await state.archive.findPersonBySlug('synthetic'))!.filings.map(row => row.id), ['filing', 'second']);
+  } finally { await state.close(); }
+});
+
 test("corrections project current metadata and history while original manifests and bytes replay unchanged", async () => {
   const state = await setup();
   try {
