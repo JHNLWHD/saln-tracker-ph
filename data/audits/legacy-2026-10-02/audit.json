@@ -1,0 +1,2068 @@
+{
+  "schemaVersion": 1,
+  "acquisition": {
+    "scope": "public_reader",
+    "completeDatabaseDocumentTree": false,
+    "startedAt": "2026-10-01T19:10:36.833Z",
+    "finishedAt": "2026-10-01T19:10:37.427Z",
+    "readTime": null,
+    "dataSha256": "b1c4adc84c46fc6a4feaf2beac46f720a5b11037781a30e5efac043d0045f1df",
+    "rawFiles": [
+      {
+        "sha256": "6ed90519412ad9873781cd16afb98b872c68cf61c270ba7635f41aed7c7cc4be",
+        "byteSize": 161011
+      },
+      {
+        "sha256": "1df4db72bffe95b59154992bbac317ab14e6a5d66501685d6dab3df18ff57f60",
+        "byteSize": 405372
+      },
+      {
+        "sha256": "9f4f14e4f54a6c21b803b6cef0515bcd215d35f72fd470bd928123ddb97a3055",
+        "byteSize": 161011
+      },
+      {
+        "sha256": "1df4db72bffe95b59154992bbac317ab14e6a5d66501685d6dab3df18ff57f60",
+        "byteSize": 405372
+      }
+    ],
+    "writesPerformed": false
+  },
+  "classification": "Non-canonical migration audit",
+  "metadataPromotion": "None. Candidate periods and associations are review inputs, not Filings or Verified Tenures.",
+  "counts": {
+    "legacyPeople": 49,
+    "reviewedLegacyIdentityRecords": 49,
+    "explicitIdentityMatches": 2,
+    "unmergedLegacyIdentityRecords": 47,
+    "referencedPersonRecords": 51,
+    "survivingPersonIdentities": 49,
+    "profileKeys": 56,
+    "canonicalProfileRedirects": 8,
+    "formerIdentifiers": 42,
+    "legacyEntries": 129,
+    "candidatePersonEntryRelationships": 129,
+    "candidatePdfEntryRelationships": 51,
+    "repositoryPdfs": 51,
+    "repositoryPdfBytes": 472348069,
+    "repositoryDistinctChecksums": 51,
+    "unreferencedPdfs": 0,
+    "unresolvedPdfReferences": 0,
+    "acquiredSourceDocumentEntries": 0,
+    "secondaryReports": 0,
+    "outOfScopeRecords": 0,
+    "reviewQueueEntries": 129,
+    "identityDocumentReviewQueue": 0,
+    "genericSubmittedStatuses": 129,
+    "yearEndDateInputs": 58
+  },
+  "pdfs": [
+    {
+      "path": "public/saln/acosta/ryan-alvin-acosta-2022.pdf",
+      "publicPath": "/saln/acosta/ryan-alvin-acosta-2022.pdf",
+      "byteSize": 4255656,
+      "sha256": "7b711c50cc3f2a3262c65d3493715f7a79d40f4947edf8f50351b66f18200aea",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-848f3f9cea0fa6da0000",
+          "personId": "person-legacy-c3a9e17ea8d8fa1c",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/acosta/ryan-alvin-acosta-2023.pdf",
+      "publicPath": "/saln/acosta/ryan-alvin-acosta-2023.pdf",
+      "byteSize": 4449382,
+      "sha256": "398f68f2e71e34a2a569e133b3e4adac43a54263f00968237ccb85996c571cbf",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-d55ee80751a17dc13af6",
+          "personId": "person-legacy-c3a9e17ea8d8fa1c",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/acosta/ryan-alvin-acosta-2024.pdf",
+      "publicPath": "/saln/acosta/ryan-alvin-acosta-2024.pdf",
+      "byteSize": 5072634,
+      "sha256": "268e82bcd667a9f75c077aee8dbe0923d5bd271e4ec9aae23dec1f7513aa75bb",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-eede85a77f25509a3996",
+          "personId": "person-legacy-c3a9e17ea8d8fa1c",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/aimee-ferolino/2020-aimee-ampoloquio.pdf",
+      "publicPath": "/saln/aimee-ferolino/2020-aimee-ampoloquio.pdf",
+      "byteSize": 15389564,
+      "sha256": "82a093a5a6a6145e4ad52c6a25af9e8e5c78d7b5896707436c1f87a8f8771feb",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-418ff185cc911412aead",
+          "personId": "person-legacy-9d3d9a553aea3124",
+          "reportingPeriod": "2020"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/aimee-ferolino/2021-aimee-ampoloquio.pdf",
+      "publicPath": "/saln/aimee-ferolino/2021-aimee-ampoloquio.pdf",
+      "byteSize": 9835924,
+      "sha256": "25be3d43cf664ad5f9b49c1b426f020a1f5ec10ffee316342a772cb8a614f680",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-ea23aee9a12a1e7d2d52",
+          "personId": "person-legacy-9d3d9a553aea3124",
+          "reportingPeriod": "2021"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/aimee-ferolino/2022-aimee-ampoloquio.pdf",
+      "publicPath": "/saln/aimee-ferolino/2022-aimee-ampoloquio.pdf",
+      "byteSize": 10537688,
+      "sha256": "598e64ee50e684198fdda94859ed2df1d93d57c056cfbacd546101c9a2b1a18d",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-e5eaa422a9187bf2697b",
+          "personId": "person-legacy-9d3d9a553aea3124",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/aimee-ferolino/2023-aimee-ampoloquio.pdf",
+      "publicPath": "/saln/aimee-ferolino/2023-aimee-ampoloquio.pdf",
+      "byteSize": 10702482,
+      "sha256": "f1466068c95c58c342e0b0e31fbc3a5b27bbe0e892f862f4cc2d8c41446528a3",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-78ef03e2f05e11d6ed24",
+          "personId": "person-legacy-9d3d9a553aea3124",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/aimee-ferolino/2024-aimee-ampoloquio.pdf",
+      "publicPath": "/saln/aimee-ferolino/2024-aimee-ampoloquio.pdf",
+      "byteSize": 10368449,
+      "sha256": "b37c119dab13911eda082386df202e295d162520811136a7799540cf3fd3cb88",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-57bba1541b5e21fa3260",
+          "personId": "person-legacy-9d3d9a553aea3124",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/barua-yap/2024-marilyn-barua-yap.pdf",
+      "publicPath": "/saln/barua-yap/2024-marilyn-barua-yap.pdf",
+      "byteSize": 7455154,
+      "sha256": "ec5a3a22244168d42b5a1c8526f4aee0b142b1e6cda7d0e20c9a909170f476c3",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-5cfd609e2879e8b1b564",
+          "personId": "person-legacy-71c7fec7ea76dd68",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/casingal/2025-maria-norina-tangaro-casingal.pdf",
+      "publicPath": "/saln/casingal/2025-maria-norina-tangaro-casingal.pdf",
+      "byteSize": 919403,
+      "sha256": "e63600cd87bb447ad62507a5bca4280c4bd2c11c16bb161b6715ff3abd4de6da",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-2f0c6d05473fd07e5b22",
+          "personId": "person-legacy-313874c8b851d92d",
+          "reportingPeriod": "2025"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/cordoba/2022-cordoba.pdf",
+      "publicPath": "/saln/cordoba/2022-cordoba.pdf",
+      "byteSize": 972458,
+      "sha256": "9c8487292c532307401cf75ff4dd81ab823ad4c84f51c58546530fb80e52c31b",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-265041ed7e67a1539b3c",
+          "personId": "person-legacy-3fa1604461106c0b",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/cordoba/2023-cordoba.pdf",
+      "publicPath": "/saln/cordoba/2023-cordoba.pdf",
+      "byteSize": 982215,
+      "sha256": "677a1ee49e940e3dfe2482f8320695ce086cffc45117f9282f8d9b6da4f84dbc",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-169481e343642b472b61",
+          "personId": "person-legacy-3fa1604461106c0b",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/cordoba/2024-cordoba.pdf",
+      "publicPath": "/saln/cordoba/2024-cordoba.pdf",
+      "byteSize": 933491,
+      "sha256": "6786b5fdc4f717f2b92f36b791d2c1cc788711618a8875d14b75cf3f8c30ae0f",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-3ccece317ae91ca22741",
+          "personId": "person-legacy-3fa1604461106c0b",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/ernesto-maceda/2022-ernesto-ferdinand-p.-maceda.pdf",
+      "publicPath": "/saln/ernesto-maceda/2022-ernesto-ferdinand-p.-maceda.pdf",
+      "byteSize": 2031510,
+      "sha256": "1379f148ce858001fd595c1a44da23849fc822e56e0a770286ac4d5b5995655b",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-08209ef09f39e27ab325",
+          "personId": "person-legacy-76c116fa899e8ecc",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/ernesto-maceda/2023-ernesto-ferdinand-p.-maceda.pdf",
+      "publicPath": "/saln/ernesto-maceda/2023-ernesto-ferdinand-p.-maceda.pdf",
+      "byteSize": 2211712,
+      "sha256": "f3472c65a6f38bcc3c0d1b3ad9af7e65e20164e97a1b425b0c1d287b1e6ba01c",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9de1c8c974a4ea214ddb",
+          "personId": "person-legacy-76c116fa899e8ecc",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/ferdinand-marcos-jr./2022-marcos-jr..pdf",
+      "publicPath": "/saln/ferdinand-marcos-jr./2022-marcos-jr..pdf",
+      "byteSize": 14229742,
+      "sha256": "bfc7aa300eb84285ba80a4614dcc65fed8eb1464ac4d4a0c7acca8b81d6b344e",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-cb7f7c1458d9481582e1",
+          "personId": "person-ferdinand-marcos-jr",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/ferdinand-marcos-jr./2023-marcos-jr..pdf",
+      "publicPath": "/saln/ferdinand-marcos-jr./2023-marcos-jr..pdf",
+      "byteSize": 18150640,
+      "sha256": "499121a8ace4bff0f215f4778f2ca21de5642779a24da58e782cfa4150a65eea",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-b52d77d316ce5234e0a2",
+          "personId": "person-ferdinand-marcos-jr",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/ferdinand-marcos-jr./2024-marcos-jr..pdf",
+      "publicPath": "/saln/ferdinand-marcos-jr./2024-marcos-jr..pdf",
+      "byteSize": 16594037,
+      "sha256": "9c5c6c512c5d959cfc6bfec42d4126886ff5822ba72a113b3e8c339b0afa4628",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9e1fa8406a4f4504152c",
+          "personId": "person-ferdinand-marcos-jr",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/garcia/george-erwin-garcia-2022.pdf",
+      "publicPath": "/saln/garcia/george-erwin-garcia-2022.pdf",
+      "byteSize": 2634617,
+      "sha256": "06a97c4cbd2ee26f67a821d6182366aee40bdbcac03fe287334ebed46674ff5b",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-bc6661655f2234005f79",
+          "personId": "person-legacy-b4e6313153f9aa8a",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/garcia/george-erwin-garcia-2023.pdf",
+      "publicPath": "/saln/garcia/george-erwin-garcia-2023.pdf",
+      "byteSize": 1958378,
+      "sha256": "60171b41850649e21e53d26e513357f51e39fdbe31103532bdfece0c7ca06ba9",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-1efcbd461f0f11d20beb",
+          "personId": "person-legacy-b4e6313153f9aa8a",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/garcia/george-garcia-2024.pdf",
+      "publicPath": "/saln/garcia/george-garcia-2024.pdf",
+      "byteSize": 1842763,
+      "sha256": "db3bff0943aff5c4bef5fb22fd6c8adc19ad5ebc2b746d8675428754cbad208e",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-55140b48cea19c4e9964",
+          "personId": "person-legacy-b4e6313153f9aa8a",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/lipana/mario-lipana-2022.pdf",
+      "publicPath": "/saln/lipana/mario-lipana-2022.pdf",
+      "byteSize": 837050,
+      "sha256": "cf7a2cd9000716af4fb33e2f75612acf223b2c26f56bda6a3fb8ebf5abbff925",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-5ef548fc2de9d4eafd7f",
+          "personId": "person-legacy-53a67dd214c5ebe5",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/lipana/mario-lipana-2023.pdf",
+      "publicPath": "/saln/lipana/mario-lipana-2023.pdf",
+      "byteSize": 930694,
+      "sha256": "f194ec42d55a57f39d1980c2d88cd6491c7d4fc7554cdd50aa12e1b2ecbf9015",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-4e1869f08c50a17855f5",
+          "personId": "person-legacy-53a67dd214c5ebe5",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/lipana/mario-lipana-2024.pdf",
+      "publicPath": "/saln/lipana/mario-lipana-2024.pdf",
+      "byteSize": 958972,
+      "sha256": "8ddbaf042752a21580186fd434772fa9de75f25c315cc87ecaa7053462977658",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-087c4ae2deaf56b27d0d",
+          "personId": "person-legacy-53a67dd214c5ebe5",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/malilin/2025-malilin.pdf",
+      "publicPath": "/saln/malilin/2025-malilin.pdf",
+      "byteSize": 12710750,
+      "sha256": "3a2e71ee0a579bb76a185d443c019dd93355a8bfdd7829a15ee2aea45b02cc43",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-270d8f5e4dbde3af8426",
+          "personId": "person-legacy-538c3fb72989bc8e",
+          "reportingPeriod": "2025"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/nelson-celis/2022-nelson-celis.pdf",
+      "publicPath": "/saln/nelson-celis/2022-nelson-celis.pdf",
+      "byteSize": 12340662,
+      "sha256": "54221c320d835adf1c6f1d15c166c86cf3bd1a8ac4394e70ccc01a89809bc9d1",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-70c24be4fcf98fab759c",
+          "personId": "person-legacy-a2ab3e7844e0d2fb",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/nelson-celis/2023-nelson-celis.pdf",
+      "publicPath": "/saln/nelson-celis/2023-nelson-celis.pdf",
+      "byteSize": 12516670,
+      "sha256": "76ba4c07eccf0396333b4606440208d81114f991347a61e211c497e83a0d5abd",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-64f0b6b5286a28a13b48",
+          "personId": "person-legacy-a2ab3e7844e0d2fb",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/nelson-celis/2024-nelson-celis.pdf",
+      "publicPath": "/saln/nelson-celis/2024-nelson-celis.pdf",
+      "byteSize": 19355208,
+      "sha256": "a4dbd121ce1fa08e44b12038d6ad6f28352c86a15d1bf063c482e05c674cb06d",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9f028ebdaa6210315459",
+          "personId": "person-legacy-a2ab3e7844e0d2fb",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/pangulayan/2025-luis-meinrado-pangulayan.pdf",
+      "publicPath": "/saln/pangulayan/2025-luis-meinrado-pangulayan.pdf",
+      "byteSize": 15604116,
+      "sha256": "11b906931586b471f4998e1462dc1e2e19617ecf8dfb2ea5cd5478fd6321c8d3",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9106b92f32843ed74e68",
+          "personId": "person-legacy-7efa0a4aa27373a6",
+          "reportingPeriod": "2025"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/pipo/2025-noli-pipo.pdf",
+      "publicPath": "/saln/pipo/2025-noli-pipo.pdf",
+      "byteSize": 20147293,
+      "sha256": "79ec95b3c70b4cbb03649a4956dc66d6a6974150862d6f36e0b844abaa78c521",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-786e6ec98e99c0295578",
+          "personId": "person-legacy-0c253d86ab8f8472",
+          "reportingPeriod": "2025"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rey-bulay/2022-rey-e.-bulay.pdf",
+      "publicPath": "/saln/rey-bulay/2022-rey-e.-bulay.pdf",
+      "byteSize": 905644,
+      "sha256": "88bfc72c174b4ee28cc4d16a6e004f39c4bdab776c120cd13cb4b0f8a721fcdb",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9a3dbabe4e0f80c5ff97",
+          "personId": "person-legacy-452693862ce8d8b7",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rey-bulay/2023-rey-e.-bulay.pdf",
+      "publicPath": "/saln/rey-bulay/2023-rey-e.-bulay.pdf",
+      "byteSize": 940091,
+      "sha256": "ef9a41f3f41bb875ca94dd2a5fc1add413a18ba34395386e9944778b6d15af79",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-28e0a4644edc25c3da11",
+          "personId": "person-legacy-452693862ce8d8b7",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rey-bulay/2024-rey-e.-bulay.pdf",
+      "publicPath": "/saln/rey-bulay/2024-rey-e.-bulay.pdf",
+      "byteSize": 874272,
+      "sha256": "7a79e71972b1b1283082e8064faf348c13968f97ca13194715ae3b14fac0855c",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-b7a3edea6b689ae35a46",
+          "personId": "person-legacy-452693862ce8d8b7",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2016-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2016-rodrigo-duterte.pdf",
+      "byteSize": 28517097,
+      "sha256": "e6cb61a61b6f5b4d35cf1b3e47f5745d5d2d0bfdc2a983ed84b722801bd290fa",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-d3beaaba1e39f9e095f4",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2016"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2017-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2017-rodrigo-duterte.pdf",
+      "byteSize": 22653034,
+      "sha256": "6e23977b6e544650c524fd51f322bd77e12241ae9d5b2e3c8b75d062b0e4d0b5",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-a29c5f35039a305ace93",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2017"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2018-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2018-rodrigo-duterte.pdf",
+      "byteSize": 22624375,
+      "sha256": "d27a0f6a263cc0a969c1c1f0a80fc1547904ec004d3c4fbab62fe8b24f0ecf4a",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-a87e038bc137d656e795",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2018"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2019-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2019-rodrigo-duterte.pdf",
+      "byteSize": 29890089,
+      "sha256": "d282423762e0feb52e420190c9ee377f6b70eac3e49ad846ddec0cc19fa63c72",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-2f8fba8d22de0078e001",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2019"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2020-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2020-rodrigo-duterte.pdf",
+      "byteSize": 21051287,
+      "sha256": "a329a64dc6e9bd94b1425f17fe80061a06c0df1aea822fe660d0d3dd4e560235",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-8f294e0593ded4f61899",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2020"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2021-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2021-rodrigo-duterte.pdf",
+      "byteSize": 21063372,
+      "sha256": "89b4f1c806db97e24ec521468ef148fd2d1f0c65ebd22913653bd2bd33bd7e64",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-5c6682d0882afdbe1a04",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2021"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/rodrigo-duterte/2022-rodrigo-duterte.pdf",
+      "publicPath": "/saln/rodrigo-duterte/2022-rodrigo-duterte.pdf",
+      "byteSize": 20401730,
+      "sha256": "2677f4843b43d349cd924e109a6109b46dc09459b096ecf0c98156cd6fa4b656",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-cb2a2e6abcce49f579a9",
+          "personId": "person-legacy-f5ca82aaac3b41d7",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2018-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2018-martires.pdf",
+      "byteSize": 1188864,
+      "sha256": "47305f4ed83c4334cc0aaac1befe12887b2cb0053e061ab48c92404aad0739f0",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-aad0bf01b21f284914d2",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2018"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2019-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2019-martires.pdf",
+      "byteSize": 1043278,
+      "sha256": "07b18759b712b31841b91f95a6191cbdc3284a7e9f80ac2b90b6d92c9b95237b",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-0cafdb77b57124934104",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2019"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2020-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2020-martires.pdf",
+      "byteSize": 1339389,
+      "sha256": "1ec49cd0bd31f1c0cd788f2dbfa625f1b31f88bf0eef75c2975c7fdda4e211a9",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-c4f8a865953af22b23ea",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2020"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2021-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2021-martires.pdf",
+      "byteSize": 1203360,
+      "sha256": "ec60e57447a32ab3871ea5f0aebed40052767ee2c4ec76dc2eebbf20329d29a6",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-f72e47eb85ed8fde16d4",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2021"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2022-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2022-martires.pdf",
+      "byteSize": 1625904,
+      "sha256": "77996f6510a1db0bd03c65095e6b465b7df4616c3e032c654473e074466f8c36",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-5673ed4a5ebeaa6b04f4",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2023-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2023-martires.pdf",
+      "byteSize": 1981645,
+      "sha256": "2422b9d1a5f6acb7da716a2942a362f2c46a1563c70b89dc63dca0374edaeb70",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-f9b2281028f3d4760492",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/samuel-martires/2024-martires.pdf",
+      "publicPath": "/saln/samuel-martires/2024-martires.pdf",
+      "byteSize": 1161453,
+      "sha256": "d3621a21bc168f4c1ed66d4c702ba08dd1ba099b6ba43d18dbe1b2571f2846d3",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-0e782802c1101afe7f20",
+          "personId": "person-legacy-79d57a4dc94c60e4",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/sara-duterte/2022-sara-duterte.pdf",
+      "publicPath": "/saln/sara-duterte/2022-sara-duterte.pdf",
+      "byteSize": 16923220,
+      "sha256": "df89154d948ef536887cc54f6bed5227ddb9969ce0f61bdff14c761260dbe6fb",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-1017b6d461a412894285",
+          "personId": "person-legacy-86726305bdc8e680",
+          "reportingPeriod": "2022"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/sara-duterte/2023-sara-duterte.pdf",
+      "publicPath": "/saln/sara-duterte/2023-sara-duterte.pdf",
+      "byteSize": 18448219,
+      "sha256": "c028eb7c1c941453600a8a5d31a4d1aff62e9aef9c2add212384db0768f59153",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-9f144299ae340e433e93",
+          "personId": "person-legacy-86726305bdc8e680",
+          "reportingPeriod": "2023"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/sara-duterte/2024-sara-duterte.pdf",
+      "publicPath": "/saln/sara-duterte/2024-sara-duterte.pdf",
+      "byteSize": 20891259,
+      "sha256": "228f8a86169357cae2f96673de8ba52872464998842c99d29fd0265ef50dc6ca",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-f85953ee9bd65c70bce5",
+          "personId": "person-legacy-86726305bdc8e680",
+          "reportingPeriod": "2024"
+        }
+      ]
+    },
+    {
+      "path": "public/saln/sara-duterte/2025-sara-duterte.pdf",
+      "publicPath": "/saln/sara-duterte/2025-sara-duterte.pdf",
+      "byteSize": 691173,
+      "sha256": "e0955dc06306b5db34589269386175935cc92ada687723d19bd02510cb6a99dc",
+      "pdfHeader": true,
+      "candidateAssociations": [
+        {
+          "entryId": "legacy-entry-4d8a1e089c317816bffc",
+          "personId": "person-legacy-86726305bdc8e680",
+          "reportingPeriod": "2025"
+        }
+      ]
+    }
+  ],
+  "documentReviewQueue": [],
+  "entries": [
+    {
+      "id": "legacy-entry-023f5fe03f4aee4beb3d",
+      "candidatePersonId": "person-risa-hontiveros",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-08209ef09f39e27ab325",
+      "candidatePersonId": "person-legacy-76c116fa899e8ecc",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/ernesto-maceda/2022-ernesto-ferdinand-p.-maceda.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-0857280081493192cc38",
+      "candidatePersonId": "person-legacy-11c2cbd87a3ec403",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-087c4ae2deaf56b27d0d",
+      "candidatePersonId": "person-legacy-53a67dd214c5ebe5",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/lipana/mario-lipana-2024.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-0cafdb77b57124934104",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2019-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-0e782802c1101afe7f20",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2024-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-0f19e08d4e6fc1a62034",
+      "candidatePersonId": "person-legacy-3552a05784065a37",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-1017b6d461a412894285",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/sara-duterte/2022-sara-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-11cd8fdca6eb0d0d97d7",
+      "candidatePersonId": "person-legacy-ebbe54bb4c7facba",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-169481e343642b472b61",
+      "candidatePersonId": "person-legacy-3fa1604461106c0b",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/cordoba/2023-cordoba.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-1aa2991b3bd06baae547",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-1c2bc6b79fcb1af93387",
+      "candidatePersonId": "person-legacy-868d59f645633c01",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-1c98e15428d35efb5a6a",
+      "candidatePersonId": "person-legacy-8dc1199ade527d22",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-1efcbd461f0f11d20beb",
+      "candidatePersonId": "person-legacy-b4e6313153f9aa8a",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/garcia/george-erwin-garcia-2023.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-20f5603d90241a6ef912",
+      "candidatePersonId": "person-legacy-ebbe54bb4c7facba",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-265041ed7e67a1539b3c",
+      "candidatePersonId": "person-legacy-3fa1604461106c0b",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/cordoba/2022-cordoba.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-270d8f5e4dbde3af8426",
+      "candidatePersonId": "person-legacy-538c3fb72989bc8e",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/malilin/2025-malilin.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-28e0a4644edc25c3da11",
+      "candidatePersonId": "person-legacy-452693862ce8d8b7",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rey-bulay/2023-rey-e.-bulay.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-290fe6fd70006671c921",
+      "candidatePersonId": "person-legacy-18eff8b6ce250cae",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2c3659482dea3c38f8ac",
+      "candidatePersonId": "person-legacy-8dc1199ade527d22",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2c676e21d1e200e364f6",
+      "candidatePersonId": "person-risa-hontiveros",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2d6468a8c1687c083a6f",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2011",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2e6b469c3032b7bbcc04",
+      "candidatePersonId": "person-legacy-b91afebaee5afaa9",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2ed2e2e259ff6b56b760",
+      "candidatePersonId": "person-risa-hontiveros",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2f0c6d05473fd07e5b22",
+      "candidatePersonId": "person-legacy-313874c8b851d92d",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/casingal/2025-maria-norina-tangaro-casingal.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-2f8fba8d22de0078e001",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2019-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-304015558f86c9e7b018",
+      "candidatePersonId": "person-legacy-aac2513583abdb68",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-3a71f61b11607494c9f2",
+      "candidatePersonId": "person-legacy-63f7c9b3ea4750c9",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-3b4ea84d3679e3b257a6",
+      "candidatePersonId": "person-legacy-c3231e185dd22e33",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-3ccece317ae91ca22741",
+      "candidatePersonId": "person-legacy-3fa1604461106c0b",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/cordoba/2024-cordoba.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-3fdc166a3d01af6000c6",
+      "candidatePersonId": "person-legacy-793207aa53cc4fc1",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-418ff185cc911412aead",
+      "candidatePersonId": "person-legacy-9d3d9a553aea3124",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/aimee-ferolino/2020-aimee-ampoloquio.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4234b493dbbab999862d",
+      "candidatePersonId": "person-legacy-bf0fa9d802600fe1",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-48b8c8523a24a123b3be",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2009",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4d8a1e089c317816bffc",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/sara-duterte/2025-sara-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4e13f62e7d0057ec362a",
+      "candidatePersonId": "person-legacy-e330e30061a8e05b",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4e1869f08c50a17855f5",
+      "candidatePersonId": "person-legacy-53a67dd214c5ebe5",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/lipana/mario-lipana-2023.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4e5fe1b8e0404d71578e",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2016",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-4f1ec2fb1d2dcfeea650",
+      "candidatePersonId": "person-legacy-ebbe54bb4c7facba",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5049761d21725e156e2b",
+      "candidatePersonId": "person-legacy-e330e30061a8e05b",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-51cc443cb85466f7c5c1",
+      "candidatePersonId": "person-legacy-868d59f645633c01",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-55140b48cea19c4e9964",
+      "candidatePersonId": "person-legacy-b4e6313153f9aa8a",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/garcia/george-garcia-2024.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5673ed4a5ebeaa6b04f4",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2022-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-569dcf80f6cf7e520f5e",
+      "candidatePersonId": "person-legacy-63f7c9b3ea4750c9",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-56ead82121679442697c",
+      "candidatePersonId": "person-risa-hontiveros",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-57bba1541b5e21fa3260",
+      "candidatePersonId": "person-legacy-9d3d9a553aea3124",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/aimee-ferolino/2024-aimee-ampoloquio.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5c6682d0882afdbe1a04",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2021",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2021-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5cfd609e2879e8b1b564",
+      "candidatePersonId": "person-legacy-71c7fec7ea76dd68",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/barua-yap/2024-marilyn-barua-yap.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5d16acdf5a8e73fdc676",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5ef548fc2de9d4eafd7f",
+      "candidatePersonId": "person-legacy-53a67dd214c5ebe5",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/lipana/mario-lipana-2022.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-5f89c6629280c79e24a1",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-60c23650380405abd919",
+      "candidatePersonId": "person-legacy-e330e30061a8e05b",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-641d246a9db572603a44",
+      "candidatePersonId": "person-legacy-5fdbed715ac5baaf",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-64f0b6b5286a28a13b48",
+      "candidatePersonId": "person-legacy-a2ab3e7844e0d2fb",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/nelson-celis/2023-nelson-celis.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-681daf73fdf080be74e9",
+      "candidatePersonId": "person-legacy-868d59f645633c01",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-6d8ab89ad1c0efc0abdf",
+      "candidatePersonId": "person-legacy-18eff8b6ce250cae",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-70c24be4fcf98fab759c",
+      "candidatePersonId": "person-legacy-a2ab3e7844e0d2fb",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/nelson-celis/2022-nelson-celis.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-7151bcefe306623532dc",
+      "candidatePersonId": "person-legacy-8dc1199ade527d22",
+      "candidateReportingPeriod": "2016",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-74fbb103708b4bad02ea",
+      "candidatePersonId": "person-legacy-b70bfe6aad6f3fcd",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-786e6ec98e99c0295578",
+      "candidatePersonId": "person-legacy-0c253d86ab8f8472",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/pipo/2025-noli-pipo.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-78ef03e2f05e11d6ed24",
+      "candidatePersonId": "person-legacy-9d3d9a553aea3124",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/aimee-ferolino/2023-aimee-ampoloquio.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-798bd757343217762ae8",
+      "candidatePersonId": "person-legacy-b70bfe6aad6f3fcd",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-7f720d74479c9c432747",
+      "candidatePersonId": "person-legacy-aac2513583abdb68",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-848f3f9cea0fa6da0000",
+      "candidatePersonId": "person-legacy-c3a9e17ea8d8fa1c",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/acosta/ryan-alvin-acosta-2022.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-8a2b87ae9998692ffb0c",
+      "candidatePersonId": "person-legacy-445ac73019df28d3",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-8a335db6ded76d304bf9",
+      "candidatePersonId": "person-legacy-445ac73019df28d3",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-8a41e3f6e3dbbc7a4f5c",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2012",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-8f294e0593ded4f61899",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2020-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9106b92f32843ed74e68",
+      "candidatePersonId": "person-legacy-7efa0a4aa27373a6",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/pangulayan/2025-luis-meinrado-pangulayan.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9744dea8d8f525a594dc",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9a3dbabe4e0f80c5ff97",
+      "candidatePersonId": "person-legacy-452693862ce8d8b7",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rey-bulay/2022-rey-e.-bulay.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9de1c8c974a4ea214ddb",
+      "candidatePersonId": "person-legacy-76c116fa899e8ecc",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/ernesto-maceda/2023-ernesto-ferdinand-p.-maceda.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9e1fa8406a4f4504152c",
+      "candidatePersonId": "person-ferdinand-marcos-jr",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/ferdinand-marcos-jr./2024-marcos-jr..pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9f028ebdaa6210315459",
+      "candidatePersonId": "person-legacy-a2ab3e7844e0d2fb",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/nelson-celis/2024-nelson-celis.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9f144299ae340e433e93",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/sara-duterte/2023-sara-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9f6e9dc7fdc0a9476b0f",
+      "candidatePersonId": "person-legacy-445ac73019df28d3",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-9fb21442f075791ebb5e",
+      "candidatePersonId": "person-legacy-498f481747da4da4",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-a29c5f35039a305ace93",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2017-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-a6bfc9f448bf17839f57",
+      "candidatePersonId": "person-legacy-678dfc767b7c77c0",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-a7345fc71b4919758fa1",
+      "candidatePersonId": "person-legacy-18eff8b6ce250cae",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-a7453f894c72f3032db4",
+      "candidatePersonId": "person-legacy-8dc1199ade527d22",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-a87e038bc137d656e795",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2018-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-aa9ce365eaddfd0ad793",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2010",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-aad0bf01b21f284914d2",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2018-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-afc04906c931394d88d2",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b127815a68d836de2773",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b1be2870c74c0764e48b",
+      "candidatePersonId": "person-legacy-445ac73019df28d3",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b2ffc1560f0ac18eaeaa",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b52d77d316ce5234e0a2",
+      "candidatePersonId": "person-ferdinand-marcos-jr",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/ferdinand-marcos-jr./2023-marcos-jr..pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b763fbe4e4ad8d4e7b2e",
+      "candidatePersonId": "person-legacy-e330e30061a8e05b",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b7a3edea6b689ae35a46",
+      "candidatePersonId": "person-legacy-452693862ce8d8b7",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rey-bulay/2024-rey-e.-bulay.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-b9a74411bc1dc6bc1878",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-bc6661655f2234005f79",
+      "candidatePersonId": "person-legacy-b4e6313153f9aa8a",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/garcia/george-erwin-garcia-2022.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c41792f7026959524ac6",
+      "candidatePersonId": "person-legacy-3552a05784065a37",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c4f8a865953af22b23ea",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2020-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c57b25c1eb6d63bd0e50",
+      "candidatePersonId": "person-legacy-3552a05784065a37",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c71add35cadfe09a059c",
+      "candidatePersonId": "person-legacy-18eff8b6ce250cae",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c71e77a13c69000b9bd1",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-c8a8e7f71ed28c60c62b",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2008",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-cb2a2e6abcce49f579a9",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2022-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-cb7f7c1458d9481582e1",
+      "candidatePersonId": "person-ferdinand-marcos-jr",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/ferdinand-marcos-jr./2022-marcos-jr..pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-cd7f86e1d119907e0ead",
+      "candidatePersonId": "person-legacy-3552a05784065a37",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d2031d10a8fbcfe52099",
+      "candidatePersonId": "person-legacy-c3231e185dd22e33",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d257735c2709cfc2f083",
+      "candidatePersonId": "person-legacy-86abb38806e8baaa",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d3beaaba1e39f9e095f4",
+      "candidatePersonId": "person-legacy-f5ca82aaac3b41d7",
+      "candidateReportingPeriod": "2016",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/rodrigo-duterte/2016-rodrigo-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d55ee80751a17dc13af6",
+      "candidatePersonId": "person-legacy-c3a9e17ea8d8fa1c",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/acosta/ryan-alvin-acosta-2023.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d812d28e044cd23b1dfe",
+      "candidatePersonId": "person-legacy-28bc045d892f40fc",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d84a69a8a4b10b1d6032",
+      "candidatePersonId": "person-legacy-aac2513583abdb68",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-d8b21f86e88e02936fc3",
+      "candidatePersonId": "person-risa-hontiveros",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-e0f7af26c5a5d075d624",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2016",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-e182072d7647903965f7",
+      "candidatePersonId": "person-legacy-18eff8b6ce250cae",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-e39158dfda894eb3cadd",
+      "candidatePersonId": "person-legacy-498f481747da4da4",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-e5eaa422a9187bf2697b",
+      "candidatePersonId": "person-legacy-9d3d9a553aea3124",
+      "candidateReportingPeriod": "2022",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/aimee-ferolino/2022-aimee-ampoloquio.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-e722eac690a257e15d7b",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2016",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-ea23aee9a12a1e7d2d52",
+      "candidatePersonId": "person-legacy-9d3d9a553aea3124",
+      "candidateReportingPeriod": "2021",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/aimee-ferolino/2021-aimee-ampoloquio.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-ec1d14c7c06d25fac10e",
+      "candidatePersonId": "person-legacy-445ac73019df28d3",
+      "candidateReportingPeriod": "2019",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-ee74a9e6faf871d6a295",
+      "candidatePersonId": "person-legacy-09e4c78f1db94c85",
+      "candidateReportingPeriod": "2017",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-eede85a77f25509a3996",
+      "candidatePersonId": "person-legacy-c3a9e17ea8d8fa1c",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/acosta/ryan-alvin-acosta-2024.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-ef3000978a8e4aa37ad1",
+      "candidatePersonId": "person-legacy-63f7c9b3ea4750c9",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-f564250f1df9e5336e49",
+      "candidatePersonId": "person-ferdinand-marcos-jr",
+      "candidateReportingPeriod": "2015",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-f72e47eb85ed8fde16d4",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2021",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2021-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-f754f939c5fdad19e14d",
+      "candidatePersonId": "person-legacy-63f7c9b3ea4750c9",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-f85953ee9bd65c70bce5",
+      "candidatePersonId": "person-legacy-86726305bdc8e680",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/sara-duterte/2024-sara-duterte.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-f9b2281028f3d4760492",
+      "candidatePersonId": "person-legacy-79d57a4dc94c60e4",
+      "candidateReportingPeriod": "2023",
+      "candidateKind": "repository_pdf",
+      "repositoryPdfPath": "/saln/samuel-martires/2023-martires.pdf",
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-fa17d48dae76f0de2683",
+      "candidatePersonId": "person-legacy-498f481747da4da4",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-fca3ea56ea4d23d2b476",
+      "candidatePersonId": "person-legacy-319cde5c2477b5ad",
+      "candidateReportingPeriod": "2018",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-fd4010b283d25ebca051",
+      "candidatePersonId": "person-legacy-c3231e185dd22e33",
+      "candidateReportingPeriod": "2020",
+      "candidateKind": "external_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-fd512d1cc2bad15dbe75",
+      "candidatePersonId": "person-legacy-b70bfe6aad6f3fcd",
+      "candidateReportingPeriod": "2024",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    },
+    {
+      "id": "legacy-entry-ff7f142a9e55123a078d",
+      "candidatePersonId": "person-legacy-27b9527c086d299e",
+      "candidateReportingPeriod": "2025",
+      "candidateKind": "report_link",
+      "repositoryPdfPath": null,
+      "classification": "unverified_review_input",
+      "sourceDocumentIds": [],
+      "reason": "Identity, link attribution, document custody and Reporting Date require source review. Legacy amounts, status and dates are not adopted."
+    }
+  ],
+  "version": "fdff60e9c81ab6232d22739052efff007fbb54f2f93ed006be1458a92291aaa0"
+}
