@@ -1,5 +1,6 @@
 import { and, count, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { DirectoryFilters, DirectoryResult } from '../archive/types';
+import { searchText } from '../archive/directory';
 import type { ArchiveReader } from './client.server';
 import { canonicalPersonId } from './identities.server';
 import { personIsEligible, tenureIsVerified } from './eligibility';
@@ -26,18 +27,23 @@ export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters
   if (filters.documents) conditions.push(filters.documents === 'available' ? hasDocuments : sql`not ${hasDocuments}`);
   if (filters.year) conditions.push(sql`exists (select 1 from ${s.filings} where ${canonicalPersonId(s.filings.personId)} = ${s.people.id} and substr(${effectiveField('filing', s.filings.id, 'reportingDate.value', s.filings.reportingDate)}, 1, 4) = ${filters.year})`);
   if (filters.q) {
-    const pattern = `%${filters.q.replace(/[\\%_]/g, value => `\\${value}`)}%`;
-    const match = (field: SQL) => sql`${field} like ${pattern} escape char(92)`;
     const identityId = sql`identity.id`;
     const variants = effectiveField('person', identityId, 'nameVariants', sql`(select coalesce(json_group_array(value), '[]') from person_names where person_id = identity.id)`);
-    conditions.push(sql`(exists (select 1 from people identity where ${canonicalPersonId(identityId)} = ${s.people.id} and
-      (${match(effectiveField('person', identityId, 'canonicalName', sql`identity.canonical_name`))}
-        or (identity.id != ${s.people.id} and ${match(sql`identity.canonical_name`)})
-        or exists (select 1 from json_each(${variants}) names where ${match(sql`names.value`)})))
-      or exists (select 1 from ${s.filings} where ${canonicalPersonId(s.filings.personId)} = ${s.people.id} and ${match(effectiveField('filing', s.filings.id, 'filerName', s.filings.filerName))})
-      or ${anyTenure(sql`(${match(sql`${s.offices.name}`)} or ${match(sql`${s.constituencies.name}`)} or exists (select 1 from ${s.jurisdictions} where ${s.jurisdictions.id} in (${s.offices.jurisdictionId}, ${s.constituencies.jurisdictionId}) and ${match(sql`${s.jurisdictions.name}`)}))`)})`);
+    // ponytail: fold only approved name fields in the server; use a Unicode FTS index when this bounded-field scan becomes too large.
+    const fields = sql`json_array(
+      (select json_group_array(json_array(${effectiveField('person', identityId, 'canonicalName', sql`identity.canonical_name`)},
+        case when identity.id != ${s.people.id} then identity.canonical_name end, json(${variants}))) from people identity where ${canonicalPersonId(identityId)} = ${s.people.id}),
+      (select json_group_array(${effectiveField('filing', s.filings.id, 'filerName', s.filings.filerName)}) from ${s.filings} where ${canonicalPersonId(s.filings.personId)} = ${s.people.id}),
+      (select json_group_array(json_array(${s.offices.name}, ${s.constituencies.name},
+        (select json_group_array(${s.jurisdictions.name}) from ${s.jurisdictions} where ${s.jurisdictions.id} in (${s.offices.jurisdictionId}, ${s.constituencies.jurisdictionId}))))
+        from ${s.tenures} inner join ${s.offices} on ${s.offices.id} = ${s.tenures.officeId} left join ${s.constituencies} on ${s.constituencies.id} = ${s.tenures.constituencyId}
+        where ${canonicalPersonId(s.tenures.personId)} = ${s.people.id} and ${s.offices.included} = 1 and ${tenureIsVerified()}))`;
+    // Keep table qualifiers inside these correlated subqueries when Drizzle builds a single-table selection.
+    const candidates = await tx.select({ id: s.people.id, fields: sql<string>`${fields}` }).from(s.people).where(and(...conditions));
+    const query = searchText(filters.q);
+    const ids = candidates.filter(row => JSON.parse(row.fields).flat(Infinity).some((value: unknown) => typeof value === 'string' && searchText(value).includes(query))).map(row => row.id);
+    conditions.push(sql`${s.people.id} in (select value from json_each(${JSON.stringify(ids)}))`);
   }
-  // ponytail: substring matching scans reviewed name values; native indexes serve evidence and field joins. Add FTS when measured nationwide search latency requires it.
   const where = and(...conditions), [totals] = await tx.select({ total: count() }).from(s.people).where(where);
   const total = totals.total, pageSize = 30, page = Math.min(filters.page, Math.max(1, Math.ceil(total / pageSize)));
   const name = effectiveField<string>('person', sql`people.id`, 'canonicalName', sql`people.canonical_name`);

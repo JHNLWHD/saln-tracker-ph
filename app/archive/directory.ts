@@ -1,5 +1,7 @@
 import type { DirectoryFilters, DirectoryResult, PersonRecord } from './types';
 
+export const searchText = (value: string) => value.normalize('NFC').toLocaleLowerCase('en-PH');
+
 export function directoryFilters(params: URLSearchParams): DirectoryFilters {
   const allowed = ['q', 'office', 'jurisdiction', 'tenure', 'documents', 'year', 'page'];
   for (const key of params.keys()) if (!allowed.includes(key) || params.getAll(key).length !== 1) throw new Error('Unsupported or repeated directory filter');
@@ -22,8 +24,8 @@ export function directoryFromRecords(records: PersonRecord[], filters: Directory
     const tenures = record.tenures.filter(t => t.verificationStatus !== 'unverified' && !t.disputedFacts.some(fact => ['person', 'office'].includes(fact)) && record.offices.some(o => o.id === t.officeId && o.included));
     const current = (id: string) => record.rosterMemberships?.some(m => m.tenureId === id);
     const fields = [record.person.canonicalName, ...record.person.nameVariants, ...record.filings.map(f => f.filerName), ...record.offices.filter(o => tenures.some(t => t.officeId === o.id)).map(o => o.name), ...record.constituencies.filter(c => tenures.some(t => t.constituencyId === c.id)).map(c => c.name), ...record.jurisdictions.map(j => j.name)];
-    return (!filters.q || fields.some(value => value.toLocaleLowerCase('en-PH').includes(filters.q.toLocaleLowerCase('en-PH')))) &&
-      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || record.jurisdictions.some(j => j.id === filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
+    return (!filters.q || fields.some(value => searchText(value).includes(searchText(filters.q)))) &&
+      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || record.offices.some(o => o.id === t.officeId && o.jurisdictionId === filters.jurisdiction) || record.constituencies.some(c => c.id === t.constituencyId && c.jurisdictionId === filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
       (!filters.documents || (record.sourceDocuments.length > 0) === (filters.documents === 'available')) && (!filters.year || record.filings.some(f => f.reportingDate.value.startsWith(filters.year)));
   }).sort((a, b) => a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
   const page = Math.min(filters.page, Math.max(1, Math.ceil(matches.length / 30)));
