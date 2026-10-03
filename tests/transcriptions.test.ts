@@ -83,6 +83,25 @@ test("cross-page summary keeps exact amounts, raw documents and replay stable wh
   } finally { await state.close(); }
 });
 
+test('summary reviews follow source acquisition and corrections follow their original review', async () => {
+  const state = await setup();
+  try {
+    await state.filing('f1', '2024');
+    const early = summary('f1'); early.payload.review = { ...review, reviewedAt: '2026-10-01' };
+    await assert.rejects(applyReviewedManifest(state.db, early), /Acquisition Date/);
+    assert.equal((await state.db.select().from(schema.financialSummaries)).length, 0);
+    assert.equal((await state.db.select().from(schema.manifestApplications).where(eq(schema.manifestApplications.id, early.id))).length, 0);
+    await applyReviewedManifest(state.db, summary('f1')); await applyReviewedManifest(state.db, report);
+    for (const target of [{ type: 'financial_summary', id: 'summary-f1' }, { type: 'secondary_report', id: 'report' }]) {
+      const changes = target.type === 'financial_summary' ? { declaredNetWorth: '2.02' } : { note: 'Corrected report note' };
+      await assert.rejects(applyReviewedManifest(state.db, { id: `early-${target.type}`, version: 1, kind: 'correction', payload: {
+        review: { ...review, reviewedAt: '2026-10-01' }, target, previousCorrectionId: null, reason: 'Synthetic chronology check', changes,
+        citations: [{ id: `proof-${target.type}`, title: 'Synthetic proof', url: 'https://example.org/proof', publisher: 'Test', type: 'official_record', supports: Object.keys(changes), publishedDate: null }],
+      } }), /precedes its original review/);
+    }
+  } finally { await state.close(); }
+});
+
 test("Secondary Reports neither create Filings nor close gaps, and sparse timelines preserve distinct same-year declarations", async () => {
   const state = await setup();
   try {
@@ -100,7 +119,12 @@ test("Secondary Reports neither create Filings nor close gaps, and sparse timeli
     await applyReviewedManifest(state.db, { id: "roster:test", version: 1, kind: "roster", payload: { review, scope: "executive", verifiedAsOf: "2026-10-02", members: [{ tenureId: "tenure", citations: [{ id: "current-proof", title: "Synthetic current roster evidence", url: "https://example.org/current", publisher: "Test", type: "official_record", supports: ["person", "office", "holdsOffice"], publishedDate: { value: "2026-10-02", precision: "day" } }] }] } });
     const record = (await archive.findPersonBySlug("sample-person"))!, html = renderToStaticMarkup(createElement(PersonProfile, { record }));
     assert.match(html, /Declared net-worth timeline/); assert.doesNotMatch(html, /2019|2020|2021|2022|2023/);
-    assert.match(html, /Current included Tenures in reviewed rosters/); assert.match(html, /Previous included Tenures/); assert.equal(record.rosterMemberships?.[0].verifiedAsOf, "2026-10-02");
+    assert.match(html, /Current included Tenures in reviewed rosters/); assert.match(html, /Other included Tenures/); assert.equal(record.rosterMemberships?.[0].verifiedAsOf, "2026-10-02");
+    const upcoming = structuredClone(record);
+    upcoming.tenures.find(tenure => tenure.id === 'previous-tenure')!.startDate = { value: '2027', precision: 'year' };
+    upcoming.tenures.find(tenure => tenure.id === 'previous-tenure')!.endDate = { value: '2030', precision: 'year' };
+    const upcomingHtml = renderToStaticMarkup(createElement(PersonProfile, { record: upcoming }));
+    assert.match(upcomingHtml, /Other included Tenures/); assert.doesNotMatch(upcomingHtml, /Previous included Tenures/);
     const home = await archive.readHome(); assert.equal(home.rosters[0].rows[0].documentCount, 6); assert.equal(home.rosters[0].rows[0].summaryCount, 2); assert.equal(home.rosters[0].rows[0].latestSummary, null);
     assert.equal((html.match(/Reporting Date: <span>2024<\/span>/g) ?? []).length, 2); assert.equal((html.match(/Reporting periods in 2024/g) ?? []).length, 1);
     assert.ok(html.indexOf('Related reporting - not a SALN filing') > html.indexOf('SALN Filings'));

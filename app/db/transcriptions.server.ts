@@ -12,7 +12,7 @@ export async function writeReviewedSummary(tx: ArchiveWriter, record: ReviewedSu
   const [filing] = await tx.select({ personId: schema.filings.personId }).from(schema.filings).where(eq(schema.filings.id, record.summary.filingId));
   if (!filing) throw new Error("A summary needs an acquired Filing");
   if (!verifyOnly) await requireEligiblePerson(tx, filing.personId);
-  await checkSummarySources(tx, record.summary);
+  await checkSummarySources(tx, record.summary, record.review.reviewedAt);
   const rows = missingRows(await tx.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.id, record.summary.id)), [{ ...record.summary, ...record.review }], row => row.id, "Declared Financial Summary", verifyOnly);
   if (rows.length) await tx.insert(schema.financialSummaries).values(rows);
 }
@@ -30,7 +30,10 @@ export async function readFinancialSummaries(tx: ArchiveReader, filingIds: strin
   const corrections = history ?? await readEditorialCorrections(tx);
   const summaries = rows.map(row => projectCorrections("financial_summary", row, corrections));
   // ponytail: one source check per summary for the first roster; batch IDs when histories grow.
-  for (const summary of summaries) await checkSummarySources(tx, summary);
+  for (const summary of summaries) {
+    const latestCorrection = corrections.filter(row => row.target.type === 'financial_summary' && row.target.id === summary.id).sort((a, b) => a.revision - b.revision).at(-1);
+    await checkSummarySources(tx, summary, latestCorrection?.reviewedAt ?? summary.reviewedAt);
+  }
   return summaries;
 }
 

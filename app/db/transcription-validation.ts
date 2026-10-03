@@ -36,10 +36,11 @@ function review(value: unknown) {
 export interface ReviewedSummary { review: ReturnType<typeof review>; summary: Omit<DeclaredFinancialSummary, "reviewedAt"> }
 export interface ReviewedReport { review: ReturnType<typeof review>; report: Omit<SecondaryReport, "reviewedAt"> }
 
-export async function checkSummarySources(tx: ArchiveReader, summary: ReviewedSummary["summary"]) {
+export async function checkSummarySources(tx: ArchiveReader, summary: ReviewedSummary["summary"], reviewedAt: string) {
   const ids = [...new Set(Object.values(summary.sources).map(source => source.sourceDocumentId))];
-  const documents = await tx.select({ id: sourceDocuments.id, filingId: sourceDocuments.filingId }).from(sourceDocuments).where(inArray(sourceDocuments.id, ids));
+  const documents = await tx.select({ id: sourceDocuments.id, filingId: sourceDocuments.filingId, acquisitionDate: sourceDocuments.acquisitionDate }).from(sourceDocuments).where(inArray(sourceDocuments.id, ids));
   if (documents.length !== ids.length || documents.some(document => document.filingId !== summary.filingId)) throw new Error("Every summary value needs an acquired Source Document from its own Filing");
+  if (documents.some(document => document.acquisitionDate > reviewedAt)) throw new Error('Summary review precedes a Source Document Acquisition Date');
 }
 
 export function validateSummary(value: unknown): ReviewedSummary["summary"] {
