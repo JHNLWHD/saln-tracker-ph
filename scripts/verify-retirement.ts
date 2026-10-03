@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { readReleaseRoute } from './release-http';
 
 interface RetirementRecord {
   productionReportRef: string; rollbackUntil: string; rollbackUsed: boolean; recoveryCommit: string; productionCommit: string; snapshotVersion: string;
@@ -24,8 +25,8 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
   assert.deepEqual(record.documents.map(row => row.path).sort(), paths, 'Every tracked PDF needs one reviewed mapping');
   assert.deepEqual(pdfPaths('HEAD'), paths, 'Current checkout must retain the recovery PDF set before removal');
   assert.equal(git(['status', '--porcelain', '--untracked-files=all', '--', 'public/saln/']).toString().trim(), '', 'PDF retirement requires a clean pre-removal state');
-  const get = (path: string, init?: RequestInit) => fetch(new URL(path, base), { signal: AbortSignal.timeout(30000), ...init });
-  const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), record.productionCommit);
+  const get = (path: string) => readReleaseRoute(base, path, record.snapshotVersion);
+  const ping = await get('/ping'); assert.equal(ping.status, 200); assert.equal(ping.headers.get('X-Archive-Revision'), record.productionCommit); assert.equal(await ping.text(), 'pong');
   const response = await get('/data/archive.json'); assert.equal(response.status, 200); const snapshot = await response.json();
   assert.equal(snapshot.version, record.snapshotVersion);
   assert.equal(snapshot.schemaVersion, 1, 'Unsupported public snapshot schema');
@@ -40,9 +41,9 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
     assert.ok(entry, 'Stable URL has no approved mapping'); assert.equal(entry.sourceDocumentId, document.sourceDocumentId); assert.equal(entry.sha256, document.sha256);
     const source = snapshot.data.sourceDocuments.find((entry: { id: string; sha256: string }) => entry.id === document.sourceDocumentId);
     assert.ok(source); assert.equal(source.sha256, document.sha256);
-    const legacy = await get(entry.path, { redirect: 'manual' }); assert.equal(legacy.status, 301);
+    const legacy = await get(entry.path); assert.equal(legacy.status, 301);
     const target = new URL(legacy.headers.get('Location')!, base); assert.equal(target.origin, base.origin); assert.equal(target.pathname, `/documents/${document.sha256}`);
-    const bytes = await get(target.pathname, { redirect: 'manual' }); assert.equal(bytes.status, 200); assert.equal(hash(new Uint8Array(await bytes.arrayBuffer())), document.sha256);
+    const bytes = await get(target.pathname); assert.equal(bytes.status, 200); assert.equal(hash(new Uint8Array(await bytes.arrayBuffer())), document.sha256);
     removed.push(document.path);
   }
   return { status: 'verified_removal_plan_no_files_changed', recoveryCommit: record.recoveryCommit, productionCommit: record.productionCommit, paths: removed };
