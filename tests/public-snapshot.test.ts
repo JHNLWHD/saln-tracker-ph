@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 import { exportPublicSnapshot } from "../app/archive/snapshot.server";
 import type { CorrectionChanges, EditorialCorrection } from "../app/archive/types";
 import { connectArchive } from "../app/db/client.server";
-import { importReviewedPerson } from "../app/db/people.server";
 import { applyReviewedManifest, manifestDigest, validateReviewedManifest } from "../app/db/manifests.server";
 import { canonicalJson } from '../app/db/canonical';
 import * as schema from "../app/db/schema";
@@ -42,7 +41,7 @@ async function setup(reverse = false) {
   const connection = connectArchive({ url: `file:${join(directory, "archive.db")}` });
   await migrateArchive(connection.db);
   const ids = reverse ? ["person-b", "person-a"] : ["person-a", "person-b"];
-  for (const id of ids) await importReviewedPerson(connection.db, person(id, reverse));
+  for (const id of ids) await applyReviewedManifest(connection.db, { id: `person:${id}`, kind: 'person', version: 1, payload: person(id, reverse) });
   const filingRows = ["filing-a", "filing-b"].map(id => ({
     id, personId: "person-a", filerName: "PERSON, SAMPLE", reportingDate: "2024", executionDate: "2025-01", receiptDate: null,
     supersedesFilingId: null, reviewedAt: "2026-09-26", reviewedBy: privateCanary,
