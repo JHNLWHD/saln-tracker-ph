@@ -22,15 +22,24 @@ export function directoryFromRecords(records: PersonRecord[], filters: Directory
   const eligible = records.filter(record => record.person.eligibility === 'eligible');
   const publicTenures = (record: PersonRecord) => record.tenures.filter(t => t.verificationStatus !== 'unverified' && !t.disputedFacts.some(fact => ['person', 'office'].includes(fact)) && record.offices.some(o => o.id === t.officeId && o.included));
   const publicOffices = (record: PersonRecord) => record.offices.filter(o => publicTenures(record).some(t => t.officeId === o.id));
-  const publicJurisdictions = (record: PersonRecord) => record.jurisdictions.filter(j => publicOffices(record).some(o => o.jurisdictionId === j.id) || record.constituencies.some(c => c.jurisdictionId === j.id && publicTenures(record).some(t => t.constituencyId === c.id)));
+  const directJurisdictions = (record: PersonRecord, tenures: PersonRecord['tenures']) => new Set(tenures.flatMap(t => [record.offices.find(o => o.id === t.officeId)?.jurisdictionId, record.constituencies.find(c => c.id === t.constituencyId)?.jurisdictionId]).filter((id): id is string => Boolean(id)));
+  const jurisdictionAncestors = (record: PersonRecord, ids: Set<string>) => {
+    for (const id of ids) for (const relationship of record.jurisdictionRelationships ?? []) if (relationship.fromId === id) ids.add(relationship.toId);
+    return ids;
+  };
+  const publicJurisdictions = (record: PersonRecord) => {
+    const ids = jurisdictionAncestors(record, directJurisdictions(record, publicTenures(record)));
+    return record.jurisdictions.filter(j => ids.has(j.id));
+  };
   const matches = eligible.filter(record => {
     const tenures = publicTenures(record);
     const current = (id: string) => record.rosterMemberships?.some(m => m.tenureId === id);
     const offices = publicOffices(record), constituencies = record.constituencies.filter(c => tenures.some(t => t.constituencyId === c.id));
-    const jurisdictions = publicJurisdictions(record);
+    const directIds = directJurisdictions(record, tenures);
+    const jurisdictions = record.jurisdictions.filter(j => directIds.has(j.id));
     const fields = [record.person.canonicalName, ...record.person.nameVariants, ...record.filings.map(f => f.filerName), ...offices.map(o => o.name), ...constituencies.map(c => c.name), ...jurisdictions.map(j => j.name)];
     return (!filters.q || fields.some(value => searchText(value).includes(searchText(filters.q)))) &&
-      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || record.offices.some(o => o.id === t.officeId && o.jurisdictionId === filters.jurisdiction) || record.constituencies.some(c => c.id === t.constituencyId && c.jurisdictionId === filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
+      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || jurisdictionAncestors(record, directJurisdictions(record, [t])).has(filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
       (!filters.documents || (record.sourceDocuments.length > 0) === (filters.documents === 'available')) && (!filters.year || record.filings.some(f => f.reportingDate.value.startsWith(filters.year)));
   }).sort((a, b) => a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
   const page = Math.min(filters.page, Math.max(1, Math.ceil(matches.length / 30)));

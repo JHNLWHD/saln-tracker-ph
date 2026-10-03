@@ -144,6 +144,7 @@ export interface PersonRecord {
   tenures: Tenure[];
   constituencies: Constituency[];
   jurisdictions: Jurisdiction[];
+  jurisdictionRelationships?: { fromId: string; toId: string; kind: "geographic" | "administrative" }[];
   electoralTerms: ElectoralTerm[];
   filings: Filing[];
   sourceDocuments: SourceDocument[];
