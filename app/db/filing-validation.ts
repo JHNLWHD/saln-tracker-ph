@@ -39,6 +39,7 @@ export function validateReviewedFiling(value: unknown): ReviewedFiling {
   parsePartialDate(archivePublicationDate.slice(0, 10));
   if (reviewedAt > archivePublicationDate.slice(0, 10)) throw new Error("A Source Document must be reviewed before publication");
   if (acquisitionDate.value > archivePublicationDate.slice(0, acquisitionDate.value.length)) throw new Error("A Source Document cannot be published before its Acquisition Date");
+  if (acquisitionDate.value > reviewedAt.slice(0, acquisitionDate.value.length)) throw new Error('A Source Document cannot be reviewed before its Acquisition Date');
   return {
     review: { reviewedAt, reviewedBy: text(review.reviewedBy, "review.reviewedBy") },
     filing: {

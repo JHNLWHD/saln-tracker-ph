@@ -7,7 +7,9 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   const document = await (await getArchive()).findSourceDocument(params.sha256);
   if (!document) throw new Response("Not Found", { status: 404 });
   const disposition = new URL(request.url).searchParams.get("download") === "1" ? "attachment" : "inline";
-  const fileName = encodeURIComponent(document.fileName).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+  // One checksum URL serves the same bytes across distinct Source Document records.
+  const extension = { 'application/pdf': 'pdf', 'image/jpeg': 'jpg', 'image/png': 'png' }[document.mediaType];
+  const fileName = `saln-${document.sha256}.${extension}`;
   const headers = {
     "Content-Type": document.mediaType,
     "Content-Length": String(document.byteSize),
