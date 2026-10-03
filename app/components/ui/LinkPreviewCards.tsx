@@ -38,7 +38,7 @@ const LinkPreviewCard = forwardRef<HTMLDivElement, LinkPreviewCardProps>(
         className={`${baseStyles} ${variants[variant]} ${hoverStyles} ${className}`}
         {...props}
       >
-        <div id={contentId}>{children}</div>
+        <div id={contentId} className="flex flex-1 flex-col">{children}</div>
         <a 
           href={link}
           target="_blank"
