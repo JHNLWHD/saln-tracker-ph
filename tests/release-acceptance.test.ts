@@ -52,13 +52,16 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   const { artifacts } = await rehearseStageOne();
   let crossOrigin = false;
   let redirectedPath = '';
+  let sameOriginRedirect: [string, string] | null = null;
+  let badPing = false;
   const other = createServer((_request, response) => response.end('Another deployment'));
   other.listen(0, '127.0.0.1'); await once(other, 'listening');
   const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
   const server = createServer((request, response) => {
     const path = request.url!;
     if (path === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${path}`); response.end(); return; }
-    if (path === '/ping') { response.setHeader('X-Archive-Revision', 'synthetic'); response.end('pong'); }
+    if (sameOriginRedirect?.[0] === path) { response.statusCode = 307; response.setHeader('Location', sameOriginRedirect[1]); response.end(); return; }
+    if (path === '/ping') { response.setHeader('X-Archive-Revision', 'synthetic'); response.end(badPing ? 'wrong response' : 'pong'); }
     else if (path === '/data/archive.json') { response.statusCode = 307; response.setHeader('Location', `/data/${artifacts.snapshot.version}/archive.json`); response.end(); }
     else if (path.endsWith('/archive.json')) response.end(artifacts.snapshotJson);
     else if (path.endsWith('/source-checksums.json')) response.end(artifacts.checksumManifestJson);
@@ -79,11 +82,18 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     const origin = `http://127.0.0.1:${address.port}`;
     assert.ok((await verifyReleaseHttp(origin, 'synthetic', artifacts)).checkedAliases > 0);
     crossOrigin = true;
-    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
+    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     crossOrigin = false;
     for (const path of ['/ping', '/data/archive.json', '/data/source-checksums.json', '/', `/official/${artifacts.snapshot.data.people[0].slug}`]) {
       redirectedPath = path;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     }
+    redirectedPath = '';
+    for (const redirect of [['/people', '/'], [`/data/${artifacts.snapshot.version}/archive.json`, '/data/archive.json'], ['/data/archive.json', `/data/${artifacts.snapshot.version}/archive.json?other=1`]] as [string, string][]) {
+      sameOriginRedirect = redirect;
+      await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts));
+    }
+    sameOriginRedirect = null; badPing = true;
+    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
   } finally { await Promise.all([server, other].map(server => new Promise<void>(resolve => server.close(() => resolve())))); }
 });
