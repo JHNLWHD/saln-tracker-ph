@@ -52,12 +52,17 @@ test('release rehearsal verifies acquired Filing bytes on import and unchanged r
 
 test('HTTP acceptance requires aliases to stay on the named deployment', async () => {
   const rehearsal = await rehearseStageOne();
-  const artifacts = serializePublicSnapshot({ ...rehearsal.artifacts.snapshot.data, people: rehearsal.artifacts.snapshot.data.people.map((person, i) => i === 0 ? { ...person, canonicalName: 'Synthetic <Name> & "Identity"' } : person) });
+  const bytes = Buffer.from('%PDF-1.7\nSynthetic legacy redirect check\n%%EOF\n'), sha256 = createHash('sha256').update(bytes).digest('hex');
+  const filing = JSON.parse(await readFile(new URL('../data/examples/hontiveros-2024-local-verification/0002-hontiveros-2024-page-1.json', import.meta.url), 'utf8')).payload;
+  const document = { ...filing.document, fileName: 'synthetic.pdf', mediaType: 'application/pdf', sha256, byteSize: bytes.length };
+  const legacyDocuments = ['/saln/first.pdf', '/saln/second.pdf'].map(path => ({ path, sourceDocumentId: document.id, sha256 }));
+  const artifacts = serializePublicSnapshot({ ...rehearsal.artifacts.snapshot.data, people: rehearsal.artifacts.snapshot.data.people.map((person, i) => i === 0 ? { ...person, canonicalName: 'Synthetic <Name> & "Identity"' } : person), filings: [filing.filing], sourceDocuments: [document], legacyDocuments });
   let crossOrigin = false;
   let redirectedPath = '';
   let sameOriginRedirect: [string, string] | null = null;
   let badPing = false;
   let badPage = '';
+  let legacyResponse: { status: number; location?: string } | null = null;
   const pageHeadings = new Map([['/', 'Find and inspect declared SALNs'], ['/people', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}`, person.canonicalName] as const)]);
   const other = createServer((_request, response) => response.end('Another deployment'));
   other.listen(0, '127.0.0.1'); await once(other, 'listening');
@@ -71,6 +76,13 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     else if (path.endsWith('/archive.json')) response.end(artifacts.snapshotJson);
     else if (path.endsWith('/source-checksums.json')) response.end(artifacts.checksumManifestJson);
     else if (path === '/unknown-release-check-path') { response.statusCode = 404; response.end(); }
+    else if (legacyDocuments.some(document => document.path === path)) {
+      const result = path === legacyDocuments[1].path && legacyResponse ? legacyResponse : { status: 301, location: `/documents/${sha256}` };
+      response.statusCode = result.status;
+      if (result.location) response.setHeader('Location', result.location);
+      response.end();
+    }
+    else if (path === `/documents/${sha256}`) response.end(bytes);
     else {
       const alias = artifacts.snapshot.data.personAliases.find(row => path === `/official/${encodeURIComponent(row.value)}`);
       const person = alias && artifacts.snapshot.data.people.find(row => row.id === alias.personId);
@@ -85,7 +97,15 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   const address = server.address(); assert.ok(address && typeof address === 'object');
   try {
     const origin = `http://127.0.0.1:${address.port}`;
-    assert.ok((await verifyReleaseHttp(origin, 'synthetic', artifacts)).checkedAliases > 0);
+    const checked = await verifyReleaseHttp(origin, 'synthetic', artifacts);
+    assert.ok(checked.checkedAliases > 0); assert.equal(checked.checkedLegacyDocuments, 2); assert.equal(checked.checkedChecksums, 1);
+    for (const result of [{ status: 404 }, { status: 200 }, { status: 302, location: `/documents/${sha256}` }, ...[legacyDocuments[1].path, `documents/${sha256}`, `/documents/${'0'.repeat(64)}`, `/documents/${sha256}?different=1`, `/documents/${sha256}#fragment`, `https://other.example/documents/${sha256}`].map(location => ({ status: 301, location }))]) {
+      legacyResponse = result;
+      await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts));
+    }
+    legacyResponse = { status: 301, location: `../documents/${sha256}` };
+    assert.equal((await verifyReleaseHttp(origin, 'synthetic', artifacts)).checkedLegacyDocuments, 2);
+    legacyResponse = null;
     crossOrigin = true;
     await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     crossOrigin = false;
@@ -94,7 +114,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     }
     redirectedPath = '';
-    for (const redirect of [['/people', '/'], [`/data/${artifacts.snapshot.version}/archive.json`, '/data/archive.json'], ['/data/archive.json', `/data/${artifacts.snapshot.version}/archive.json?other=1`]] as [string, string][]) {
+    for (const redirect of [['/people', '/'], [`/data/${artifacts.snapshot.version}/archive.json`, '/data/archive.json'], ['/data/archive.json', `/data/${artifacts.snapshot.version}/archive.json?other=1`], [`/documents/${sha256}`, legacyDocuments[0].path]] as [string, string][]) {
       sameOriginRedirect = redirect;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts));
     }

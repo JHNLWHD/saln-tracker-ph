@@ -68,19 +68,24 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
     assert.deepEqual(headings, [renderToStaticMarkup(heading)], `Unexpected page heading: ${path}`);
   }
   assert.equal((await get('/unknown-release-check-path')).status, 404);
+  const redirects: [string, string][] = [];
   for (const alias of artifacts.snapshot.data.personAliases) {
     const person = artifacts.snapshot.data.people.find(person => person.id === alias.personId)!;
     if (alias.value === person.slug) continue;
-    const response = await get(`/official/${encodeURIComponent(alias.value)}`);
+    redirects.push([`/official/${encodeURIComponent(alias.value)}`, `/official/${person.slug}`]);
+  }
+  for (const document of artifacts.snapshot.data.legacyDocuments) redirects.push([document.path, `/documents/${document.sha256}`]);
+  for (const [path, destination] of redirects) {
+    const response = await get(path);
     assert.equal(response.status, 301);
-    const target = new URL(response.headers.get('Location')!, url);
-    assert.equal(target.origin, url.origin); assert.equal(target.pathname, `/official/${person.slug}`);
+    const target = new URL(response.headers.get('Location')!, new URL(path, url));
+    assert.equal(target.href, new URL(destination, url).href, `Unexpected redirect destination: ${path}`);
   }
   for (const document of artifacts.checksumManifest.documents) {
     const response = await get(`/documents/${document.sha256}`); assert.equal(response.status, 200);
     const bytes = new Uint8Array(await response.arrayBuffer()); assert.equal(bytes.byteLength, document.byteSize); assert.equal(createHash('sha256').update(bytes).digest('hex'), document.sha256);
   }
-  return { revision, origin: url.origin, checkedRoutes: pages.length, checkedAliases: artifacts.snapshot.data.personAliases.length, checkedChecksums: artifacts.checksumManifest.documents.length };
+  return { revision, origin: url.origin, checkedRoutes: pages.length, checkedAliases: artifacts.snapshot.data.personAliases.length, checkedLegacyDocuments: artifacts.snapshot.data.legacyDocuments.length, checkedChecksums: artifacts.checksumManifest.documents.length };
 }
 
 async function main() {
