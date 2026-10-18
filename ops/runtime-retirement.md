@@ -1,10 +1,10 @@
 # Runtime and Git-held document retirement
 
-**Merge only after #66 succeeds and the agreed rollback window closes without a Firestore rollback.** This branch prepares the code cleanup; it is not a production cleanup report. No Git-held PDF or remote Firestore record was removed.
+This PR prepares the redesigned Turso runtime and can merge with the redesign stack. Merging this code does not delete Firebase data or Git-held PDFs. Keep the previous production revision available for rollback. Production deployment remains a separate action; document removal still requires the checks below.
 
 The public app now uses Turso by default, requires a named database and has no Firebase fallback. The Firebase runtime adapter, browser initialization, legacy presentation types, Firestore migration writer and deployment configuration/commands are removed. The two Firebase SDK packages remain **development-only** for the explicit operator capture and its integrity tests. That read-only historical capture lives under `scripts/`, has no import path from `app/`, and preserves the unresolved database-wide audit in #56. It is not a production runtime dependency or a metadata write path.
 
-Before merging, record the successful production report, agreed deadline and absence of a rollback. Verify the built public server/client contain no Firebase modules or calls. Repeat build, typecheck, tests, route checks and browser network observation after deploying the accepted cleanup SHA. Removing code does not delete Firestore data; any remote deletion is a separate user decision.
+Before deployment, verify the built public server/client contain no Firebase modules or calls. Record the previous production revision and the rollback deadline in the deployment report. Repeat build, typecheck, tests, route checks and browser network observation after deploying the accepted cleanup SHA. Removing code does not delete Firestore data; any remote deletion is a separate user decision.
 
 ## Document removal plan
 
@@ -14,4 +14,4 @@ Run `npm run archive:verify-retirement -- <private-record.json> <production-orig
 
 Only after every check passes, use `git rm -- <verified-paths>` in the approved cleanup branch. Commit the normal deletion; do not rewrite history. Re-run the verifier before removing files, then check production URLs and checksums again after deployment. Keep the recovery commit and locked recovery artifacts. The command prints a removal plan and never deletes a file itself.
 
-The present baseline has **zero approved legacy PDF/R2 mappings**. All 51 Git-held PDFs remain tracked. Their removal and the live final production report remain open acceptance criteria in #67.
+The present baseline has **zero approved legacy PDF/R2 mappings**. All 51 Git-held PDFs remain tracked. Their removal is deferred maintenance, not a condition for merging the redesign or displaying the migrated data. The live final production report follows deployment.
