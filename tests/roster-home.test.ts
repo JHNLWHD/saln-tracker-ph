@@ -56,10 +56,12 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /<article aria-label="Ferdinand R\. Marcos Jr\."/); assert.match(markup, /View Filings/);
     assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
     const multipleOffices = structuredClone(home);
+    multipleOffices.rosters[0].rows[1].documentCount = 1;
     multipleOffices.rosters[0].rows.push({ ...home.rosters[0].rows[0], tenureId: 'another-tenure', officeName: 'Another reviewed Office' });
     const cards = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: multipleOffices })));
     assert.equal((cards.match(/<article aria-label="Ferdinand R\. Marcos Jr\."/g) ?? []).length, 1);
     assert.match(cards, /President of the Philippines · Another reviewed Office/);
+    assert.ok(cards.indexOf('President of the Philippines') < cards.indexOf('Vice President of the Philippines'), 'Document coverage must not reorder the reviewed roster');
     const withRecent = structuredClone(home);
     withRecent.recentlyAdded = [{ id: 'synthetic-document', sha256: 'a'.repeat(64), fileName: 'synthetic.pdf', archivePublicationDate: '2026-10-02T00:00:00.000Z', reportingDate: { value: '2024', precision: 'year' }, canonicalName: home.rosters[0].rows[0].canonicalName, slug: home.rosters[0].rows[0].slug }];
     const linked = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: withRecent })));
