@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import type { DirectoryResult } from '../archive/types';
-import { FinancialTotals } from './FinancialSummary';
+import { FinancialTotals } from './FinancialTotals';
 
 export function PersonCard({ person }: { person: Omit<DirectoryResult['rows'][number], 'id'> }) {
   return <article aria-label={person.canonicalName} className="card flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm">

@@ -15,7 +15,7 @@ import { closeArchive } from '../app/archive/archive.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { applyReviewedManifest } from '../app/db/manifests.server';
 
-test('home and profile expose every migrated record without promoting legacy totals into reviewed data', async () => {
+test('home, directory and profile expose every migrated record without promoting legacy totals into reviewed data', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-legacy-display-'));
   const url = `file:${join(directory, 'archive.db')}`, { client, db } = connectArchive({ url });
   const prior = { ARCHIVE_ADAPTER: process.env.ARCHIVE_ADAPTER, TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL, TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN };
@@ -34,6 +34,7 @@ test('home and profile expose every migrated record without promoting legacy tot
     await client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: ['b'.repeat(64), 'saln-tracker-ph', 'public_reader', '2026-10-02T00:00:00.000Z', 1, '{}', JSON.stringify([{ ...documents[0], data: typedFirestoreValue({ ...profile, name: 'Old capture' }) }])] });
     Object.assign(process.env, { ARCHIVE_ADAPTER: 'turso', TURSO_DATABASE_URL: url }); delete process.env.TURSO_AUTH_TOKEN;
     const { loader: home } = await import('../app/routes/home');
+    const { loader: people } = await import('../app/routes/people');
     const { loader: person } = await import('../app/routes/official.$slug');
     const args = (path: string) => ({ request: new Request(`http://localhost${path}`), params: {}, context: {} });
     const homeData = await home(args('/'));
@@ -44,6 +45,11 @@ test('home and profile expose every migrated record without promoting legacy tot
     assert.equal(legacy.profiles[0].name, 'Legacy Person', 'Only the latest capture is displayed');
     assert.deepEqual(legacy.profiles[0].saln_records.map(row => row.net_worth), [1375378062.74, 987.65]);
     assert.ok(!JSON.stringify(homeData).includes('must-not-publish'));
+    const listing = await people(args('/people?q=Commissioner'));
+    assert.equal(listing.legacy?.profiles.length, 1);
+    assert.equal((await people(args('/people?q=absent'))).legacy?.profiles.length, 0);
+    assert.equal((await people(args('/people?view=reviewed'))).directory?.total, 0);
+    for (const path of ['/people?q=a&q=b', '/people?amount=1', '/people?view=unknown']) await assert.rejects(people(args(path)), error => error instanceof Response && error.status === 400);
     const detail = await person({ ...args('/official/legacy-person'), params: { slug: 'legacy-person' } });
     assert.deepEqual(detail.legacy?.saln_records, legacy.profiles[0].saln_records);
     assert.ok(detail.legacy);
