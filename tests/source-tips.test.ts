@@ -35,8 +35,8 @@ test('Source Tip boundary rejects credentials, uploads and public database alias
 test('anonymous Source Tip action commits only to its private destination, with safe failures and no snapshot mutation', async () => {
   const folder = await mkdtemp(join(tmpdir(), 'saln-tips-')), publicUrl = `file:${join(folder, 'archive.db')}`, privateUrl = `file:${join(folder, 'tips.db')}`;
   const publicDb = connectArchive({ url: publicUrl }), privateDb = connectArchive({ url: privateUrl });
-  const env = { TURSO_DATABASE_URL: publicUrl, SOURCE_TIPS_DATABASE_URL: privateUrl }, old = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
-  async function submit(values = valid, extraHeaders: Record<string, string> = {}) { return action({ request: new Request('http://localhost/source-tip', { method: 'POST', body: new URLSearchParams(values), headers: { Origin: 'http://localhost', 'Content-Type': 'application/x-www-form-urlencoded', ...extraHeaders } }), params: {}, context: {} }); }
+  const env = { TURSO_DATABASE_URL: publicUrl, SOURCE_TIPS_DATABASE_URL: privateUrl, SOURCE_TIPS_RATE_LIMIT_SECRET: '' }, old = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
+  async function submit(values = valid, extraHeaders: Record<string, string> = {}) { return action({ request: new Request('http://localhost/source-tip', { method: 'POST', body: new URLSearchParams(values), headers: { Origin: 'http://localhost', 'Content-Type': 'application/x-www-form-urlencoded', ...extraHeaders } }), params: {}, context: { ip: '127.0.0.1' } }); }
   try {
     Object.assign(process.env, env); await migrateArchive(publicDb.db); await initializeSourceTipDestination(privateDb.client);
     const before = await exportPublicSnapshot(publicDb.db);

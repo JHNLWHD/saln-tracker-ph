@@ -33,7 +33,7 @@ export function sourceTipsConfigured(env: NodeJS.ProcessEnv = process.env) {
 
 function sourceTipRateKey(trustedIp: unknown, env: NodeJS.ProcessEnv) {
   const local = env.SOURCE_TIPS_DATABASE_URL?.startsWith('file:') && env.NETLIFY !== 'true';
-  if (local && trustedIp === undefined) return 'local-development';
+  if (local && (trustedIp === undefined || (env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) < 32)) return 'local-development';
   if (typeof trustedIp !== 'string' || !isIP(trustedIp) || (env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) < 32) throw new Error('Trusted client address and private rate-limit key are required');
   return createHmac('sha256', env.SOURCE_TIPS_RATE_LIMIT_SECRET!).update(trustedIp).digest('hex');
 }
