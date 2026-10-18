@@ -1,14 +1,15 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { Archive, Citation, PersonRecord } from "../archive/types";
 import { readArchiveTransaction, type ArchiveDatabase, type ArchiveReader, type ArchiveWriter } from "./client.server";
 import * as schema from "./schema";
 import { hasEligibleTenure, parsePartialDate, validateReviewedPerson, type ReviewedPerson } from "./validation";
 import { missingRows } from "./canonical";
-import { personIsEligible } from "./eligibility";
+import { personIsEligible, tenureIsVerified } from "./eligibility";
 import { findPublicSourceDocument, readPublicSourceDocument, sourceDocumentFromRow } from "./filings.server";
 import { checkCitationMetadata, projectCorrections, readEditorialCorrections } from "./corrections.server";
 import { checkPersonIdentifiers, findPersonIdentifier, identityLineage, readIdentityMatches } from "./identities.server";
-import { readArchiveHome } from "./rosters.server";
+import { isLatestRosterSnapshot, readArchiveHome, tenureCoversRosterDate } from "./rosters.server";
+import { readFinancialSummaries, readSecondaryReports, withTranscriptionLevels } from "./transcriptions.server";
 
 /** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
 export async function writeReviewedPerson(tx: ArchiveWriter, record: ReviewedPerson, verifyOnly = false) {
@@ -104,7 +105,6 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
       })),
       filings: [], sourceDocuments: [], financialSummaries: [],
       identityMatches: matches.filter(row => lineage.includes(row.fromPersonId)),
-
     };
     record.person = projectCorrections("person", record.person, corrections);
     const formerNames = formerPeople.filter(row => row.id !== person.id).flatMap(row => {
@@ -131,11 +131,19 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
       record.filings.sort((a, b) => a.reportingDate.value < b.reportingDate.value ? -1 : a.reportingDate.value > b.reportingDate.value ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
       record.sourceDocuments = documentRows.map(({ document }) => projectCorrections("source_document", sourceDocumentFromRow(document), corrections))
         .sort((a, b) => a.archivePublicationDate < b.archivePublicationDate ? -1 : a.archivePublicationDate > b.archivePublicationDate ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+      record.financialSummaries = await readFinancialSummaries(db, record.filings.map(filing => filing.id), corrections);
+      record.sourceDocuments = withTranscriptionLevels(record.sourceDocuments, record.financialSummaries);
+      record.relatedReports = (await readSecondaryReports(db, lineage, corrections)).map(report => ({ ...report, personId: person.id }));
+      record.rosterMemberships = await db.select({ snapshotId: schema.rosterSnapshots.id, scope: schema.rosterSnapshots.scope, verifiedAsOf: schema.rosterSnapshots.verifiedAsOf, tenureId: schema.rosterMembers.tenureId }).from(schema.rosterMembers)
+        .innerJoin(schema.rosterSnapshots, eq(schema.rosterSnapshots.id, schema.rosterMembers.snapshotId)).innerJoin(schema.tenures, eq(schema.tenures.id, schema.rosterMembers.tenureId)).where(and(inArray(schema.rosterMembers.tenureId, record.tenures.map(tenure => tenure.id)), tenureIsVerified(), tenureCoversRosterDate(schema.rosterSnapshots.verifiedAsOf),
+          isLatestRosterSnapshot())).orderBy(schema.rosterSnapshots.scope, schema.rosterMembers.position);
     }
     record.editorialCorrections = corrections.filter(row => row.target.type === "person" ? lineage.includes(row.target.id) :
       row.target.type === "tenure" ? record.tenures.some(tenure => tenure.id === row.target.id) :
         row.target.type === "filing" ? record.filings.some(filing => filing.id === row.target.id) :
-          row.target.type === "source_document" && record.sourceDocuments.some(document => document.id === row.target.id));
+          row.target.type === "source_document" ? record.sourceDocuments.some(document => document.id === row.target.id) :
+            row.target.type === "financial_summary" ? record.financialSummaries.some(summary => summary.id === row.target.id) :
+              row.target.type === "secondary_report" && record.relatedReports?.some(report => report.id === row.target.id));
     return record;
   }
   return {

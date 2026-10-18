@@ -71,9 +71,26 @@ test('unverified legacy profile does not display excluded Offices as evidence of
 function documentRecord(): PersonRecord {
   const value = structuredClone(record);
   value.filings = [{ id: 'filing-1', personId: value.person.id, filerName: 'PERSON, SAMPLE', reportingDate: { value: '2024', precision: 'year' }, executionDate: null, receiptDate: null, supersedesFilingId: null }];
-  value.sourceDocuments = [{ id: 'document-1', filingId: 'filing-1', fileName: 'sample-saln.pdf', mediaType: 'application/pdf', byteSize: 1234, sha256: 'a'.repeat(64), storageKey: 'private-storage-key', originalUrl: 'https://example.org/source.pdf', provenanceType: 'official_download', provenanceNote: 'Acquired from the custodian publication.', officialReleaseDate: null, acquisitionDate: { value: '2026-09', precision: 'month' }, archivePublicationDate: '2026-09-26T10:00:00.000Z', transcriptionLevel: 'document_only' }];
+  value.sourceDocuments = [{ id: 'document-1', filingId: 'filing-1', fileName: 'sample-saln.pdf', mediaType: 'application/pdf', byteSize: 1234, sha256: 'a'.repeat(64), originalUrl: 'https://example.org/source.pdf', provenanceType: 'official_download', provenanceNote: 'Acquired from the custodian publication.', officialReleaseDate: null, acquisitionDate: { value: '2026-09', precision: 'month' }, archivePublicationDate: '2026-09-26T10:00:00.000Z', transcriptionLevel: 'document_only' }];
   return value;
 }
+
+test('reviewed financial totals lead the profile and retain source links without calling an older summary the latest Filing', () => {
+  const value = documentRecord();
+  const source = { sourceDocumentId: 'document-1', location: 'Printed total box' };
+  value.financialSummaries = [{ id: 'summary-1', filingId: 'filing-1', totalAssets: '19884098.21', totalLiabilities: '897840.00', declaredNetWorth: '18986258.21', currency: 'PHP', reviewedAt: '2026-10-02', sources: { totalAssets: source, totalLiabilities: source, declaredNetWorth: source } }];
+  value.filings.push({ ...value.filings[0], id: 'filing-2', reportingDate: { value: '2025', precision: 'year' } });
+  const html = render(value);
+  assert.ok(html.indexOf('₱18,986,258.21') < html.indexOf('Name Variants'));
+  assert.ok(html.indexOf('Declared net worth') < html.indexOf('Total assets'));
+  assert.match(html, /Most recent reviewed totals/);
+  assert.match(html, /Reporting Date: <span>2024<\/span>/);
+  assert.match(html, /href="\/documents\/a{64}">Printed total box/);
+  assert.doesNotMatch(html, /latest Filing/i);
+  value.filings[1].reportingDate = { value: '2024', precision: 'year' };
+  value.financialSummaries.push({ ...value.financialSummaries[0], id: 'summary-2', filingId: 'filing-2' });
+  assert.match(render(value), /Multiple reviewed summaries/);
+});
 
 test('Document-only Filing shows provenance and separate stable open/download actions without invented dates or totals', () => {
   const html = render(documentRecord());
