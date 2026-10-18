@@ -141,6 +141,26 @@ export function assertRecoverySnapshot(actual: unknown, expected: unknown) {
   if (typeof expected !== 'string' || !/^[a-f0-9]{64}$/.test(expected) || actual !== expected) throw new Error('Recovery snapshot must match the accepted release plan');
 }
 
+/** Bind post-import checks to the successful, retained pre-import verification. */
+export async function readBeforeRecovery(file: string, binding: {
+  acceptedCommit: string; databaseUrl: string;
+  backupTarget: { accountId: string; bucket: string; jurisdiction: string };
+  pre: { key: string; sha256: string };
+}) {
+  const before = JSON.parse(await readFile(file, 'utf8'));
+  assert.equal(before.status, 'recovery_evidence_checked_not_deployed');
+  assert.equal(before.phase, 'before');
+  assert.equal(before.acceptedCommit, binding.acceptedCommit);
+  assert.equal(before.databaseUrl, binding.databaseUrl);
+  assert.deepEqual(before.backupTarget, binding.backupTarget);
+  assert.ok(Array.isArray(before.verified) && before.verified.length === 1, 'Expected one verified pre-import backup');
+  const pre = before.verified[0];
+  assert.equal(pre.phase, 'pre'); assert.equal(pre.key, binding.pre.key); assert.equal(pre.sha256, binding.pre.sha256);
+  assert.equal(pre.restored, true); assert.equal(pre.matchesCurrentProduction, true);
+  assert.equal(typeof pre.databaseDigest, 'string'); assert.match(pre.databaseDigest, /^[a-f0-9]{64}$/);
+  return pre.databaseDigest as string;
+}
+
 async function main() {
   const [file, phase, revision, ...extra] = process.argv.slice(2);
   if (!file || !['before', 'after'].includes(phase) || !revision || extra.length) throw new Error('Usage: archive:verify-recovery -- private-cutover-record.json before|after accepted-commit');
@@ -152,6 +172,9 @@ async function main() {
   assertRecoverySnapshot(record.snapshotVersion, plan.expected.snapshotVersion);
   const buckets = productionBuckets(record.targets, plan.productionR2, plan.stagingR2);
   const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl, plan.stagingTursoHost);
+  const backupTarget = { accountId: buckets.accountId, bucket: buckets.backupBucket, jurisdiction: buckets.backupJurisdiction };
+  const beforeReportFile = `${file}.before.json`;
+  const beforeDigest = phase === 'after' ? await readBeforeRecovery(beforeReportFile, { acceptedCommit: revision, databaseUrl: databaseConfig.url, backupTarget, pre: record.backups.pre }) : undefined;
   const token = process.env.R2_CONFIG_READ_TOKEN;
   if (!token || !process.env.BACKUP_R2_ACCESS_KEY_ID || !process.env.BACKUP_R2_SECRET_ACCESS_KEY) throw new Error('Read-only lock and backup credentials are required');
   await verifyBucketLocks(buckets, token);
@@ -165,14 +188,16 @@ async function main() {
       const backup = record.backups[name];
       if (!backup || typeof backup.key !== 'string' || !backup.key.startsWith(`releases/${revision}/`) || !backup.key.endsWith(`/${name}.sql`)) throw new Error('Backup keys must identify this release and phase');
       const currentPhase = name === (phase === 'before' ? 'pre' : 'post');
-      const restored = await verifySqlRecovery(backup.file, backup.sha256, name === 'post' ? record.snapshotVersion : null, currentPhase ? productionDigest : undefined);
+      const restored = await verifySqlRecovery(backup.file, backup.sha256, name === 'post' ? record.snapshotVersion : null, currentPhase ? productionDigest : beforeDigest);
       const object = await storage.send(new GetObjectCommand({ Bucket: buckets.backupBucket, Key: backup.key }));
       if (!object.Body) throw new Error('Locked backup has no body');
       const bytes = await object.Body.transformToByteArray();
       assert.equal(bytes.byteLength, restored.byteSize); assert.equal(createHash('sha256').update(bytes).digest('hex'), backup.sha256);
-      verified.push({ phase: name, ...restored, matchesCurrentProduction: currentPhase });
+      verified.push({ phase: name, key: backup.key, ...restored, matchesCurrentProduction: currentPhase });
     }
-    console.log(JSON.stringify({ status: 'recovery_evidence_checked_not_deployed', acceptedCommit: revision, databaseUrl: databaseConfig.url, phase, verified }));
+    const report = { status: 'recovery_evidence_checked_not_deployed', observedAt: new Date().toISOString(), acceptedCommit: revision, databaseUrl: databaseConfig.url, backupTarget, phase, verified };
+    if (phase === 'before') await writeFile(beforeReportFile, JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
+    console.log(JSON.stringify(report));
   } finally { storage.destroy(); }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(() => { console.error('Production recovery gate failed. No deployment, database import or provider write was performed.'); process.exitCode = 1; });
