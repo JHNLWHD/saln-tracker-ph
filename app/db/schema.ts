@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { check, index, integer, primaryKey, sqliteTable, text, uniqueIndex, type AnySQLiteColumn } from "drizzle-orm/sqlite-core";
-import type { Citation, Constituency, CorrectionChanges, CorrectionTargetType, Jurisdiction, Office, SourceDocument, Tenure } from "../archive/types";
+import type { Citation, Constituency, CorrectionChanges, CorrectionTargetType, Jurisdiction, Office, RosterSnapshot, SourceDocument, Tenure } from "../archive/types";
 
 export const people = sqliteTable("people", {
   id: text("id").primaryKey(),
@@ -141,13 +141,13 @@ export const sourceDocuments = sqliteTable("source_documents", {
 export const manifestApplications = sqliteTable("manifest_applications", {
   id: text("id").primaryKey(),
   version: integer("version").notNull(),
-  kind: text("kind", { enum: ["person", "filing", "correction", "identities"] }).notNull(),
+  kind: text("kind", { enum: ["person", "filing", "correction", "identities", "roster"] }).notNull(),
   digest: text("digest").notNull(),
   canonicalPayload: text("canonical_payload").notNull(),
   appliedAt: text("applied_at").notNull(),
 }, (t) => [
   check("manifest_version", sql`${t.version} = 1`),
-  check("manifest_kind", sql`${t.kind} in ('person','filing','correction','identities')`),
+  check("manifest_kind", sql`${t.kind} in ('person','filing','correction','identities','roster')`),
   check("manifest_digest", sql`length(${t.digest}) = 64 and ${t.digest} not glob '*[^0-9a-f]*'`),
   check("manifest_payload", sql`json_valid(${t.canonicalPayload}) and json_type(${t.canonicalPayload}) = 'object'`),
 ]);
@@ -203,3 +203,18 @@ export const legacyDocuments = sqliteTable("legacy_documents", {
   sha256: text("sha256").notNull(),
   manifestId: text("manifest_id").notNull().references(() => manifestApplications.id),
 });
+
+export const rosterSnapshots = sqliteTable("roster_snapshots", {
+  id: text("id").primaryKey().references(() => manifestApplications.id),
+  scope: text("scope").$type<RosterSnapshot["scope"]>().notNull(),
+  verifiedAsOf: text("verified_as_of").notNull(),
+  reviewedAt: text("reviewed_at").notNull(),
+  reviewedBy: text("reviewed_by").notNull(),
+}, (t) => [index("roster_scope_date").on(t.scope, t.verifiedAsOf), check("roster_scope", sql`${t.scope} in ('executive','senate','speaker','house','local')`)]);
+
+export const rosterMembers = sqliteTable("roster_members", {
+  snapshotId: text("snapshot_id").notNull().references(() => rosterSnapshots.id),
+  tenureId: text("tenure_id").notNull().references(() => tenures.id),
+  position: integer("position").notNull(),
+  citations: text("citations", { mode: "json" }).$type<Citation[]>().notNull(),
+}, (t) => [primaryKey({ columns: [t.snapshotId, t.tenureId] }), uniqueIndex("roster_member_position").on(t.snapshotId, t.position), check("roster_position", sql`${t.position} >= 0`), check("roster_evidence", sql`json_valid(${t.citations}) and json_type(${t.citations}) = 'array' and json_array_length(${t.citations}) > 0`)]);

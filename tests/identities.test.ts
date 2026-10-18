@@ -188,8 +188,8 @@ test("dated legacy identity manifest retains every reviewed key while publishing
     const load = (slug: string) => loader({ request: new Request(`http://localhost/official/${slug}?source=legacy`), params: { slug }, context: {} });
     await assert.rejects(load("ferdinand-bongbong-romualdez-marcos-jr"), error => error instanceof Response && error.status === 301 && error.headers.get("Location") === "/official/ferdinand-marcos-jr?source=legacy");
     await assert.rejects(load("sen-006"), error => error instanceof Response && error.status === 301 && error.headers.get("Location") === "/official/risa-hontiveros?source=legacy");
-    assert.equal((await load("risa-hontiveros")).person.person.id, "person-risa-hontiveros"); // No self-redirect.
-    assert.equal((await load("aimee-ferolino-ampoloquio")).person.person.eligibility, "unverified");
+    assert.equal((await load("risa-hontiveros")).person?.person.id, "person-risa-hontiveros"); // No self-redirect.
+    assert.equal((await load("aimee-ferolino-ampoloquio")).person?.person.eligibility, "unverified");
   } finally {
     await closeArchive(); await state.close();
     for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
