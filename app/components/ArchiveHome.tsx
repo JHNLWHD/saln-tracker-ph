@@ -19,7 +19,7 @@ export function ArchiveHome({ data }: { data: HomeData }) {
       <ArchiveTable caption={`${scopeLabels[snapshot.scope]} · ${snapshot.verifiedAsOf}`}>
         <thead><tr><th scope="col">Person and Office</th><th scope="col">Archive Source Documents</th><th scope="col">Declared Financial Summary</th></tr></thead>
         <tbody>{rows.map(row => <tr key={row.tenureId}>
-          <th scope="row" className="min-w-[12rem]"><Link to={`/official/${row.slug}`} className="underline text-primary-700">{row.canonicalName}</Link><p className="archive-muted font-normal">{row.officeName}</p></th>
+          <th scope="row" className="min-w-[12rem]"><Link to={`/official/${row.slug}?view=reviewed`} className="underline text-primary-700">{row.canonicalName}</Link><p className="archive-muted font-normal">{row.officeName}</p></th>
           <td><p>{row.documentCount.toLocaleString('en-PH')}</p>{row.documentCount === 0 && <p className="archive-muted">No SALN currently in the archive</p>}</td>
           <td className="min-w-[12rem]">{row.latestSummary ? <p>Declared net worth: ₱{row.latestSummary.declaredNetWorth}</p> : <p>Totals not transcribed</p>}</td>
         </tr>)}</tbody>
@@ -30,7 +30,7 @@ export function ArchiveHome({ data }: { data: HomeData }) {
       <h2 id="recent-documents">Recently Added</h2>
       <p className="archive-muted">Source Documents ordered by Archive Publication Date. Reporting Date identifies the declaration period.</p>
       {data.recentlyAdded.length === 0 && <p>No Source Documents are currently in the archive.</p>}
-      {data.recentlyAdded.map(document => <EvidenceRow key={document.id} title={document.fileName} href={`/documents/${document.sha256}`} metadata={<><Link to={`/official/${document.slug}`} className="underline text-primary-700">{document.canonicalName}</Link><p>Reporting Date: {document.reportingDate.value} ({document.reportingDate.precision} precision)</p><p>Archive Publication Date: <time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></p></>} />)}
+      {data.recentlyAdded.map(document => <EvidenceRow key={document.id} title={document.fileName} href={`/documents/${document.sha256}`} metadata={<><Link to={`/official/${document.slug}?view=reviewed`} className="underline text-primary-700">{document.canonicalName}</Link><p>Reporting Date: {document.reportingDate.value} ({document.reportingDate.precision} precision)</p><p>Archive Publication Date: <time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></p></>} />)}
     </section>
   </div>;
 }

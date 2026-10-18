@@ -60,7 +60,7 @@ const nationalRosterOffices = {
 
 export async function writeReviewedRoster(tx: ArchiveWriter, id: string, record: ReviewedRoster, verifyOnly = false) {
   if (!verifyOnly) {
-    const [sameTime] = await tx.select({ id: schema.rosterSnapshots.id }).from(schema.rosterSnapshots).where(and(ne(schema.rosterSnapshots.id, id), eq(schema.rosterSnapshots.scope, record.scope), eq(schema.rosterSnapshots.verifiedAsOf, record.verifiedAsOf), eq(schema.rosterSnapshots.reviewedAt, record.review.reviewedAt))).limit(1);
+    const [sameTime] = await tx.select({ id: schema.rosterSnapshots.id }).from(schema.rosterSnapshots).where(and(ne(schema.rosterSnapshots.id, id), eq(schema.rosterSnapshots.scope, record.scope), eq(schema.rosterSnapshots.verifiedAsOf, record.verifiedAsOf), record.review.reviewedAt.length === 10 ? sql`substr(${schema.rosterSnapshots.reviewedAt}, 1, 10) = ${record.review.reviewedAt}` : eq(schema.rosterSnapshots.reviewedAt, record.review.reviewedAt))).limit(1);
     if (sameTime) throw new Error('A same-day replacement needs a distinct reviewed timestamp');
   }
   const corrections = await readEditorialCorrections(tx);

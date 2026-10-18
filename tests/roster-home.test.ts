@@ -55,6 +55,12 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
     assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /scope="row"/); assert.match(markup, /tabindex="0"/);
     assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
+    const withRecent = structuredClone(home);
+    withRecent.recentlyAdded = [{ id: 'synthetic-document', sha256: 'a'.repeat(64), fileName: 'synthetic.pdf', archivePublicationDate: '2026-10-02T00:00:00.000Z', reportingDate: { value: '2024', precision: 'year' }, canonicalName: home.rosters[0].rows[0].canonicalName, slug: home.rosters[0].rows[0].slug }];
+    const linked = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: withRecent })));
+    const profileLinks = [...linked.matchAll(/href="(\/official\/[^\"]+)"/g)].map(match => match[1]);
+    assert.ok(profileLinks.length >= 3);
+    assert.ok(profileLinks.every(href => href.endsWith('?view=reviewed')), 'Roster and Recently Added links must keep the reviewed view');
     const exported = await exportPublicSnapshot(state.db);
     assert.equal(exported.snapshot.data.rosterSnapshots.length, 1);
     assert.ok(!exported.snapshotJson.includes("reviewedBy"));
@@ -91,6 +97,12 @@ test('review timestamps order same-day replacements independently of IDs and imp
     await assert.rejects(applyReviewedManifest(state.db, { ...later, id: 'ambiguous-time' }), /distinct reviewed timestamp/);
     for (const reviewedAt of ['2026-02-30T14:00:00.000Z', '2026-10-02T14:00:00+00:00', '2026-09-27T14:00:00.000Z']) assert.throws(() => validateReviewedRoster({ ...later.payload, review: { ...later.payload.review, reviewedAt } }));
     assert.equal((await applyReviewedManifest(state.db, later)).status, 'unchanged');
+    const nextDay = structuredClone(later); nextDay.id = 'next-day'; nextDay.payload.review.reviewedAt = '2026-10-03T14:00:00.000Z';
+    await applyReviewedManifest(state.db, nextDay);
+    const imprecise = structuredClone(nextDay); imprecise.id = 'imprecise-replacement'; imprecise.payload.review.reviewedAt = '2026-10-03';
+    await assert.rejects(applyReviewedManifest(state.db, imprecise), /distinct reviewed timestamp/);
+    assert.equal((await state.db.select().from(manifestApplications).where(eq(manifestApplications.id, imprecise.id))).length, 0);
+    assert.equal((await createDbArchive(state.db).readHome()).rosters[0].snapshot.id, nextDay.id);
   } finally { await state.close(); }
 });
 
