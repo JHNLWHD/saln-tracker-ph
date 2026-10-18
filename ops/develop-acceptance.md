@@ -10,7 +10,7 @@ To check a named deployment, append its origin and exact commit: `npm run archiv
 
 As-is migration is independent of editorial review. Verify the complete legacy capture against Turso with `archive:prepare-legacy-copy` and its verification SQL, then check every legacy profile and source link. Keep all existing Git-held PDFs available at their original paths. R2 mappings are required before removing those copies, not before displaying migrated records. The checks below target the separate reviewed Archive at `?view=reviewed`; its counts do not describe legacy coverage.
 
-The fixed [stage-one plan](../data/release/stage-one.json) describes **reviewed metadata**: 27 eligible People and 29 Tenures. It contains no approved release Source Documents. The Risa 2024 source pages and Summary/reporting records are local verification examples; their publication dates need release review before a production manifest is prepared. Legacy PDFs have no approved R2 mappings. Zero in this baseline means zero approved release records, not no SALN in the real world. These gaps block publication of new reviewed Source Documents; do not pass them by changing an expected count to zero. Review and commit release-specific manifests, source-byte mappings and the complete expected baseline before acceptance.
+The fixed [stage-one plan](../data/release/stage-one.json) describes **reviewed metadata**: 27 eligible People and 29 Tenures. It contains no approved release Source Documents. The Risa 2024 source pages and Summary/reporting records are local verification examples; their publication dates need release review before a production manifest is prepared. Legacy PDFs have no approved R2 mappings. Zero in this baseline means zero approved release records, not no SALN in the real world. The generated report keeps this future work under `deferredSourcePublication`, separate from release acceptance evidence. Before publishing new reviewed Source Documents, review and commit their manifests, source-byte mappings and complete expected baseline. This work does not block the as-is release while original PDF files remain available.
 
 ## Required evidence
 
@@ -21,7 +21,7 @@ The fixed [stage-one plan](../data/release/stage-one.json) describes **reviewed 
 | Empty staging migration | Staging creation/migration record and exact ledger matching plan | Local rehearsal only |
 | Import/replay | Staging manifest IDs/digests; first applied and second unchanged; no extra writes | Local rehearsal only |
 | Reconciliation | Every expected Person, Identity Match, Tenure, Filing, Source Document, alias, relationship, roster and checksum; exact snapshot version | Metadata baseline only |
-| Legacy URLs | Profile aliases and every approved PDF mapping, one-hop destination, byte checksums, no loops | No approved PDF mapping |
+| Legacy URLs | Every original profile/PDF path, preserved PDF byte checksums, and exact redirects where mappings exist | Pending live path and byte comparison |
 | Browser review | Home, directory/search, profiles, Related Reporting, document open/download, gaps, private Source Tip success/failure, keyboard, 360px and desktop visuals | Prior local slice checks; live review pending |
 | Private queue | Synthetic live tip reaches only the private destination; public snapshot stays unchanged; access is restricted | Pending |
 | Runtime network | Browser network evidence contains no Firebase endpoint or call during all journeys | Pending |
