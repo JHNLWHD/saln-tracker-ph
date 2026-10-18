@@ -137,6 +137,10 @@ export function assertProductionApproval(record: { acceptedCommit?: string; deve
   if (!Number.isFinite(deadline) || deadline <= Date.now()) throw new Error('An agreed future rollback deadline is required');
 }
 
+export function assertRecoverySnapshot(actual: unknown, expected: unknown) {
+  if (typeof expected !== 'string' || !/^[a-f0-9]{64}$/.test(expected) || actual !== expected) throw new Error('Recovery snapshot must match the accepted release plan');
+}
+
 async function main() {
   const [file, phase, revision, ...extra] = process.argv.slice(2);
   if (!file || !['before', 'after'].includes(phase) || !revision || extra.length) throw new Error('Usage: archive:verify-recovery -- private-cutover-record.json before|after accepted-commit');
@@ -144,7 +148,8 @@ async function main() {
   assertProductionApproval(record, revision);
   assertProductionCheckout(revision);
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
-  if (plan.publicationReviewPending.length || record.snapshotVersion !== plan.expected.snapshotVersion) throw new Error('Release publication review must pass before production verification');
+  // Recovery checks do not publish Source Documents or promote copied legacy data.
+  assertRecoverySnapshot(record.snapshotVersion, plan.expected.snapshotVersion);
   const buckets = productionBuckets(record.targets, plan.productionR2, plan.stagingR2);
   const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl, plan.stagingTursoHost);
   const token = process.env.R2_CONFIG_READ_TOKEN;

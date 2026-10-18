@@ -5,11 +5,20 @@ import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, databaseFingerprint, productionBuckets, productionDatabase, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
 import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { migrateArchive } from '../scripts/migrate';
+
+test('legacy recovery can proceed while future Source Document publication is pending, with the exact accepted snapshot', async () => {
+  const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
+  assert.ok(plan.publicationReviewPending.length > 0);
+  assert.equal(plan.expected.counts.sourceDocuments, 0);
+  assert.doesNotThrow(() => assertRecoverySnapshot(plan.expected.snapshotVersion, plan.expected.snapshotVersion));
+  assert.throws(() => assertRecoverySnapshot('0'.repeat(64), plan.expected.snapshotVersion), /accepted release plan/);
+  for (const value of [null, undefined, '', 'pending']) assert.throws(() => assertRecoverySnapshot(value, value), /accepted release plan/);
+});
 
 test('production evidence requires exact approval and whole-bucket indefinite locks', () => {
   const lock = { success: true, result: { rules: [{ enabled: true, condition: { type: 'Indefinite' } }] } };
