@@ -9,7 +9,7 @@ export function Footer() {
         <div className="site-footer-record">
           <div>
             <p className="site-footer-brand">SALN Tracker PH</p>
-            <p>Source Documents and reviewed Transcriptions for people who hold or held included elected offices in the Philippines.</p>
+            <p>Original tracker data and a source-based Archive of public SALN records in the Philippines.</p>
             <p>The Archive does not verify real-world wealth or determine compliance.</p>
           </div>
           <nav aria-label="Footer navigation" className="site-footer-links">

@@ -8,12 +8,13 @@ export function meta() {
 export default function About() {
   return <><Header /><main className="archive-container max-w-3xl py-8 space-y-8">
     <h1>About the Archive</h1>
-    <p>SALN Tracker PH is an open-ended Archive of acquired Source Documents and reviewed Transcriptions. It covers People who hold or held included elected Offices in the Philippines.</p>
-    <section className="space-y-3"><h2>What the Archive covers</h2>
+    <p>SALN Tracker PH preserves the earlier tracker's profiles, SALN entries and source links. The default pages show the original values under “Original tracker data.” Migration does not require a new editorial review.</p>
+    <p>The separate reviewed Archive presents acquired Source Documents and reviewed Transcriptions for People who hold or held included elected Offices in the Philippines. Its rules below do not exclude existing records from the default view.</p>
+    <section className="space-y-3"><h2>What the reviewed Archive covers</h2>
       <p>A Statement of Assets, Liabilities, and Net Worth (SALN) records a declarant's stated assets, liabilities and net worth. The Archive presents those declarations. It does not verify real-world wealth or determine compliance.</p>
       <p>National, provincial, city and municipal elected Offices are included. Barangay and Sangguniang Kabataan Offices are excluded. A former elected officeholder can remain eligible while holding an appointed Office.</p>
       <p>Archive coverage grows as evidence is acquired and reviewed. An Archive Gap means that a Source Document is not currently in the Archive. It does not establish a missing Filing or a failure to file.</p>
-      <Link className="text-primary-700 underline" to="/people">Browse Archive-Eligible People</Link>
+      <Link className="text-primary-700 underline" to="/people?view=reviewed">Browse Archive-Eligible People</Link>
     </section>
     <section className="space-y-3"><h2>Identity and Office evidence</h2>
       <p>A Person needs attributable evidence of an included elected Office. A public article can establish a Tenure. Official records are preferred. A citation identifies what each source supports.</p>
