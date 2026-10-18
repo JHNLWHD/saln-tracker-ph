@@ -5,7 +5,7 @@ import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, readBeforeRecovery, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
 import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
@@ -28,6 +28,28 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
   const revision = 'a'.repeat(40), record = { acceptedCommit: revision, developAcceptanceRef: 'Synthetic acceptance', productionApprovalRef: 'Synthetic explicit approval', rollbackUntil: new Date(Date.now() + 3600000).toISOString() };
   assert.doesNotThrow(() => assertProductionApproval(record, revision));
   for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
+});
+
+test('after verification requires durable before evidence bound to the exact release, target and pre-import object', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-before-evidence-')), file = join(directory, 'cutover.json.before.json');
+  const binding = { acceptedCommit: 'a'.repeat(40), databaseUrl: 'libsql://production.example.invalid', backupTarget: { accountId: 'b'.repeat(32), bucket: 'production-backups', jurisdiction: 'eu' }, pre: { key: `releases/${'a'.repeat(40)}/first/pre.sql`, sha256: 'c'.repeat(64) } };
+  const pre = { ...binding.pre, phase: 'pre', restored: true, matchesCurrentProduction: true, databaseDigest: 'd'.repeat(64) };
+  const report = { status: 'recovery_evidence_checked_not_deployed', phase: 'before', acceptedCommit: binding.acceptedCommit, databaseUrl: binding.databaseUrl, backupTarget: binding.backupTarget, verified: [pre] };
+  try {
+    await assert.rejects(readBeforeRecovery(file, binding), /ENOENT/);
+    await writeFile(file, JSON.stringify(report));
+    assert.equal(await readBeforeRecovery(file, binding), pre.databaseDigest);
+    for (const changes of [
+      { status: 'pending' }, { phase: 'after' }, { acceptedCommit: 'e'.repeat(40) }, { databaseUrl: 'libsql://other.example.invalid' },
+      { backupTarget: { ...binding.backupTarget, bucket: 'other-backups' } }, { backupTarget: { ...binding.backupTarget, jurisdiction: 'default' } },
+      { verified: [] }, { verified: [pre, pre] }, ...[{ phase: 'post' }, { key: binding.pre.key.replace('/pre.sql', '/post.sql') }, { sha256: 'e'.repeat(64) }, { databaseDigest: '' }, { restored: false }, { matchesCurrentProduction: false }].map(change => ({ verified: [{ ...pre, ...change }] })),
+    ]) {
+      await writeFile(file, JSON.stringify({ ...report, ...changes }));
+      await assert.rejects(readBeforeRecovery(file, binding));
+    }
+    await writeFile(file, JSON.stringify(report));
+    await assert.rejects(readBeforeRecovery(file, { ...binding, pre: { ...binding.pre, sha256: 'f'.repeat(64) } }));
+  } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
 const stagingR2 = { accountId: 'b'.repeat(32), bucket: 'staging-documents', jurisdiction: 'default' };
