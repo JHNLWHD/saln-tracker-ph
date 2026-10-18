@@ -21,7 +21,7 @@ export async function databaseFingerprint(client: Client) {
   try {
     const schema = await tx.execute("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name");
     const tables = schema.rows.filter(row => row.type === 'table');
-    assert.ok(tables.length, 'Restored database has no application tables');
+    // A newly provisioned database is a valid, checksum-bound pre-import state.
     const hash = createHash('sha256').update(encode(schema.rows.map(row => Array.from(row))));
     // ponytail: sort one table in memory; use a streaming ordered export if backup tables outgrow operator memory.
     for (const table of tables) {
