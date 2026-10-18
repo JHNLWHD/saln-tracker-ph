@@ -81,7 +81,7 @@ test("route loaders run locally without Firebase and preserve the missing-profil
     const { loader: homeLoader } = await import("../app/routes/home");
     const { loader: profileLoader } = await import("../app/routes/official.$slug");
     assert.deepEqual(await homeLoader({ request: new Request("http://localhost/"), params: {}, context: {} }), {
-      archive: { rosters: [], recentlyAdded: [] }, officials: null,
+      archive: { rosters: [], recentlyAdded: [] },
     });
     await assert.rejects(
       profileLoader({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }),
