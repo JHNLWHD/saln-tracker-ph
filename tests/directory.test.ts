@@ -16,6 +16,8 @@ test('URL filters reject unsupported fields, repeated values and bad periods; pa
   for (const query of ['amount=100', 'q=x&q=y', 'year=0000', 'page=-1', 'page=1.1', 'tenure=unknown', 'documents=claimed', `q=${'a'.repeat(129)}`]) assert.throws(() => filters(query));
   assert.equal(filters('year=1800').year, '1800');
   assert.equal(directoryHref(filters('q=Risa&documents=available'), 2), '/people?q=Risa&documents=available&page=2');
+  assert.equal(directoryHref(filters(), 1, 'reviewed'), '/people?view=reviewed');
+  assert.equal(directoryHref(filters('q=Risa'), 2, 'reviewed'), '/people?q=Risa&page=2&view=reviewed');
 });
 
 test('native directory searches only public identity/office fields and applies roster, correction and eligibility boundaries', async () => {
@@ -36,6 +38,15 @@ test('native directory searches only public identity/office fields and applies r
     const review = { reviewedAt: '2026-10-02', reviewedBy: 'private test reviewer' }, bytes = Buffer.from('%PDF-1.7\nSynthetic directory fixture\n%%EOF\n'), sha256 = createHash('sha256').update(bytes).digest('hex');
     await applyReviewedManifest(db, { id: 'synthetic-filing', version: 1, kind: 'filing', payload: { review, filing: { id: 'synthetic-filing', personId: 'person-risa-hontiveros', filerName: 'FAMILYNAME FIRST', reportingDate: { value: '2024', precision: 'year' }, executionDate: null, receiptDate: null, supersedesFilingId: null }, document: { id: 'synthetic-document', filingId: 'synthetic-filing', fileName: 'unindexed-document-label.pdf', mediaType: 'application/pdf', byteSize: bytes.byteLength, sha256, originalUrl: 'https://example.org/source', provenanceType: 'official_download', provenanceNote: 'unindexed-document-text', officialReleaseDate: null, acquisitionDate: { value: '2026-10-02', precision: 'day' }, archivePublicationDate: '2026-10-02T00:00:00.000Z', transcriptionLevel: 'document_only' } } }, { bytes, storage: { async get() { return bytes; }, async put() { return { created: true, storageKey: `documents/sha256/${sha256}` }; } } });
     await applyReviewedManifest(db, { id: 'synthetic-report', version: 1, kind: 'report', payload: { review, report: { id: 'synthetic-report', personId: 'person-risa-hontiveros', title: 'unindexed-article-prose', url: 'https://example.org/report', publisher: 'Test', publishedDate: null, note: '55555.00' } } });
+    const source = { sourceDocumentId: 'synthetic-document', location: 'Printed total box' };
+    await applyReviewedManifest(db, { id: 'synthetic-summary', version: 1, kind: 'summary', payload: { review, summary: { id: 'synthetic-summary', filingId: 'synthetic-filing', currency: 'PHP', totalAssets: '55555.00', totalLiabilities: '1000.00', declaredNetWorth: '54555.00', sources: { totalAssets: source, totalLiabilities: source, declaredNetWorth: source } } } });
+    const financialRow = (await browse('q=Risa')).rows[0];
+    assert.equal(financialRow.latestSummary?.declaredNetWorth, '54555.00');
+    assert.deepEqual(financialRow.summaryReportingDate, { value: '2024', precision: 'year' });
+    assert.deepEqual(directoryFromRecords([(await archive.findPersonBySlug('risa-hontiveros'))!], filters()).rows[0], financialRow);
+    assert.equal((await browse()).rows[0].id, 'person-risa-hontiveros', 'Acquired copies appear before empty profiles, before pagination');
+    await applyReviewedManifest(db, { id: 'synthetic-summary-correction', version: 1, kind: 'correction', payload: { review, target: { type: 'financial_summary', id: 'synthetic-summary' }, previousCorrectionId: null, reason: 'Synthetic reviewed transcription correction', changes: { declaredNetWorth: '54554.99' }, citations: [{ id: 'summary-proof', title: 'Printed total box', url: 'https://example.org/source', publisher: 'Test', type: 'official_record', supports: ['declaredNetWorth'], publishedDate: null }] } });
+    assert.equal((await browse('q=Risa')).rows[0].latestSummary?.declaredNetWorth, '54554.99');
     assert.equal((await browse('q=FAMILYNAME')).total, 1); assert.equal((await browse('year=2024&documents=available')).total, 1);
     for (const q of ['unindexed-document-label', 'unindexed-document-text', 'unindexed-article-prose', '55555.00']) assert.equal((await browse(`q=${q}`)).total, 0);
     const correction = { id: 'correct-directory-name', version: 1, kind: 'correction', payload: { review, target: { type: 'person', id: 'person-risa-hontiveros' }, previousCorrectionId: null, reason: 'Synthetic approved identity correction', changes: { canonicalName: 'Reviewed Person Name', nameVariants: ['NewAliasUnique'] }, citations: [{ id: 'name-proof', title: 'Synthetic name evidence', url: 'https://example.org/name', publisher: 'Test', type: 'official_record', supports: ['canonicalName', 'nameVariants'], publishedDate: null }] } };

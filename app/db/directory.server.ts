@@ -1,10 +1,13 @@
-import { and, count, eq, inArray, sql, type SQL } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { DirectoryFilters, DirectoryResult } from '../archive/types';
 import { searchText } from '../archive/directory';
 import type { ArchiveReader } from './client.server';
 import { canonicalPersonId } from './identities.server';
 import { personIsEligible, tenureIsVerified } from './eligibility';
 import { effectiveField, isLatestRosterSnapshot, tenureCoversRosterDate } from './rosters.server';
+import { latestSummaryCandidates } from '../archive/financial';
+import { readFinancialSummaries } from './transcriptions.server';
+import { parsePartialDate } from './validation';
 import * as s from './schema';
 
 const anyTenure = (condition: SQL = sql`1`) => sql`exists (select 1 from ${s.tenures} inner join ${s.offices} on ${s.offices.id} = ${s.tenures.officeId}
@@ -48,7 +51,7 @@ export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters
   const name = effectiveField<string>('person', sql`people.id`, 'canonicalName', sql`people.canonical_name`);
   const rows = await tx.select({ id: s.people.id, slug: s.people.slug, canonicalName: name,
     documentCount: sql<number>`(select count(distinct d.sha256) from source_documents d inner join filings f on f.id = d.filing_id where ${canonicalPersonId(sql`f.person_id`)} = people.id)`.mapWith(Number),
-  }).from(s.people).where(where).orderBy(name, s.people.id).limit(pageSize).offset((page - 1) * pageSize);
+  }).from(s.people).where(where).orderBy(desc(hasDocuments), name, s.people.id).limit(pageSize).offset((page - 1) * pageSize);
   const offices = await tx.select({ id: s.offices.id, name: s.offices.name }).from(s.offices).innerJoin(s.tenures, eq(s.tenures.officeId, s.offices.id)).innerJoin(s.people, eq(s.people.id, canonicalPersonId(s.tenures.personId)))
     .where(and(personIsEligible(), tenureIsVerified(), eq(s.offices.included, true))).groupBy(s.offices.id).orderBy(s.offices.name, s.offices.id);
   const publicJurisdictionIds = sql`with recursive public_places(id) as (
@@ -64,5 +67,15 @@ export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters
     .where(sql`${s.jurisdictions.id} in (${publicJurisdictionIds})`).orderBy(s.jurisdictions.name, s.jurisdictions.id);
   const memberships = await tx.select({ personId: canonicalPersonId(s.tenures.personId).as('person_id'), name: s.offices.name }).from(s.tenures).innerJoin(s.offices, eq(s.offices.id, s.tenures.officeId))
     .where(and(inArray(canonicalPersonId(s.tenures.personId), rows.map(row => row.id)), tenureIsVerified(), eq(s.offices.included, true))).groupBy(canonicalPersonId(s.tenures.personId), s.offices.name).orderBy(s.offices.name);
-  return { rows: rows.map(row => ({ ...row, offices: memberships.filter(member => member.personId === row.id).map(member => member.name) })), total, page, pageSize, offices, jurisdictions };
+  const filings = await tx.select({ id: s.filings.id, personId: canonicalPersonId(s.filings.personId), reportingDate: effectiveField<string>('filing', s.filings.id, 'reportingDate.value', s.filings.reportingDate) })
+    .from(s.filings).where(inArray(canonicalPersonId(s.filings.personId), rows.map(row => row.id)));
+  const summaries = await readFinancialSummaries(tx, filings.map(filing => filing.id));
+  return { rows: rows.map(row => {
+    const latest = latestSummaryCandidates(summaries.flatMap(summary => {
+      const filing = filings.find(filing => filing.id === summary.filingId && filing.personId === row.id);
+      return filing ? [{ summary, reportingDate: parsePartialDate(filing.reportingDate)! }] : [];
+    }));
+    return { ...row, offices: memberships.filter(member => member.personId === row.id).map(member => member.name), latestSummary: latest.length === 1 ? latest[0].summary : null,
+      ...(latest.length ? { summaryCount: latest.length, ...(latest.length === 1 ? { summaryReportingDate: latest[0].reportingDate } : {}) } : {}) };
+  }), total, page, pageSize, offices, jurisdictions };
 }

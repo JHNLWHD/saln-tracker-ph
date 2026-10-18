@@ -175,7 +175,7 @@ export interface Archive {
 
 export interface DirectoryFilters { q: string; office: string; jurisdiction: string; tenure: '' | 'current' | 'former'; documents: '' | 'available' | 'none'; year: string; page: number }
 export interface DirectoryResult {
-  rows: { id: string; slug: string; canonicalName: string; documentCount: number; offices: string[] }[];
+  rows: ({ id: string; slug: string; canonicalName: string; documentCount: number; offices: string[] } & Pick<RosterRow, 'latestSummary' | 'summaryReportingDate' | 'summaryCount'>)[];
   total: number; page: number; pageSize: number;
   offices: { id: string; name: string }[]; jurisdictions: { id: string; name: string }[];
 }
