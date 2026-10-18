@@ -53,8 +53,13 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     assert.deepEqual(loaded.archive, home); assert.equal('officials' in loaded, false);
     const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
     assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
-    assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /scope="row"/); assert.match(markup, /tabindex="0"/);
+    assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /<article aria-label="Ferdinand R\. Marcos Jr\."/); assert.match(markup, /View Filings/);
     assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
+    const multipleOffices = structuredClone(home);
+    multipleOffices.rosters[0].rows.push({ ...home.rosters[0].rows[0], tenureId: 'another-tenure', officeName: 'Another reviewed Office' });
+    const cards = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: multipleOffices })));
+    assert.equal((cards.match(/<article aria-label="Ferdinand R\. Marcos Jr\."/g) ?? []).length, 1);
+    assert.match(cards, /President of the Philippines · Another reviewed Office/);
     const withRecent = structuredClone(home);
     withRecent.recentlyAdded = [{ id: 'synthetic-document', sha256: 'a'.repeat(64), fileName: 'synthetic.pdf', archivePublicationDate: '2026-10-02T00:00:00.000Z', reportingDate: { value: '2024', precision: 'year' }, canonicalName: home.rosters[0].rows[0].canonicalName, slug: home.rosters[0].rows[0].slug }];
     const linked = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: withRecent })));
