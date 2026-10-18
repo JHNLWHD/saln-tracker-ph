@@ -77,6 +77,21 @@ test('R2 lock reads and backup endpoints identify each accepted bucket jurisdict
   assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['archive', 'default'], ['archive', 'eu']]);
 });
 
+test('pre-import recovery accepts an empty database while rejecting a populated target or post-import snapshot', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-empty-recovery-')), path = join(directory, 'empty.db'), file = join(directory, 'pre.sql');
+  const { client } = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
+  try {
+    const digest = await databaseFingerprint(client);
+    const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
+    const checksum = createHash('sha256').update(dump).digest('hex');
+    await writeFile(file, dump);
+    assert.equal((await verifySqlRecovery(file, checksum, null, digest)).databaseDigest, digest);
+    await client.execute('CREATE TABLE imported (id INTEGER PRIMARY KEY)');
+    await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
+    await assert.rejects(verifySqlRecovery(file, checksum, 'a'.repeat(64)), error => error instanceof Error && error.cause instanceof Error && /no such table/.test(error.cause.message));
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
 test('SQL recovery restores exact bound bytes and rejects corruption and external database attachment', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-sql-test-')), file = join(directory, 'backup.sql');
   try {
