@@ -12,6 +12,7 @@ export function Header() {
           </Link>
           <nav aria-label="Main navigation" className="site-nav">
             <NavLink to="/" end>Archive</NavLink>
+            <NavLink to="/people">People</NavLink>
             <NavLink to="/about">About</NavLink>
             <NavLink to="/resources">Resources</NavLink>
           </nav>

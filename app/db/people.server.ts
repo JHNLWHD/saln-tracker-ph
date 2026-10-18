@@ -10,6 +10,7 @@ import { checkCitationMetadata, projectCorrections, readEditorialCorrections } f
 import { checkPersonIdentifiers, findPersonIdentifier, identityLineage, readIdentityMatches } from "./identities.server";
 import { isLatestRosterSnapshot, readArchiveHome, tenureCoversRosterDate } from "./rosters.server";
 import { readFinancialSummaries, readSecondaryReports, withTranscriptionLevels } from "./transcriptions.server";
+import { readDirectory } from './directory.server';
 
 /** Apply immutable rows inside the caller's transaction, or verify an earlier application. */
 export async function writeReviewedPerson(tx: ArchiveWriter, record: ReviewedPerson, verifyOnly = false) {
@@ -147,6 +148,7 @@ export function createDbArchive(db: ArchiveDatabase): Archive {
     return record;
   }
   return {
+    browsePeople(filters) { return readArchiveTransaction(db, tx => readDirectory(tx, filters)); },
     readHome() { return readArchiveTransaction(db, readArchiveHome); },
     findSourceDocument(sha256) { return findPublicSourceDocument(db, sha256); },
     async findLegacyDocument(path) {

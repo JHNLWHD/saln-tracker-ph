@@ -8,7 +8,7 @@ export const people = sqliteTable("people", {
   canonicalName: text("canonical_name").notNull(),
   reviewedAt: text("reviewed_at").notNull(),
   reviewedBy: text("reviewed_by").notNull(),
-}, (t) => [check("person_name_present", sql`length(trim(${t.canonicalName})) > 0`)]);
+}, (t) => [index('people_name_order').on(t.canonicalName, t.id), check("person_name_present", sql`length(trim(${t.canonicalName})) > 0`)]);
 
 export const personNames = sqliteTable("person_names", {
   personId: text("person_id").notNull().references(() => people.id),
@@ -69,6 +69,7 @@ export const tenures = sqliteTable("tenures", {
   disputedFacts: text("disputed_facts", { mode: "json" }).$type<string[]>().notNull().default([]),
 }, (t) => [
   index("tenures_person").on(t.personId),
+  index('tenures_constituency').on(t.constituencyId, t.personId),
   index("tenures_verification").on(t.verificationStatus, t.officeId),
   check("tenure_verification", sql`${t.verificationStatus} in ('verified','unverified','disputed')`),
   check("tenure_assumption", sql`${t.assumptionMethod} in ('election','succession','substitution','vacancy_appointment','chamber_selection','unknown')`),
