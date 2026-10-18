@@ -17,7 +17,7 @@ npm run build
 
 Open http://localhost:5177. The app reads the hosted Turso Archive named in `.env`; React Router loads the server environment without exposing database credentials to the browser. The example uses `saln-tracker-ph-jhoenil.aws-ap-northeast-1.turso.io`. A missing URL fails instead of falling back to Firebase or fixtures. No build or app start performs a migration or import.
 
-The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. Public pages read the reviewed Archive. Raw legacy values retain their unreviewed status. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
+Migration preserves all existing records as-is. Editorial review does not block copying or displaying them. The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. The default Home, People and legacy profile pages show the latest preserved capture, labeled **Original tracker data**, including original totals, entries, items, dates and source links. Select **Browse the reviewed Archive** (`/people?view=reviewed`) for reviewed records. `/data/archive.json` remains the reviewed Public Data Snapshot. Databases without a legacy capture keep the reviewed view. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
 
 For an empty fixture preview, explicitly use `ARCHIVE_ADAPTER=local npm run dev`. Use a `file:` database only for isolated imports and tests, as described below.
 
@@ -60,7 +60,7 @@ npm run archive:import-person -- data/reviewed/0001-ferdinand-marcos-jr.json
 ARCHIVE_ADAPTER=turso TURSO_DATABASE_URL=file:.data/archive.db npm run dev
 ```
 
-Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Browse reviewed identities at `/people`; filters stay in the URL.
+Open `/official/ferdinand-marcos-jr?view=reviewed`. The profile shows cited Tenure evidence and the no-document state. The reviewed manifest does not establish a current Roster Snapshot or import legacy SALN values. Browse reviewed identities at `/people?view=reviewed`; filters stay in the URL.
 
 The import validates reviewed metadata and records its application in one transaction. An identical rerun verifies stored rows and is a no-op. To remove the current schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
 
@@ -104,5 +104,9 @@ Profiles and Public Data Snapshots use corrected metadata and show the correctio
 ## Historical capture
 
 `archive:capture-legacy` and `archive:audit-legacy` are explicit operator audit commands. Their Firebase SDKs are development dependencies under `scripts/`, with no public app import path. Raw captures remain private and ignored. The complete database capture remains unverified until read-authorized ADC is available; a public collection capture is not a database backup. Firestore write/deploy commands have been retired. No remote Firestore data is deleted by this cleanup.
+
+To copy the complete observed legacy application collection into Turso without changing its review status, run `npm run archive:prepare-legacy-copy -- <public-reader-capture-directory> <new-private-output-directory>` under `.data/`. The command verifies both source reads and writes SQL; it makes no database changes. Rehearse `copy.sql` locally before applying it to the explicitly selected hosted database. It creates `legacy_firestore_captures` plus the queryable `legacy_officials` and `legacy_saln_records` views. The original typed values, nested items, source URLs, dates and statuses remain intact. Each source-data checksum identifies an immutable capture, and an identical import adds no rows. Different captures remain separate; filter the views by `capture_sha256` when comparing versions.
+
+Run the generated `verify.sql` after import and require matching counts plus `source_data_matches = 1` and `capture_identity_matches = 1`. This checks every stored source field and the stored capture identity. `capture_metadata_matches = 1` confirms the exact same capture; it can be zero when a later capture has unchanged source data. In that case the first capture metadata remains intact. The SQL and database contain raw legacy data and must stay private. Public pages select only known fields from the former public interface; they never expose the raw capture. This copy does not publish new reviewed Filings or Transcriptions, copy PDF bytes, or establish a complete Firestore database backup.
 
 Current Git-held PDFs remain until the rollback deadline and complete R2 URL/recovery verification pass. Normal file removal must preserve Git history.
