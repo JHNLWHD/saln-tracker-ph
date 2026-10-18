@@ -96,7 +96,7 @@ async function main() {
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
   assert.deepEqual(result.expectation, plan.expected, 'Release metadata does not match the reviewed reconciliation baseline');
   const http = base ? await verifyReleaseHttp(base, revision!, result.artifacts) : null;
-  const report = { status: 'not_accepted', observedAt: new Date().toISOString(), rehearsal: 'empty local database migrated, imported once and verified unchanged on replay', ...result.expectation, http, publicationReviewPending: result.publicationReviewPending, pending: ['Exact deployed revision build/typecheck evidence', 'Live staging migration/import/resource inventory', 'Legacy PDF URL and R2 byte mapping', 'Manual browser journeys, Source Tip private persistence and no Firebase network traffic', 'Explicit user acceptance'] };
+  const report = { status: 'not_accepted', observedAt: new Date().toISOString(), rehearsal: 'empty local database migrated, imported once and verified unchanged on replay', ...result.expectation, http, deferredSourcePublication: result.publicationReviewPending, pending: ['Exact deployed revision build/typecheck evidence', 'Live staging migration/import/resource inventory', 'Preserved legacy profile/PDF paths and byte-for-byte source comparison', 'Manual browser journeys, Source Tip private persistence and no Firebase network traffic', 'Explicit user acceptance'] };
   await mkdir(dirname(output), { recursive: true }); await writeFile(output, JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
   console.log(JSON.stringify({ status: report.status, snapshotVersion: report.snapshotVersion, counts: report.counts, http }));
 }
