@@ -8,6 +8,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { eq } from "drizzle-orm";
 import { formatAmount, latestSummaryCandidates } from "../app/archive/financial";
+import { directoryFilters } from "../app/archive/directory";
 import { exportPublicSnapshot } from "../app/archive/snapshot.server";
 import { PersonProfile } from "../app/components/PersonProfile";
 import { connectArchive } from "../app/db/client.server";
@@ -160,6 +161,8 @@ test("Secondary Reports neither create Filings nor close gaps, and sparse timeli
     const upcomingHtml = renderToStaticMarkup(createElement(PersonProfile, { record: upcoming }));
     assert.match(upcomingHtml, /Other included Tenures/); assert.doesNotMatch(upcomingHtml, /Previous included Tenures/);
     const home = await archive.readHome(); assert.equal(home.rosters[0].rows[0].documentCount, 6); assert.equal(home.rosters[0].rows[0].summaryCount, 2); assert.equal(home.rosters[0].rows[0].latestSummary, null);
+    const directory = await archive.browsePeople(directoryFilters(new URLSearchParams()));
+    assert.equal(directory.rows[0].summaryCount, 2); assert.equal(directory.rows[0].latestSummary, null); assert.equal(directory.rows[0].summaryReportingDate, undefined);
     assert.equal((html.match(/Reporting Date: <span>2024<\/span>/g) ?? []).length, 2); assert.equal((html.match(/Reporting periods in 2024/g) ?? []).length, 1);
     assert.ok(html.indexOf('Related reporting - not a SALN filing') > html.indexOf('SALN Filings'));
     assert.match(html, /Source Tip|Suggest a source/);

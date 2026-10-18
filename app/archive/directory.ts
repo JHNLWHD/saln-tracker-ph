@@ -1,4 +1,5 @@
 import type { DirectoryFilters, DirectoryResult, PersonRecord } from './types';
+import { latestSummaryCandidates } from './financial';
 
 export const searchText = (value: string) => value.normalize('NFC').toLocaleLowerCase('en-PH');
 
@@ -11,9 +12,10 @@ export function directoryFilters(params: URLSearchParams): DirectoryFilters {
   return { q, office, jurisdiction, tenure: tenure as DirectoryFilters['tenure'], documents: documents as DirectoryFilters['documents'], year, page: Number(page) };
 }
 
-export function directoryHref(filters: DirectoryFilters, page: number) {
+export function directoryHref(filters: DirectoryFilters, page: number, view?: 'reviewed') {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries({ ...filters, page })) if (value !== '' && !(key === 'page' && value === 1)) params.set(key, String(value));
+  if (view) params.set('view', view);
   return `/people${params.size ? `?${params}` : ''}`;
 }
 
@@ -41,7 +43,14 @@ export function directoryFromRecords(records: PersonRecord[], filters: Directory
     return (!filters.q || fields.some(value => searchText(value).includes(searchText(filters.q)))) &&
       tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || jurisdictionAncestors(record, directJurisdictions(record, [t])).has(filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
       (!filters.documents || (record.sourceDocuments.length > 0) === (filters.documents === 'available')) && (!filters.year || record.filings.some(f => f.reportingDate.value.startsWith(filters.year)));
-  }).sort((a, b) => a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
+  }).sort((a, b) => Number(b.sourceDocuments.length > 0) - Number(a.sourceDocuments.length > 0) || a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
   const page = Math.min(filters.page, Math.max(1, Math.ceil(matches.length / 30)));
-  return { total: matches.length, page, pageSize: 30, rows: matches.slice((page - 1) * 30, page * 30).map(record => ({ id: record.person.id, slug: record.person.slug, canonicalName: record.person.canonicalName, documentCount: new Set(record.sourceDocuments.map(d => d.sha256)).size, offices: publicOffices(record).map(o => o.name) })), offices: [...new Map(eligible.flatMap(r => publicOffices(r).map(o => [o.id, { id: o.id, name: o.name }]))).values()], jurisdictions: [...new Map(eligible.flatMap(r => publicJurisdictions(r).map(j => [j.id, { id: j.id, name: j.name }]))).values()] };
+  return { total: matches.length, page, pageSize: 30, rows: matches.slice((page - 1) * 30, page * 30).map(record => {
+    const latest = latestSummaryCandidates(record.financialSummaries.flatMap(summary => {
+      const filing = record.filings.find(filing => filing.id === summary.filingId);
+      return filing ? [{ summary, reportingDate: filing.reportingDate }] : [];
+    }));
+    return { id: record.person.id, slug: record.person.slug, canonicalName: record.person.canonicalName, documentCount: new Set(record.sourceDocuments.map(d => d.sha256)).size, offices: publicOffices(record).map(o => o.name), latestSummary: latest.length === 1 ? latest[0].summary : null,
+      ...(latest.length ? { summaryCount: latest.length, ...(latest.length === 1 ? { summaryReportingDate: latest[0].reportingDate } : {}) } : {}) };
+  }), offices: [...new Map(eligible.flatMap(r => publicOffices(r).map(o => [o.id, { id: o.id, name: o.name }]))).values()], jurisdictions: [...new Map(eligible.flatMap(r => publicJurisdictions(r).map(j => [j.id, { id: j.id, name: j.name }]))).values()] };
 }
