@@ -30,7 +30,8 @@ test('retirement requires complete Git recovery and stable exact bytes, and neve
   const server = createServer((request, response) => {
     if (request.url === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${request.url}`); response.end(); return; }
     if (request.url === '/ping') { response.setHeader('X-Archive-Revision', commit); response.end(badPing ? 'wrong response' : 'pong'); }
-    else if (request.url === '/data/archive.json') response.end(JSON.stringify({ schemaVersion: 1, version, data: corruptSnapshot ? { ...snapshotData, tampered: true } : snapshotData }));
+    else if (request.url === '/data/archive.json') { response.statusCode = 307; response.setHeader('Location', `/data/${version}/archive.json`); response.end(); }
+    else if (request.url === `/data/${version}/archive.json`) response.end(JSON.stringify({ schemaVersion: 1, version, data: corruptSnapshot ? { ...snapshotData, tampered: true } : snapshotData }));
     else if (request.url === '/saln/test.pdf') { response.statusCode = 301; response.setHeader('Location', legacyLocation); response.end(); }
     else if (request.url === `/documents/${hash}`) {
       if (redirectCanonical) { response.statusCode = 302; response.setHeader('Location', '/backing-copy.pdf'); response.end(); }
