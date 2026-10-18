@@ -10,6 +10,9 @@ import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { migrateArchive } from '../scripts/migrate';
+import { canonicalJson } from '../app/db/canonical';
+import { legacyCopySchema } from '../scripts/legacy-copy';
+import { typedFirestoreValue } from '../scripts/legacy-capture';
 
 test('legacy recovery can proceed while future Source Document publication is pending, with the exact accepted snapshot', async () => {
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
@@ -110,7 +113,7 @@ test('pre-import recovery accepts an empty database while rejecting a populated 
     assert.equal((await verifySqlRecovery(file, checksum, null, digest)).databaseDigest, digest);
     await client.execute('CREATE TABLE imported (id INTEGER PRIMARY KEY)');
     await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
-    await assert.rejects(verifySqlRecovery(file, checksum, 'a'.repeat(64)), error => error instanceof Error && error.cause instanceof Error && /no such table/.test(error.cause.message));
+    await assert.rejects(verifySqlRecovery(file, checksum, 'a'.repeat(64), undefined, { dataSha256: 'b'.repeat(64), documentCount: 1, salnCount: 1 }), error => error instanceof Error && error.cause instanceof Error && /no such table/.test(error.cause.message));
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
@@ -168,18 +171,45 @@ test('production verification binds actual checkout and authenticated database s
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
-test('a complete native Archive dump reopens with the accepted public snapshot', async () => {
+test('post-import recovery requires the accepted raw legacy capture even when the public snapshot and live dump match', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-native-recovery-')), path = join(directory, 'archive.db'), file = join(directory, 'backup.sql');
   const { client, db } = connectArchive({ url: `file:${path}` });
   try {
     await migrateArchive(db);
     await importReviewedPerson(db, JSON.parse(await readFile(new URL('../data/reviewed/0001-ferdinand-marcos-jr.json', import.meta.url), 'utf8')));
     const expected = (await exportPublicSnapshot(db)).snapshot.version;
-    const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
-    await writeFile(file, dump);
-    const production = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
-    let digest: string;
-    try { digest = await databaseFingerprint(production.client); } finally { production.client.close(); }
-    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(dump).digest('hex'), expected, digest)).snapshotVersion, expected);
+    const documents = [1, 2].map(index => ({ id: `official-${index}`, path: `officials/official-${index}`, data: typedFirestoreValue({ name: `Official ${index}`, saln_records: Array.from({ length: index }, (_, i) => ({ year: 2025 - i, net_worth: 100 + i })), unknownField: 'Preserve this too' }) }));
+    const legacy = { dataSha256: createHash('sha256').update(canonicalJson(documents)).digest('hex'), documentCount: 2, salnCount: 3 };
+    const capture = { ...legacy, projectId: 'saln-tracker-ph', scope: 'public_reader', finishedAt: '2026-10-01T00:00:00.000Z' };
+    async function verify(expectation: unknown = legacy) {
+      // Every variant still has the exact accepted reviewed snapshot and a matching live database digest.
+      assert.equal((await exportPublicSnapshot(db)).snapshot.version, expected);
+      const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
+      await writeFile(file, dump);
+      const production = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
+      try { return await verifySqlRecovery(file, createHash('sha256').update(dump).digest('hex'), expected, await databaseFingerprint(production.client), expectation); }
+      finally { production.client.close(); }
+    }
+    await assert.rejects(verify(), /no such table/);
+    await client.executeMultiple(legacyCopySchema.join(';'));
+    await assert.rejects(verify(), /accepted legacy capture is missing/);
+    const insert = (hash: string, timestamp: string, rows: unknown[]) => client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: [hash, capture.projectId, capture.scope, timestamp, rows.length, canonicalJson({ ...capture, dataSha256: hash, documentCount: rows.length, finishedAt: timestamp }), canonicalJson(rows)] });
+    await insert(legacy.dataSha256, capture.finishedAt, documents);
+    const result = await verify();
+    assert.equal(result.snapshotVersion, expected); assert.deepEqual(result.legacyCapture, legacy);
+    for (const expectation of [null, {}, { ...legacy, dataSha256: 'pending' }]) await assert.rejects(verify(expectation), /accepted legacy capture checksum and counts/);
+    await assert.rejects(verify({ ...legacy, documentCount: 3 }), /Legacy profile count/);
+    await assert.rejects(verify({ ...legacy, salnCount: 4 }), /Legacy SALN count/);
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET document_count = 1, documents_json = ?', args: [canonicalJson(documents.slice(0, 1))] });
+    await assert.rejects(verify(), /Legacy raw data differs/);
+    const changed = [{ ...documents[0], extra: 'Changed raw field' }, documents[1]];
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET document_count = 2, documents_json = ?', args: [canonicalJson(changed)] });
+    await assert.rejects(verify(), /Legacy raw data differs/);
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET documents_json = ?', args: [canonicalJson(documents)] });
+    const partial = documents.slice(0, 1), partialHash = createHash('sha256').update(canonicalJson(partial)).digest('hex');
+    await insert(partialHash, '2026-10-02T00:00:00.000Z', partial);
+    await assert.rejects(verify(), /active legacy capture differs/);
+    await client.execute({ sql: 'DELETE FROM legacy_firestore_captures WHERE data_sha256 = ?', args: [partialHash] });
+    assert.deepEqual((await verify()).legacyCapture, legacy);
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });

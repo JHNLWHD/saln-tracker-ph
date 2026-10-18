@@ -9,6 +9,40 @@ import type { Client } from '@libsql/client';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { connectArchive } from '../app/db/client.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
+import { canonicalJson } from '../app/db/canonical';
+
+interface LegacyCaptureExpectation { dataSha256: string; documentCount: number; salnCount: number }
+
+function acceptedLegacyCapture(value: unknown): LegacyCaptureExpectation {
+  const expected = value as LegacyCaptureExpectation | undefined;
+  if (!expected || typeof expected.dataSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(expected.dataSha256) || ![expected.documentCount, expected.salnCount].every(count => Number.isSafeInteger(count) && count >= 0)) throw new Error('An accepted legacy capture checksum and counts are required');
+  return expected;
+}
+
+async function verifyLegacyCapture(client: Client, expected: LegacyCaptureExpectation) {
+  // Match the runtime selection. An older complete capture cannot hide a newer partial copy.
+  const { rows } = await client.execute('SELECT * FROM legacy_firestore_captures ORDER BY captured_at DESC, data_sha256 DESC LIMIT 1');
+  const row = rows[0];
+  assert.ok(row, 'The accepted legacy capture is missing');
+  assert.equal(row.data_sha256, expected.dataSha256, 'The active legacy capture differs from the accepted release');
+  assert.equal(row.project_id, 'saln-tracker-ph'); assert.equal(row.scope, 'public_reader');
+  const documents = JSON.parse(String(row.documents_json));
+  assert.ok(Array.isArray(documents), 'Expected the complete typed legacy documents');
+  assert.equal(createHash('sha256').update(canonicalJson(documents)).digest('hex'), expected.dataSha256, 'Legacy raw data differs from the accepted capture');
+  assert.equal(documents.length, expected.documentCount, 'Legacy profile count differs');
+  assert.equal(Number(row.document_count), expected.documentCount, 'Legacy stored profile count differs');
+  const salnCount = documents.reduce((total, document) => {
+    const records = document.data?.fields?.saln_records;
+    assert.equal(document.data?.type, 'map'); assert.equal(records?.type, 'array');
+    assert.ok(Array.isArray(records.values), 'Expected the preserved SALN array');
+    return total + records.values.length;
+  }, 0);
+  assert.equal(salnCount, expected.salnCount, 'Legacy SALN count differs');
+  const capture = JSON.parse(String(row.capture_json));
+  assert.equal(capture.dataSha256, expected.dataSha256); assert.equal(capture.documentCount, expected.documentCount);
+  assert.equal(capture.projectId, row.project_id); assert.equal(capture.scope, row.scope); assert.equal(capture.finishedAt, row.captured_at);
+  return { dataSha256: expected.dataSha256, documentCount: documents.length, salnCount };
+}
 
 export function assertIndefiniteLock(input: unknown) {
   const response = input as { success?: boolean; result?: { rules?: { enabled?: boolean; prefix?: string; condition?: { type?: string } }[] } };
@@ -49,7 +83,8 @@ function usesFilesystemModule(sql: string) {
 }
 
 /** Restore only a checksum-bound SQL artifact into a fresh temporary local database. */
-export async function verifySqlRecovery(file: string, checksum: string, expectedSnapshot: string | null, expectedDatabase?: string) {
+export async function verifySqlRecovery(file: string, checksum: string, expectedSnapshot: string | null, expectedDatabase?: string, expectedLegacy?: unknown) {
+  const legacy = expectedSnapshot ? acceptedLegacyCapture(expectedLegacy) : undefined;
   if (!/^[a-f0-9]{64}$/.test(checksum)) throw new Error('A backup checksum is required');
   const bytes = await readFile(file);
   assert.equal(createHash('sha256').update(bytes).digest('hex'), checksum, 'Backup checksum mismatch');
@@ -80,12 +115,14 @@ export async function verifySqlRecovery(file: string, checksum: string, expected
     assert.deepEqual(integrity.rows.map(row => Object.values(row)[0]), ['ok']);
     const databaseDigest = await databaseFingerprint(client);
     if (expectedDatabase) assert.equal(databaseDigest, expectedDatabase, 'Backup differs from the named production database');
+    let legacyCapture: LegacyCaptureExpectation | undefined;
     if (expectedSnapshot) {
       client.close();
       connection = connectArchive({ url: config.url });
       assert.equal((await exportPublicSnapshot(connection.db)).snapshot.version, expectedSnapshot, 'Restored public snapshot differs from the accepted release');
+      legacyCapture = await verifyLegacyCapture(connection.client, legacy!);
     }
-    return { sha256: checksum, byteSize: bytes.byteLength, restored: true, snapshotVersion: expectedSnapshot, databaseDigest };
+    return { sha256: checksum, byteSize: bytes.byteLength, restored: true, snapshotVersion: expectedSnapshot, databaseDigest, legacyCapture };
   } finally { connection?.client.close(); await rm(directory, { recursive: true, force: true }); }
 }
 
@@ -188,7 +225,7 @@ async function main() {
       const backup = record.backups[name];
       if (!backup || typeof backup.key !== 'string' || !backup.key.startsWith(`releases/${revision}/`) || !backup.key.endsWith(`/${name}.sql`)) throw new Error('Backup keys must identify this release and phase');
       const currentPhase = name === (phase === 'before' ? 'pre' : 'post');
-      const restored = await verifySqlRecovery(backup.file, backup.sha256, name === 'post' ? record.snapshotVersion : null, currentPhase ? productionDigest : beforeDigest);
+      const restored = await verifySqlRecovery(backup.file, backup.sha256, name === 'post' ? record.snapshotVersion : null, currentPhase ? productionDigest : beforeDigest, name === 'post' ? plan.legacyCapture : undefined);
       const object = await storage.send(new GetObjectCommand({ Bucket: buckets.backupBucket, Key: backup.key }));
       if (!object.Body) throw new Error('Locked backup has no body');
       const bytes = await object.Body.transformToByteArray();

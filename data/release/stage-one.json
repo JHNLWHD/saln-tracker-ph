@@ -1,6 +1,11 @@
 {
   "version": 1,
   "scope": "stage-one-reviewed-metadata",
+  "legacyCapture": {
+    "dataSha256": "b1c4adc84c46fc6a4feaf2beac46f720a5b11037781a30e5efac043d0045f1df",
+    "documentCount": 49,
+    "salnCount": 129
+  },
   "productionTursoDatabaseUrl": null,
   "productionR2": null,
   "stagingTursoHost": null,
