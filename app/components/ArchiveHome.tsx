@@ -26,7 +26,7 @@ export function ArchiveHome({ data }: { data: HomeData }) {
       <p className="text-sm">Roster Snapshot · Verified as of <time dateTime={snapshot.verifiedAsOf}>{snapshot.verifiedAsOf}</time>. Manually reviewed; this is not a live roster.</p>
       {(omittedMemberCount ?? snapshot.members.length - rows.length) > 0 && <p className="archive-muted">Some roster entries are not shown because their Archive eligibility or Tenure evidence is unresolved.</p>}
       <div className={`grid gap-4 ${snapshot.scope === 'executive' ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-        {[...cards.values()].sort((a, b) => Number(b.documentCount > 0) - Number(a.documentCount > 0)).map(person => <PersonCard key={person.personId} person={person} />)}
+        {[...cards.values()].map(person => <PersonCard key={person.personId} person={person} />)}
       </div>
       <details className="text-sm"><summary className="cursor-pointer py-2 underline text-primary-700">Roster evidence and coverage</summary><p className="archive-muted mt-3">People shown from this Snapshot: {new Set(rows.map(row => row.personId)).size}. A reviewed cohort can cover only part of an Office's membership. Archive coverage does not establish compliance or verify real-world wealth.</p><ul className="mt-3 space-y-2">{[...new Map(snapshot.members.flatMap(member => member.citations).map(source => [source.id, source])).values()].map(source => <li key={source.id}><a href={source.url} className="underline text-primary-700">{source.title}</a><p className="archive-muted">{source.publisher} · {source.publishedDate?.value ?? 'Publication date not established'}</p></li>)}</ul></details>
     </section>; })}
