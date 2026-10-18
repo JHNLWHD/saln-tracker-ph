@@ -59,8 +59,8 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
   for (const [file, contents] of [['archive.json', artifacts.snapshotJson], ['source-checksums.json', artifacts.checksumManifestJson]]) {
     const canonical = await get(`/data/${artifacts.snapshot.version}/${file}`); assert.equal(canonical.status, 200); assert.equal(await canonical.text(), contents);
   }
-  const pages: [string, string][] = [['/', 'Find and inspect declared SALNs'], ['/people', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source']];
-  for (const person of artifacts.snapshot.data.people) pages.push([`/official/${encodeURIComponent(person.slug)}`, person.canonicalName]);
+  const pages: [string, string][] = [['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source']];
+  for (const person of artifacts.snapshot.data.people) pages.push([`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName]);
   for (const [path, heading] of pages) {
     const response = await get(path); assert.equal(response.status, 200, path);
     const html = await response.text(); assert.doesNotMatch(html, /"reviewedBy"|documents\/sha256\//, path);
@@ -72,7 +72,7 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
   for (const alias of artifacts.snapshot.data.personAliases) {
     const person = artifacts.snapshot.data.people.find(person => person.id === alias.personId)!;
     if (alias.value === person.slug) continue;
-    redirects.push([`/official/${encodeURIComponent(alias.value)}`, `/official/${person.slug}`]);
+    redirects.push([`/official/${encodeURIComponent(alias.value)}?view=reviewed`, `/official/${person.slug}?view=reviewed`]);
   }
   for (const document of artifacts.snapshot.data.legacyDocuments) redirects.push([document.path, `/documents/${document.sha256}`]);
   for (const [path, destination] of redirects) {

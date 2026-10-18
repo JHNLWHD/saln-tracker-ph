@@ -63,7 +63,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   let badPing = false;
   let badPage = '';
   let legacyResponse: { status: number; location?: string } | null = null;
-  const pageHeadings = new Map([['/', 'Find and inspect declared SALNs'], ['/people', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}`, person.canonicalName] as const)]);
+  const pageHeadings = new Map([['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName] as const)]);
   const other = createServer((_request, response) => response.end('Another deployment'));
   other.listen(0, '127.0.0.1'); await once(other, 'listening');
   const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
@@ -84,11 +84,11 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     }
     else if (path === `/documents/${sha256}`) response.end(bytes);
     else {
-      const alias = artifacts.snapshot.data.personAliases.find(row => path === `/official/${encodeURIComponent(row.value)}`);
+      const alias = artifacts.snapshot.data.personAliases.find(row => path === `/official/${encodeURIComponent(row.value)}?view=reviewed`);
       const person = alias && artifacts.snapshot.data.people.find(row => row.id === alias.personId);
       if (person && alias!.value !== person.slug) {
         response.statusCode = 301;
-        response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}`);
+        response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}?view=reviewed`);
       }
       response.end(`<html><h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></html>`);
     }
@@ -109,19 +109,19 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     crossOrigin = true;
     await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     crossOrigin = false;
-    for (const path of ['/ping', '/data/archive.json', '/data/source-checksums.json', '/', `/official/${artifacts.snapshot.data.people[0].slug}`]) {
+    for (const path of ['/ping', '/data/archive.json', '/data/source-checksums.json', '/?view=reviewed', `/official/${artifacts.snapshot.data.people[0].slug}?view=reviewed`]) {
       redirectedPath = path;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /escaped the named deployment/);
     }
     redirectedPath = '';
-    for (const redirect of [['/people', '/'], [`/data/${artifacts.snapshot.version}/archive.json`, '/data/archive.json'], ['/data/archive.json', `/data/${artifacts.snapshot.version}/archive.json?other=1`], [`/documents/${sha256}`, legacyDocuments[0].path]] as [string, string][]) {
+    for (const redirect of [['/people?view=reviewed', '/'], [`/data/${artifacts.snapshot.version}/archive.json`, '/data/archive.json'], ['/data/archive.json', `/data/${artifacts.snapshot.version}/archive.json?other=1`], [`/documents/${sha256}`, legacyDocuments[0].path]] as [string, string][]) {
       sameOriginRedirect = redirect;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts));
     }
     sameOriginRedirect = null; badPing = true;
     await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected values/);
     badPing = false;
-    for (const path of ['/', '/people', '/about', '/resources', '/source-tip', `/official/${artifacts.snapshot.data.people[0].slug}`]) {
+    for (const path of ['/?view=reviewed', '/people?view=reviewed', '/about', '/resources', '/source-tip', `/official/${artifacts.snapshot.data.people[0].slug}?view=reviewed`]) {
       badPage = path;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Unexpected page heading/);
     }
