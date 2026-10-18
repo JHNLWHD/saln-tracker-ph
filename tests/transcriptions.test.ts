@@ -108,13 +108,18 @@ test('corrected acquisition dates and summary reviews stay consistent without br
     await state.filing('f1', '2024', '2026-09-25');
     const original = summary('f1'); original.payload.review = { ...review, reviewedAt: '2026-09-26' };
     await applyReviewedManifest(state.db, original);
+    const earlyCorrection: ReviewedManifest & { kind: 'correction' } = { id: 'early-summary-reading', version: 1, kind: 'correction', payload: {
+      review: { ...review, reviewedAt: '2026-09-27' }, target: { type: 'financial_summary', id: 'summary-f1' }, previousCorrectionId: null, reason: 'Synthetic first corrected reading', changes: { declaredNetWorth: '1.01' },
+      citations: [{ id: 'early-reading-proof', title: 'Synthetic early source review', url: 'https://example.org/early-review', publisher: 'Test', type: 'official_record', supports: ['declaredNetWorth'], publishedDate: null }],
+    } };
+    await applyReviewedManifest(state.db, earlyCorrection);
     const correction: ReviewedManifest & { kind: 'correction' } = { id: 'later-acquisition', version: 1, kind: 'correction', payload: {
       review: { ...review, reviewedAt: '2026-10-03' }, target: { type: 'source_document', id: 'f1-a' }, previousCorrectionId: null, reason: 'Synthetic corrected acquisition',
       changes: { acquisitionDate: { value: '2026-09-28', precision: 'day' } }, citations: [{ id: 'acquisition-proof', title: 'Synthetic source evidence', url: 'https://example.org/acquisition', publisher: 'Test', type: 'official_record', supports: ['acquisitionDate'], publishedDate: null }],
     } };
     await assert.rejects(applyReviewedManifest(state.db, correction), /review the summary before this correction/);
     await applyReviewedManifest(state.db, { id: 'summary-rereview', version: 1, kind: 'correction', payload: {
-      review, target: { type: 'financial_summary', id: 'summary-f1' }, previousCorrectionId: null, reason: 'Synthetic reviewed reading', changes: { declaredNetWorth: '2.02' },
+      review, target: { type: 'financial_summary', id: 'summary-f1' }, previousCorrectionId: earlyCorrection.id, reason: 'Synthetic reviewed reading', changes: { declaredNetWorth: '2.02' },
       citations: [{ id: 'rereview-proof', title: 'Synthetic source evidence', url: 'https://example.org/review', publisher: 'Test', type: 'official_record', supports: ['declaredNetWorth'], publishedDate: null }],
     } });
     await applyReviewedManifest(state.db, correction);
@@ -125,6 +130,8 @@ test('corrected acquisition dates and summary reviews stay consistent without br
     assert.equal(profile.sourceDocuments.find(row => row.id === 'f1-a')!.acquisitionDate.value, '2026-09-28');
     assert.equal((await state.db.select().from(schema.financialSummaries))[0].reviewedAt, '2026-09-26');
     assert.equal((await applyReviewedManifest(state.db, original)).status, 'unchanged');
+    await state.db.update(schema.manifestApplications).set({ appliedAt: '2026-10-04T00:00:00.000Z' });
+    assert.equal((await applyReviewedManifest(state.db, earlyCorrection)).status, 'unchanged');
     assert.equal((await applyReviewedManifest(state.db, correction)).status, 'unchanged');
   } finally { await state.close(); }
 });

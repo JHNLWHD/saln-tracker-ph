@@ -180,8 +180,14 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
   const addsEvidence = patch.citations.some(source => source.supports.some(fact => !existingCitations.some(existing => existing.id === source.id && existing.supports.includes(fact))));
   if (!verifyOnly && !addsEvidence && !Object.keys(patch.changes).some(key => canonicalJson(Reflect.get(before, key)) !== canonicalJson(Reflect.get(patch.changes, key)))) throw new Error("Editorial Correction does not change the target or add evidence");
   await checkCitationMetadata(db, patch.citations, allHistory);
-  // Other targets keep their current overlays; this target is checked at its exact revision on replay.
-  const effectiveHistory = [...allHistory.filter(row => row.target.type !== patch.target.type || row.target.id !== patch.target.id), ...previousHistory];
+  // Replay checks cross-target chronology at application time, before later corrections.
+  let effectiveHistory = [...allHistory.filter(row => row.target.type !== patch.target.type || row.target.id !== patch.target.id), ...previousHistory];
+  if (verifyOnly) {
+    const applications = await db.select({ id: schema.manifestApplications.id }).from(schema.manifestApplications)
+      .where(sql`rowid < (select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${id})`);
+    const appliedBefore = new Set(applications.map(row => row.id));
+    effectiveHistory = allHistory.filter(row => appliedBefore.has(row.id));
+  }
   await checkEffectiveRecord(db, original, patch, effectiveHistory);
   const expected: EditorialCorrection = {
     id, target: patch.target, previousCorrectionId: patch.previousCorrectionId, revision: (head?.revision ?? 0) + 1,
