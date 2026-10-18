@@ -19,6 +19,7 @@ test('release rehearsal reconciles the fixed baseline and HTTP acceptance reject
   assert.ok(result.publicationReviewPending.length > 0);
   const server = createServer((request, response) => {
     response.setHeader('X-Archive-Revision', 'synthetic-test-revision');
+    if (request.url === '/data/archive.json') { response.statusCode = 307; response.setHeader('Location', `/data/${result.artifacts.snapshot.version}/archive.json`); response.end(); return; }
     response.end(request.url === '/ping' ? 'pong' : '{}');
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -62,6 +63,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   let sameOriginRedirect: [string, string] | null = null;
   let badPing = false;
   let badPage = '';
+  let directDataAlias = '';
   let legacyResponse: { status: number; location?: string } | null = null;
   const pageHeadings = new Map([['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName] as const)]);
   const other = createServer((_request, response) => response.end('Another deployment'));
@@ -72,7 +74,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     if (path === redirectedPath) { response.statusCode = 302; response.setHeader('Location', `http://127.0.0.1:${otherAddress.port}${path}`); response.end(); return; }
     if (sameOriginRedirect?.[0] === path) { response.statusCode = 307; response.setHeader('Location', sameOriginRedirect[1]); response.end(); return; }
     if (path === '/ping') { response.setHeader('X-Archive-Revision', 'synthetic'); response.end(badPing ? 'wrong response' : 'pong'); }
-    else if (path === '/data/archive.json') { response.statusCode = 307; response.setHeader('Location', `/data/${artifacts.snapshot.version}/archive.json`); response.end(); }
+    else if (['/data/archive.json', '/data/source-checksums.json'].includes(path) && path !== directDataAlias) { response.statusCode = 307; response.setHeader('Location', `/data/${artifacts.snapshot.version}/${path.slice('/data/'.length)}`); response.end(); }
     else if (path.endsWith('/archive.json')) response.end(artifacts.snapshotJson);
     else if (path.endsWith('/source-checksums.json')) response.end(artifacts.checksumManifestJson);
     else if (path === '/unknown-release-check-path') { response.statusCode = 404; response.end(); }
@@ -99,6 +101,11 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     const origin = `http://127.0.0.1:${address.port}`;
     const checked = await verifyReleaseHttp(origin, 'synthetic', artifacts);
     assert.ok(checked.checkedAliases > 0); assert.equal(checked.checkedLegacyDocuments, 2); assert.equal(checked.checkedChecksums, 1);
+    for (const path of ['/data/archive.json', '/data/source-checksums.json']) {
+      directDataAlias = path;
+      await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Data alias must redirect/);
+    }
+    directDataAlias = '';
     for (const result of [{ status: 404 }, { status: 200 }, { status: 302, location: `/documents/${sha256}` }, ...[legacyDocuments[1].path, `documents/${sha256}`, `/documents/${'0'.repeat(64)}`, `/documents/${sha256}?different=1`, `/documents/${sha256}#fragment`, `https://other.example/documents/${sha256}`].map(location => ({ status: 301, location }))]) {
       legacyResponse = result;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts));
