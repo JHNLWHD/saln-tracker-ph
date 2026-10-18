@@ -156,8 +156,9 @@ test("existing profile route reads reviewed metadata from a local SQL database",
     delete process.env.TURSO_AUTH_TOKEN;
     const { loader } = await import("../app/routes/official.$slug");
     const result = await loader({ request: new Request("http://localhost/official/person-1"), params: { slug: "person-1" }, context: {} });
+    assert.ok(result.person);
     assert.equal(result.person.person.canonicalName, "Sample Person");
-    assert.equal(result.legacyPresentation, null);
+    assert.equal('legacyPresentation' in result, false);
     assert.deepEqual(result.person.sourceDocuments, []);
     await assert.rejects(loader({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }), (error: unknown) => error instanceof Response && error.status === 404);
   } finally {

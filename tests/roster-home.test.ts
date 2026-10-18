@@ -50,7 +50,7 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     process.env.ARCHIVE_ADAPTER = "turso"; process.env.TURSO_DATABASE_URL = state.url;
     const { loader } = await import("../app/routes/home");
     const loaded = await loader({ request: new Request("http://localhost/"), params: {}, context: {} });
-    assert.deepEqual(loaded.archive, home); assert.equal(loaded.officials, null);
+    assert.deepEqual(loaded.archive, home); assert.equal('officials' in loaded, false);
     const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
     assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
     assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /scope="row"/); assert.match(markup, /tabindex="0"/);
