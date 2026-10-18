@@ -2,7 +2,7 @@ import { useId } from 'react';
 import type { Citation, CorrectionChanges, CorrectionTargetType, PartialDate, PersonRecord, SourceDocument, Tenure } from '../archive/types';
 import { ArchiveTable, EmptyState } from './ui/Archive';
 import { FinancialSummary, SummarySourceLinks } from './FinancialSummary';
-import { formatAmount } from '../archive/financial';
+import { formatAmount, latestSummaryCandidates } from '../archive/financial';
 
 const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
   election: 'Election',
@@ -104,12 +104,21 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
     const filing = record.filings.find(filing => filing.id === summary.filingId);
     return filing ? [{ summary, filing }] : [];
   }).sort((a, b) => a.filing.reportingDate.value < b.filing.reportingDate.value ? -1 : a.filing.reportingDate.value > b.filing.reportingDate.value ? 1 : a.filing.id < b.filing.id ? -1 : 1);
+  const latest = latestSummaryCandidates(timeline.map(({ summary, filing }) => ({ summary, reportingDate: filing.reportingDate })));
 
   return (
     <article className="space-y-8">
       <header className="space-y-3 border-b border-gray-300 pb-6">
         <p className="archive-label">Person</p>
         <h1>{person.canonicalName}</h1>
+        <p className="archive-muted">{[...new Set(includedTenures.map(({ office }) => office.name))].join(' · ')}</p>
+        {person.eligibility === 'eligible' && <section aria-labelledby={`${id}-latest-totals`} className="card space-y-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <div><h2 id={`${id}-latest-totals`} className="text-lg">Most recent reviewed totals</h2>
+            {latest.length === 1 && <p className="archive-muted mt-1 text-sm">Reporting Date: <EvidenceDate date={latest[0].reportingDate} /></p>}
+          </div>
+          {latest.length === 1 ? <><FinancialSummary summary={latest[0].summary} documents={record.sourceDocuments} /><a className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-700 underline" href={`#${id}-filing-${latest[0].summary.filingId}`}>View this Filing and Source Documents</a></> : <p>{latest.length > 1 ? 'Multiple reviewed summaries; inspect the separate Filings below.' : 'Totals not transcribed. Inspect the Source Documents below.'}</p>}
+        </section>}
+        <details className="text-sm"><summary className="cursor-pointer py-2 underline text-primary-700">Identity and roster details</summary><div className="mt-3 space-y-4">
         <p className="archive-muted text-sm">Canonical Name</p>
         {person.nameVariants.length > 0 && (
           <div>
@@ -121,6 +130,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
         {memberships.length > 0 && <div><h2 className="text-lg">Current included Tenures in reviewed rosters</h2><ul className="space-y-2">{memberships.map(membership => <li key={`${membership.snapshotId}-${membership.tenureId}`}>{record.offices.find(office => office.id === record.tenures.find(tenure => tenure.id === membership.tenureId)?.officeId)?.name}<p className="archive-muted text-sm">Roster Snapshot · Verified as of <time dateTime={membership.verifiedAsOf}>{membership.verifiedAsOf}</time></p></li>)}</ul></div>}
         {includedTenures.some(({ tenure }) => tenure.endDate !== null && !memberships.some(member => member.tenureId === tenure.id)) && <div><h2 className="text-lg">Other included Tenures</h2><ul>{includedTenures.filter(({ tenure }) => tenure.endDate !== null && !memberships.some(member => member.tenureId === tenure.id)).map(({ tenure, office }) => <li key={tenure.id}>{office.name} · End date: <EvidenceDate date={tenure.endDate} /></li>)}</ul></div>}
         {includedTenures.some(({ tenure }) => tenure.endDate === null && !memberships.some(member => member.tenureId === tenure.id)) && <p className="archive-muted text-sm">An unknown actual end does not establish current officeholding. See the Tenure evidence below.</p>}
+        </div></details>
       </header>
 
       {person.eligibility !== 'eligible' && (
@@ -176,6 +186,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                           </td>
                           <td className="min-w-[18rem] space-y-2">
                             <p className="font-semibold">{provenanceLabels[document.provenanceType]}</p>
+                            <details><summary className="cursor-pointer py-2 text-primary-700 underline">Provenance details</summary><div className="mt-2 space-y-3">
                             <p>{document.provenanceNote}</p>
                             {document.originalUrl && <a className="text-primary-700 underline" href={document.originalUrl}>Original source<span className="sr-only"> for {document.fileName}</span></a>}
                             <dl className="space-y-1">
@@ -183,6 +194,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                               <div><dt className="font-semibold">Acquisition Date</dt><dd><EvidenceDate date={document.acquisitionDate} /></dd></div>
                               <div><dt className="font-semibold">Archive Publication Date</dt><dd><time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></dd></div>
                             </dl>
+                            </div></details>
                           </td>
                           <td>{transcriptionLabels[document.transcriptionLevel]}</td>
                           <td>
