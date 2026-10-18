@@ -13,6 +13,6 @@ export default function Resources() {
       <li className="py-5 space-y-2"><h2 className="text-xl"><a className="text-primary-700 underline" href="https://www.ombudsman.gov.ph/request-for-copy-of-salns/">Office of the Ombudsman: request a SALN copy</a></h2><p>The Office publishes its request guidance and forms. Check the source page for its current process.</p></li>
       <li className="py-5 space-y-2"><h2 className="text-xl"><Link className="text-primary-700 underline" to="/about">Archive methodology</Link></h2><p>Read the eligibility rules, provenance categories, transcription limits and correction process.</p></li>
     </ul>
-    <p className="archive-muted">Person profiles show Related Reporting separately, with a publisher and citation. Financial claims in articles are not imported as SALN totals.</p>
+    <p className="archive-muted">Reviewed Person profiles show Related Reporting separately, with a publisher and citation. That view does not use article claims as reviewed SALN totals. The default view preserves the earlier tracker's values and source links as recorded.</p>
   </main><Footer /></>;
 }
