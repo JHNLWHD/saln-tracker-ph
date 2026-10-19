@@ -5,7 +5,7 @@ import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, readBeforeRecovery, verifyBucketLocks, verifySqlRecovery } from '../scripts/verify-recovery';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, readBeforeRecovery, verifyBucketLocks, verifyPreImportDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
 import { connectArchive } from '../app/db/client.server';
 import { importReviewedPerson } from '../app/db/people.server';
 import { exportPublicSnapshot } from '../app/archive/snapshot.server';
@@ -35,7 +35,7 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
 
 test('after verification requires durable before evidence bound to the exact release, target and pre-import object', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-before-evidence-')), file = join(directory, 'cutover.json.before.json');
-  const binding = { acceptedCommit: 'a'.repeat(40), databaseUrl: 'libsql://production.example.invalid', backupTarget: { accountId: 'b'.repeat(32), bucket: 'production-backups', jurisdiction: 'eu' }, pre: { key: `releases/${'a'.repeat(40)}/first/pre.sql`, sha256: 'c'.repeat(64) } };
+  const binding = { acceptedCommit: 'a'.repeat(40), databaseUrl: 'libsql://production.example.invalid', preImportDatabaseDigest: 'd'.repeat(64), backupTarget: { accountId: 'b'.repeat(32), bucket: 'production-backups', jurisdiction: 'eu' }, pre: { key: `releases/${'a'.repeat(40)}/first/pre.sql`, sha256: 'c'.repeat(64) } };
   const pre = { ...binding.pre, phase: 'pre', restored: true, matchesCurrentProduction: true, databaseDigest: 'd'.repeat(64) };
   const report = { status: 'recovery_evidence_checked_not_deployed', phase: 'before', acceptedCommit: binding.acceptedCommit, databaseUrl: binding.databaseUrl, backupTarget: binding.backupTarget, verified: [pre] };
   try {
@@ -45,13 +45,14 @@ test('after verification requires durable before evidence bound to the exact rel
     for (const changes of [
       { status: 'pending' }, { phase: 'after' }, { acceptedCommit: 'e'.repeat(40) }, { databaseUrl: 'libsql://other.example.invalid' },
       { backupTarget: { ...binding.backupTarget, bucket: 'other-backups' } }, { backupTarget: { ...binding.backupTarget, jurisdiction: 'default' } },
-      { verified: [] }, { verified: [pre, pre] }, ...[{ phase: 'post' }, { key: binding.pre.key.replace('/pre.sql', '/post.sql') }, { sha256: 'e'.repeat(64) }, { databaseDigest: '' }, { restored: false }, { matchesCurrentProduction: false }].map(change => ({ verified: [{ ...pre, ...change }] })),
+      { verified: [] }, { verified: [pre, pre] }, ...[{ phase: 'post' }, { key: binding.pre.key.replace('/pre.sql', '/post.sql') }, { sha256: 'e'.repeat(64) }, { databaseDigest: '' }, { databaseDigest: 'e'.repeat(64) }, { restored: false }, { matchesCurrentProduction: false }].map(change => ({ verified: [{ ...pre, ...change }] })),
     ]) {
       await writeFile(file, JSON.stringify({ ...report, ...changes }));
       await assert.rejects(readBeforeRecovery(file, binding));
     }
     await writeFile(file, JSON.stringify(report));
     await assert.rejects(readBeforeRecovery(file, { ...binding, pre: { ...binding.pre, sha256: 'f'.repeat(64) } }));
+    for (const preImportDatabaseDigest of [undefined, null, '', 'pending', 'e'.repeat(64)]) await assert.rejects(readBeforeRecovery(file, { ...binding, preImportDatabaseDigest }));
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
@@ -114,6 +115,20 @@ test('pre-import recovery accepts an empty database while rejecting a populated 
     await client.execute('CREATE TABLE imported (id INTEGER PRIMARY KEY)');
     await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
     await assert.rejects(verifySqlRecovery(file, checksum, 'a'.repeat(64), undefined, { dataSha256: 'b'.repeat(64), documentCount: 1, salnCount: 1 }), error => error instanceof Error && error.cause instanceof Error && /no such table/.test(error.cause.message));
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('before verification rejects an import performed after the pre-import database state was reviewed', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-reviewed-pre-state-'));
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  try {
+    await client.execute('CREATE TABLE existing_data (id TEXT PRIMARY KEY)');
+    await client.execute("INSERT INTO existing_data VALUES ('retained before this release')");
+    const reviewed = await databaseFingerprint(client);
+    assert.equal(await verifyPreImportDatabase(client, reviewed), reviewed, 'A reviewed populated pre-state is valid');
+    for (const missing of [undefined, null, '', 'pending']) await assert.rejects(verifyPreImportDatabase(client, missing), /reviewed pre-import database digest/);
+    await client.execute("INSERT INTO existing_data VALUES ('imported too soon')");
+    await assert.rejects(verifyPreImportDatabase(client, reviewed), /reviewed pre-import state/);
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 

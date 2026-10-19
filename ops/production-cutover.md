@@ -14,6 +14,21 @@ Before accepting the release commit, review and commit the production libSQL URL
 
 Also review and commit `productionR2` with the approved `accountId`, `documentBucket`, `documentJurisdiction`, `backupBucket` and `backupJurisdiction` in that release plan. Its current `null` value blocks verification. The private record must name those exact identifiers. Document and backup buckets must be distinct `(bucket name, jurisdiction)` pairs; equal names in different jurisdictions identify separate buckets. Each jurisdiction must be explicit: `default`, `eu`, `us` or `fedramp`. Lock reads send each bucket's jurisdiction header, and backup reads use its jurisdiction-specific S3 endpoint. Unsupported jurisdictions fail closed. Also review and commit `stagingR2` with its `accountId`, `bucket` and `jurisdiction` in the accepted release plan. Its current `null` value blocks verification. This complete staging identity must come from the independently reviewed plan, not operator environment values. A matching name in a different account or jurisdiction is separate. A missing or invalid identity blocks verification because separation is unproven. The verifier rejects the same resource before it reads any lock or backup object. Credentials remain private.
 
+Before accepting the release commit, also capture, review and commit `productionPreImportDatabaseDigest` in the release plan. Use the read-only command below with the reviewed target and private operator credentials. Run it before the writes covered by this cutover, review the existing state, and keep competing imports stopped through the backup and import sequence. The baseline may be empty or already contain data that this release must preserve. Its current `null` value blocks verification. A fresh dump of an already changed database cannot redefine the baseline through the private cutover record or an environment value.
+
+```sh
+node --import tsx --input-type=module <<'JS'
+import { readFile } from 'node:fs/promises';
+import { connectArchive } from './app/db/client.server.ts';
+import { databaseFingerprint, productionDatabase } from './scripts/verify-recovery.ts';
+const plan = JSON.parse(await readFile('data/release/stage-one.json', 'utf8'));
+const { client } = connectArchive(productionDatabase(process.env.TURSO_DATABASE_URL, plan.productionTursoDatabaseUrl, plan.stagingTursoHost));
+try { console.log(await databaseFingerprint(client)); } finally { client.close(); }
+JS
+```
+
+The `before` command requires the live database and restored pre-import backup to match that reviewed digest. If an import or other write has already changed the baseline, stop and reconcile the operation; do not relabel the new state as the pre-import backup. The `after` command also requires the retained before report to match the same reviewed digest. A report created after mutation cannot establish the required rollback point.
+
 ## Backup and import sequence
 
 1. Stop competing editorial imports. Take an immediate live Turso **SQL dump** through the native `turso db shell <production-database> .dump` command into a new private file. Do not use `turso db export` as this SQL recovery artifact: that command produces a SQLite generation snapshot and its documentation warns that it may lag recent changes. Record the dump checksum and time. Keep all SQL dumps private.
