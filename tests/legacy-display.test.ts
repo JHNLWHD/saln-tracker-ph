@@ -83,7 +83,7 @@ test('home, directory and profile expose every migrated record without promoting
     await assert.rejects(person({ ...args('/official/canonical-person'), params: { slug: 'canonical-person' } }), error => error instanceof Response && error.status === 301 && error.headers.get('Location') === '/official/legacy-person');
     const render = (child: ReturnType<typeof createElement>) => renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, child));
     const listingHtml = render(createElement(LegacyDirectory, { data: legacy }));
-    assert.match(listingHtml, /Original tracker data/);
+    assert.doesNotMatch(listingHtml, /Original tracker data|Browse the reviewed|[?&]view=reviewed/, 'Default browsing must not ask visitors to choose a data mode');
     assert.doesNotMatch(listingHtml, /awaiting review/);
     assert.match(listingHtml, /₱1,375,378,062\.74/);
     assert.match(listingHtml, /₱987\.65/);
@@ -93,19 +93,19 @@ test('home, directory and profile expose every migrated record without promoting
     assert.match(listingHtml, /<form[^>]*action="\/"/);
     const searchHtml = render(createElement(LegacyDirectory, { data: listing.legacy!, query: listing.query }));
     assert.match(searchHtml, /<details[^>]*open=""/, 'Search results must expand their matching branch');
-    const detailHtml = render(createElement(LegacyPersonProfile, { profile: detail.legacy, reviewedSlug: null }));
+    const detailHtml = render(createElement(LegacyPersonProfile, { profile: detail.legacy }));
     assert.equal((detailHtml.match(/id="legacy-entry-/g) ?? []).length, 2);
     assert.match(detailHtml, /Recorded item/);
     assert.match(detailHtml, /href="https:\/\/example\.org\/source\.pdf"/);
     assert.match(detailHtml, /Not recorded/);
     assert.doesNotMatch(detailHtml, /href="javascript:|must-not-publish/);
     for (const source of ['/saln/legacy.pdf', '/saln/legacy copy.pdf#page=2']) {
-      const html = render(createElement(LegacyPersonProfile, { profile: { ...detail.legacy, saln_records: [{ ...detail.legacy.saln_records[0], source_url: source }] }, reviewedSlug: null }));
+      const html = render(createElement(LegacyPersonProfile, { profile: { ...detail.legacy, saln_records: [{ ...detail.legacy.saln_records[0], source_url: source }] } }));
       assert.ok(html.includes(`href="${source}"`), 'Root-relative copies must remain clickable');
     }
     for (const source of ['//outside.example/source.pdf', '/\\outside.example/source.pdf', '/\n/outside.example/source.pdf', 'javascript:alert(1)', 'data:text/html,hello', 'https://user:password@example.org/source.pdf']) {
-      const html = render(createElement(LegacyPersonProfile, { profile: { ...detail.legacy, saln_records: [{ ...detail.legacy.saln_records[0], source_url: source }] }, reviewedSlug: null }));
-      assert.doesNotMatch(html, /Open legacy source/, 'Unsafe source references must remain plain text');
+      const html = render(createElement(LegacyPersonProfile, { profile: { ...detail.legacy, saln_records: [{ ...detail.legacy.saln_records[0], source_url: source }] } }));
+      assert.doesNotMatch(html, /View source/, 'Unsafe source references must remain plain text');
     }
     const reviewed = await person({ ...args('/official/canonical-person?view=reviewed'), params: { slug: 'canonical-person' } });
     assert.equal(reviewed.person?.person.eligibility, 'unverified');

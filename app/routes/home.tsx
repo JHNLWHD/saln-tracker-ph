@@ -10,7 +10,7 @@ import { searchText } from '../archive/directory';
 
 export function meta({ data }: Route.MetaArgs) {
   const query = data?.query;
-  return [{ title: query ? `Find ${query} | SALN Tracker PH` : 'SALN Tracker PH | Declared assets and net worth' }, { name: 'description', content: 'Explore preserved SALN totals and entries, with a separate Archive of reviewed Source Documents and Transcriptions.' }, ...(query ? [{ name: 'robots', content: 'noindex,follow' }] : [])];
+  return [{ title: query ? `Find ${query} | SALN Tracker PH` : 'SALN Tracker PH | Declared assets and net worth' }, { name: 'description', content: 'Explore public officials and their declared assets, liabilities and net worth. Browse SALN entries and sources by year.' }, ...(query ? [{ name: 'robots', content: 'noindex,follow' }] : [])];
 }
 export async function loader({ request }: Route.LoaderArgs) {
   const params = new URL(request.url).searchParams, view = params.get('view');

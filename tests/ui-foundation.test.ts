@@ -13,8 +13,8 @@ const render = (element: ReturnType<typeof h>) => renderToStaticMarkup(element);
 
 test('navigation has one set of links, an active page, and a reachable skip target', () => {
   const html = render(h(StaticRouter, { location: '/about', children: h(Header) }));
-  assert.match(html, /href="#archive-content"/);
-  assert.match(html, /id="archive-content" tabindex="-1"/);
+  assert.match(html, /href="#main-content"/);
+  assert.match(html, /id="main-content" tabindex="-1"/);
   assert.match(html, /aria-label="Main navigation"/);
   assert.match(html, /aria-current="page"[^>]*href="\/about"/);
   assert.equal((html.match(/href="\/about"/g) || []).length, 1);
@@ -23,9 +23,9 @@ test('navigation has one set of links, an active page, and a reachable skip targ
   assert.doesNotMatch(html, /#OpenSALN|#PublicSALNNow/);
 });
 
-test('footer separates advocacy from the archive description', () => {
+test('footer separates advocacy from the site description', () => {
   const html = render(h(StaticRouter, { location: '/', children: h(Footer) }));
-  assert.match(html, /The Archive does not verify real-world wealth or determine compliance/);
+  assert.match(html, /Figures reflect declared assets, liabilities and net worth/);
   const advocacy = html.slice(html.indexOf('<aside'));
   assert.match(advocacy, /Advocacy · SALN Tracker PH/);
   assert.match(advocacy, /#OpenSALN #PublicSALNNow/);
@@ -37,7 +37,7 @@ test('evidence, empty state, and table preserve source and accessibility semanti
   assert.match(row, /Source Document/);
   assert.match(row, /href="\/documents\/one"/);
   assert.match(row, /Document only/);
-  assert.match(render(h(EmptyState)), /No SALN currently in the archive/);
+  assert.match(render(h(EmptyState)), /No SALN documents available/);
   const table = render(h(ArchiveTable, { caption: 'Source Documents', children: h('tbody', null, h('tr', null, h('td', null, '2024'))) }));
   assert.match(table, /role="region" aria-labelledby="([^"]+)" tabindex="0"/);
   const captionId = table.match(/aria-labelledby="([^"]+)"/)![1];

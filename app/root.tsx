@@ -83,7 +83,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       <Header />
       <main className="archive-container py-12">
         <h1>{message}</h1>
-        <EmptyState title="Try another page" action={<a href="/">Return to the Archive</a>}>
+        <EmptyState title="Try another page" action={<a href="/">Return Home</a>}>
           <p>{details}</p>
         </EmptyState>
         {stack && (

@@ -148,7 +148,7 @@ test("Secondary Reports neither create Filings nor close gaps, and sparse timeli
     const archive = createDbArchive(state.db), empty = (await archive.findPersonBySlug("sample-person"))!;
     assert.equal(empty.filings.length, 0); assert.equal(empty.sourceDocuments.length, 0); assert.equal(empty.financialSummaries.length, 0);
     const emptyHtml = renderToStaticMarkup(createElement(PersonProfile, { record: empty }));
-    assert.match(emptyHtml, /Related reporting - not a SALN filing/); assert.match(emptyHtml, /No SALN currently in the archive/); assert.match(emptyHtml, /Suggest a Source Document/);
+    assert.match(emptyHtml, /Related reporting - not a SALN filing/); assert.match(emptyHtml, /No SALN documents available/); assert.match(emptyHtml, /Suggest a Source Document/);
     assert.doesNotMatch(emptyHtml, /Declared net-worth timeline/);
     for (const [id, date] of [["old", "2018"], ["recent", "2024"], ["distinct", "2024"]]) { await state.filing(id, date); await applyReviewedManifest(state.db, summary(id)); }
     await applyReviewedManifest(state.db, { id: "roster:test", version: 1, kind: "roster", payload: { review, scope: "executive", verifiedAsOf: "2026-10-02", members: [{ tenureId: "tenure", citations: [{ id: "current-proof", title: "Synthetic current roster evidence", url: "https://example.org/current", publisher: "Test", type: "official_record", supports: ["person", "office", "holdsOffice"], publishedDate: { value: "2026-10-02", precision: "day" } }] }] } });

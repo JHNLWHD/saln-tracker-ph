@@ -43,7 +43,7 @@ test("reviewed Senate cohorts and stage-one roster reconcile stable People and c
     for (const path of [...initial, ...paths]) assert.equal((await apply(path)).status, 'unchanged');
     assert.equal((await exportPublicSnapshot(db)).snapshotJson, before.snapshotJson);
     const html = renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, createElement(ArchiveHome, { data: home })));
-    assert.match(html, /People shown from this Snapshot: 12/); assert.match(html, /Totals not transcribed/); assert.doesNotMatch(html, /₱/);
+    assert.match(html, /Officials shown: 12/); assert.match(html, /Totals not transcribed/); assert.doesNotMatch(html, /₱/);
     for (const name of ['0004-sara-duterte.json', '0005-executive-roster-2026-09-28.json']) await apply(name);
     const completion = (await readdir(new URL('stage-one-completion/', data))).filter(name => name.endsWith('.json')).sort().map(name => `stage-one-completion/${name}`);
     for (const path of completion) {

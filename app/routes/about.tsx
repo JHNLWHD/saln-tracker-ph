@@ -3,37 +3,30 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 
 export function meta() {
-  return [{ title: 'About the Archive | SALN Tracker PH' }, { name: 'description', content: 'The Archive scope, source provenance, transcription method and limits.' }];
+  return [{ title: 'About | SALN Tracker PH' }, { name: 'description', content: 'Learn about SALNs, declared totals and the sources behind SALN Tracker PH.' }];
 }
 export default function About() {
   return <><Header /><main className="archive-container max-w-3xl py-8 space-y-8">
-    <h1>About the Archive</h1>
-    <p>SALN Tracker PH preserves the earlier tracker's profiles, SALN entries and source links. The default pages show the original values under “Original tracker data.” Migration does not require a new editorial review.</p>
-    <p>The separate reviewed Archive presents acquired Source Documents and reviewed Transcriptions for People who hold or held included elected Offices in the Philippines. Its rules below do not exclude existing records from the default view.</p>
-    <section className="space-y-3"><h2>What the reviewed Archive covers</h2>
-      <p>A Statement of Assets, Liabilities, and Net Worth (SALN) records a declarant's stated assets, liabilities and net worth. The Archive presents those declarations. It does not verify real-world wealth or determine compliance.</p>
-      <p>National, provincial, city and municipal elected Offices are included. Barangay and Sangguniang Kabataan Offices are excluded. A former elected officeholder can remain eligible while holding an appointed Office.</p>
-      <p>Archive coverage grows as evidence is acquired and reviewed. An Archive Gap means that a Source Document is not currently in the Archive. It does not establish a missing Filing or a failure to file.</p>
-      <Link className="text-primary-700 underline" to="/people?view=reviewed">Browse Archive-Eligible People</Link>
+    <h1>About SALN Tracker PH</h1>
+    <p>SALN Tracker PH makes it easier to find the Statements of Assets, Liabilities and Net Worth of public officials in the Philippines.</p>
+    <section className="space-y-3"><h2>What is a SALN?</h2>
+      <p>A Statement of Assets, Liabilities and Net Worth (SALN) records a person's declared assets, liabilities and net worth for a reporting period.</p>
+      <p>The figures on this site reflect those declarations. They are not an independent assessment of an official's wealth.</p>
+      <Link className="text-primary-700 underline" to="/">Browse officials and their SALNs</Link>
     </section>
-    <section className="space-y-3"><h2>Identity and Office evidence</h2>
-      <p>A Person needs attributable evidence of an included elected Office. A public article can establish a Tenure. Official records are preferred. A citation identifies what each source supports.</p>
-      <p>Actual Tenure dates stay separate from scheduled Electoral Terms. Unknown dates remain unknown. Current Office membership comes from a manual, dated Roster Snapshot; an open-ended Tenure is not proof of current membership.</p>
-      <p>Canonical Names, Name Variants and Filer Names remain distinct. Separate Filings for the same reporting period remain separate.</p>
+    <section className="space-y-3"><h2>Reading the numbers</h2>
+      <p>Each profile shows available SALN entries by year, with declared totals and recorded asset and liability items. Separate entries for the same year stay separate.</p>
+      <p>“Not recorded” means no amount is available in that field. Check the reporting year and source before comparing figures.</p>
+      <p>Office details and current or former status reflect the available records. Dates are shown only to the precision those records support.</p>
     </section>
-    <section className="space-y-3"><h2>Source Documents and provenance</h2>
-      <p>The Source Document is canonical. Its acquired bytes stay unchanged and have a SHA-256 checksum. The Archive does not combine screenshots into a replacement PDF or reconstruct missing pages.</p>
-      <p>Each document states whether it is an Official Download, a Formally Released Copy or a Preserved Copy. Its provenance note records the source and limits. A preserved public copy does not become an official release merely because the Archive holds it.</p>
-      <p>Reporting, execution, receipt, official release, acquisition and Archive publication dates describe different events. Dates retain the precision that the source supports.</p>
-    </section>
-    <section className="space-y-3"><h2>Transcription and corrections</h2>
-      <p>Documents can be published before transcription. Reviewed Summary totals link each amount to its Source Document and location. A blank Summary means that the amount is not transcribed; it does not mean zero.</p>
-      <p>Related Reporting stays separate from Source Documents and Transcriptions. Article claims and estimates are not SALN amounts.</p>
-      <p>Reviewed manifests publish metadata. Editorial Corrections record changes without replacing acquired bytes or erasing prior decisions. Public Data Snapshots export metadata and checksums; they exclude private Source Tips.</p>
+    <section className="space-y-3"><h2>Sources and coverage</h2>
+      <p>Open the source links on each entry to inspect the supporting document or reporting. Source notes describe the origin when it is known.</p>
+      <p>Available documents are kept as supplied. Unknown source details remain unknown.</p>
+      <p>The site may not have a copy for every official or reporting period. A missing entry does not establish whether a SALN was filed.</p>
     </section>
     <section className="space-y-3"><h2>Suggest a source</h2>
-      <p>Send a URL and explanation for private review. Contact information is optional. A Source Tip does not become published evidence automatically.</p>
-      <Link className="text-primary-700 underline" to="/source-tip">Suggest a source for private review</Link>
+      <p>Found a missing document or an error? Send a source URL and a short explanation. Submissions and optional contact details stay private while the source is checked.</p>
+      <Link className="text-primary-700 underline" to="/source-tip">Suggest a source</Link>
     </section>
   </main><Footer /></>;
 }
