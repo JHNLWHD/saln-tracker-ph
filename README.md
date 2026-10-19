@@ -1,6 +1,6 @@
 # SALN Tracker PH
 
-An open-ended Archive of acquired SALN Source Documents and reviewed Transcriptions for People who hold or held included elected Offices in the Philippines. The Archive does not verify real-world wealth, establish complete coverage or determine compliance.
+Explore the SALNs of public officials in the Philippines, with declared totals and links to their sources. The figures reflect declarations, not an independent assessment of an official's wealth. Available records do not establish complete coverage or determine compliance.
 
 ## Development
 
@@ -17,7 +17,9 @@ npm run build
 
 Open http://localhost:5177. The app reads the hosted Turso Archive named in `.env`; React Router loads the server environment without exposing database credentials to the browser. The example uses `saln-tracker-ph-jhoenil.aws-ap-northeast-1.turso.io`. A missing URL fails instead of falling back to Firebase or fixtures. No build or app start performs a migration or import.
 
-Migration preserves all existing records as-is. Editorial review does not block copying or displaying them. The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. The default Home, People and legacy profile pages show the latest preserved capture, labeled **Original tracker data**, including original totals, entries, items, dates and source links. Select **Browse the reviewed Archive** (`/people?view=reviewed`) for reviewed records. `/data/archive.json` remains the reviewed Public Data Snapshot. Databases without a legacy capture keep the reviewed view. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
+Migration preserves all existing records as-is. Editorial review does not block copying or displaying them. The hosted database contains both the preserved Firebase capture (`legacy_officials` and `legacy_saln_records`) and the reviewed Archive tables. Home and the original profile URLs show the latest preserved capture, including original totals, entries, items, dates and source links. Home provides search and position groups; `/people` redirects there. These pages use ordinary SALN wording without migration labels or a data-mode switch.
+
+Secondary document views remain available through `/?view=reviewed`, `/people?view=reviewed` and `/official/<slug>?view=reviewed` for direct links and acceptance checks. They use the same SALN Tracker branding. `/data/archive.json` remains the reviewed Public Data Snapshot. Databases without a legacy capture keep the document view. The local demo uses `.data/objects` for acquired PDF and scan bytes and a separate local database for private Source Tips. These files and credentials are not included in the PRs. Deployment credentials and R2 storage remain separate configuration.
 
 For an empty fixture preview, explicitly use `ARCHIVE_ADAPTER=local npm run dev`. Use a `file:` database only for isolated imports and tests, as described below.
 
