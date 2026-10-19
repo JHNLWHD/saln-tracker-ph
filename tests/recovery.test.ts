@@ -171,6 +171,27 @@ test('production verification binds actual checkout and authenticated database s
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
+test('SQL recovery rejects reordered manifest applications even when every stored column matches', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-manifest-order-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const schema = 'CREATE TABLE manifest_applications (id TEXT PRIMARY KEY, canonical_payload TEXT NOT NULL, applied_at TEXT NOT NULL);';
+  const original = "('z-original', '{\"version\":1}', '2026-10-19T00:00:00.000Z')";
+  const correction = "('a-correction', '{\"version\":2}', '2026-10-19T00:00:00.000Z')";
+  const insert = (rows: string[]) => `INSERT INTO manifest_applications VALUES ${rows.join(', ')};`;
+  try {
+    await client.executeMultiple(schema + insert([original, correction]));
+    // Application order matters; numeric gaps in rowid do not change chronology.
+    await client.execute('UPDATE manifest_applications SET rowid = rowid * 10');
+    const digest = await databaseFingerprint(client);
+    const matching = schema + insert([original, correction]);
+    await writeFile(file, matching);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(matching).digest('hex'), null, digest)).databaseDigest, digest);
+    const reordered = schema + insert([correction, original]);
+    await writeFile(file, reordered);
+    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(reordered).digest('hex'), null, digest), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
 test('post-import recovery requires the accepted raw legacy capture even when the public snapshot and live dump match', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-native-recovery-')), path = join(directory, 'archive.db'), file = join(directory, 'backup.sql');
   const { client, db } = connectArchive({ url: `file:${path}` });
