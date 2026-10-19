@@ -66,7 +66,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   let legacyHome = false;
   let directDataAlias = '';
   let legacyResponse: { status: number; location?: string } | null = null;
-  const pageHeadings = new Map([['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName] as const)]);
+  const pageHeadings = new Map([['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About SALN Tracker PH'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName] as const)]);
   const other = createServer((_request, response) => response.end('Another deployment'));
   other.listen(0, '127.0.0.1'); await once(other, 'listening');
   const otherAddress = other.address(); assert.ok(otherAddress && typeof otherAddress === 'object');
@@ -93,8 +93,8 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
         response.statusCode = 301;
         response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}?view=reviewed`);
       }
-      const label = path === '/?view=reviewed' ? `<p>${legacyHome ? 'SALN Tracker PH' : 'Reviewed SALN Archive'}</p>` : '';
-      response.end(`<html>${label}<h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></html>`);
+      const marker = path === '/?view=reviewed' && !legacyHome ? ' data-saln-view="documents"' : '';
+      response.end(`<html><div${marker}><h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></div></html>`);
     }
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -104,7 +104,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     const checked = await verifyReleaseHttp(origin, 'synthetic', artifacts);
     assert.ok(checked.checkedAliases > 0); assert.equal(checked.checkedLegacyDocuments, 2); assert.equal(checked.checkedChecksums, 1);
     legacyHome = true;
-    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected reviewed Archive home/);
+    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected document-based SALN view/);
     legacyHome = false;
     for (const path of ['/data/archive.json', '/data/source-checksums.json']) {
       directDataAlias = path;

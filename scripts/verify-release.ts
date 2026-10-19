@@ -59,14 +59,14 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
   for (const [file, contents] of [['archive.json', artifacts.snapshotJson], ['source-checksums.json', artifacts.checksumManifestJson]]) {
     const canonical = await get(`/data/${artifacts.snapshot.version}/${file}`); assert.equal(canonical.status, 200); assert.equal(await canonical.text(), contents);
   }
-  const pages: [string, string][] = [['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source']];
+  const pages: [string, string][] = [['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About SALN Tracker PH'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source']];
   for (const person of artifacts.snapshot.data.people) pages.push([`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName]);
   for (const [path, heading] of pages) {
     const response = await get(path); assert.equal(response.status, 200, path);
     const html = await response.text(); assert.doesNotMatch(html, /"reviewedBy"|documents\/sha256\//, path);
     const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(match => match[1].replace(/<[^>]*>/g, '').trim());
     assert.deepEqual(headings, [renderToStaticMarkup(heading)], `Unexpected page heading: ${path}`);
-    if (path === '/?view=reviewed') assert.match(html, /<p\b[^>]*>\s*Reviewed SALN Archive\s*<\/p>/i, 'Expected reviewed Archive home');
+    if (path === '/?view=reviewed') assert.match(html, /<div\b[^>]*\bdata-saln-view="documents"[^>]*>/i, 'Expected document-based SALN view');
   }
   assert.equal((await get('/unknown-release-check-path')).status, 404);
   const redirects: [string, string][] = [];
