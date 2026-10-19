@@ -69,6 +69,17 @@ export async function databaseFingerprint(client: Client) {
   } finally { await tx.rollback(); tx.close(); }
 }
 
+function reviewedPreImportDigest(value: unknown): string {
+  if (typeof value !== 'string' || !/^[a-f0-9]{64}$/.test(value)) throw new Error('A reviewed pre-import database digest is required in the accepted release plan');
+  return value;
+}
+
+export async function verifyPreImportDatabase(client: Client, expected: unknown) {
+  const approved = reviewedPreImportDigest(expected), actual = await databaseFingerprint(client);
+  assert.equal(actual, approved, 'Production no longer matches the reviewed pre-import state');
+  return actual;
+}
+
 function usesFilesystemModule(sql: string) {
   const tokens = (sql.match(/'(?:''|[^'])*'|"(?:""|[^"])*"|`(?:``|[^`])*`|\[[^\]]*\]|--[^\r\n]*|\/\*[\s\S]*?\*\/|[A-Za-z_][A-Za-z_0-9$]*|[^\s]/g) ?? []).filter(token => !token.startsWith('--') && !token.startsWith('/*'));
   const fromClause = [false];
@@ -184,6 +195,7 @@ export function assertRecoverySnapshot(actual: unknown, expected: unknown) {
 /** Bind post-import checks to the successful, retained pre-import verification. */
 export async function readBeforeRecovery(file: string, binding: {
   acceptedCommit: string; databaseUrl: string;
+  preImportDatabaseDigest: unknown;
   backupTarget: { accountId: string; bucket: string; jurisdiction: string };
   pre: { key: string; sha256: string };
 }) {
@@ -197,7 +209,7 @@ export async function readBeforeRecovery(file: string, binding: {
   const pre = before.verified[0];
   assert.equal(pre.phase, 'pre'); assert.equal(pre.key, binding.pre.key); assert.equal(pre.sha256, binding.pre.sha256);
   assert.equal(pre.restored, true); assert.equal(pre.matchesCurrentProduction, true);
-  assert.equal(typeof pre.databaseDigest, 'string'); assert.match(pre.databaseDigest, /^[a-f0-9]{64}$/);
+  assert.equal(pre.databaseDigest, reviewedPreImportDigest(binding.preImportDatabaseDigest), 'Before evidence differs from the reviewed pre-import state');
   return pre.databaseDigest as string;
 }
 
@@ -208,13 +220,14 @@ async function main() {
   assertProductionApproval(record, revision);
   assertProductionCheckout(revision);
   const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
+  const preImportDigest = reviewedPreImportDigest(plan.productionPreImportDatabaseDigest);
   // Recovery checks do not publish Source Documents or promote copied legacy data.
   assertRecoverySnapshot(record.snapshotVersion, plan.expected.snapshotVersion);
   const buckets = productionBuckets(record.targets, plan.productionR2, plan.stagingR2);
   const databaseConfig = productionDatabase(record.targets.tursoDatabaseUrl, plan.productionTursoDatabaseUrl, plan.stagingTursoHost);
   const backupTarget = { accountId: buckets.accountId, bucket: buckets.backupBucket, jurisdiction: buckets.backupJurisdiction };
   const beforeReportFile = `${file}.before.json`;
-  const beforeDigest = phase === 'after' ? await readBeforeRecovery(beforeReportFile, { acceptedCommit: revision, databaseUrl: databaseConfig.url, backupTarget, pre: record.backups.pre }) : undefined;
+  const beforeDigest = phase === 'after' ? await readBeforeRecovery(beforeReportFile, { acceptedCommit: revision, databaseUrl: databaseConfig.url, preImportDatabaseDigest: preImportDigest, backupTarget, pre: record.backups.pre }) : undefined;
   const token = process.env.R2_CONFIG_READ_TOKEN;
   if (!token || !process.env.BACKUP_R2_ACCESS_KEY_ID || !process.env.BACKUP_R2_SECRET_ACCESS_KEY) throw new Error('Read-only lock and backup credentials are required');
   await verifyBucketLocks(buckets, token);
@@ -222,7 +235,7 @@ async function main() {
   try {
     const production = connectArchive(databaseConfig);
     let productionDigest: string;
-    try { productionDigest = await databaseFingerprint(production.client); } finally { production.client.close(); }
+    try { productionDigest = phase === 'before' ? await verifyPreImportDatabase(production.client, preImportDigest) : await databaseFingerprint(production.client); } finally { production.client.close(); }
     const verified = [];
     for (const name of phase === 'before' ? ['pre'] : ['pre', 'post']) {
       const backup = record.backups[name];
