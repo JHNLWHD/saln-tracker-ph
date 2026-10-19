@@ -19,7 +19,11 @@ import type { LegacyProfile } from '../app/db/legacy.server';
 test('legacy browsing groups current and former officials by branch with President and Vice President first', () => {
   const profile = (id: string, name: string, position: string, agency: string | null, status = 'active'): LegacyProfile => ({ id, slug: id, name, position, agency, status, term_start: null, term_end: null, saln_records: [] });
   const data = { capturedAt: '2026-10-18T00:00:00.000Z', profiles: [
-    profile('commissioner', 'A commissioner', 'Commissioner', 'CONSTITUTIONAL_COMMISSION'),
+    profile('commissioner', 'A commissioner', 'Commissioner, Commission on Audit', 'CONSTITUTIONAL_COMMISSION'),
+    profile('commissioner-elections', 'B commissioner', 'Commissioner, Commission on Elections', 'CONSTITUTIONAL_COMMISSION'),
+    profile('chair-z', 'Z chairperson', 'Chairman, Commission on Audit', 'CONSTITUTIONAL_COMMISSION'),
+    profile('commissioner-z', 'Z commissioner', 'Commissioner, Commission on Audit', 'CONSTITUTIONAL_COMMISSION'),
+    profile('chair-y', 'Y chairperson', 'Chairman, Commission on Audit', 'CONSTITUTIONAL_COMMISSION'),
     profile('vp', 'A vice president', 'Vice President', 'EXECUTIVE'),
     profile('former', 'A former president', 'Former President', 'EXECUTIVE', 'inactive'),
     profile('senator-z', 'Z senator', 'Senator', 'LEGISLATIVE'),
@@ -29,7 +33,7 @@ test('legacy browsing groups current and former officials by branch with Preside
   ] };
   const before = structuredClone(data);
   const html = renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, createElement(LegacyDirectory, { data })));
-  assert.deepEqual([...html.matchAll(/<article[^>]*aria-label="([^"]+)"/g)].map(match => match[1]), ['Z president', 'A vice president', 'B senator', 'Z senator', 'A commissioner', 'A former president', 'Another profile']);
+  assert.deepEqual([...html.matchAll(/<article[^>]*aria-label="([^"]+)"/g)].map(match => match[1]), ['Z president', 'A vice president', 'B senator', 'Z senator', 'Y chairperson', 'Z chairperson', 'A commissioner', 'Z commissioner', 'B commissioner', 'A former president', 'Another profile']);
   for (const heading of ['Current officials', 'Former officials', 'Executive Branch', 'Legislative Branch', 'Constitutional Commissions', 'Agency not recorded']) assert.ok(html.includes(heading), heading);
   assert.deepEqual(data, before, 'Display grouping must not change the preserved source data');
 });
