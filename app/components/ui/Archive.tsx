@@ -30,7 +30,7 @@ export function ArchiveTable({ caption, children }: { caption: string; children:
   );
 }
 
-export function EmptyState({ title = 'No SALN currently in the archive', children, action }: {
+export function EmptyState({ title = 'No SALN documents available', children, action }: {
   title?: string;
   children?: ReactNode;
   action?: ReactNode;

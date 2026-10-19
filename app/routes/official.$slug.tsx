@@ -8,9 +8,7 @@ import { LegacyPersonProfile } from '../components/LegacyRecords';
 
 export function meta({ data }: Pick<Route.MetaArgs, 'data'>) {
   const name = data?.legacy?.name ?? data?.person?.person.canonicalName;
-  const description = data?.legacy ? `Inspect Original tracker data, preserved SALN entries and source links for ${name}.`
-    : name ? `Inspect archived Source Documents and public-office evidence for ${name}.` : 'Inspect the SALN Archive.';
-  return [{ title: `${name ?? 'Person'} | SALN Tracker PH` }, { name: 'description', content: description }];
+  return [{ title: `${name ?? 'Person'} | SALN Tracker PH` }, { name: 'description', content: name ? `View SALN entries, declared assets, liabilities and net worth for ${name}.` : 'Browse public officials and their SALN entries.' }];
 }
 export async function loader({ params, request }: Route.LoaderArgs) {
   const person = await (await getArchive()).findPersonBySlug(params.slug);
@@ -22,7 +20,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     const legacy = profiles?.find(profile => profile.id === params.slug) ?? profiles?.find(profile => profile.slug === params.slug) ?? (matched.length === 1 ? matched[0] : undefined);
     if (legacy) {
       if (params.slug !== legacy.id) throw redirect(`/official/${encodeURIComponent(legacy.id)}${new URL(request.url).search}`, 301);
-      return { legacy, reviewedSlug: person?.person.eligibility === 'eligible' ? person.person.slug : null };
+      return { legacy };
     }
   }
   if (!person) throw new Response('Not Found', { status: 404 });
@@ -30,5 +28,5 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   return { person };
 }
 export default function Person({ loaderData }: Route.ComponentProps) {
-  return <><Header /><main className="archive-container py-8 sm:py-12">{loaderData.legacy ? <LegacyPersonProfile profile={loaderData.legacy} reviewedSlug={loaderData.reviewedSlug} /> : <PersonProfile record={loaderData.person} />}</main><Footer /></>;
+  return <><Header /><main className="archive-container py-8 sm:py-12">{loaderData.legacy ? <LegacyPersonProfile profile={loaderData.legacy} /> : <PersonProfile record={loaderData.person} />}</main><Footer /></>;
 }

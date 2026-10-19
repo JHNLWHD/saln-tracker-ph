@@ -9,12 +9,12 @@ export function Footer() {
         <div className="site-footer-record">
           <div>
             <p className="site-footer-brand">SALN Tracker PH</p>
-            <p>Original tracker data and a source-based Archive of public SALN records in the Philippines.</p>
-            <p>The Archive does not verify real-world wealth or determine compliance.</p>
+            <p>Explore the SALNs of public officials in the Philippines.</p>
+            <p>Figures reflect declared assets, liabilities and net worth.</p>
           </div>
           <nav aria-label="Footer navigation" className="site-footer-links">
             <Link to="/">Home</Link>
-            <Link to="/about">About the Archive</Link>
+            <Link to="/about">About</Link>
             <Link to="/resources">Resources</Link>
             <a href="https://bettergov.ph/" target="_blank" rel="noopener noreferrer">Built by BetterGov.ph</a>
           </nav>

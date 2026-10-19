@@ -52,8 +52,8 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     const loaded = await loader({ request: new Request("http://localhost/"), params: {}, context: {} });
     assert.deepEqual(loaded.archive, home); assert.equal('officials' in loaded, false);
     const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
-    assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
-    assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /<article aria-label="Ferdinand R\. Marcos Jr\."/); assert.match(markup, /View Filings/);
+    assert.match(markup, /Officeholders as of/); assert.match(markup, /Totals not transcribed/);
+    assert.match(markup, /No SALN documents available/); assert.match(markup, /<article aria-label="Ferdinand R\. Marcos Jr\."/); assert.match(markup, /View Filings/);
     assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
     const multipleOffices = structuredClone(home);
     multipleOffices.rosters[0].rows[1].documentCount = 1;
@@ -129,7 +129,7 @@ test('Roster reads and exports exclude Tenures whose corrected dates or verifica
       assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
       assert.equal(home.rosters[0].omittedMemberCount, 1);
       const html = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
-      assert.match(html, /Some roster entries are not shown/);
+      assert.match(html, /Some officials are not shown/);
       const exported = await exportPublicSnapshot(state.db);
       assert.ok(exported.snapshot.data.tenures.some(row => row.id === 'tenure-marcos-president-2022'));
       assert.deepEqual(exported.snapshot.data.rosterSnapshots[0].members.map(row => row.tenureId), home.rosters[0].snapshot.members.map(row => row.tenureId));
