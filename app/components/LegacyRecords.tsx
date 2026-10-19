@@ -24,10 +24,13 @@ function sourceHref(value: string) {
 
 const agencyNames = new Map([['EXECUTIVE', 'Executive Branch'], ['LEGISLATIVE', 'Legislative Branch'], ['CONSTITUTIONAL_COMMISSION', 'Constitutional Commissions'], ['JUDICIARY', 'Judiciary']]);
 const statusNames = new Map([['active', 'Current officials'], ['inactive', 'Former officials']]);
-const executivePosition = (profile: LegacyProfile) => {
-  const position = profile.position?.replace(/^former\s+/i, '').trim().toLowerCase();
-  return position === 'president' ? 0 : position === 'vice president' ? 1 : 2;
-};
+const positionRanks = new Map([['president', 0], ['vice president', 1], ['chairman', 0], ['chairperson', 0], ['ombudsman', 0], ['commissioner', 1]]);
+function comparePositions(a: LegacyProfile, b: LegacyProfile) {
+  const position = (profile: LegacyProfile) => (profile.position ?? '').replace(/^former\s+/i, '').trim().toLowerCase();
+  const first = position(a), second = position(b);
+  const rank = (value: string) => positionRanks.get(value.split(',')[0].trim()) ?? 2;
+  return rank(first) - rank(second) || first.localeCompare(second, 'en-PH');
+}
 
 function LegacyCard({ profile }: { profile: LegacyProfile }) {
   const latestYear = Math.max(...profile.saln_records.map(record => record.year));
@@ -64,7 +67,7 @@ export function LegacyDirectory({ data, query = '' }: { data: LegacyData; query?
       if (!profiles.length) return null;
       const title = statusNames.get(status) ?? (status ? `Recorded status: ${status}` : 'Status not recorded');
       return <section key={status} aria-label={title} className="space-y-4"><h2>{title}</h2>{agencies.map(agency => {
-        const members = profiles.filter(profile => (profile.agency ?? '') === agency).sort((a, b) => (agency === 'EXECUTIVE' ? executivePosition(a) - executivePosition(b) : 0) || a.name.localeCompare(b.name, 'en-PH') || a.id.localeCompare(b.id));
+        const members = profiles.filter(profile => (profile.agency ?? '') === agency).sort((a, b) => comparePositions(a, b) || a.name.localeCompare(b.name, 'en-PH') || a.id.localeCompare(b.id));
         if (!members.length) return null;
         return <CollapsibleSection key={agency} title={agencyNames.get(agency) ?? (agency || 'Agency not recorded')} count={members.length} defaultExpanded={Boolean(query) || agency === 'EXECUTIVE' || agency === 'LEGISLATIVE'}>
           <div className={`grid gap-4 md:grid-cols-2 ${agency === 'EXECUTIVE' ? '' : 'xl:grid-cols-3'}`}>{members.map(profile => <LegacyCard key={profile.id} profile={profile} />)}</div>
