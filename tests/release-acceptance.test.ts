@@ -63,6 +63,7 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
   let sameOriginRedirect: [string, string] | null = null;
   let badPing = false;
   let badPage = '';
+  let legacyHome = false;
   let directDataAlias = '';
   let legacyResponse: { status: number; location?: string } | null = null;
   const pageHeadings = new Map([['/?view=reviewed', 'Explore declared assets and net worth'], ['/people?view=reviewed', 'Find and browse People'], ['/about', 'About the Archive'], ['/resources', 'Resources'], ['/source-tip', 'Suggest a source'], ...artifacts.snapshot.data.people.map(person => [`/official/${encodeURIComponent(person.slug)}?view=reviewed`, person.canonicalName] as const)]);
@@ -92,7 +93,8 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
         response.statusCode = 301;
         response.setHeader('Location', `${crossOrigin ? 'https://other.example' : ''}/official/${person.slug}?view=reviewed`);
       }
-      response.end(`<html><h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></html>`);
+      const label = path === '/?view=reviewed' ? `<p>${legacyHome ? 'SALN Tracker PH' : 'Reviewed SALN Archive'}</p>` : '';
+      response.end(`<html>${label}<h1>${renderToStaticMarkup(path === badPage ? 'Generic fallback' : pageHeadings.get(path) ?? 'Alias')}</h1></html>`);
     }
   });
   server.listen(0, '127.0.0.1'); await once(server, 'listening');
@@ -101,6 +103,9 @@ test('HTTP acceptance requires aliases to stay on the named deployment', async (
     const origin = `http://127.0.0.1:${address.port}`;
     const checked = await verifyReleaseHttp(origin, 'synthetic', artifacts);
     assert.ok(checked.checkedAliases > 0); assert.equal(checked.checkedLegacyDocuments, 2); assert.equal(checked.checkedChecksums, 1);
+    legacyHome = true;
+    await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Expected reviewed Archive home/);
+    legacyHome = false;
     for (const path of ['/data/archive.json', '/data/source-checksums.json']) {
       directDataAlias = path;
       await assert.rejects(verifyReleaseHttp(origin, 'synthetic', artifacts), /Data alias must redirect/);

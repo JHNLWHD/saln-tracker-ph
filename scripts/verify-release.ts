@@ -66,6 +66,7 @@ export async function verifyReleaseHttp(base: string, revision: string, artifact
     const html = await response.text(); assert.doesNotMatch(html, /"reviewedBy"|documents\/sha256\//, path);
     const headings = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(match => match[1].replace(/<[^>]*>/g, '').trim());
     assert.deepEqual(headings, [renderToStaticMarkup(heading)], `Unexpected page heading: ${path}`);
+    if (path === '/?view=reviewed') assert.match(html, /<p\b[^>]*>\s*Reviewed SALN Archive\s*<\/p>/i, 'Expected reviewed Archive home');
   }
   assert.equal((await get('/unknown-release-check-path')).status, 404);
   const redirects: [string, string][] = [];
