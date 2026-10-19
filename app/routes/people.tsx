@@ -1,4 +1,4 @@
-import { Form, Link, isRouteErrorResponse, useNavigation, useRouteError } from 'react-router';
+import { Form, Link, isRouteErrorResponse, redirect, useNavigation, useRouteError } from 'react-router';
 import type { Route } from './+types/people';
 import { getArchive } from '../archive/archive.server';
 import { directoryFilters, directoryHref } from '../archive/directory';
@@ -7,11 +7,9 @@ import { Footer } from '../components/layout/Footer';
 import { EmptyState, TextField } from '../components/ui/Archive';
 import { Button } from '../components/ui/Button';
 import { PersonCard } from '../components/PersonCard';
-import { readLegacyRecords } from '../db/legacy.server';
-import { LegacyDirectory } from '../components/LegacyRecords';
 
 export function meta({ data }: Route.MetaArgs) {
-  const query = data?.filters?.q ?? data?.query;
+  const query = data?.filters?.q;
   return [{ title: `${query ? `Find ${query}` : 'Browse People'} | SALN Archive` }, { name: 'description', content: 'Browse preserved legacy SALN entries or search the reviewed Archive.' }, { name: 'robots', content: 'noindex,follow' }];
 }
 
@@ -25,22 +23,17 @@ export async function loader({ request }: Route.LoaderArgs) {
   catch { throw new Response('Invalid directory filters', { status: 400 }); }
   // Preserve existing links that use reviewed office, tenure, document or period filters.
   if (view !== 'reviewed' && [...params.keys()].every(key => key === 'q')) {
-    const legacy = await readLegacyRecords();
-    if (legacy) {
-      const query = filters.q;
-      return { query, legacy: { ...legacy, profiles: legacy.profiles.filter(profile => [profile.name, profile.position, profile.agency].some(value => value?.toLocaleLowerCase().includes(query.toLocaleLowerCase()))) } };
-    }
+    throw redirect(`/${params.size ? `?${params}` : ''}`, 301);
   }
   return { filters, directory: await (await getArchive()).browsePeople(filters) };
 }
 
 export default function People({ loaderData }: Route.ComponentProps) {
   const loading = useNavigation().state !== 'idle';
-  if (loaderData.legacy) return <><Header /><main className="archive-container py-8 sm:py-12"><LegacyDirectory data={loaderData.legacy} query={loaderData.query} directoryPath="/people" /></main><Footer /></>;
   const { filters, directory } = loaderData;
   const pages = Math.max(1, Math.ceil(directory.total / directory.pageSize));
   return <><Header /><main className="archive-container py-8 space-y-6">
-    <header className="space-y-2"><p className="archive-label">Reviewed SALN Archive</p><h1>Find and browse People</h1><p className="archive-muted">See reviewed totals and open each Person's Filings. People with acquired Source Documents appear first.</p><Link className="inline-flex min-h-11 items-center text-primary-700 underline" to="/people">Browse all legacy records and totals</Link></header>
+    <header className="space-y-2"><p className="archive-label">Reviewed SALN Archive</p><h1>Find and browse People</h1><p className="archive-muted">See reviewed totals and open each Person's Filings. People with acquired Source Documents appear first.</p><Link className="inline-flex min-h-11 items-center text-primary-700 underline" to="/">Browse all legacy records and totals</Link></header>
     <Form method="get" action="/people" className="space-y-4" key={JSON.stringify(filters)} aria-label="Directory filters">
       <input type="hidden" name="view" value="reviewed" />
       <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 flex-1"><TextField id="directory-query" name="q" label="Name or public-office field" defaultValue={filters.q} maxLength={128} type="search" /></div><Button type="submit" loading={loading}>Find People</Button></div>

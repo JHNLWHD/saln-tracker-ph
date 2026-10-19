@@ -13,7 +13,7 @@ export function Footer() {
             <p>The Archive does not verify real-world wealth or determine compliance.</p>
           </div>
           <nav aria-label="Footer navigation" className="site-footer-links">
-            <Link to="/">Archive</Link>
+            <Link to="/">Home</Link>
             <Link to="/about">About the Archive</Link>
             <Link to="/resources">Resources</Link>
             <a href="https://bettergov.ph/" target="_blank" rel="noopener noreferrer">Built by BetterGov.ph</a>

@@ -18,6 +18,8 @@ test('navigation has one set of links, an active page, and a reachable skip targ
   assert.match(html, /aria-label="Main navigation"/);
   assert.match(html, /aria-current="page"[^>]*href="\/about"/);
   assert.equal((html.match(/href="\/about"/g) || []).length, 1);
+  assert.match(html, /href="\/"[^>]*>Home<\/a>/);
+  assert.doesNotMatch(html, /href="\/people"/, 'Main navigation must not offer a duplicate browsing page');
   assert.doesNotMatch(html, /#OpenSALN|#PublicSALNNow/);
 });
 

@@ -4,6 +4,7 @@ import { FinancialTotals } from './FinancialTotals';
 import { formatAmount } from '../archive/financial';
 import { ArchiveTable, EmptyState, TextField } from './ui/Archive';
 import { Button } from './ui/Button';
+import { CollapsibleSection } from './ui/CollapsibleSection';
 
 const legacyLabel = 'Original tracker data';
 const amount = (value: number | null) => value === null ? 'Not recorded' : formatAmount(value.toFixed(2));
@@ -21,31 +22,55 @@ function sourceHref(value: string) {
   catch { return undefined; }
 }
 
-export function LegacyDirectory({ data, query = '', directoryPath }: { data: LegacyData; query?: string; directoryPath?: '/people' }) {
+const agencyNames = new Map([['EXECUTIVE', 'Executive Branch'], ['LEGISLATIVE', 'Legislative Branch'], ['CONSTITUTIONAL_COMMISSION', 'Constitutional Commissions'], ['JUDICIARY', 'Judiciary']]);
+const statusNames = new Map([['active', 'Current officials'], ['inactive', 'Former officials']]);
+const executivePosition = (profile: LegacyProfile) => {
+  const position = profile.position?.replace(/^former\s+/i, '').trim().toLowerCase();
+  return position === 'president' ? 0 : position === 'vice president' ? 1 : 2;
+};
+
+function LegacyCard({ profile }: { profile: LegacyProfile }) {
+  const latestYear = Math.max(...profile.saln_records.map(record => record.year));
+  const latest = profile.saln_records.filter(record => record.year === latestYear);
+  const href = `/official/${encodeURIComponent(profile.id)}`;
+  return <article aria-label={profile.name} className="card flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="card-body flex flex-1 flex-col gap-5 p-5 sm:p-6">
+      <header><h3 className="card-title text-lg"><Link to={href} className="text-primary-700">{profile.name}</Link></h3><p className="archive-muted mt-1 text-sm">{[profile.position, profile.agency].filter(Boolean).join(' · ')}</p></header>
+      {latest.length ? latest.map((record, index) => <div key={index} className="space-y-3"><p className="archive-label">{record.year}{latest.length > 1 && ` · Entry ${index + 1}`}</p><LegacyTotals record={record} /></div>) : <p>No SALN entries recorded.</p>}
+      <div className="card-actions mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4 text-sm"><span>{profile.saln_records.length} SALN {profile.saln_records.length === 1 ? 'entry' : 'entries'}</span><Link to={href} className="inline-flex min-h-11 items-center font-semibold text-primary-700">View all entries<span className="sr-only"> for {profile.name}</span><span aria-hidden="true" className="ml-2">→</span></Link></div>
+    </div>
+  </article>;
+}
+
+export function LegacyDirectory({ data, query = '' }: { data: LegacyData; query?: string }) {
   const count = data.profiles.reduce((total, profile) => total + profile.saln_records.length, 0);
-  return <div className="space-y-8">
-    <header className="space-y-3">
+  const statuses = [...new Set([...statusNames.keys(), ...data.profiles.map(profile => profile.status ?? '')])];
+  const agencies = [...new Set([...agencyNames.keys(), ...data.profiles.map(profile => profile.agency ?? '')])];
+  return <div className="space-y-6">
+    <header className="space-y-2">
       <p className="archive-label">SALN Tracker PH</p><h1>Explore declared assets and net worth</h1>
-      <LegacyLabel /><p className="archive-muted max-w-3xl">Profiles and SALN entries from the earlier tracker. Amounts, office details, dates and source links are shown as recorded.</p>
-      <p className="text-lg font-semibold" role="status">{data.profiles.length} profiles · {count} SALN entries{query && ' matching your search'}</p>
-      <Link className="inline-flex min-h-11 items-center text-primary-700 underline" to={`${directoryPath ?? '/'}?view=reviewed`}>Browse the reviewed Archive</Link>
+      <LegacyLabel /><p className="archive-muted max-w-3xl text-sm">Original amounts, office details and sources. Current and former groups use the original tracker’s status labels.</p>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+        <p className="text-lg font-semibold" role="status">{data.profiles.length} profiles · {count} SALN entries{query && ' matching your search'}</p>
+        <Link className="inline-flex min-h-11 items-center text-sm text-primary-700 underline" to="/?view=reviewed">Browse the reviewed Archive</Link>
+      </div>
     </header>
-    {directoryPath && <form key={query} method="get" action={directoryPath} className="flex flex-wrap items-end gap-3" aria-label="Search legacy records">
+    <form key={query} method="get" action="/" className="flex flex-wrap items-end gap-3" aria-label="Search legacy records">
       <div className="w-full sm:min-w-0 sm:flex-1"><TextField id="legacy-query" name="q" label="Name, position or agency" type="search" maxLength={128} defaultValue={query} /></div>
-      <Button type="submit">Find People</Button>{query && <Link to="/people" className="inline-flex min-h-11 items-center underline">Clear search</Link>}
-    </form>}
-    {data.profiles.length ? <section aria-label="Legacy profiles" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{data.profiles.map(profile => {
-      const latestYear = Math.max(...profile.saln_records.map(record => record.year));
-      const latest = profile.saln_records.filter(record => record.year === latestYear);
-      const href = `/official/${encodeURIComponent(profile.id)}`;
-      return <article key={profile.id} aria-label={profile.name} className="card flex h-full flex-col rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="card-body flex flex-1 flex-col gap-5 p-5 sm:p-6">
-          <header><h2 className="card-title text-lg"><Link to={href} className="text-primary-700">{profile.name}</Link></h2><p className="archive-muted mt-1 text-sm">{[profile.position, profile.agency].filter(Boolean).join(' · ')}</p></header>
-          {latest.length ? latest.map((record, index) => <div key={index} className="space-y-3"><p className="archive-label">{record.year}{latest.length > 1 && ` · Entry ${index + 1}`}</p><LegacyTotals record={record} /></div>) : <p>No SALN entries recorded.</p>}
-          <div className="card-actions mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 pt-4 text-sm"><span>{profile.saln_records.length} SALN {profile.saln_records.length === 1 ? 'entry' : 'entries'}</span><Link to={href} className="inline-flex min-h-11 items-center font-semibold text-primary-700">View all entries<span className="sr-only"> for {profile.name}</span><span aria-hidden="true" className="ml-2">→</span></Link></div>
-        </div>
-      </article>;
-    })}</section> : <EmptyState title="No matching profiles"><p>Try another name, position or agency.</p></EmptyState>}
+      <Button type="submit">Find People</Button>{query && <Link to="/" className="inline-flex min-h-11 items-center underline">Clear search</Link>}
+    </form>
+    {data.profiles.length ? <div aria-label="Legacy profiles" className="space-y-8">{statuses.map(status => {
+      const profiles = data.profiles.filter(profile => (profile.status ?? '') === status);
+      if (!profiles.length) return null;
+      const title = statusNames.get(status) ?? (status ? `Recorded status: ${status}` : 'Status not recorded');
+      return <section key={status} aria-label={title} className="space-y-4"><h2>{title}</h2>{agencies.map(agency => {
+        const members = profiles.filter(profile => (profile.agency ?? '') === agency).sort((a, b) => (agency === 'EXECUTIVE' ? executivePosition(a) - executivePosition(b) : 0) || a.name.localeCompare(b.name, 'en-PH') || a.id.localeCompare(b.id));
+        if (!members.length) return null;
+        return <CollapsibleSection key={agency} title={agencyNames.get(agency) ?? (agency || 'Agency not recorded')} count={members.length} defaultExpanded={Boolean(query) || agency === 'EXECUTIVE' || agency === 'LEGISLATIVE'}>
+          <div className={`grid gap-4 md:grid-cols-2 ${agency === 'EXECUTIVE' ? '' : 'xl:grid-cols-3'}`}>{members.map(profile => <LegacyCard key={profile.id} profile={profile} />)}</div>
+        </CollapsibleSection>;
+      })}</section>;
+    })}</div> : <EmptyState title="No matching profiles"><p>Try another name, position or agency.</p></EmptyState>}
     <p className="archive-muted text-sm">Legacy data copied on <time dateTime={data.capturedAt}>{data.capturedAt.slice(0, 10)}</time>.</p>
   </div>;
 }
