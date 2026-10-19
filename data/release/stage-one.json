@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "scope": "stage-one-reviewed-metadata",
+  "manifests": [
+    "0001-ferdinand-marcos-jr.json",
+    "0002-risa-hontiveros.json",
+    "0003-legacy-identities.json",
+    "0004-sara-duterte.json",
+    "0005-executive-roster-2026-09-28.json",
+    "senate-2022-cohort/01-alan-peter-cayetano.json",
+    "senate-2022-cohort/02-jv-ejercito.json",
+    "senate-2022-cohort/03-francis-escudero.json",
+    "senate-2022-cohort/04-jinggoy-estrada.json",
+    "senate-2022-cohort/05-win-gatchalian.json",
+    "senate-2022-cohort/06-risa-hontiveros.json",
+    "senate-2022-cohort/07-loren-legarda.json",
+    "senate-2022-cohort/08-robin-padilla.json",
+    "senate-2022-cohort/09-raffy-tulfo.json",
+    "senate-2022-cohort/10-joel-villanueva.json",
+    "senate-2022-cohort/11-mark-villar.json",
+    "senate-2022-cohort/12-juan-miguel-zubiri.json",
+    "senate-2022-cohort/13-roster.json",
+    "stage-one-completion/01-bam-aquino.json",
+    "stage-one-completion/02-pia-cayetano.json",
+    "stage-one-completion/03-ronald-bato-dela-rosa.json",
+    "stage-one-completion/04-bong-go.json",
+    "stage-one-completion/05-panfilo-lacson.json",
+    "stage-one-completion/06-lito-lapid.json",
+    "stage-one-completion/07-rodante-marcoleta.json",
+    "stage-one-completion/08-imee-marcos.json",
+    "stage-one-completion/09-kiko-pangilinan.json",
+    "stage-one-completion/10-tito-sotto.json",
+    "stage-one-completion/11-erwin-tulfo.json",
+    "stage-one-completion/12-camille-villar.json",
+    "stage-one-completion/13-senate-roster.json",
+    "stage-one-completion/14-faustino-bojie-dy-iii.json",
+    "stage-one-completion/15-speaker-roster.json"
+  ],
+  "expected": {
+    "counts": {
+      "people": 27,
+      "personNames": 9,
+      "offices": 6,
+      "tenures": 29,
+      "constituencies": 2,
+      "jurisdictions": 2,
+      "jurisdictionRelationships": 1,
+      "electoralTerms": 0,
+      "citations": 11,
+      "tenureCitations": 47,
+      "filings": 0,
+      "sourceDocuments": 0,
+      "editorialCorrections": 0,
+      "identityMatches": 2,
+      "personAliases": 55,
+      "legacyDocuments": 0,
+      "rosterSnapshots": 4,
+      "financialSummaries": 0,
+      "secondaryReports": 0
+    },
+    "snapshotVersion": "f40c8b040fdd940c9dfc6f7c5a89b0cdf4e0c423c31e6d9dcda470030da6669b",
+    "manifests": [
+      {
+        "id": "person:person-ferdinand-marcos-jr",
+        "digest": "5f519d941ffe033f44a22922278e7a0a97cf7b0d99efea5d361c15dd5fc9f232"
+      },
+      {
+        "id": "person:person-risa-hontiveros",
+        "digest": "32eb1ce7293614669df9583e27f14c37df6cb33431c55eac7b15ec06305b48ca"
+      },
+      {
+        "id": "identities-legacy-public-2026-09-26",
+        "digest": "24602e141e7e8ae54eb5ca3784a81e3c3d3f7198aeb9641bb3d935261535f867"
+      },
+      {
+        "id": "person:sara-vice-president-2022",
+        "digest": "fcbac1ab17893c8cab32c7109793157227dab451fd3a2e38324ec58eaa61ac10"
+      },
+      {
+        "id": "roster-executive-2026-09-28",
+        "digest": "3598b7492ecbb3e760fd429da0082a55188fa4da0843a02166c4fdc41afc9d57"
+      },
+      {
+        "id": "person:senate-2022-cohort:alan-peter-cayetano",
+        "digest": "2b3fef3ebc8d9cf9467dbc0b9d2802c077e2fb96ccb0ddabcfb7d9987636f440"
+      },
+      {
+        "id": "person:senate-2022-cohort:jv-ejercito",
+        "digest": "992ee12a0954cd26e54acdf1ead421249c1de05addd42754adc50862a6de0500"
+      },
+      {
+        "id": "person:senate-2022-cohort:francis-escudero",
+        "digest": "8163fe32cfc2743b9e8f719c71a09d227ff6a4601156fafe75f5f14fb803505b"
+      },
+      {
+        "id": "person:senate-2022-cohort:jinggoy-estrada",
+        "digest": "71e09d80e3b587e67ade1dd5b1073cec6ad138e6e4416bea87e2951c87573a51"
+      },
+      {
+        "id": "person:senate-2022-cohort:win-gatchalian",
+        "digest": "4bc5ca278841f964463f2fe023ff197afca3128d52661bd107b61ceb28fcd34c"
+      },
+      {
+        "id": "person:senate-2022-cohort:risa-hontiveros",
+        "digest": "e7e8cafdbfca18ec2910cc7c4f0224b947b9ca396db1738ca073c6fda8e3b166"
+      },
+      {
+        "id": "person:senate-2022-cohort:loren-legarda",
+        "digest": "0f781a0238677daa733f7c79365f0e505d98256b2fd4845585456d26971949a5"
+      },
+      {
+        "id": "person:senate-2022-cohort:robin-padilla",
+        "digest": "91056d347a7765fefb4962842b5583962f3dd75d2f0ab89953596ebe5652e137"
+      },
+      {
+        "id": "person:senate-2022-cohort:raffy-tulfo",
+        "digest": "14753be48fcfb72c4c40a9a2d5c1466717531c65341d2d8b9a1babff277b2cf1"
+      },
+      {
+        "id": "person:senate-2022-cohort:joel-villanueva",
+        "digest": "a6eb7fe97fa9fdc73f6969bcd213e160a530dd20564dd58f55b226eec6307b6c"
+      },
+      {
+        "id": "person:senate-2022-cohort:mark-villar",
+        "digest": "1eb29064532086cd6205a00690dc10426b21f379f9f2e0cbef9a90588d163e51"
+      },
+      {
+        "id": "person:senate-2022-cohort:juan-miguel-zubiri",
+        "digest": "46729afd4d8f798397238c8bd9cdbc82e8f1184d431b8063e3032b030f924ba2"
+      },
+      {
+        "id": "roster-senate-2026-09-21-a-2022-cohort",
+        "digest": "ab2f8f4dfc586992b89072f9a22c3523542f8c6a2f955728f9ec5b21c0a0d96f"
+      },
+      {
+        "id": "person:senate-completion:bam-aquino",
+        "digest": "83e01b8df1a70b3b219b14fd20641b8c6b07d7a833ebf895fd0e417b93320e78"
+      },
+      {
+        "id": "person:senate-completion:pia-cayetano",
+        "digest": "82908d47fdd49e9f78a6dff749bd039735f24741d6e113496b51c4208ed2e28a"
+      },
+      {
+        "id": "person:senate-completion:ronald-bato-dela-rosa",
+        "digest": "d42b3d2f4034496e672a9d5d60af6dc78a65d56ba7379953b2a02351ed6a4c26"
+      },
+      {
+        "id": "person:senate-completion:bong-go",
+        "digest": "f4d21686b0c718365dc4adcb30f3052a6d3ee8fccfada58113b27851299cc308"
+      },
+      {
+        "id": "person:senate-completion:panfilo-lacson",
+        "digest": "50202dcd5d9aae51c0af4c0339ba9c82cd3a20c7f626cc5613d10de16fd94f39"
+      },
+      {
+        "id": "person:senate-completion:lito-lapid",
+        "digest": "e2a7d452fb664dfeb6cfd75f7e01400d383d8703367e9ff83b9447411d823b47"
+      },
+      {
+        "id": "person:senate-completion:rodante-marcoleta",
+        "digest": "9e7e88457ff914c157b208993c10bf4b8d0b03c0bbb3f7fee4392a1522148829"
+      },
+      {
+        "id": "person:senate-completion:imee-marcos",
+        "digest": "1c684cdbcd2f30087e1ee541efd9fe96373021e5e0d020c86ad3dc6e585c417e"
+      },
+      {
+        "id": "person:senate-completion:kiko-pangilinan",
+        "digest": "36a4b1acfd9672b17830b54fa660c4944ac65cac69492b96d037af3c9b49b2e2"
+      },
+      {
+        "id": "person:senate-completion:tito-sotto",
+        "digest": "7b2d5d7137b33b418353f28e5c37ecf349cb3ae73ae38ec1445ef7b87abfe349"
+      },
+      {
+        "id": "person:senate-completion:erwin-tulfo",
+        "digest": "52d91cbb42e25a53ae906fda0192b45b8bbb96b9f3dcea651ea708b094c38346"
+      },
+      {
+        "id": "person:senate-completion:camille-villar",
+        "digest": "88c34785d43672d40071960915b05465d9ffc7c40ccfd7911be0ff1851a8f554"
+      },
+      {
+        "id": "roster-senate-2026-09-21",
+        "digest": "c11a2221f69bc8fcda9e5635c6d564c4445e2651c36fc8e3f5642e79a625b30a"
+      },
+      {
+        "id": "person:faustino-bojie-dy-iii",
+        "digest": "2f131e4a5337499f77a5db0e48809d262914f6658cf2da1ff6c339018defd331"
+      },
+      {
+        "id": "roster-speaker-2026-09-25",
+        "digest": "c717edbde2cd4a5328a01d38b698d195e5bcb824502700f0ff9341dc24b1eb17"
+      }
+    ],
+    "migrations": [
+      {
+        "hash": "e8102db8bd264b5edc7c018591b53f84c3c51754d9d92932d15c3c3fb6c1caa2",
+        "created_at": 1790429212953
+      },
+      {
+        "hash": "3b6221725a35768d2b9966bcd7e0a6eb1a994147d9f92c5fc5047c4f764168bc",
+        "created_at": 1790430081332
+      },
+      {
+        "hash": "ab719f6c9842247fad1934a30a0773cb193d938225d29b636ccf345f970daaac",
+        "created_at": 1790430738187
+      },
+      {
+        "hash": "9683669caeb65594b7a23210c3171478577ebdd22fb828827d1df79f34e0f3ff",
+        "created_at": 1790431601055
+      },
+      {
+        "hash": "f89816c4b5b659fea210e62f0601a51a262f314081d49294aeea757efa97271b",
+        "created_at": 1790880798452
+      },
+      {
+        "hash": "c9e0cd836f259212b172f687e4e47194d097bb64c316c4660f3a5e64346ac20a",
+        "created_at": 1790882571685
+      },
+      {
+        "hash": "d3ccd98ff0a68708e2ea3e7d47d2c20912b5d9b680de06e9937dce189a4ef337",
+        "created_at": 1790883558326
+      },
+      {
+        "hash": "6f17ef12554c25ad1207cc7d338ac0285e22cd7818ac783b6179623f51e37989",
+        "created_at": 1790885146230
+      }
+    ]
+  },
+  "publicationReviewPending": [
+    "Risa Hontiveros 2024 acquired source pages and Summary/reporting examples need release-specific publication review; local verification timestamps are not production events.",
+    "No legacy PDF has an approved R2 redirect mapping."
+  ]
+}
