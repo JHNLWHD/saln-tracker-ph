@@ -59,8 +59,11 @@ export async function databaseFingerprint(client: Client) {
     const hash = createHash('sha256').update(encode(schema.rows.map(row => Array.from(row))));
     // ponytail: sort one table in memory; use a streaming ordered export if backup tables outgrow operator memory.
     for (const table of tables) {
-      const rows = await tx.execute(`SELECT * FROM "${String(table.name).replaceAll('"', '""')}"`);
-      hash.update(encode([table.name, rows.columns, rows.rows.map(row => encode(Array.from(row))).sort()]));
+      // Filing adoption and correction replay depend on ledger order, including tied timestamps.
+      const applicationOrder = table.name === 'manifest_applications';
+      const rows = await tx.execute(`SELECT * FROM "${String(table.name).replaceAll('"', '""')}"${applicationOrder ? ' ORDER BY rowid' : ''}`);
+      const values = rows.rows.map(row => encode(Array.from(row)));
+      hash.update(encode([table.name, rows.columns, applicationOrder ? values : values.sort()]));
     }
     return hash.digest('hex');
   } finally { await tx.rollback(); tx.close(); }
