@@ -33,7 +33,7 @@ test('Person profile shows supported identity, Tenure evidence, and partial date
   assert.match(html, /Public News · Public article/);
   assert.match(html, /Supports: Person, Office, Start date, Assumption Method/);
   assert.doesNotMatch(html, /Supports:[^<]*(?:startDate|assumptionMethod)/);
-  assert.match(html, /No SALN currently in the archive/);
+  assert.match(html, /No SALN documents available/);
   assert.match(html, /does not establish that the Person failed to file/);
   assert.doesNotMatch(html, /2022-01-01|Present|Current official|Former official|₱0/);
 });
@@ -45,16 +45,16 @@ test('disputed eligibility remains explicit and retains each conflicting citatio
   disputed.tenures[0].disputedFacts = ['The included Office is disputed'];
   disputed.tenures[0].citations.push({ ...disputed.tenures[0].citations[0], id: 'source-2', title: 'Conflicting Office report', url: 'https://example.org/conflict', publisher: 'Other News', publishedDate: null });
   const html = render(disputed);
-  assert.match(html, /Archive eligibility is disputed/);
-  assert.match(html, /excluded from public directories, search, and coverage counts/);
+  assert.match(html, /Public-office details are disputed/);
+  assert.match(html, /public-office details are checked/);
   assert.match(html, /Disputed Tenure/);
   assert.match(html, /The included Office is disputed/);
   assert.match(html, /href="https:\/\/example.org\/tenure"/);
   assert.match(html, /href="https:\/\/example.org\/conflict"/);
   assert.match(html, /Other News · Public article/);
   assert.match(html, /Published: Not established/);
-  assert.match(html, /Source Documents are not shown while Archive eligibility is unresolved/);
-  assert.doesNotMatch(html, /No SALN currently in the archive|project has not acquired/);
+  assert.match(html, /SALN documents are not shown while public-office details are unresolved/);
+  assert.doesNotMatch(html, /No SALN documents available|project has not acquired/);
 });
 
 test('unverified legacy profile does not display excluded Offices as evidence of eligibility', () => {
@@ -62,8 +62,8 @@ test('unverified legacy profile does not display excluded Offices as evidence of
   unverified.person.eligibility = 'unverified';
   unverified.offices[0].included = false;
   const html = render(unverified);
-  assert.match(html, /Archive eligibility is not verified/);
-  assert.match(html, /profile remains available for link continuity/);
+  assert.match(html, /Public-office details are not verified/);
+  assert.match(html, /profile remains available while its public-office details are checked/);
   assert.match(html, /No Tenure in an included Office has been established/);
   assert.doesNotMatch(html, />Senator<\/h3>/);
 });
@@ -83,13 +83,13 @@ test('reviewed financial totals lead the profile and retain source links without
   const html = render(value);
   assert.ok(html.indexOf('₱18,986,258.21') < html.indexOf('Name Variants'));
   assert.ok(html.indexOf('Declared net worth') < html.indexOf('Total assets'));
-  assert.match(html, /Most recent reviewed totals/);
+  assert.match(html, /Latest declared totals/);
   assert.match(html, /Reporting Date: <span>2024<\/span>/);
   assert.match(html, /href="\/documents\/a{64}">Printed total box/);
   assert.doesNotMatch(html, /latest Filing/i);
   value.filings[1].reportingDate = { value: '2024', precision: 'year' };
   value.financialSummaries.push({ ...value.financialSummaries[0], id: 'summary-2', filingId: 'filing-2' });
-  assert.match(render(value), /Multiple reviewed summaries/);
+  assert.match(render(value), /Multiple SALN entries/);
 });
 
 test('Document-only Filing shows provenance and separate stable open/download actions without invented dates or totals', () => {
@@ -111,7 +111,7 @@ test('Document-only Filing shows provenance and separate stable open/download ac
   assert.ok(html.includes(`href="${route}">Open<span class="sr-only"> sample-saln.pdf</span>`));
   assert.ok(html.includes(`href="${route}?download=1" download="sample-saln.pdf">Download<span class="sr-only"> sample-saln.pdf</span>`));
   assert.match(html, /<th scope="col">Provenance<\/th>/);
-  assert.doesNotMatch(html, /No SALN currently in the archive|₱0|2024-12-31|2026-09-01|private-storage-key/);
+  assert.doesNotMatch(html, /No SALN documents available|₱0|2024-12-31|2026-09-01|private-storage-key/);
 });
 
 test('same-period Filings and their multiple Source Documents remain separate', () => {
@@ -170,5 +170,5 @@ test('corrected profile values show their history, reasons, date precision, and 
   assert.match(html, /href="https:\/\/example.org\/corrected-date"/);
   assert.match(html, /Other News · Public article/);
   assert.ok(html.includes(`href="/documents/${'a'.repeat(64)}">Open`));
-  assert.doesNotMatch(html, /Archive eligibility is disputed|2023-12-01|>startDate</);
+  assert.doesNotMatch(html, /Public-office details are disputed|2023-12-01|>startDate</);
 });

@@ -11,7 +11,7 @@ export function headers({ actionHeaders }: Pick<Route.HeadersArgs, 'actionHeader
   const retryAfter = actionHeaders.get('Retry-After');
   return { ...privateHeaders, ...(retryAfter ? { 'Retry-After': retryAfter } : {}) };
 }
-export function meta() { return [{ title: 'Suggest a source | SALN Tracker PH' }, { name: 'description', content: 'Privately suggest a source for Archive review.' }, { name: 'robots', content: 'noindex,nofollow' }]; }
+export function meta() { return [{ title: 'Suggest a source | SALN Tracker PH' }, { name: 'description', content: 'Suggest a source URL for SALN Tracker PH.' }, { name: 'robots', content: 'noindex,nofollow' }]; }
 export function loader({ request }: Route.LoaderArgs) {
   const hint = new URL(request.url).searchParams.get('person') ?? '';
   return data({ configured: sourceTipsConfigured(), personHint: /^[A-Za-z0-9:._-]{1,128}$/.test(hint) ? hint : '' }, { headers: privateHeaders });
@@ -40,7 +40,7 @@ export default function SourceTip({ loaderData, actionData }: Route.ComponentPro
   const values = failed?.values, errors = failed?.errors;
   return <><Header /><main className="archive-container py-8 space-y-6 max-w-3xl"><h1>Suggest a source</h1>
     <p>Send a source URL and explain what it establishes. A Source Tip stays private until reviewers acquire and assess the evidence.</p>
-    {actionData?.success ? <div role="status"><h2>Source Tip received</h2><p>It is queued for private review. It is not published evidence.</p><Link className="underline text-primary-700" to="/">Return to the Archive</Link></div> : !loaderData.configured ? <EmptyState title="Source Tips are currently unavailable"><p>Please try again later.</p></EmptyState> : <Form method="post" encType="application/x-www-form-urlencoded" className="space-y-5 ph-no-capture" aria-label="Private Source Tip">
+    {actionData?.success ? <div role="status"><h2>Source Tip received</h2><p>It is queued for private review. It is not published evidence.</p><Link className="underline text-primary-700" to="/">Return Home</Link></div> : !loaderData.configured ? <EmptyState title="Source Tips are currently unavailable"><p>Please try again later.</p></EmptyState> : <Form method="post" encType="application/x-www-form-urlencoded" className="space-y-5 ph-no-capture" aria-label="Private Source Tip">
       {failed?.error && <p role="alert" className="archive-field-error">{failed.error}</p>}
       {errors && Object.keys(errors).length > 0 && <p role="alert">Check the marked fields.</p>}
       <input type="hidden" name="personHint" value={loaderData.personHint} />

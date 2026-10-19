@@ -34,7 +34,7 @@ const factLabels: Record<string, string> = {
   provenanceNote: 'Provenance note',
   officialReleaseDate: 'Official Release Date',
   acquisitionDate: 'Acquisition Date',
-  archivePublicationDate: 'Archive Publication Date',
+  archivePublicationDate: 'Added to SALN Tracker',
   totalAssets: 'Total assets', totalLiabilities: 'Total liabilities', declaredNetWorth: 'Declared net worth', sources: 'Source Document references',
   title: 'Title', url: 'Source URL', publisher: 'Publisher', publishedDate: 'Publication date', note: 'Note',
 };
@@ -113,10 +113,10 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
         <h1>{person.canonicalName}</h1>
         <p className="archive-muted">{[...new Set(includedTenures.map(({ office }) => office.name))].join(' · ')}</p>
         {person.eligibility === 'eligible' && <section aria-labelledby={`${id}-latest-totals`} className="card space-y-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-          <div><h2 id={`${id}-latest-totals`} className="text-lg">Most recent reviewed totals</h2>
+          <div><h2 id={`${id}-latest-totals`} className="text-lg">Latest declared totals</h2>
             {latest.length === 1 && <p className="archive-muted mt-1 text-sm">Reporting Date: <EvidenceDate date={latest[0].reportingDate} /></p>}
           </div>
-          {latest.length === 1 ? <><FinancialSummary summary={latest[0].summary} documents={record.sourceDocuments} /><a className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-700 underline" href={`#${id}-filing-${latest[0].summary.filingId}`}>View this Filing and Source Documents</a></> : <p>{latest.length > 1 ? 'Multiple reviewed summaries; inspect the separate Filings below.' : 'Totals not transcribed. Inspect the Source Documents below.'}</p>}
+          {latest.length === 1 ? <><FinancialSummary summary={latest[0].summary} documents={record.sourceDocuments} /><a className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-700 underline" href={`#${id}-filing-${latest[0].summary.filingId}`}>View this Filing and Source Documents</a></> : <p>{latest.length > 1 ? 'Multiple SALN entries; inspect the separate filings below.' : 'Totals not transcribed. Inspect the Source Documents below.'}</p>}
         </section>}
         <details className="text-sm"><summary className="cursor-pointer py-2 underline text-primary-700">Identity and roster details</summary><div className="mt-3 space-y-4">
         <p className="archive-muted text-sm">Canonical Name</p>
@@ -135,15 +135,15 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
 
       {person.eligibility !== 'eligible' && (
         <aside className="border-l-4 border-gray-500 bg-white p-4" aria-labelledby={`${id}-scope`}>
-          <h2 id={`${id}-scope`} className="text-xl">{person.eligibility === 'disputed' ? 'Archive eligibility is disputed' : 'Archive eligibility is not verified'}</h2>
-          <p>This profile remains available for link continuity. This Person is excluded from public directories, search, and coverage counts until eligibility is established through a Verified Tenure in an included Elected Office.</p>
+          <h2 id={`${id}-scope`} className="text-xl">{person.eligibility === 'disputed' ? 'Public-office details are disputed' : 'Public-office details are not verified'}</h2>
+          <p>This profile remains available while its public-office details are checked. The supporting evidence is listed below.</p>
         </aside>
       )}
 
       <section aria-labelledby={`${id}-filings`} className="space-y-6">
         <h2 id={`${id}-filings`}>SALN Filings</h2>
         {record.sourceDocuments.length === 0 && person.eligibility !== 'eligible' && (
-          <p>Source Documents are not shown while Archive eligibility is unresolved. This does not establish that the Person failed to file a SALN.</p>
+          <p>SALN documents are not shown while public-office details are unresolved. This does not establish that the Person failed to file a SALN.</p>
         )}
         {record.sourceDocuments.length === 0 && person.eligibility === 'eligible' && (
           <EmptyState>
@@ -168,7 +168,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
               </dl>
               {summary && <FinancialSummary summary={summary} documents={record.sourceDocuments} />}
               {!hasReviewedTotals && <p className="archive-muted">Totals not transcribed. No reviewed summary totals are available for this Filing. Inspect the Source Document for the declared information.</p>}
-              {documents.length === 0 ? <p>No Source Document is currently in the archive for this Filing.</p> : (
+              {documents.length === 0 ? <p>No source document is available for this filing.</p> : (
                 <ArchiveTable caption={`Source Documents for ${filing.filerName} (${filing.reportingDate.value})`}>
                   <thead><tr><th scope="col">Source Document</th><th scope="col">Provenance</th><th scope="col">Transcription Level</th><th scope="col">Actions</th></tr></thead>
                   <tbody>
@@ -182,7 +182,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                             <p className="font-semibold break-words">{document.fileName}</p>
                             <p className="archive-muted">{document.mediaType} · {document.byteSize.toLocaleString('en-PH')} bytes</p>
                             <p className="archive-muted">Availability: acquired copy</p>
-                            {copies.length > 1 && <details><summary>{copies.length} exact copies</summary><ul className="space-y-3">{copies.map(copy => <li key={copy.id}><p>{copy.fileName}: {copy.provenanceNote}</p>{copy.originalUrl && <a href={copy.originalUrl}>Original source</a>}<p>{provenanceLabels[copy.provenanceType]} · {transcriptionLabels[copy.transcriptionLevel]}</p><p>Acquisition Date: <EvidenceDate date={copy.acquisitionDate} /></p><p>Official Release Date: <EvidenceDate date={copy.officialReleaseDate} /></p><p>Archive Publication Date: {copy.archivePublicationDate}</p></li>)}</ul></details>}
+                            {copies.length > 1 && <details><summary>{copies.length} exact copies</summary><ul className="space-y-3">{copies.map(copy => <li key={copy.id}><p>{copy.fileName}: {copy.provenanceNote}</p>{copy.originalUrl && <a href={copy.originalUrl}>Original source</a>}<p>{provenanceLabels[copy.provenanceType]} · {transcriptionLabels[copy.transcriptionLevel]}</p><p>Acquisition Date: <EvidenceDate date={copy.acquisitionDate} /></p><p>Official Release Date: <EvidenceDate date={copy.officialReleaseDate} /></p><p>Added to SALN Tracker: {copy.archivePublicationDate}</p></li>)}</ul></details>}
                           </td>
                           <td className="min-w-[18rem] space-y-2">
                             <p className="font-semibold">{provenanceLabels[document.provenanceType]}</p>
@@ -192,7 +192,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
                             <dl className="space-y-1">
                               <div><dt className="font-semibold">Official Release Date</dt><dd><EvidenceDate date={document.officialReleaseDate} /></dd></div>
                               <div><dt className="font-semibold">Acquisition Date</dt><dd><EvidenceDate date={document.acquisitionDate} /></dd></div>
-                              <div><dt className="font-semibold">Archive Publication Date</dt><dd><time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></dd></div>
+                              <div><dt className="font-semibold">Added to SALN Tracker</dt><dd><time dateTime={document.archivePublicationDate}>{document.archivePublicationDate}</time></dd></div>
                             </dl>
                             </div></details>
                           </td>
@@ -216,9 +216,9 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
 
       {timeline.length >= 2 && <section aria-labelledby={`${id}-timeline`} className="space-y-3"><h2 id={`${id}-timeline`}>Declared net-worth timeline</h2><p className="archive-muted">Only reviewed Summary Transcriptions are shown. Unrepresented periods have no implied value.</p><ol className="space-y-4 border-l-2 border-gray-300 pl-4">{timeline.map(({ summary, filing }) => <li key={filing.id}><a className="underline text-primary-700" href={`#${id}-filing-${filing.id}`}><EvidenceDate date={filing.reportingDate} /> · {formatAmount(summary.declaredNetWorth)}</a><p className="archive-muted text-sm">Filer Name: {filing.filerName}</p></li>)}</ol></section>}
 
-      {(record.relatedReports?.length ?? 0) > 0 && <section aria-labelledby={`${id}-reporting`} className="space-y-4"><h2 id={`${id}-reporting`}>Related reporting - not a SALN filing</h2><p className="archive-muted">These publications are Secondary Reports. They do not contribute to Filings, Archive counts, declared totals or coverage.</p><ul className="space-y-4">{record.relatedReports?.map(report => <li key={report.id}><h3><a className="underline text-primary-700" href={report.url}>{report.title}</a></h3><p className="archive-muted">{report.publisher} · Published: <EvidenceDate date={report.publishedDate} /></p><p>{report.note}</p></li>)}</ul></section>}
+      {(record.relatedReports?.length ?? 0) > 0 && <section aria-labelledby={`${id}-reporting`} className="space-y-4"><h2 id={`${id}-reporting`}>Related reporting - not a SALN filing</h2><p className="archive-muted">These publications are Secondary Reports. They do not contribute to SALN entry counts, declared totals or coverage.</p><ul className="space-y-4">{record.relatedReports?.map(report => <li key={report.id}><h3><a className="underline text-primary-700" href={report.url}>{report.title}</a></h3><p className="archive-muted">{report.publisher} · Published: <EvidenceDate date={report.publishedDate} /></p><p>{report.note}</p></li>)}</ul></section>}
 
-      {person.eligibility === 'eligible' && <section aria-labelledby={`${id}-gaps`} className="space-y-3"><h2 id={`${id}-gaps`}>Archive Gaps</h2><p className="archive-label">Not currently in the archive</p><p>Coverage is limited to the acquired Source Documents listed here. An unrepresented reporting period does not establish a failure to file.</p><p><a className="underline text-primary-700" href={sourceTipHref}>Suggest a source for another reporting period</a></p></section>}
+      {person.eligibility === 'eligible' && <section aria-labelledby={`${id}-gaps`} className="space-y-3"><h2 id={`${id}-gaps`}>SALN coverage</h2><p className="archive-label">Available reporting periods</p><p>Coverage is limited to the acquired Source Documents listed here. An unrepresented reporting period does not establish a failure to file.</p><p><a className="underline text-primary-700" href={sourceTipHref}>Suggest a source for another reporting period</a></p></section>}
 
       <section aria-labelledby={`${id}-tenures`} className="space-y-4">
         <h2 id={`${id}-tenures`}>Public office and evidence</h2>

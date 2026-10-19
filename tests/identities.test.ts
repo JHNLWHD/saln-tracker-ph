@@ -174,8 +174,8 @@ test("dated legacy identity manifest retains every reviewed key while publishing
     const unverified = (await state.archive.findPersonBySlug("aimee-ferolino-ampoloquio"))!;
     assert.equal(unverified.person.eligibility, "unverified");
     const html = renderToStaticMarkup(createElement(PersonProfile, { record: unverified }));
-    assert.match(html, /Archive eligibility is not verified/);
-    assert.match(html, /excluded from public directories, search, and coverage counts/);
+    assert.match(html, /Public-office details are not verified/);
+    assert.match(html, /public-office details are checked/);
     assert.deepEqual(unverified.filings, []);
     assert.deepEqual(unverified.financialSummaries, []);
     const exported = await exportPublicSnapshot(state.db);
