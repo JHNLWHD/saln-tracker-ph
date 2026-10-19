@@ -232,6 +232,7 @@ async function main() {
       assert.equal(bytes.byteLength, restored.byteSize); assert.equal(createHash('sha256').update(bytes).digest('hex'), backup.sha256);
       verified.push({ phase: name, key: backup.key, ...restored, matchesCurrentProduction: currentPhase });
     }
+    assertProductionApproval(record, revision);
     const report = { status: 'recovery_evidence_checked_not_deployed', observedAt: new Date().toISOString(), acceptedCommit: revision, databaseUrl: databaseConfig.url, backupTarget, phase, verified };
     if (phase === 'before') await writeFile(beforeReportFile, JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 });
     console.log(JSON.stringify(report));
