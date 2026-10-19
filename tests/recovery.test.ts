@@ -1,0 +1,251 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import test from 'node:test';
+import { assertIndefiniteLock, assertProductionApproval, assertProductionCheckout, assertRecoverySnapshot, databaseFingerprint, productionBuckets, productionDatabase, readBeforeRecovery, verifyBucketLocks, verifyPreImportDatabase, verifySqlRecovery } from '../scripts/verify-recovery';
+import { connectArchive } from '../app/db/client.server';
+import { importReviewedPerson } from '../app/db/people.server';
+import { exportPublicSnapshot } from '../app/archive/snapshot.server';
+import { migrateArchive } from '../scripts/migrate';
+import { canonicalJson } from '../app/db/canonical';
+import { legacyCopySchema } from '../scripts/legacy-copy';
+import { typedFirestoreValue } from '../scripts/legacy-capture';
+
+test('legacy recovery can proceed while future Source Document publication is pending, with the exact accepted snapshot', async () => {
+  const plan = JSON.parse(await readFile(new URL('../data/release/stage-one.json', import.meta.url), 'utf8'));
+  assert.ok(plan.publicationReviewPending.length > 0);
+  assert.equal(plan.expected.counts.sourceDocuments, 0);
+  assert.doesNotThrow(() => assertRecoverySnapshot(plan.expected.snapshotVersion, plan.expected.snapshotVersion));
+  assert.throws(() => assertRecoverySnapshot('0'.repeat(64), plan.expected.snapshotVersion), /accepted release plan/);
+  for (const value of [null, undefined, '', 'pending']) assert.throws(() => assertRecoverySnapshot(value, value), /accepted release plan/);
+});
+
+test('production evidence requires exact approval and whole-bucket indefinite locks', () => {
+  const lock = { success: true, result: { rules: [{ enabled: true, condition: { type: 'Indefinite' } }] } };
+  assert.doesNotThrow(() => assertIndefiniteLock(lock));
+  for (const rule of [{ enabled: false, condition: { type: 'Indefinite' } }, { enabled: true, prefix: 'documents/', condition: { type: 'Indefinite' } }, { enabled: true, condition: { type: 'Age', maxAgeSeconds: 9999999 } }]) assert.throws(() => assertIndefiniteLock({ success: true, result: { rules: [rule] } }));
+  assert.throws(() => assertIndefiniteLock({ success: false }));
+  const revision = 'a'.repeat(40), record = { acceptedCommit: revision, developAcceptanceRef: 'Synthetic acceptance', productionApprovalRef: 'Synthetic explicit approval', rollbackUntil: new Date(Date.now() + 3600000).toISOString() };
+  assert.doesNotThrow(() => assertProductionApproval(record, revision));
+  for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
+});
+
+test('after verification requires durable before evidence bound to the exact release, target and pre-import object', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-before-evidence-')), file = join(directory, 'cutover.json.before.json');
+  const binding = { acceptedCommit: 'a'.repeat(40), databaseUrl: 'libsql://production.example.invalid', preImportDatabaseDigest: 'd'.repeat(64), backupTarget: { accountId: 'b'.repeat(32), bucket: 'production-backups', jurisdiction: 'eu' }, pre: { key: `releases/${'a'.repeat(40)}/first/pre.sql`, sha256: 'c'.repeat(64) } };
+  const pre = { ...binding.pre, phase: 'pre', restored: true, matchesCurrentProduction: true, databaseDigest: 'd'.repeat(64) };
+  const report = { status: 'recovery_evidence_checked_not_deployed', phase: 'before', acceptedCommit: binding.acceptedCommit, databaseUrl: binding.databaseUrl, backupTarget: binding.backupTarget, verified: [pre] };
+  try {
+    await assert.rejects(readBeforeRecovery(file, binding), /ENOENT/);
+    await writeFile(file, JSON.stringify(report));
+    assert.equal(await readBeforeRecovery(file, binding), pre.databaseDigest);
+    for (const changes of [
+      { status: 'pending' }, { phase: 'after' }, { acceptedCommit: 'e'.repeat(40) }, { databaseUrl: 'libsql://other.example.invalid' },
+      { backupTarget: { ...binding.backupTarget, bucket: 'other-backups' } }, { backupTarget: { ...binding.backupTarget, jurisdiction: 'default' } },
+      { verified: [] }, { verified: [pre, pre] }, ...[{ phase: 'post' }, { key: binding.pre.key.replace('/pre.sql', '/post.sql') }, { sha256: 'e'.repeat(64) }, { databaseDigest: '' }, { databaseDigest: 'e'.repeat(64) }, { restored: false }, { matchesCurrentProduction: false }].map(change => ({ verified: [{ ...pre, ...change }] })),
+    ]) {
+      await writeFile(file, JSON.stringify({ ...report, ...changes }));
+      await assert.rejects(readBeforeRecovery(file, binding));
+    }
+    await writeFile(file, JSON.stringify(report));
+    await assert.rejects(readBeforeRecovery(file, { ...binding, pre: { ...binding.pre, sha256: 'f'.repeat(64) } }));
+    for (const preImportDatabaseDigest of [undefined, null, '', 'pending', 'e'.repeat(64)]) await assert.rejects(readBeforeRecovery(file, { ...binding, preImportDatabaseDigest }));
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+const stagingR2 = { accountId: 'b'.repeat(32), bucket: 'staging-documents', jurisdiction: 'default' };
+
+test('R2 recovery targets must differ from the staging identity in the accepted release plan', () => {
+  const approved = { accountId: 'a'.repeat(32), documentBucket: 'production-documents', documentJurisdiction: 'default', backupBucket: 'production-backups', backupJurisdiction: 'default' };
+  assert.deepEqual(productionBuckets(approved, approved, stagingR2), { ...approved, backupEndpoint: `https://${approved.accountId}.r2.cloudflarestorage.com` });
+  for (const inventory of [null, undefined]) assert.throws(() => productionBuckets(approved, inventory, stagingR2), /accepted release plan/);
+  for (const changed of [{ documentJurisdiction: 'eu' }, { backupJurisdiction: 'us' }, { accountId: 'b'.repeat(32) }, { documentBucket: 'staging-documents' }, { backupBucket: 'test-backups' }]) {
+    assert.throws(() => productionBuckets({ ...approved, ...changed }, approved, stagingR2), /accepted release plan/);
+  }
+  for (const missing of [null, undefined, { ...stagingR2, bucket: '' }, { ...stagingR2, accountId: '' }, { ...stagingR2, jurisdiction: '' }, { ...stagingR2, bucket: ' ' }, { ...stagingR2, accountId: 'unreviewed' }]) assert.throws(() => productionBuckets(approved, approved, missing), /staging R2 identity from the accepted release plan/);
+  for (const bucket of [null, undefined, 123]) {
+    const staging = JSON.parse(JSON.stringify({ ...stagingR2, bucket }));
+    assert.throws(() => productionBuckets(approved, approved, staging), /staging R2 identity from the accepted release plan/);
+    const production = JSON.parse(JSON.stringify({ ...approved, documentBucket: bucket }));
+    assert.throws(() => productionBuckets(production, production, stagingR2), /separate production buckets/);
+  }
+  for (const bucket of [approved.documentBucket, approved.backupBucket]) assert.throws(() => productionBuckets(approved, approved, { accountId: approved.accountId, bucket, jurisdiction: 'default' }), /staging bucket/);
+  const shared = { ...approved, backupBucket: approved.documentBucket };
+  assert.throws(() => productionBuckets(shared, shared, stagingR2), /separate production buckets/);
+  const separate = { ...shared, backupJurisdiction: 'eu' };
+  assert.equal(productionBuckets(separate, separate, stagingR2).backupEndpoint, `https://${approved.accountId}.eu.r2.cloudflarestorage.com`);
+  const staging = { accountId: approved.accountId, bucket: approved.documentBucket, jurisdiction: 'eu' };
+  assert.doesNotThrow(() => productionBuckets(approved, approved, staging));
+  assert.doesNotThrow(() => productionBuckets(approved, approved, { ...staging, accountId: 'b'.repeat(32), jurisdiction: 'default' }));
+  assert.throws(() => productionBuckets(separate, separate, staging), /staging bucket/);
+});
+
+test('R2 lock reads and backup endpoints identify each accepted bucket jurisdiction', async t => {
+  const calls: { url: string; jurisdiction: string | null }[] = [];
+  t.mock.method(globalThis, 'fetch', async (url: string, init: RequestInit) => {
+    calls.push({ url, jurisdiction: new Headers(init.headers).get('cf-r2-jurisdiction') });
+    return Response.json({ success: true, result: { rules: [{ enabled: true, condition: { type: 'Indefinite' } }] } });
+  });
+  for (const jurisdiction of ['default', 'eu', 'us', 'fedramp']) {
+    const approved = { accountId: 'a'.repeat(32), documentBucket: 'documents', documentJurisdiction: 'eu', backupBucket: 'backups', backupJurisdiction: jurisdiction };
+    const targets = productionBuckets(approved, approved, stagingR2);
+    assert.equal(targets.backupEndpoint, `https://${approved.accountId}${jurisdiction === 'default' ? '' : `.${jurisdiction}`}.r2.cloudflarestorage.com`);
+    await verifyBucketLocks(targets, 'synthetic-token');
+    assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['documents', 'eu'], ['backups', jurisdiction]]);
+    const missing = { ...approved, backupJurisdiction: '' };
+    assert.throws(() => productionBuckets(missing, missing, stagingR2), /explicit supported jurisdiction/);
+  }
+  const sameName = { accountId: 'a'.repeat(32), documentBucket: 'archive', documentJurisdiction: 'default', backupBucket: 'archive', backupJurisdiction: 'eu' };
+  await verifyBucketLocks(productionBuckets(sameName, sameName, stagingR2), 'synthetic-token');
+  assert.deepEqual(calls.slice(-2).map(call => [call.url.split('/').at(-2), call.jurisdiction]), [['archive', 'default'], ['archive', 'eu']]);
+});
+
+test('pre-import recovery accepts an empty database while rejecting a populated target or post-import snapshot', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-empty-recovery-')), path = join(directory, 'empty.db'), file = join(directory, 'pre.sql');
+  const { client } = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
+  try {
+    const digest = await databaseFingerprint(client);
+    const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
+    const checksum = createHash('sha256').update(dump).digest('hex');
+    await writeFile(file, dump);
+    assert.equal((await verifySqlRecovery(file, checksum, null, digest)).databaseDigest, digest);
+    await client.execute('CREATE TABLE imported (id INTEGER PRIMARY KEY)');
+    await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
+    await assert.rejects(verifySqlRecovery(file, checksum, 'a'.repeat(64), undefined, { dataSha256: 'b'.repeat(64), documentCount: 1, salnCount: 1 }), error => error instanceof Error && error.cause instanceof Error && /no such table/.test(error.cause.message));
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('before verification rejects an import performed after the pre-import database state was reviewed', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-reviewed-pre-state-'));
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  try {
+    await client.execute('CREATE TABLE existing_data (id TEXT PRIMARY KEY)');
+    await client.execute("INSERT INTO existing_data VALUES ('retained before this release')");
+    const reviewed = await databaseFingerprint(client);
+    assert.equal(await verifyPreImportDatabase(client, reviewed), reviewed, 'A reviewed populated pre-state is valid');
+    for (const missing of [undefined, null, '', 'pending']) await assert.rejects(verifyPreImportDatabase(client, missing), /reviewed pre-import database digest/);
+    await client.execute("INSERT INTO existing_data VALUES ('imported too soon')");
+    await assert.rejects(verifyPreImportDatabase(client, reviewed), /reviewed pre-import state/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery restores exact bound bytes and rejects corruption and external database attachment', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-sql-test-')), file = join(directory, 'backup.sql');
+  try {
+    const sql = 'CREATE TABLE recovered (id text PRIMARY KEY); INSERT INTO recovered VALUES (\'synthetic\');';
+    const checksum = createHash('sha256').update(sql).digest('hex'); await writeFile(file, sql);
+    const restored = await verifySqlRecovery(file, checksum, null);
+    assert.equal(restored.restored, true); assert.equal(restored.byteSize, Buffer.byteLength(sql)); assert.match(restored.databaseDigest, /^[a-f0-9]{64}$/);
+    await assert.rejects(verifySqlRecovery(file, '0'.repeat(64), null), /checksum mismatch/);
+    const outside = join(directory, 'escaped.db');
+    for (const unsafe of [`ATTACH DATABASE '${outside}' AS other;`, `${sql} /* comment */ ATTACH DATABASE '${outside}' AS other; CREATE TABLE other.escape(id);`, `${sql} VACUUM INTO '${outside}';`, `${sql} SELECT "writefile"('${outside}', 'escape');`, `${sql} SELECT readfile('${file}');`, `${sql} SELECT data FROM "fsdir"('${file}');`, `${sql} SELECT data FROM 'fsdir'('${file}');`, `${sql} PRAGMA temp_store_directory='${directory}';`, `BEGIN; ${sql}`, `BEGIN; ${sql} /* interrupted`, `${sql}\n.quit\n`]) {
+      await writeFile(file, unsafe);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null));
+      await assert.rejects(access(outside));
+    }
+    for (const unsafe of [`${sql} SELECT name FROM 'fsdir' WHERE dir = '${directory}';`, `${sql} SELECT name FROM recovered, 'fsdir' WHERE dir = '${directory}';`, `${sql} SELECT data FROM 'zipfile'('${outside}');`]) {
+      await writeFile(file, unsafe);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null), /filesystem modules/);
+    }
+    const complete = `PRAGMA foreign_keys=OFF; BEGIN; ${sql} INSERT INTO recovered VALUES ('ATTACH, fsdir and zipfile are quoted text'); INSERT INTO recovered VALUES ('fsdir'), ('zipfile'); COMMIT; -- fsdir in a comment\n/* zipfile in a comment */`;
+    await writeFile(file, complete);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(complete).digest('hex'), null)).restored, true);
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('production verification binds actual checkout and authenticated database state, including non-public rows', async () => {
+  const revision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  assert.throws(() => assertProductionCheckout('0'.repeat(40)), /Running checkout/);
+  if (execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], { encoding: 'utf8' }).trim()) assert.throws(() => assertProductionCheckout(revision), /clean checkout/);
+  else assert.doesNotThrow(() => assertProductionCheckout(revision));
+  const url = 'libsql://production.example.invalid', stagingHost = 'staging.example.invalid';
+  const env = { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'operator-override.example.invalid' };
+  assert.equal(productionDatabase(url, url, stagingHost, env).url, url);
+  for (const missing of [undefined, null, '', ' ', 'https://staging.example.invalid', 'staging.example.invalid:443']) assert.throws(() => productionDatabase(url, url, missing, env), /staging database hostname from the accepted release plan/);
+  assert.throws(() => productionDatabase('libsql://staging.example.invalid', url, stagingHost, env));
+  assert.throws(() => productionDatabase(url, url, stagingHost, { TURSO_DATABASE_URL: url }));
+  for (const approved of [undefined, null, '']) assert.throws(() => productionDatabase(url, approved, stagingHost, env), /accepted release plan/);
+  const staging = 'libsql://staging.example.invalid';
+  assert.throws(() => productionDatabase(staging, url, stagingHost, { ...env, TURSO_DATABASE_URL: staging }), /accepted release plan/);
+  assert.throws(() => productionDatabase(staging, staging, stagingHost, { ...env, TURSO_DATABASE_URL: staging }), /staging database/);
+  const dotted = `${staging}.`;
+  assert.throws(() => productionDatabase(dotted, dotted, 'STAGING.EXAMPLE.INVALID', { ...env, TURSO_DATABASE_URL: dotted }), /staging database/);
+  assert.throws(() => productionDatabase(staging, staging, `${stagingHost}.`, { ...env, TURSO_DATABASE_URL: staging }), /staging database/);
+  const directory = await mkdtemp(join(tmpdir(), 'saln-production-binding-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const sql = "CREATE TABLE private_archive (id INTEGER, raw BLOB); INSERT INTO private_archive VALUES (9007199254740993, X'00ff');";
+  try {
+    await client.executeMultiple(sql); await writeFile(file, sql);
+    const checksum = createHash('sha256').update(sql).digest('hex'), digest = await databaseFingerprint(client);
+    assert.equal((await verifySqlRecovery(file, checksum, null, digest)).databaseDigest, digest);
+    await client.execute('UPDATE private_archive SET id = 9007199254740994');
+    await assert.rejects(verifySqlRecovery(file, checksum, null, await databaseFingerprint(client)), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery rejects reordered manifest applications even when every stored column matches', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-manifest-order-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const schema = 'CREATE TABLE manifest_applications (id TEXT PRIMARY KEY, canonical_payload TEXT NOT NULL, applied_at TEXT NOT NULL);';
+  const original = "('z-original', '{\"version\":1}', '2026-10-19T00:00:00.000Z')";
+  const correction = "('a-correction', '{\"version\":2}', '2026-10-19T00:00:00.000Z')";
+  const insert = (rows: string[]) => `INSERT INTO manifest_applications VALUES ${rows.join(', ')};`;
+  try {
+    await client.executeMultiple(schema + insert([original, correction]));
+    // Application order matters; numeric gaps in rowid do not change chronology.
+    await client.execute('UPDATE manifest_applications SET rowid = rowid * 10');
+    const digest = await databaseFingerprint(client);
+    const matching = schema + insert([original, correction]);
+    await writeFile(file, matching);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(matching).digest('hex'), null, digest)).databaseDigest, digest);
+    const reordered = schema + insert([correction, original]);
+    await writeFile(file, reordered);
+    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(reordered).digest('hex'), null, digest), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('post-import recovery requires the accepted raw legacy capture even when the public snapshot and live dump match', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-native-recovery-')), path = join(directory, 'archive.db'), file = join(directory, 'backup.sql');
+  const { client, db } = connectArchive({ url: `file:${path}` });
+  try {
+    await migrateArchive(db);
+    await importReviewedPerson(db, JSON.parse(await readFile(new URL('../data/reviewed/0001-ferdinand-marcos-jr.json', import.meta.url), 'utf8')));
+    const expected = (await exportPublicSnapshot(db)).snapshot.version;
+    const documents = [1, 2].map(index => ({ id: `official-${index}`, path: `officials/official-${index}`, data: typedFirestoreValue({ name: `Official ${index}`, saln_records: Array.from({ length: index }, (_, i) => ({ year: 2025 - i, net_worth: 100 + i })), unknownField: 'Preserve this too' }) }));
+    const legacy = { dataSha256: createHash('sha256').update(canonicalJson(documents)).digest('hex'), documentCount: 2, salnCount: 3 };
+    const capture = { ...legacy, projectId: 'saln-tracker-ph', scope: 'public_reader', finishedAt: '2026-10-01T00:00:00.000Z' };
+    async function verify(expectation: unknown = legacy) {
+      // Every variant still has the exact accepted reviewed snapshot and a matching live database digest.
+      assert.equal((await exportPublicSnapshot(db)).snapshot.version, expected);
+      const dump = execFileSync('sqlite3', ['-init', '/dev/null', path, '.dump']);
+      await writeFile(file, dump);
+      const production = connectArchive({ url: `file:${path}`, intMode: 'bigint' });
+      try { return await verifySqlRecovery(file, createHash('sha256').update(dump).digest('hex'), expected, await databaseFingerprint(production.client), expectation); }
+      finally { production.client.close(); }
+    }
+    await assert.rejects(verify(), /no such table/);
+    await client.executeMultiple(legacyCopySchema.join(';'));
+    await assert.rejects(verify(), /accepted legacy capture is missing/);
+    const insert = (hash: string, timestamp: string, rows: unknown[]) => client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: [hash, capture.projectId, capture.scope, timestamp, rows.length, canonicalJson({ ...capture, dataSha256: hash, documentCount: rows.length, finishedAt: timestamp }), canonicalJson(rows)] });
+    await insert(legacy.dataSha256, capture.finishedAt, documents);
+    const result = await verify();
+    assert.equal(result.snapshotVersion, expected); assert.deepEqual(result.legacyCapture, legacy);
+    for (const expectation of [null, {}, { ...legacy, dataSha256: 'pending' }]) await assert.rejects(verify(expectation), /accepted legacy capture checksum and counts/);
+    await assert.rejects(verify({ ...legacy, documentCount: 3 }), /Legacy profile count/);
+    await assert.rejects(verify({ ...legacy, salnCount: 4 }), /Legacy SALN count/);
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET document_count = 1, documents_json = ?', args: [canonicalJson(documents.slice(0, 1))] });
+    await assert.rejects(verify(), /Legacy raw data differs/);
+    const changed = [{ ...documents[0], extra: 'Changed raw field' }, documents[1]];
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET document_count = 2, documents_json = ?', args: [canonicalJson(changed)] });
+    await assert.rejects(verify(), /Legacy raw data differs/);
+    await client.execute({ sql: 'UPDATE legacy_firestore_captures SET documents_json = ?', args: [canonicalJson(documents)] });
+    const partial = documents.slice(0, 1), partialHash = createHash('sha256').update(canonicalJson(partial)).digest('hex');
+    await insert(partialHash, '2026-10-02T00:00:00.000Z', partial);
+    await assert.rejects(verify(), /active legacy capture differs/);
+    await client.execute({ sql: 'DELETE FROM legacy_firestore_captures WHERE data_sha256 = ?', args: [partialHash] });
+    assert.deepEqual((await verify()).legacyCapture, legacy);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
