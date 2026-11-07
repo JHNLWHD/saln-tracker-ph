@@ -19,8 +19,9 @@ export interface SALNRecord {
   total_liabilities: number;
   assets: Asset[];
   liabilities: Liability[];
-  date_filed: string;
-  status: 'submitted' | 'verified' | 'under_review' | 'flagged';
+  // Preserve unvalidated legacy metadata; display code must check these values.
+  date_filed?: unknown;
+  status?: unknown;
   source_url?: string;
   source_description?: string;
 }
