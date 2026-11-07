@@ -26,7 +26,8 @@ function number(value: unknown): number | null {
 function array(value: unknown): unknown[] {
   if (value === undefined) return [];
   const node = object(value);
-  if (node.type !== 'array' || !Array.isArray(node.values)) throw new Error('Expected a stored legacy array');
+  if (node.type !== 'array') return [];
+  if (!Array.isArray(node.values)) throw new Error('Expected a stored legacy array');
   return node.values;
 }
 

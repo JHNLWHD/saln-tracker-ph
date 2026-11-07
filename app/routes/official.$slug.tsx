@@ -7,9 +7,11 @@ import { PersonProfile } from '../components/PersonProfile';
 import { readLegacyRecords } from '../db/legacy.server';
 import { LegacyPersonProfile } from '../components/LegacyRecords';
 
-export function meta({ data }: Route.MetaArgs) {
+export function meta({ data }: Pick<Route.MetaArgs, 'data'>) {
   const name = data?.legacy?.name ?? data?.person?.person.canonicalName;
-  return [{ title: `${name ?? 'Person'} | SALN Tracker PH` }, { name: 'description', content: name ? `Inspect archived Source Documents and public-office evidence for ${name}.` : 'Inspect the SALN Archive.' }];
+  const description = data?.legacy ? `Inspect Original tracker data, preserved SALN entries and source links for ${name}.`
+    : name ? `Inspect archived Source Documents and public-office evidence for ${name}.` : 'Inspect the SALN Archive.';
+  return [{ title: `${name ?? 'Person'} | SALN Tracker PH` }, { name: 'description', content: description }];
 }
 export async function loader({ params, request }: Route.LoaderArgs) {
   const person = await (await getArchive()).findPersonBySlug(params.slug);

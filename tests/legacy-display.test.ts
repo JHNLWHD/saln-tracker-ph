@@ -21,7 +21,12 @@ test('home and profile expose every migrated record without promoting legacy tot
   const prior = { ARCHIVE_ADAPTER: process.env.ARCHIVE_ADAPTER, TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL, TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN };
   const saln = { year: 2024, total_assets: 1375378062.74, total_liabilities: 0, net_worth: 1375378062.74, date_filed: '2025-04-29', status: 'submitted', source_url: 'https://example.org/source.pdf', source_description: 'Legacy source', assets: [{ description: 'Recorded item', value: 1375378062.74 }], liabilities: [] };
   const profile = { slug: 'short-slug', name: 'Legacy Person', position: 'Commissioner', agency: 'CONSTITUTIONAL_COMMISSION', status: 'active', saln_records: [saln, { ...saln, net_worth: 987.65, total_liabilities: null, source_url: 'javascript:alert(1)' }], privateContact: 'must-not-publish' };
-  const documents = [{ id: 'legacy-person', path: 'officials/legacy-person', data: typedFirestoreValue(profile) }];
+  const documents = [
+    { id: 'legacy-person', path: 'officials/legacy-person', data: typedFirestoreValue(profile) },
+    { id: 'without-records', path: 'officials/without-records', data: typedFirestoreValue({ slug: 'without-records', name: 'Without records' }) },
+    { id: 'opaque-records', path: 'officials/opaque-records', data: typedFirestoreValue({ slug: 'opaque-records', name: 'Opaque records', saln_records: { original: 'retained' } }) },
+    { id: 'null-records', path: 'officials/null-records', data: typedFirestoreValue({ slug: 'null-records', name: 'Null records', saln_records: null }) },
+  ];
   try {
     await migrateArchive(db);
     await applyReviewedManifest(db, { id: 'identities-legacy-display-test', version: 1, kind: 'identities', payload: {
@@ -30,16 +35,17 @@ test('home and profile expose every migrated record without promoting legacy tot
     } });
     const before = await exportPublicSnapshot(db);
     for (const sql of legacyCopySchema) await client.execute(sql);
-    await client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: ['a'.repeat(64), 'saln-tracker-ph', 'public_reader', '2026-10-03T00:00:00.000Z', 1, '{}', JSON.stringify(documents)] });
+    await client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: ['a'.repeat(64), 'saln-tracker-ph', 'public_reader', '2026-10-03T00:00:00.000Z', documents.length, '{}', JSON.stringify(documents)] });
     await client.execute({ sql: 'INSERT INTO legacy_firestore_captures VALUES (?, ?, ?, ?, ?, ?, ?)', args: ['b'.repeat(64), 'saln-tracker-ph', 'public_reader', '2026-10-02T00:00:00.000Z', 1, '{}', JSON.stringify([{ ...documents[0], data: typedFirestoreValue({ ...profile, name: 'Old capture' }) }])] });
     Object.assign(process.env, { ARCHIVE_ADAPTER: 'turso', TURSO_DATABASE_URL: url }); delete process.env.TURSO_AUTH_TOKEN;
     const { loader: home } = await import('../app/routes/home');
-    const { loader: person } = await import('../app/routes/official.$slug');
+    const { loader: person, meta: profileMeta } = await import('../app/routes/official.$slug');
     const args = (path: string) => ({ request: new Request(`http://localhost${path}`), params: {}, context: {} });
     const homeData = await home(args('/'));
     const legacy = homeData.legacy;
     assert.ok(legacy, 'Home must expose the migrated data instead of only the reviewed subset');
-    assert.equal(legacy.profiles.length, 1);
+    assert.equal(legacy.profiles.length, 4);
+    assert.deepEqual(legacy.profiles.slice(1).map(row => row.saln_records.length), [0, 0, 0]);
     assert.equal(legacy.profiles[0].saln_records.length, 2, 'Same-year entries must remain distinct');
     assert.equal(legacy.profiles[0].name, 'Legacy Person', 'Only the latest capture is displayed');
     assert.deepEqual(legacy.profiles[0].saln_records.map(row => row.net_worth), [1375378062.74, 987.65]);
@@ -47,6 +53,8 @@ test('home and profile expose every migrated record without promoting legacy tot
     const detail = await person({ ...args('/official/legacy-person'), params: { slug: 'legacy-person' } });
     assert.deepEqual(detail.legacy?.saln_records, legacy.profiles[0].saln_records);
     assert.ok(detail.legacy);
+    const metadata = profileMeta({ data: detail });
+    assert.ok(metadata.some(tag => 'content' in tag && tag.content?.includes('Original tracker data')));
     await assert.rejects(person({ ...args('/official/short-slug?source=legacy'), params: { slug: 'short-slug' } }), error => error instanceof Response && error.status === 301 && error.headers.get('Location') === '/official/legacy-person?source=legacy');
     await assert.rejects(person({ ...args('/official/canonical-person'), params: { slug: 'canonical-person' } }), error => error instanceof Response && error.status === 301 && error.headers.get('Location') === '/official/legacy-person');
     const render = (child: ReturnType<typeof createElement>) => renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, child));
@@ -58,6 +66,13 @@ test('home and profile expose every migrated record without promoting legacy tot
     assert.match(listingHtml, /href="\/official\/legacy-person"/);
     assert.doesNotMatch(listingHtml, /href="\/official\/short-slug"/);
     assert.doesNotMatch(listingHtml, /Totals not transcribed|Old capture/);
+    assert.equal((listingHtml.match(/No SALN entries recorded/g) ?? []).length, 3);
+    for (const id of ['without-records', 'opaque-records', 'null-records']) {
+      const detail = await person({ ...args(`/official/${id}`), params: { slug: id } });
+      assert.ok(detail.legacy);
+      assert.equal(detail.legacy.id, id);
+      assert.deepEqual(detail.legacy.saln_records, []);
+    }
     const detailHtml = render(createElement(LegacyPersonProfile, { profile: detail.legacy, reviewedSlug: null }));
     assert.equal((detailHtml.match(/id="legacy-entry-/g) ?? []).length, 2);
     assert.match(detailHtml, /Recorded item/);
@@ -80,5 +95,23 @@ test('home and profile expose every migrated record without promoting legacy tot
     await closeArchive(); client.close();
     for (const [key, value] of Object.entries(prior)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
     await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('legacy totals and items format fractional-cent and large finite amounts', () => {
+  const render = (child: ReturnType<typeof createElement>) => renderToStaticMarkup(createElement(StaticRouter, { location: '/' }, child));
+  for (const [value, expected] of [[1.005, '₱1.01'], [-1.005, '-₱1.01'], [1e21, '₱1,000,000,000,000,000,000,000.00']] as const) {
+    const profile = {
+      id: 'currency-fixture', slug: 'currency-fixture', name: 'Currency fixture', position: null, agency: null,
+      status: null, term_start: null, term_end: null,
+      saln_records: [{ year: 2024, total_assets: value, total_liabilities: value, net_worth: value,
+        date_filed: null, status: null, source_url: null, source_description: null,
+        assets: [{ description: 'Asset', value, source: null }], liabilities: [{ creditor: 'Creditor', nature: 'Liability', balance: value }],
+      }],
+    };
+    const detail = render(createElement(LegacyPersonProfile, { profile, reviewedSlug: null }));
+    assert.equal(detail.split(expected).length - 1, 5, 'All totals and item amounts use the expected currency text');
+    const listing = render(createElement(LegacyDirectory, { data: { capturedAt: '2026-11-07T00:00:00.000Z', profiles: [profile] } }));
+    assert.equal(listing.split(expected).length - 1, 3, 'Directory totals use the same currency text');
   }
 });

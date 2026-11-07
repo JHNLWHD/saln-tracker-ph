@@ -6,10 +6,12 @@ import { ArchiveTable, EmptyState, TextField } from './ui/Archive';
 import { Button } from './ui/Button';
 
 const legacyLabel = 'Original tracker data';
-const amount = (value: number | null) => value === null ? 'Not recorded' : formatAmount(value.toFixed(2));
+const decimalFormat = new Intl.NumberFormat('en-PH', { useGrouping: false, minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const decimalAmount = (value: number | null) => value === null ? null : decimalFormat.format(value);
+const amount = (value: number | null) => value === null ? 'Not recorded' : formatAmount(decimalFormat.format(value));
 
 function LegacyTotals({ record }: { record: LegacyRecord }) {
-  return <FinancialTotals summary={{ totalAssets: record.total_assets?.toFixed(2) ?? null, totalLiabilities: record.total_liabilities?.toFixed(2) ?? null, declaredNetWorth: record.net_worth?.toFixed(2) ?? null }} />;
+  return <FinancialTotals summary={{ totalAssets: decimalAmount(record.total_assets), totalLiabilities: decimalAmount(record.total_liabilities), declaredNetWorth: decimalAmount(record.net_worth) }} />;
 }
 function LegacyLabel() {
   return <p className="text-sm font-semibold text-gray-600">{legacyLabel}</p>;

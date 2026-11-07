@@ -178,6 +178,18 @@ test("Roster trust boundary rejects unsupported dates, private fields and inelig
     await assert.rejects(applyReviewedManifest(state.db, { ...manifest, id: "changed-citation", payload: { ...payload, members: [{ ...payload.members[0], citations: [{ ...payload.members[0].citations[0], title: "Conflicting source title" }] }] } }), /different immutable metadata/);
     assert.equal((await state.db.select().from(rosterMembers)).length, 2);
     assert.throws(() => validateReviewedManifest({ ...manifest, payload: { ...payload, scope: "automatic_live_roster" } }));
+    await state.client.execute("UPDATE manifest_applications SET rowid = rowid * 10");
+    const ledger = (await state.client.execute("SELECT rowid, * FROM manifest_applications WHERE kind != 'roster' ORDER BY rowid")).rows;
+    for (const file of ["0005_down.sql", "0005_reviewed_rosters.sql"]) {
+      // Original review attribution depends on application chronology, including row IDs.
+      await state.client.execute("PRAGMA reverse_unordered_selects=ON");
+      const sql = await readFile(new URL(`../drizzle/${file}`, import.meta.url), "utf8");
+      await state.client.migrate(sql.split(/--> statement-breakpoint|;/).map(statement => statement.trim()).filter(Boolean));
+      assert.deepEqual((await state.client.execute("SELECT rowid, * FROM manifest_applications ORDER BY rowid")).rows, ledger);
+      assert.deepEqual((await state.client.execute("PRAGMA foreign_key_check")).rows, []);
+      assert.equal((await state.client.execute("PRAGMA foreign_keys")).rows[0].foreign_keys, 1);
+    }
+    await applyReviewedManifest(state.db, await json("0005-executive-roster-2026-09-28.json"));
     await rollbackArchive(state.client); await migrateArchive(state.db);
     assert.equal((await state.db.select().from(rosterMembers)).length, 0);
     assert.equal(Number((await state.client.execute("pragma foreign_keys")).rows[0].foreign_keys), 1);
