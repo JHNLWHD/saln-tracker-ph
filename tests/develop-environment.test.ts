@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { copyFile, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
@@ -16,8 +17,8 @@ import * as snapshotRoute from '../app/routes/data.$file';
 test('snapshot aliases reject mutation requests through router dispatch with supported methods', async () => {
   const handler = createStaticHandler([{
     path: '/data/:file',
-    loader: ({ request, params }) => snapshotRoute.loader({ request, params: { file: params.file! }, context: {} }),
-    action: snapshotRoute.action && (({ request, params }) => snapshotRoute.action({ request, params: { file: params.file! }, context: {} })),
+    loader: ({ request, params }) => snapshotRoute.loader(routeArgs({ request, params: { file: params.file! }, context: {} }, '/data/:file')),
+    action: snapshotRoute.action && (({ request, params }) => snapshotRoute.action(routeArgs({ request, params: { file: params.file! }, context: {} }, '/data/:file'))),
   }]);
   for (const file of ['archive.json', 'source-checksums.json']) {
     for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
@@ -64,7 +65,7 @@ test('snapshot aliases use the release pair without a database and immutable ver
     await migrateArchive(db);
     const before = await exportPublicSnapshot(db), first = await writeSnapshotArtifacts(root, before);
     const { loader } = await import('../app/routes/data.$file');
-    const read = (file: string, method = 'GET') => loader({ request: new Request(`http://localhost/data/${file}`, { method }), params: { file }, context: {} });
+    const read = (file: string, method = 'GET') => loader(routeArgs({ request: new Request(`http://localhost/data/${file}`, { method }), params: { file }, context: {} }, '/data/:file'));
     for (const file of ['archive.json', 'source-checksums.json']) {
       const response = await read(file); assert.equal(response.status, 307);
       assert.equal(response.headers.get('Location'), `/data/${release.version}/${file}`);

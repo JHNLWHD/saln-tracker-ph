@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -64,7 +65,7 @@ test('home, directory and profile expose every migrated record without promoting
     const { loader: home } = await import('../app/routes/home');
     const { loader: people } = await import('../app/routes/people');
     const { loader: person, meta: profileMeta } = await import('../app/routes/official.$slug');
-    const args = (path: string) => ({ request: new Request(`http://localhost${path}`), params: {}, context: {} });
+    const args = (path: string) => (routeArgs({ request: new Request(`http://localhost${path}`), params: {}, context: {} }, path.startsWith('/official/') ? '/official/:slug' : path.split('?')[0]));
     const homeData = await home(args('/'));
     const legacy = homeData.legacy;
     assert.ok(legacy, 'Home must expose the migrated data instead of only the reviewed subset');

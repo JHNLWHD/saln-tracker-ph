@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createLegacyArchive } from "../app/archive/legacy";
@@ -80,11 +81,11 @@ test("route loaders run locally without Firebase and preserve the missing-profil
   try {
     const { loader: homeLoader } = await import("../app/routes/home");
     const { loader: profileLoader } = await import("../app/routes/official.$slug");
-    assert.deepEqual(await homeLoader({ request: new Request("http://localhost/"), params: {}, context: {} }), {
+    assert.deepEqual(await homeLoader(routeArgs({ request: new Request("http://localhost/"), params: {}, context: {} }, '/')), {
       archive: { rosters: [], recentlyAdded: [] },
     });
     await assert.rejects(
-      profileLoader({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }),
+      profileLoader(routeArgs({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }, '/official/:slug')),
       (error: unknown) => error instanceof Response && error.status === 404,
     );
   } finally {

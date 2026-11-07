@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
@@ -31,7 +32,7 @@ test("public document route serves reviewed exact bytes, download headers and co
     filing: { id: "test-filing", personId: "person-ferdinand-marcos-jr", filerName: "SYNTHETIC TEST ONLY", reportingDate: { value: "2020", precision: "year" }, executionDate: null, receiptDate: null, supersedesFilingId: null },
     document: { id: "test-document", filingId: "test-filing", fileName: "test source.pdf", mediaType: "application/pdf", byteSize: bytes.byteLength, sha256, originalUrl: "https://example.org/test-source.pdf", provenanceType: "official_download", provenanceNote: "Synthetic fixture, never public source evidence.", officialReleaseDate: null, acquisitionDate: { value: "2026-09-26", precision: "day" }, archivePublicationDate: "2026-09-26T00:00:00.000Z", transcriptionLevel: "document_only" },
   };
-  const request = (hash = sha256, query = "", options: RequestInit = {}) => loader({ request: new Request(`http://localhost/documents/${hash}${query}`, options), params: { sha256: hash }, context: {} });
+  const request = (hash = sha256, query = "", options: RequestInit = {}) => loader(routeArgs({ request: new Request(`http://localhost/documents/${hash}${query}`, options), params: { sha256: hash }, context: {} }, '/documents/:sha256'));
   const status = (expected: number) => (error: unknown) => error instanceof Response && error.status === expected;
   try {
     Object.assign(process.env, env);

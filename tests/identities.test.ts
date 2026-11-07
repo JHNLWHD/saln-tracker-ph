@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
@@ -86,11 +87,11 @@ test("reviewed merge chains retain source rows, dates, correction history, docum
     assert.equal((await state.archive.findLegacyDocument("/saln/test/a.pdf"))?.sha256, sha256);
     Object.assign(process.env, env);
     const { loader: legacyLoader } = await import("../app/routes/saln.$");
-    const legacyRequest = (path: string) => legacyLoader({ request: new Request(`http://localhost${path}`), params: { "*": "test/a.pdf" }, context: {} });
+    const legacyRequest = (path: string) => legacyLoader(routeArgs({ request: new Request(`http://localhost${path}`), params: { "*": "test/a.pdf" }, context: {} }, '/saln/*'));
     await assert.rejects(legacyRequest("/saln/test/a.pdf?download=1"), error => error instanceof Response && error.status === 301 && error.headers.get("Location") === `/documents/${sha256}?download=1`);
     await assert.rejects(legacyRequest("/saln/unknown.pdf"), error => error instanceof Response && error.status === 404);
     const { loader: documentLoader } = await import("../app/routes/documents.$sha256");
-    const response = await documentLoader({ request: new Request(`http://localhost/documents/${sha256}?download=1`), params: { sha256 }, context: {} });
+    const response = await documentLoader(routeArgs({ request: new Request(`http://localhost/documents/${sha256}?download=1`), params: { sha256 }, context: {} }, '/documents/:sha256'));
     assert.match(response.headers.get("Content-Disposition")!, /^attachment;/);
     assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes);
     await assert.rejects(applyReviewedManifest(state.db, manifest("wrong-pdf", { documents: [{ path: "/saln/other.pdf", sourceDocumentId: "document-a", sha256: "a".repeat(64) }] })), /exact checksum/);
@@ -185,7 +186,7 @@ test("dated legacy identity manifest retains every reviewed key while publishing
     assert.equal((await applyReviewedManifest(state.db, input)).status, "unchanged");
     Object.assign(process.env, { ARCHIVE_ADAPTER: "turso", TURSO_DATABASE_URL: state.url });
     const { loader } = await import("../app/routes/official.$slug");
-    const load = (slug: string) => loader({ request: new Request(`http://localhost/official/${slug}?source=legacy`), params: { slug }, context: {} });
+    const load = (slug: string) => loader(routeArgs({ request: new Request(`http://localhost/official/${slug}?source=legacy`), params: { slug }, context: {} }, '/official/:slug'));
     await assert.rejects(load("ferdinand-bongbong-romualdez-marcos-jr"), error => error instanceof Response && error.status === 301 && error.headers.get("Location") === "/official/ferdinand-marcos-jr?source=legacy");
     await assert.rejects(load("sen-006"), error => error instanceof Response && error.status === 301 && error.headers.get("Location") === "/official/risa-hontiveros?source=legacy");
     assert.equal((await load("risa-hontiveros")).person?.person.id, "person-risa-hontiveros"); // No self-redirect.

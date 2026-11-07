@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
@@ -49,7 +50,7 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     assert.equal(vp?.tenures[0].citations.find(source => source.id === "evidence-sara-inauguration-2022")?.publishedDate?.value, "2022-06-19");
     process.env.ARCHIVE_ADAPTER = "turso"; process.env.TURSO_DATABASE_URL = state.url;
     const { loader } = await import("../app/routes/home");
-    const loaded = await loader({ request: new Request("http://localhost/"), params: {}, context: {} });
+    const loaded = await loader(routeArgs({ request: new Request("http://localhost/"), params: {}, context: {} }, '/'));
     assert.deepEqual(loaded.archive, home); assert.equal('officials' in loaded, false);
     const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
     assert.match(markup, /Officeholders as of/); assert.match(markup, /Totals not transcribed/);

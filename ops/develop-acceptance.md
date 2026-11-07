@@ -19,6 +19,7 @@ The fixed [stage-one plan](../data/release/stage-one.json) describes **reviewed 
 | Gate | Evidence to record | Current result |
 | --- | --- | --- |
 | Exact release | Deployed SHA, branch URL, Netlify deploy ID; build/typecheck/test results for that SHA | Pending live deployment |
+| Dependencies | Fresh full and production-only audits for the exact lock; every advisory has a current call-path disposition in [the security record](dependency-security.md) | Local update and assessment; repeat before promotion |
 | Isolation | Archive/private database IDs and hosts, R2 account/bucket, actual credential grants distinct from production | Pending |
 | Empty staging migration | Staging creation/migration record and exact ledger matching plan | Local rehearsal only |
 | Import/replay | Staging manifest IDs/digests; first applied and second unchanged; no extra writes | Local rehearsal only |

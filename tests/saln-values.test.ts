@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -45,7 +46,7 @@ function totals(html: string) {
   });
 }
 const render = (location: string, child: ReturnType<typeof createElement>) => renderToStaticMarkup(createElement(StaticRouter, { location }, child));
-const rootMatch = { id: 'root' as const, params: {}, pathname: '/', data: undefined, handle: undefined };
+const rootMatch = { id: 'root' as const, params: {}, pathname: '/', data: undefined, loaderData: undefined, handle: undefined };
 
 async function withCopiedProfiles(profiles: LegacyProfile[], check: () => Promise<void>) {
   const directory = await mkdtemp(join(tmpdir(), 'saln-values-'));
@@ -79,12 +80,13 @@ async function withCopiedProfiles(profiles: LegacyProfile[], check: () => Promis
 }
 
 async function checkPages(profiles: LegacyProfile[]) {
-  const homeData = await loadHome({ request: new Request('http://localhost/'), params: {}, context: {} });
+  const homeData = await loadHome(routeArgs({ request: new Request('http://localhost/'), params: {}, context: {} }, '/'));
   assert.deepEqual(homeData.legacy?.profiles, profiles, 'Home must preserve every public Firebase field and entry');
-  const homeHtml = render('/', createElement(Home, { loaderData: homeData, params: {}, matches: [rootMatch, { id: 'routes/home', params: {}, pathname: '/', data: homeData, handle: undefined }] }));
+  const homeHtml = render('/', createElement(Home, { loaderData: homeData, params: {}, matches: [rootMatch, { id: 'routes/home', params: {}, pathname: '/', data: homeData, loaderData: homeData, handle: undefined }] }));
   const cards = elements(homeHtml, 'article');
   assert.equal(cards.length, profiles.length, 'Home must show every profile exactly once');
-  assert.ok(text(homeHtml).includes(`${profiles.length} profiles · ${profiles.reduce((n, profile) => n + profile.saln_records.length, 0)} SALN entries`));
+  const entryCount = profiles.reduce((n, profile) => n + profile.saln_records.length, 0);
+  assert.ok(text(homeHtml).includes(`${profiles.length} ${profiles.length === 1 ? 'profile' : 'profiles'} · ${entryCount} ${entryCount === 1 ? 'SALN entry' : 'SALN entries'}`));
   for (const profile of profiles) {
     const path = `/official/${encodeURIComponent(profile.id)}`;
     const matchingCards = cards.filter(card => attribute(card.attributes, 'aria-label') === profile.name);
@@ -99,9 +101,9 @@ async function checkPages(profiles: LegacyProfile[]) {
     assert.deepEqual(totals(card), latest.map(expectedTotals), `${profile.id}: Home totals by label`);
 
     const params = { slug: profile.id };
-    const data = await loadPerson({ request: new Request(`http://localhost${path}`), params, context: {} });
+    const data = await loadPerson(routeArgs({ request: new Request(`http://localhost${path}`), params, context: {} }, '/official/:slug'));
     assert.deepEqual(data.legacy, profile, `${profile.id}: profile loader must preserve every public field`);
-    const html = render(path, createElement(Person, { loaderData: data, params, matches: [rootMatch, { id: 'routes/official.$slug', params, pathname: path, data, handle: undefined }] }));
+    const html = render(path, createElement(Person, { loaderData: data, params, matches: [rootMatch, { id: 'routes/official.$slug', params, pathname: path, data, loaderData: data, handle: undefined }] }));
     assert.deepEqual(elements(html, 'h1').map(row => text(row.body)), [profile.name], `${profile.id}: profile name`);
     const entries = elements(html, 'section');
     const ordered = profile.saln_records.map((record, index) => ({ record, index })).sort((a, b) => b.record.year - a.record.year);
@@ -126,7 +128,7 @@ async function checkPages(profiles: LegacyProfile[]) {
       if (record.assets.length) expected.push({ caption: ['Assets'], headings: ['Description', 'Value', 'Source note'], rows: record.assets.map(item => [item.description || 'Not recorded', expectedAmount(item.value), item.source || 'Not recorded']) });
       if (record.liabilities.length) expected.push({ caption: ['Liabilities'], headings: ['Creditor', 'Nature', 'Balance'], rows: record.liabilities.map(item => [item.creditor || 'Not recorded', item.nature || 'Not recorded', expectedAmount(item.balance)]) });
       assert.deepEqual(tables, expected, `${label}: each amount must stay with its item and column`);
-      assert.deepEqual(elements(entry, 'summary').map(row => text(row.body)), [`Recorded items · ${record.assets.length} assets · ${record.liabilities.length} liabilities`], `${label}: item counts`);
+      assert.deepEqual(elements(entry, 'summary').map(row => text(row.body)), [`Recorded items · ${record.assets.length} ${record.assets.length === 1 ? 'asset' : 'assets'} · ${record.liabilities.length} ${record.liabilities.length === 1 ? 'liability' : 'liabilities'}`], `${label}: item counts`);
     }
   }
 }
