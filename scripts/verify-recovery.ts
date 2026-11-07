@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { realpathSync } from 'node:fs';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -51,19 +52,19 @@ export function assertIndefiniteLock(input: unknown) {
 
 export async function databaseFingerprint(client: Client) {
   const tx = await client.transaction('read');
-  const encode = (value: unknown) => JSON.stringify(value, (_key, item) => typeof item === 'bigint' ? { integer: String(item) } : item instanceof ArrayBuffer ? { blob: Buffer.from(item).toString('hex') } : item);
+  const encode = (value: unknown) => JSON.stringify(value, (_key, item) => typeof item === 'bigint' ? { integer: String(item) } : typeof item === 'number' && !Number.isFinite(item) ? { real: String(item) } : item instanceof ArrayBuffer ? { blob: Buffer.from(item).toString('hex') } : item);
   try {
-    const schema = await tx.execute("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name");
+    const schema = await tx.execute("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE name NOT GLOB 'sqlite_*' ORDER BY type, name");
     const tables = schema.rows.filter(row => row.type === 'table');
     // A newly provisioned database is a valid, checksum-bound pre-import state.
     const hash = createHash('sha256').update(encode(schema.rows.map(row => Array.from(row))));
     // ponytail: sort one table in memory; use a streaming ordered export if backup tables outgrow operator memory.
     for (const table of tables) {
-      // Filing adoption and correction replay depend on ledger order, including tied timestamps.
-      const applicationOrder = table.name === 'manifest_applications';
-      const rows = await tx.execute(`SELECT * FROM "${String(table.name).replaceAll('"', '""')}"${applicationOrder ? ' ORDER BY rowid' : ''}`);
+      // Original Document selection and correction replay depend on insertion order.
+      const insertionOrder = table.name === 'manifest_applications' || table.name === 'source_documents';
+      const rows = await tx.execute(`SELECT * FROM "${String(table.name).replaceAll('"', '""')}"${insertionOrder ? ' ORDER BY rowid' : ''}`);
       const values = rows.rows.map(row => encode(Array.from(row)));
-      hash.update(encode([table.name, rows.columns, applicationOrder ? values : values.sort()]));
+      hash.update(encode([table.name, rows.columns, insertionOrder ? values : values.sort()]));
     }
     return hash.digest('hex');
   } finally { await tx.rollback(); tx.close(); }
@@ -104,7 +105,7 @@ export async function verifySqlRecovery(file: string, checksum: string, expected
   assert.equal(createHash('sha256').update(bytes).digest('hex'), checksum, 'Backup checksum mismatch');
   const sql = bytes.toString('utf8');
   // Safe mode blocks external writes. Also exclude filesystem scans and non-dump PRAGMAs.
-  const commands = sql.replace(/'(?:''|[^'])*'|--[^\r\n]*|\/\*[\s\S]*?\*\//g, ' ');
+  const commands = sql.replace(/'(?:''|[^'])*'|"(?:""|[^"])*"|`(?:``|[^`])*`|\[[^\]]*\]|--[^\r\n]*|\/\*[\s\S]*?\*\//g, ' ');
   const unsafePragmas = commands.replace(/\bPRAGMA\s+foreign_keys\s*=\s*(?:OFF|ON|0|1)\s*;/gi, '');
   if (!commands.trim() || sql.includes('\0') || usesFilesystemModule(sql) || /\bPRAGMA\b/i.test(unsafePragmas)) throw new Error('Expected a complete, self-contained SQL dump without filesystem modules');
   const directory = await mkdtemp(join(tmpdir(), 'saln-recovery-')), config = { url: `file:${join(directory, 'restore.db')}`, intMode: 'bigint' as const };
@@ -141,8 +142,12 @@ export async function verifySqlRecovery(file: string, checksum: string, expected
 }
 
 export function assertProductionCheckout(revision: string, directory = fileURLToPath(new URL('../', import.meta.url))) {
-  const git = (...args: string[]) => execFileSync('git', args, { cwd: directory, encoding: 'utf8' }).trim();
+  // Operator shell overrides must not redirect inspection away from this checkout.
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')));
+  const git = (...args: string[]) => execFileSync('git', ['--no-optional-locks', ...args], { cwd: directory, env, encoding: 'utf8' }).trim();
+  assert.equal(realpathSync(git('rev-parse', '--show-toplevel')), realpathSync(directory), 'Running checkout root differs from the verifier directory');
   assert.equal(git('rev-parse', 'HEAD'), revision, 'Running checkout differs from the accepted commit');
+  assert.ok(git('ls-files', '-v', '-z').split('\0').every(entry => !entry || entry.startsWith('H ')), 'Production verification rejects index flags that can hide tracked changes');
   assert.equal(git('status', '--porcelain', '--untracked-files=normal'), '', 'Production verification requires a clean checkout');
 }
 

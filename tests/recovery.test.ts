@@ -207,6 +207,109 @@ test('SQL recovery rejects reordered manifest applications even when every store
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
+test('SQL recovery preserves original Source Document order while allowing rowid gaps to compact', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-source-order-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const schema = 'CREATE TABLE source_documents (id TEXT PRIMARY KEY, filing_id TEXT NOT NULL);';
+  const original = "('z-original', 'filing')", later = "('a-later', 'filing')";
+  try {
+    await client.executeMultiple(`${schema} INSERT INTO source_documents VALUES ${original}, ${later}; UPDATE source_documents SET rowid = rowid * 10;`);
+    const digest = await databaseFingerprint(client);
+    const matching = `${schema} INSERT INTO source_documents VALUES ${original}, ${later};`;
+    await writeFile(file, matching);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(matching).digest('hex'), null, digest)).databaseDigest, digest);
+    const reversed = `${schema} INSERT INTO source_documents VALUES ${later}, ${original};`;
+    await writeFile(file, reversed);
+    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(reversed).digest('hex'), null, digest), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery accepts quoted PRAGMA identifiers and still rejects PRAGMA commands', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-quoted-dump-')), file = join(directory, 'backup.sql');
+  try {
+    for (const identifier of ['"PRAGMA"', '`PRAGMA`', '[PRAGMA]', '"escaped""PRAGMA"', '`escaped``PRAGMA`']) {
+      const sql = `PRAGMA foreign_keys=OFF; BEGIN; CREATE TABLE ${identifier} (${identifier} TEXT); INSERT INTO ${identifier} VALUES ('preserved'); COMMIT;`;
+      await writeFile(file, sql);
+      assert.equal((await verifySqlRecovery(file, createHash('sha256').update(sql).digest('hex'), null)).restored, true);
+      const unsafe = `${sql} PRAGMA journal_mode=OFF;`;
+      await writeFile(file, unsafe);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null), /self-contained SQL dump/);
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('production checkout verification ignores ambient Git repository and index overrides', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-checkout-'));
+  const actual = join(directory, 'actual'), other = join(directory, 'other');
+  const keys = ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_CONFIG_COUNT', 'GIT_CONFIG_KEY_0', 'GIT_CONFIG_VALUE_0'];
+  const saved = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+  const git = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8', env: Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_'))) }).trim();
+  try {
+    for (const cwd of [actual, other]) {
+      git(directory, 'init', '-q', cwd);
+      await writeFile(join(cwd, 'source'), cwd);
+      git(cwd, 'add', 'source');
+      git(cwd, '-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'Synthetic checkout fixture');
+    }
+    const revision = git(actual, 'rev-parse', 'HEAD'), otherRevision = git(other, 'rev-parse', 'HEAD');
+    assert.notEqual(revision, otherRevision);
+    assert.doesNotThrow(() => assertProductionCheckout(revision, actual));
+    Object.assign(process.env, { GIT_DIR: join(other, '.git'), GIT_WORK_TREE: other, GIT_INDEX_FILE: join(other, '.git', 'index'), GIT_CONFIG_COUNT: '1', GIT_CONFIG_KEY_0: 'status.showUntrackedFiles', GIT_CONFIG_VALUE_0: 'no' });
+    assert.doesNotThrow(() => assertProductionCheckout(revision, actual));
+    assert.throws(() => assertProductionCheckout(otherRevision, actual), /Running checkout/);
+    await writeFile(join(actual, 'source'), 'Modified source');
+    assert.throws(() => assertProductionCheckout(revision, actual), /clean checkout/);
+    await writeFile(join(actual, 'source'), actual);
+    await writeFile(join(actual, 'untracked'), 'Untracked source');
+    assert.throws(() => assertProductionCheckout(revision, actual), /clean checkout/);
+    await rm(join(actual, 'untracked'));
+    for (const flag of ['assume-unchanged', 'skip-worktree']) {
+      git(actual, 'update-index', `--${flag}`, 'source');
+      await writeFile(join(actual, 'source'), 'Hidden modified source');
+      assert.equal(git(actual, 'status', '--porcelain'), '', 'Fixture must reproduce a status-hidden modification');
+      assert.throws(() => assertProductionCheckout(revision, actual), /index flags/);
+      await writeFile(join(actual, 'source'), actual);
+      git(actual, 'update-index', `--no-${flag}`, 'source');
+      assert.doesNotThrow(() => assertProductionCheckout(revision, actual));
+    }
+  } finally {
+    for (const key of keys) if (saved[key] === undefined) delete process.env[key]; else process.env[key] = saved[key];
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('SQL recovery includes legal user tables whose names resemble the SQLite internal prefix', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-table-prefix-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const sql = 'CREATE TABLE sqliteXprivate (value TEXT); INSERT INTO sqliteXprivate VALUES (\'Preserved private data\');';
+  const verify = async (dump: string, digest: string) => { await writeFile(file, dump); return verifySqlRecovery(file, createHash('sha256').update(dump).digest('hex'), null, digest); };
+  try {
+    await client.executeMultiple(sql);
+    const digest = await databaseFingerprint(client);
+    assert.equal((await verify(sql, digest)).databaseDigest, digest);
+    await assert.rejects(verify('BEGIN; COMMIT;', digest), /named production database/);
+    await client.execute("UPDATE sqliteXprivate SET value = 'Changed private data'");
+    await assert.rejects(verify(sql, await databaseFingerprint(client)), /named production database/);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery distinguishes infinite SQLite real values from null and from each other', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-real-values-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'production.db')}`, intMode: 'bigint' });
+  const sql = "CREATE TABLE private_values (id TEXT PRIMARY KEY, value REAL); INSERT INTO private_values VALUES ('positive', 1e999), ('negative', -1e999), ('missing', NULL);";
+  try {
+    await client.executeMultiple(sql);
+    const digest = await databaseFingerprint(client);
+    await writeFile(file, sql);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(sql).digest('hex'), null, digest)).databaseDigest, digest);
+    for (const replacement of ['NULL', '-1e999']) {
+      const changed = sql.replace("'positive', 1e999", `'positive', ${replacement}`);
+      await writeFile(file, changed);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(changed).digest('hex'), null, digest), /named production database/);
+    }
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
 test('post-import recovery requires the accepted raw legacy capture even when the public snapshot and live dump match', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-native-recovery-')), path = join(directory, 'archive.db'), file = join(directory, 'backup.sql');
   const { client, db } = connectArchive({ url: `file:${path}` });
