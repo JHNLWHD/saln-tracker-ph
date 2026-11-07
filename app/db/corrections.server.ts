@@ -8,11 +8,14 @@ import * as schema from "./schema";
 import { parsePartialDate, validateReviewedPerson, validateTenureEvidence } from "./validation";
 import { checkSummarySources, validateReviewedReport, validateSummary } from "./transcription-validation";
 
-export async function readEditorialCorrections(db: ArchiveReader): Promise<EditorialCorrection[]> {
+export async function readEditorialCorrections(db: ArchiveReader, beforeApplicationId?: string): Promise<EditorialCorrection[]> {
   const table = schema.editorialCorrections;
   const rows = await db.select({ id: table.id, targetType: table.targetType, targetId: table.targetId,
     previousCorrectionId: table.previousCorrectionId, revision: table.revision, reason: table.reason,
     reviewedAt: table.reviewedAt, previousValues: table.previousValues, changes: table.changes, citations: table.citations }).from(table)
+    .where(beforeApplicationId === undefined ? undefined : sql`${table.id} in (
+      select ${schema.manifestApplications.id} from ${schema.manifestApplications}
+      where rowid < (select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${beforeApplicationId}))`)
     .orderBy(schema.editorialCorrections.targetType, schema.editorialCorrections.targetId, schema.editorialCorrections.revision);
   return rows.map(({ targetType, targetId, ...row }) => ({ ...row, target: { type: targetType, id: targetId } }));
 }
@@ -106,7 +109,7 @@ export async function checkCitationMetadata(db: ArchiveWriter, citations: Citati
   }
 }
 
-async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: ReviewedCorrection, history: EditorialCorrection[]) {
+async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: ReviewedCorrection, history: EditorialCorrection[], beforeApplicationId?: string) {
   if (target.type === "tenure") {
     const before = projectCorrections(target.type, target.record, history);
     for (const fact of before.disputedFacts.filter(fact => patch.changes.disputedFacts && !patch.changes.disputedFacts.includes(fact))) {
@@ -135,7 +138,12 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
     if (target.type === 'source_document' && patch.changes.acquisitionDate) {
-      const summaries = await db.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.filingId, filingId));
+      // Historical replay must not validate against summaries published after this application.
+      const summaries = await db.select().from(schema.financialSummaries).where(and(eq(schema.financialSummaries.filingId, filingId),
+        beforeApplicationId === undefined ? undefined : sql`${schema.financialSummaries.id} in (
+          select json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.summary.id') from ${schema.manifestApplications}
+          where ${schema.manifestApplications.kind} = 'summary' and rowid < (
+            select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${beforeApplicationId}))`));
       for (const row of summaries) {
         const summary = projectCorrections('financial_summary', row, history);
         if (Object.values(summary.sources).some(source => source.sourceDocumentId === target.record.id) && patch.changes.acquisitionDate.value > summary.reviewedAt) throw new Error('Acquisition Date follows a reviewed summary; review the summary before this correction');
@@ -183,12 +191,9 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
   // Replay checks cross-target chronology at application time, before later corrections.
   let effectiveHistory = [...allHistory.filter(row => row.target.type !== patch.target.type || row.target.id !== patch.target.id), ...previousHistory];
   if (verifyOnly) {
-    const applications = await db.select({ id: schema.manifestApplications.id }).from(schema.manifestApplications)
-      .where(sql`rowid < (select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${id})`);
-    const appliedBefore = new Set(applications.map(row => row.id));
-    effectiveHistory = allHistory.filter(row => appliedBefore.has(row.id));
+    effectiveHistory = await readEditorialCorrections(db, id);
   }
-  await checkEffectiveRecord(db, original, patch, effectiveHistory);
+  await checkEffectiveRecord(db, original, patch, effectiveHistory, verifyOnly ? id : undefined);
   const expected: EditorialCorrection = {
     id, target: patch.target, previousCorrectionId: patch.previousCorrectionId, revision: (head?.revision ?? 0) + 1,
     reason: patch.reason, reviewedAt: patch.review.reviewedAt, previousValues, changes: patch.changes, citations: patch.citations,

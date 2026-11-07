@@ -8,11 +8,12 @@ import * as schema from "./schema";
 import { parsePartialDate } from "./validation";
 import { checkSummarySources, type ReviewedReport, type ReviewedSummary } from "./transcription-validation";
 
-export async function writeReviewedSummary(tx: ArchiveWriter, record: ReviewedSummary, verifyOnly = false) {
+export async function writeReviewedSummary(tx: ArchiveWriter, applicationId: string, record: ReviewedSummary, verifyOnly = false) {
   const [filing] = await tx.select({ personId: schema.filings.personId }).from(schema.filings).where(eq(schema.filings.id, record.summary.filingId));
   if (!filing) throw new Error("A summary needs an acquired Filing");
   if (!verifyOnly) await requireEligiblePerson(tx, filing.personId);
-  await checkSummarySources(tx, record.summary, record.review.reviewedAt, verifyOnly ? [] : undefined);
+  const history = verifyOnly ? await readEditorialCorrections(tx, applicationId) : undefined;
+  await checkSummarySources(tx, record.summary, record.review.reviewedAt, history);
   const rows = missingRows(await tx.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.id, record.summary.id)), [{ ...record.summary, ...record.review }], row => row.id, "Declared Financial Summary", verifyOnly);
   if (rows.length) await tx.insert(schema.financialSummaries).values(rows);
 }
@@ -42,9 +43,9 @@ export async function readSecondaryReports(tx: ArchiveReader, personIds: string[
   return rows.map(row => projectCorrections("secondary_report", { ...row, publishedDate: parsePartialDate(row.publishedDate) }, corrections));
 }
 
-/** Extraction progress changes the public projection; the acquired metadata stays immutable. */
-export function withTranscriptionLevels<T extends Pick<SourceDocument, "id" | "sha256" | "transcriptionLevel">>(documents: T[], summaries: DeclaredFinancialSummary[]): T[] {
+/** Exact copies share extraction progress within their Filing; acquired metadata stays immutable. */
+export function withTranscriptionLevels<T extends Pick<SourceDocument, "id" | "filingId" | "sha256" | "transcriptionLevel">>(documents: T[], summaries: DeclaredFinancialSummary[]): T[] {
   const sourceIds = new Set(summaries.flatMap(summary => Object.values(summary.sources).map(source => source.sourceDocumentId)));
-  const checksums = new Set(documents.filter(document => sourceIds.has(document.id)).map(document => document.sha256));
-  return documents.map(document => ({ ...document, transcriptionLevel: document.transcriptionLevel === "document_only" && checksums.has(document.sha256) ? "summary_totals" : document.transcriptionLevel }));
+  const transcribedCopies = new Set(documents.filter(document => sourceIds.has(document.id)).map(document => `${document.filingId}:${document.sha256}`));
+  return documents.map(document => ({ ...document, transcriptionLevel: document.transcriptionLevel === "document_only" && transcribedCopies.has(`${document.filingId}:${document.sha256}`) ? "summary_totals" : document.transcriptionLevel }));
 }

@@ -70,7 +70,7 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
     else if (manifest.kind === "filing") await writeReviewedFiling(tx, manifest.payload, Boolean(existing));
     else if (manifest.kind === "correction") await writeReviewedCorrection(tx, manifest.id, manifest.payload, Boolean(existing));
     else if (manifest.kind === "roster") await writeReviewedRoster(tx, manifest.id, manifest.payload, Boolean(existing));
-    else if (manifest.kind === "summary") await writeReviewedSummary(tx, manifest.payload, Boolean(existing));
+    else if (manifest.kind === "summary") await writeReviewedSummary(tx, manifest.id, manifest.payload, Boolean(existing));
     else if (manifest.kind === "report") await writeReviewedReport(tx, manifest.payload, Boolean(existing));
     else {
       for (const entry of manifest.payload.legacyPeople) await writeReviewedPerson(tx, legacyPersonRecord(manifest.payload.review, entry), Boolean(existing));

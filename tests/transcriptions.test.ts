@@ -40,9 +40,9 @@ async function setup() {
   await migrateArchive(connection.db); await applyReviewedManifest(connection.db, person);
   const objects = new Map<string, Uint8Array>();
   const storage: DocumentStorage = { get: async hash => objects.get(hash) ?? null, async put(bytes, hash) { objects.set(hash, bytes); return { storageKey: `documents/sha256/${hash}`, created: true }; } };
-  async function filing(id: string, date: string, acquisitionDate = '2026-10-02') {
+  async function filing(id: string, date: string, acquisitionDate = '2026-10-02', sourceBytes?: Uint8Array) {
     for (const page of ["a", "b"]) {
-      const bytes = Buffer.from(`%PDF-1.7\nSynthetic ${id} ${page}\n%%EOF\n`), documentId = `${id}-${page}`;
+      const bytes = sourceBytes ?? Buffer.from(`%PDF-1.7\nSynthetic ${id} ${page}\n%%EOF\n`), documentId = `${id}-${page}`;
       await applyReviewedManifest(connection.db, { id: `document:${documentId}`, version: 1, kind: "filing", payload: { review,
         filing: { id, personId: "p", filerName: "PERSON, SAMPLE", reportingDate: { value: date, precision: date.length === 4 ? "year" : "day" }, executionDate: null, receiptDate: null, supersedesFilingId: null },
         document: { id: documentId, filingId: id, fileName: `${documentId}.pdf`, mediaType: "application/pdf", byteSize: bytes.byteLength, sha256: createHash("sha256").update(bytes).digest("hex"), originalUrl: "https://example.org/source.pdf", provenanceType: "official_download", provenanceNote: "Synthetic fixture", officialReleaseDate: null, acquisitionDate: { value: acquisitionDate, precision: "day" }, archivePublicationDate: "2026-10-02T00:00:00.000Z", transcriptionLevel: "document_only" },
@@ -80,6 +80,24 @@ test("cross-page summary keeps exact amounts, raw documents and replay stable wh
     const exported = await exportPublicSnapshot(state.db);
     assert.equal(exported.snapshot.data.financialSummaries[0].declaredNetWorth, "2.02"); assert.ok(!exported.snapshotJson.includes(review.reviewedBy));
     await rollbackArchive(state.client); await migrateArchive(state.db); assert.equal((await state.db.select().from(schema.financialSummaries)).length, 0);
+  } finally { await state.close(); }
+});
+
+test('transcription progress stays with its Filing when declarations share the same source bytes', async () => {
+  const state = await setup();
+  try {
+    const bytes = Buffer.from('%PDF-1.7\nSynthetic file with two declarations\n%%EOF\n');
+    await state.filing('first', '2024', undefined, bytes);
+    await state.filing('second', '2023', undefined, bytes);
+    const input = summary('first');
+    for (const source of Object.values(input.payload.summary.sources)) source.sourceDocumentId = 'first-a';
+    await applyReviewedManifest(state.db, input);
+    const record = (await createDbArchive(state.db).findPersonBySlug('sample-person'))!;
+    assert.equal(record.filings.length, 2);
+    assert.deepEqual(record.sourceDocuments.filter(row => row.filingId === 'first').map(row => row.transcriptionLevel), ['summary_totals', 'summary_totals']);
+    assert.deepEqual(record.sourceDocuments.filter(row => row.filingId === 'second').map(row => row.transcriptionLevel), ['document_only', 'document_only']);
+    const snapshot = await exportPublicSnapshot(state.db);
+    assert.deepEqual(snapshot.snapshot.data.sourceDocuments.filter(row => row.filingId === 'second').map(row => row.transcriptionLevel), ['document_only', 'document_only']);
   } finally { await state.close(); }
 });
 
@@ -136,6 +154,58 @@ test('corrected acquisition dates and summary reviews stay consistent without br
   } finally { await state.close(); }
 });
 
+test('summary replay retains source corrections that preceded its application', async () => {
+  const state = await setup();
+  try {
+    await state.filing('f1', '2024');
+    for (const page of ['a', 'b']) {
+      await applyReviewedManifest(state.db, { id: `earlier-acquisition-${page}`, version: 1, kind: 'correction', payload: {
+        review, target: { type: 'source_document', id: `f1-${page}` }, previousCorrectionId: null, reason: 'Synthetic correction to the actual acquisition date',
+        changes: { acquisitionDate: { value: '2026-09-25', precision: 'day' } },
+        citations: [{ id: `earlier-acquisition-proof-${page}`, title: 'Synthetic acquisition evidence', url: 'https://example.org/acquisition', publisher: 'Test', type: 'official_record', supports: ['acquisitionDate'], publishedDate: null }],
+      } });
+    }
+    const original = summary('f1'); original.payload.review = { ...review, reviewedAt: '2026-09-26' };
+    assert.equal((await applyReviewedManifest(state.db, original)).status, 'applied');
+    assert.equal((await applyReviewedManifest(state.db, original)).status, 'unchanged');
+  } finally { await state.close(); }
+});
+
+test('source correction replay excludes summaries first published after that correction', async () => {
+  const state = await setup();
+  try {
+    await state.filing('f1', '2024');
+    const first: ReviewedManifest & { kind: 'correction' } = { id: 'acquisition-first', version: 1, kind: 'correction', payload: {
+      review, target: { type: 'source_document', id: 'f1-a' }, previousCorrectionId: null, reason: 'Synthetic acquisition evidence',
+      changes: { acquisitionDate: { value: '2026-09-25', precision: 'day' } },
+      citations: [{ id: 'first-acquisition-proof', title: 'Synthetic acquisition evidence', url: 'https://example.org/acquisition', publisher: 'Test', type: 'official_record', supports: ['acquisitionDate'], publishedDate: null }],
+    } };
+    const second: ReviewedManifest & { kind: 'correction' } = { ...first, id: 'acquisition-second', payload: { ...first.payload, previousCorrectionId: first.id,
+      changes: { acquisitionDate: { value: '2026-09-20', precision: 'day' } },
+    } };
+    await applyReviewedManifest(state.db, first);
+    await applyReviewedManifest(state.db, second);
+    const laterSummary = summary('f1');
+    laterSummary.payload.review = { ...review, reviewedAt: '2026-09-22' };
+    for (const source of Object.values(laterSummary.payload.summary.sources)) source.sourceDocumentId = 'f1-a';
+    await applyReviewedManifest(state.db, laterSummary);
+    await state.db.update(schema.manifestApplications).set({ appliedAt: '2026-10-04T00:00:00.000Z' });
+    const ledger = await state.db.select().from(schema.manifestApplications);
+    assert.equal((await applyReviewedManifest(state.db, first)).status, 'unchanged');
+    assert.equal((await applyReviewedManifest(state.db, second)).status, 'unchanged');
+    assert.equal((await applyReviewedManifest(state.db, laterSummary)).status, 'unchanged');
+    assert.deepEqual(await state.db.select().from(schema.manifestApplications), ledger);
+    const rejected = { ...second, id: 'acquisition-after-summary', payload: { ...second.payload, previousCorrectionId: second.id,
+      changes: { acquisitionDate: { value: '2026-09-24', precision: 'day' } },
+    } };
+    await assert.rejects(applyReviewedManifest(state.db, rejected), /review the summary before this correction/);
+    assert.deepEqual(await state.db.select().from(schema.manifestApplications), ledger);
+    const profile = (await createDbArchive(state.db).findPersonBySlug('sample-person'))!;
+    assert.equal(profile.sourceDocuments.find(row => row.id === 'f1-a')!.acquisitionDate.value, '2026-09-20');
+    assert.equal(profile.financialSummaries[0].reviewedAt, '2026-09-22');
+  } finally { await state.close(); }
+});
+
 test("Secondary Reports neither create Filings nor close gaps, and sparse timelines preserve distinct same-year declarations", async () => {
   const state = await setup();
   try {
@@ -188,6 +258,42 @@ test("financial trust boundary rejects numeric rounding, private fields and fore
     const item = { ...valid.summary, reviewedAt: review.reviewedAt };
     assert.equal(latestSummaryCandidates([{ summary: item, reportingDate: { value: "2024", precision: "year" } }, { summary: item, reportingDate: { value: "2024-12-31", precision: "day" } }]).length, 2);
     assert.equal(latestSummaryCandidates([{ summary: item, reportingDate: { value: "2023", precision: "year" } }, { summary: item, reportingDate: { value: "2024-02", precision: "month" } }]).length, 1);
+  } finally { await state.close(); }
+});
+
+test("transcription migration preserves prior application and correction rows through rollback and upgrade", async () => {
+  const state = await setup();
+  try {
+    await state.filing("f1", "2024");
+    const priorCorrection: ReviewedManifest & { kind: "correction" } = { id: "prior-name-correction", version: 1, kind: "correction", payload: {
+      review, target: { type: "person", id: "p" }, previousCorrectionId: null, reason: "Synthetic prior correction",
+      changes: { canonicalName: "Corrected Person" }, citations: [{ id: "prior-name-proof", title: "Synthetic name evidence", url: "https://example.org/name", publisher: "Test", type: "official_record", supports: ["canonicalName"], publishedDate: null }],
+    } };
+    await applyReviewedManifest(state.db, priorCorrection);
+    await state.client.execute("UPDATE manifest_applications SET rowid = rowid * 10");
+    await state.client.execute("UPDATE editorial_corrections SET rowid = rowid * 10");
+    const ledger = (await state.client.execute("SELECT rowid,* FROM manifest_applications ORDER BY rowid")).rows;
+    const corrections = (await state.client.execute("SELECT rowid,* FROM editorial_corrections ORDER BY rowid")).rows;
+    const documents = (await state.client.execute("SELECT rowid,* FROM source_documents ORDER BY rowid")).rows;
+    await applyReviewedManifest(state.db, summary("f1"));
+    await applyReviewedManifest(state.db, report);
+    await applyReviewedManifest(state.db, { id: "transcription-reading", version: 1, kind: "correction", payload: {
+      review, target: { type: "financial_summary", id: "summary-f1" }, previousCorrectionId: null, reason: "Synthetic transcription correction",
+      changes: { declaredNetWorth: "2.02" }, citations: [{ id: "reading-proof", title: "Synthetic reading", url: "https://example.org/reading", publisher: "Test", type: "official_record", supports: ["declaredNetWorth"], publishedDate: null }],
+    } });
+    for (const file of ["0006_down.sql", "0006_reviewed_transcriptions.sql"]) {
+      await state.client.execute("PRAGMA reverse_unordered_selects=ON");
+      const sql = await readFile(new URL(`../drizzle/${file}`, import.meta.url), "utf8");
+      await state.client.migrate(sql.split(/--> statement-breakpoint|;/).map(statement => statement.trim()).filter(Boolean));
+      assert.deepEqual((await state.client.execute("SELECT rowid,* FROM manifest_applications ORDER BY rowid")).rows, ledger);
+      assert.deepEqual((await state.client.execute("SELECT rowid,* FROM editorial_corrections ORDER BY rowid")).rows, corrections);
+      assert.deepEqual((await state.client.execute("SELECT rowid,* FROM source_documents ORDER BY rowid")).rows, documents);
+      assert.deepEqual((await state.client.execute("PRAGMA foreign_key_check")).rows, []);
+      assert.equal((await state.client.execute("PRAGMA foreign_keys")).rows[0].foreign_keys, 1);
+    }
+    assert.equal((await applyReviewedManifest(state.db, priorCorrection)).status, "unchanged");
+    assert.equal((await applyReviewedManifest(state.db, summary("f1"))).status, "applied");
+    assert.equal((await applyReviewedManifest(state.db, report)).status, "applied");
   } finally { await state.close(); }
 });
 

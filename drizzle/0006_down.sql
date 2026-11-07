@@ -25,7 +25,7 @@ CREATE TABLE `__previous_editorial_corrections` (
 	CONSTRAINT "correction_previous_values" CHECK(json_valid("__previous_editorial_corrections"."previous_values") and json_type("__previous_editorial_corrections"."previous_values") = 'object'),
 	CONSTRAINT "correction_citations" CHECK(json_valid("__previous_editorial_corrections"."citations") and json_type("__previous_editorial_corrections"."citations") = 'array' and json_array_length("__previous_editorial_corrections"."citations") > 0)
 );
-INSERT INTO __previous_editorial_corrections SELECT * FROM editorial_corrections;
+INSERT INTO `__previous_editorial_corrections`(rowid, "id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations") SELECT rowid, "id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations" FROM `editorial_corrections`;
 DROP TABLE editorial_corrections;
 ALTER TABLE __previous_editorial_corrections RENAME TO editorial_corrections;
 CREATE UNIQUE INDEX corrections_target_revision ON editorial_corrections(target_type,target_id,revision);
@@ -42,6 +42,6 @@ CREATE TABLE `__previous_manifest_applications` (
 	CONSTRAINT "manifest_payload" CHECK(json_valid("__previous_manifest_applications"."canonical_payload") and json_type("__previous_manifest_applications"."canonical_payload") = 'object')
 );
 
-INSERT INTO `__previous_manifest_applications`("id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications` WHERE kind not in ('summary','report');
+INSERT INTO `__previous_manifest_applications`(rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications` WHERE kind not in ('summary','report');
 DROP TABLE `manifest_applications`;
 ALTER TABLE `__previous_manifest_applications` RENAME TO `manifest_applications`;

@@ -50,7 +50,7 @@ CREATE TABLE `__new_editorial_corrections` (
 	CONSTRAINT "correction_citations" CHECK(json_valid("__new_editorial_corrections"."citations") and json_type("__new_editorial_corrections"."citations") = 'array' and json_array_length("__new_editorial_corrections"."citations") > 0)
 );
 --> statement-breakpoint
-INSERT INTO `__new_editorial_corrections`("id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations") SELECT "id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations" FROM `editorial_corrections`;--> statement-breakpoint
+INSERT INTO `__new_editorial_corrections`(rowid, "id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations") SELECT rowid, "id", "target_type", "target_id", "previous_correction_id", "revision", "reason", "reviewed_at", "reviewed_by", "previous_values", "changes", "citations" FROM `editorial_corrections`;--> statement-breakpoint
 DROP TABLE `editorial_corrections`;--> statement-breakpoint
 ALTER TABLE `__new_editorial_corrections` RENAME TO `editorial_corrections`;--> statement-breakpoint
 CREATE UNIQUE INDEX `corrections_target_revision` ON `editorial_corrections` (`target_type`,`target_id`,`revision`);--> statement-breakpoint
@@ -67,6 +67,6 @@ CREATE TABLE `__new_manifest_applications` (
 	CONSTRAINT "manifest_payload" CHECK(json_valid("__new_manifest_applications"."canonical_payload") and json_type("__new_manifest_applications"."canonical_payload") = 'object')
 );
 --> statement-breakpoint
-INSERT INTO `__new_manifest_applications`("id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications`;--> statement-breakpoint
+INSERT INTO `__new_manifest_applications`(rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications`;--> statement-breakpoint
 DROP TABLE `manifest_applications`;--> statement-breakpoint
 ALTER TABLE `__new_manifest_applications` RENAME TO `manifest_applications`;
