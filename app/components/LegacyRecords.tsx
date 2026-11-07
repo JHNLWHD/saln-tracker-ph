@@ -51,7 +51,7 @@ export function LegacyDirectory({ data, query = '' }: { data: LegacyData; query?
     <header className="space-y-2">
       <p className="archive-label">SALN Tracker PH</p><h1>Explore declared assets and net worth</h1>
       <p className="archive-muted max-w-3xl text-sm">Browse public officials and open their SALN entries and sources.</p>
-      <p className="text-lg font-semibold" role="status">{data.profiles.length} profiles · {count} SALN entries{query && ' matching your search'}</p>
+      <p className="text-lg font-semibold" role="status">{data.profiles.length} {data.profiles.length === 1 ? 'profile' : 'profiles'} · {count} SALN {count === 1 ? 'entry' : 'entries'}{query && ' matching your search'}</p>
     </header>
     <form key={query} method="get" action="/" className="flex flex-wrap items-end gap-3" aria-label="Search SALNs">
       <div className="w-full sm:min-w-0 sm:flex-1"><TextField id="legacy-query" name="q" label="Name, position or agency" type="search" maxLength={128} defaultValue={query} /></div>
@@ -84,7 +84,7 @@ export function LegacyPersonProfile({ profile }: { profile: LegacyProfile }) {
       <LegacyTotals record={record} />
       <p className="archive-muted text-sm">Filing date: {record.date_filed || 'Not recorded'} · Recorded status: {record.status || 'Not recorded'}</p>
       {record.source_url ? <div className="space-y-1">{sourceHref(record.source_url) ? <a className="inline-flex min-h-11 items-center break-all font-semibold text-primary-700 underline" href={sourceHref(record.source_url)} rel="noreferrer">View source</a> : <p>Source reference</p>}<p className="archive-muted text-sm">{record.source_description || 'No source description recorded'}</p><p className="break-all text-xs">{record.source_url}</p></div> : <p className="archive-muted">No source link recorded.</p>}
-      <details><summary className="cursor-pointer py-2 font-semibold text-primary-700 underline">Recorded items · {record.assets.length} assets · {record.liabilities.length} liabilities</summary>
+      <details><summary className="cursor-pointer py-2 font-semibold text-primary-700 underline">Recorded items · {record.assets.length} {record.assets.length === 1 ? 'asset' : 'assets'} · {record.liabilities.length} {record.liabilities.length === 1 ? 'liability' : 'liabilities'}</summary>
         <div className="mt-3 space-y-5">
           {record.assets.length ? <ArchiveTable caption="Assets"><thead><tr><th scope="col">Description</th><th scope="col">Value</th><th scope="col">Source note</th></tr></thead><tbody>{record.assets.map((item, index) => <tr key={index}><td>{item.description || 'Not recorded'}</td><td className="tabular-nums">{amount(item.value)}</td><td>{item.source || 'Not recorded'}</td></tr>)}</tbody></ArchiveTable> : <p>No asset items recorded.</p>}
           {record.liabilities.length ? <ArchiveTable caption="Liabilities"><thead><tr><th scope="col">Creditor</th><th scope="col">Nature</th><th scope="col">Balance</th></tr></thead><tbody>{record.liabilities.map((item, index) => <tr key={index}><td>{item.creditor || 'Not recorded'}</td><td>{item.nature || 'Not recorded'}</td><td className="tabular-nums">{amount(item.balance)}</td></tr>)}</tbody></ArchiveTable> : <p>No liability items recorded.</p>}
