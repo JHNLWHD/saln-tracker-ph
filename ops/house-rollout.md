@@ -2,11 +2,15 @@
 
 Status: **proposal; user approval pending**. No House batch issues were created. No House manifests were imported.
 
+This is partial work toward #68. Its complete reviewed Roster Snapshot criterion remains unmet. Keep #68 open; explicit approval of this concrete map is separate from closing the parent issue.
+
 The [ticket map](../data/proposals/house-2026-10-02/ticket-map.json) proposes 33 tickets: one shared review, 29 bounded member batches, and three integration checks. The [batch list](../data/proposals/house-2026-10-02/README.md) shows all groups and counts. A source member ID identifies a row in the House directory. It does not identify a Person in the Archive.
 
 ## Source and limits
 
 The [official House directory](https://congress.gov.ph/house-members) was inspected in Chrome on **2026-10-02**. Its All Representatives list showed **317 current members**: **253 district** and **64 party-list** representatives. It also showed **318 seats**. The inactive section contained seven records. The current and inactive TSV files are separate, checksum-bound projections of the visible table. They are not preserved HTML or SALN Source Documents. The copied current projection matched the browser projection in character count and transfer checksum.
+
+The 7 November 2026 stack review checked local integrity, not current membership accuracy or the original browser observation. A public directory fetch returned 403, so no independent live revalidation was available. Keep the historical projections unchanged. HOUSE-00 must obtain and review a fresh source before source acceptance or import.
 
 Source Names retain the visible name headings. The directory's Speaker annotation belongs to a separate Chamber Leadership Office. It is not part of the Source Name. Source Names do not establish Canonical Names, Filer Names or Identity Matches.
 
@@ -25,11 +29,11 @@ District representatives use a `legislative_district` Constituency. New mappings
 
 Party-list representatives use a `party_list` Constituency and the country Jurisdiction `jurisdiction-ph`. Members of the same organization share the reviewed Constituency. Do not invent numbered seats or a new Jurisdiction kind for an organization.
 
-Keep actual Tenure start/end dates and Assumption Method unknown until supported. A directory's current-member label supports a dated Roster Snapshot. It does not prove the start date of the actual Tenure or the dates of an Electoral Term.
+Keep actual Tenure start/end dates and Assumption Method unknown until supported. A directory's current-member label is a source candidate for Roster Snapshot review. It does not replace the qualifying dated holding citations required below or prove the start date of the actual Tenure or the dates of an Electoral Term.
 
 ## Blocking edges and work order
 
-1. Close #66 with the proven production workflow and explicit acceptance. Obtain approval of this #68 ticket map before creating any batch issues or importing House data.
+1. Close #66 with the proven production workflow and explicit acceptance. Obtain approval of this concrete ticket map and record it in `approvalRef` before creating any House issues or importing House data. Approval does not close #68 or satisfy its reviewed Roster Snapshot criterion.
 2. HOUSE-00 reviews the full source projection, exclusions, disputed labels and shared geography IDs. It freezes the existing Person/legacy identity index and shared Office/Constituency/Jurisdiction IDs. Agree the Snapshot verification date and qualifying dated holding evidence for every member, including reused D027. Plan a shared source that identifies each member or member-specific sources. The undated directory and its capture date do not supply a publication date.
 3. Prepare and accept HOUSE-D01 as the district pilot. Then prepare HOUSE-D02 through HOUSE-D23 from the same accepted baseline.
 4. HOUSE-D-ACCEPT reconciles all 253 district source IDs. Its acceptance permits the party-list pilot HOUSE-P01.
@@ -37,6 +41,8 @@ Keep actual Tenure start/end dates and Assumption Method unknown until supported
 6. HOUSE-FINAL rechecks the release-date source and accepts all 317 mapped membership Tenures. Revalidate dated holding evidence against the final Snapshot date and obtain reviewed follow-up evidence for changed membership. Pass the Home acceptance gate below, then publish the complete reviewed House Roster Snapshot through the proven staging and production approval workflow. Provincial rollout follows this acceptance.
 
 Only evidence and manifest preparation for disjoint batches can run in parallel after their pilot and shared review. A shared identity or geography conflict adds a blocking edge. Serialize operator imports, immutable ledger reconciliation, staging releases and production approval. An issue closes only after its explicit acceptance, so native issue dependencies can represent the pilot and review gates.
+
+Use native dependencies for #66 and the House pilot/integration gates. Link #68 as the parent tracking reference, not a blocking issue. Its Snapshot criterion depends on HOUSE-FINAL; a native #68 blocker would create a dependency deadlock. Map approval is the separate manual prerequisite represented by the proposal status and `approvalRef`. Both remain unapproved in this proposal.
 
 Each batch contains **at most 12 People**. District area groups and party-list organizations remain intact. Source groups are sorted by their captured labels and packed without splitting a group. Each batch also permits at most 12 initial Filings and 12 acquired Source Documents in total. Inventory overflow and propose a separate bounded follow-up for approval. No full itemization is planned.
 

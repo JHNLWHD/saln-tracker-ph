@@ -2,6 +2,7 @@
   "version": 1,
   "status": "proposal_not_approved",
   "approvalRef": null,
+  "approvalRule": "Explicit user approval of this concrete map must be recorded in approvalRef before House issues are published or House manifests are imported. #68 is the parent tracker, not a native closed-issue blocker. Keep #68 open until its reviewed Roster Snapshot acceptance is met.",
   "asOf": "2026-10-02",
   "source": {
     "publisher": "House of Representatives",
@@ -93,8 +94,7 @@
     "id": "HOUSE-00",
     "title": "[Data] Review the complete House roster, identities and geography",
     "blockedBy": [
-      "#66",
-      "#68"
+      "#66"
     ],
     "acceptance": [
       "Refresh and manually review the complete dated source projection; record all active and inactive changes and account for the 317/318 difference without inventing a holder.",
@@ -134,7 +134,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00"
       ],
       "acceptanceCriteria": [
@@ -171,7 +170,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -212,7 +210,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -250,7 +247,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -290,7 +286,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -327,7 +322,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -360,7 +354,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -399,7 +392,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -442,7 +434,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -482,7 +473,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -521,7 +511,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -563,7 +552,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -606,7 +594,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -644,7 +631,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -684,7 +670,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -722,7 +707,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -762,7 +746,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -801,7 +784,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -841,7 +823,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -885,7 +866,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -927,7 +907,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -970,7 +949,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -1010,7 +988,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D01"
       ],
@@ -1056,7 +1033,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT"
       ],
@@ -1101,7 +1077,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT",
         "HOUSE-P01"
@@ -1150,7 +1125,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT",
         "HOUSE-P01"
@@ -1199,7 +1173,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT",
         "HOUSE-P01"
@@ -1246,7 +1219,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT",
         "HOUSE-P01"
@@ -1279,7 +1251,6 @@
       ],
       "blockedBy": [
         "#66",
-        "#68",
         "HOUSE-00",
         "HOUSE-D-ACCEPT",
         "HOUSE-P01"
