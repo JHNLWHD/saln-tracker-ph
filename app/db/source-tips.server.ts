@@ -41,7 +41,7 @@ function sourceTipRateKey(trustedIp: unknown, env: NodeJS.ProcessEnv) {
 export function validateSourceTip(form: URLSearchParams) {
   const keys = ['sourceUrl', 'explanation', 'contact', 'personHint', 'website'];
   for (const key of form.keys()) if (!keys.includes(key) || form.getAll(key).length !== 1) throw new Error('Unsupported Source Tip field');
-  const values: SourceTipInput = { sourceUrl: (form.get('sourceUrl') ?? '').trim(), explanation: (form.get('explanation') ?? '').trim(), contact: (form.get('contact') ?? '').trim(), personHint: (form.get('personHint') ?? '').trim() };
+  const values: SourceTipInput = { sourceUrl: (form.get('sourceUrl') ?? '').trim(), explanation: (form.get('explanation') ?? '').replace(/\r\n?/g, '\n').trim(), contact: (form.get('contact') ?? '').trim(), personHint: (form.get('personHint') ?? '').trim() };
   const errors: Partial<Record<keyof SourceTipInput, string>> = {};
   try { const url = new URL(values.sourceUrl); if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || values.sourceUrl.length > 2048) throw new Error(); }
   catch { errors.sourceUrl = 'Enter a complete public HTTP or HTTPS source URL without credentials.'; }
