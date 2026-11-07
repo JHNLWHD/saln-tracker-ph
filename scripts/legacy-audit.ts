@@ -45,9 +45,11 @@ export async function captureDocuments(directory: string) {
     for (const row of rows) {
       const name = string(field(row, "name"));
       if (!name?.startsWith(`${root}/`)) throw new Error("Database capture has an invalid document path");
-      // showMissing placeholders remain in the raw tree for traversal, but are not documents.
-      if (field(row, 'fields') === undefined && field(row, 'createTime') === undefined && field(row, 'updateTime') === undefined) continue;
-      docs.push({ path: name.slice(root.length + 1), data: decode({ mapValue: { fields: field(row, "fields") ?? {} } }, true) });
+      // showMissing placeholders stay in the raw tree for descendant traversal.
+      const fields = field(row, "fields");
+      const emptyFields = fields == null || (typeof fields === "object" && Object.keys(fields).length === 0);
+      if (emptyFields && field(row, "createTime") == null && field(row, "updateTime") == null) continue;
+      docs.push({ path: name.slice(root.length + 1), data: decode({ mapValue: { fields: fields ?? {} } }, true) });
     }
   }
   if (new Set(docs.map(row => row.path)).size !== docs.length) throw new Error("Capture contains duplicate document paths");

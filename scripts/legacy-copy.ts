@@ -69,14 +69,15 @@ export async function prepareLegacyCopy(directory: string) {
     ON CONFLICT(data_sha256) DO NOTHING`;
   const salnCount = decoded.documents.reduce((total, document) => {
     const records: unknown = document.data && typeof document.data === "object" ? Reflect.get(document.data, "saln_records") : undefined;
-    if (!Array.isArray(records)) throw new Error("Expected a SALN array in each application record");
-    return total + records.length;
+    return total + (Array.isArray(records) ? records.length : 0);
   }, 0);
   return { dataSha256: capture.dataSha256 as string, documentCount: documents.length, salnCount, documentsJson,
     statements: [...legacyCopySchema, insert],
     verificationSql: `SELECT data_sha256, project_id, scope, document_count,
       documents_json = ${literal(documentsJson)} AS source_data_matches,
       capture_json = ${literal(canonicalJson(capture))} AS capture_metadata_matches,
+      c.data_sha256 = (SELECT data_sha256 FROM legacy_firestore_captures
+        ORDER BY captured_at DESC, data_sha256 DESC LIMIT 1) AS source_is_active,
       json_extract(capture_json, '$.dataSha256') = data_sha256
         AND json_extract(capture_json, '$.projectId') = project_id
         AND json_extract(capture_json, '$.scope') = scope

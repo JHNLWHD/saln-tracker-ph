@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { Bytes, GeoPoint, Timestamp } from "firebase/firestore";
-import type { v1 } from "firebase-admin/firestore";
+import { v1 } from "firebase-admin/firestore";
 import { canonicalJson } from "../app/db/canonical";
 import type { ReviewedIdentities } from "../app/db/identity-validation";
 import { buildLegacyAudit, captureDocuments, inventoryPdfs } from "../scripts/legacy-audit";
@@ -117,13 +117,17 @@ test("audit keeps legacy dates, statuses, amounts, contacts and Source Tips outs
 
 test("private capture checksums, counts and provenance are checked before audit decoding", async () => {
   const directory = await mkdtemp(join(tmpdir(), "saln-capture-test-"));
+  const sdk = new v1.FirestoreClient({ projectId: "saln-tracker-ph" });
   try {
-    const tree = { format: "firestore-document-tree/v1", databaseRoot: root, readTime, collections: [`${root}/officials`], documents: [
+    // Use the installed transport's defaults for missing parents and real empty documents.
+    const method = Reflect.get(sdk, "_protos").google.firestore.v1.Firestore.service.ListDocuments;
+    const response = method.responseDeserialize(method.responseSerialize({ documents: [
       { name: `${root}/officials/profile`, fields: { name: { stringValue: "Public Name" }, saln_records: { arrayValue: { values: [] } }, contact: { stringValue: privateCanary } } },
       { name: `${root}/officials/missing-parent` },
       { name: `${root}/officials/missing-parent/nested/child`, fields: { contact: { stringValue: privateCanary } } },
       { name: `${root}/officials/empty`, createTime: { seconds: '1700000000' } },
-    ] };
+    ] }));
+    const tree = { format: "firestore-document-tree/v1", databaseRoot: root, readTime, collections: [`${root}/officials`], documents: response.documents };
     const body = JSON.stringify(tree);
     await writeFile(join(directory, "database-documents.json"), body);
     const capture = { format: "legacy-capture/v1", projectId: "saln-tracker-ph", database: "(default)", writesPerformed: false, scope: "database_document_tree", completeDatabaseDocumentTree: true,
@@ -146,7 +150,7 @@ test("private capture checksums, counts and provenance are checked before audit 
     await writeFile(join(directory, "capture.json"), JSON.stringify({ ...capture, documentCount: 2 }));
     await writeFile(join(directory, "database-documents.json"), body);
     await assert.rejects(captureDocuments(directory), /count/);
-  } finally { await rm(directory, { recursive: true, force: true }); }
+  } finally { await sdk.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
 test("dated committed audit covers every repository PDF and keeps all unsupported legacy entries in review", async () => {
