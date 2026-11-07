@@ -6,7 +6,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { closeArchive } from "../app/archive/archive.server";
 import { exportPublicSnapshot } from "../app/archive/snapshot.server";
 import type { Citation } from "../app/archive/types";
@@ -203,12 +203,19 @@ test("identity migration preserves a populated correction ledger and restores fo
     await applyReviewedManifest(state.db, { id: 'person:a', version: 1, kind: 'person', payload: person('a') });
     await applyReviewedManifest(state.db, { id: "correct-a", version: 1, kind: "correction", payload: { review, target: { type: "person", id: "a" }, previousCorrectionId: null,
       reason: "Synthetic name correction", changes: { canonicalName: "Corrected" }, citations: [{ ...citation, supports: ["canonicalName"] }] } });
-    const ledger = await state.db.select().from(schema.manifestApplications), history = await state.db.select().from(schema.editorialCorrections);
+    await state.client.execute("UPDATE manifest_applications SET rowid = rowid + 10");
+    const ledger = await state.db.select().from(schema.manifestApplications).orderBy(sql`rowid`), history = await state.db.select().from(schema.editorialCorrections);
+    const applicationRows = (await state.client.execute("SELECT rowid, id FROM manifest_applications ORDER BY rowid")).rows;
+    // Application order determines the original review used by correction replay.
+    await state.client.execute("PRAGMA reverse_unordered_selects=ON");
     await state.client.migrate(await statements("0004_down.sql"));
-    assert.deepEqual(await state.db.select().from(schema.manifestApplications), ledger);
+    assert.deepEqual(await state.db.select().from(schema.manifestApplications).orderBy(sql`rowid`), ledger);
+    assert.deepEqual((await state.client.execute("SELECT rowid, id FROM manifest_applications ORDER BY rowid")).rows, applicationRows);
     assert.deepEqual(await state.db.select().from(schema.editorialCorrections), history);
+    await state.client.execute("PRAGMA reverse_unordered_selects=ON");
     await state.client.migrate(await statements("0004_reviewed_identities.sql"));
-    assert.deepEqual(await state.db.select().from(schema.manifestApplications), ledger);
+    assert.deepEqual(await state.db.select().from(schema.manifestApplications).orderBy(sql`rowid`), ledger);
+    assert.deepEqual((await state.client.execute("SELECT rowid, id FROM manifest_applications ORDER BY rowid")).rows, applicationRows);
     assert.deepEqual(await state.db.select().from(schema.editorialCorrections), history);
     assert.deepEqual((await state.client.execute("PRAGMA foreign_key_check")).rows, []);
     assert.equal((await state.client.execute("PRAGMA foreign_keys")).rows[0].foreign_keys, 1);
