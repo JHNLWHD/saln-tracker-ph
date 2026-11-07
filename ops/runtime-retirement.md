@@ -12,6 +12,8 @@ Copy the [template](../data/release/document-retirement.example.json) to a priva
 
 Run `npm run archive:verify-retirement -- <private-record.json> <production-origin>`. The verifier is read-only. It requires complete tracked-file coverage, exact current/Git-history checksums, a matching public snapshot mapping, a one-hop stable URL and the exact canonical document bytes. The stable URL must route to the document endpoint rather than serve the old static file. If the live static file still takes precedence, establish and verify a scoped Netlify redirect to the reviewed canonical route during the approved cutover; never force a wildcard mapping or bypass review. Confirm the production runtime is actually using the named R2 resource through the deployment report.
 
+Run it from the actual repository root. Ambient `GIT_*` variables cannot redirect the recovery history or file coverage checks. Verification does not refresh the Git index. A successful plan is evidence for a separately approved removal operation; it does not grant permission to remove files.
+
 Only after every check passes, use `git rm -- <verified-paths>` in the approved cleanup branch. Commit the normal deletion; do not rewrite history. Re-run the verifier before removing files, then check production URLs and checksums again after deployment. Keep the recovery commit and locked recovery artifacts. The command prints a removal plan and never deletes a file itself.
 
 The present baseline has **zero approved legacy PDF/R2 mappings**. All 51 Git-held PDFs remain tracked. Their removal is deferred maintenance, not a condition for merging the redesign or displaying the migrated data. The live final production report follows deployment.

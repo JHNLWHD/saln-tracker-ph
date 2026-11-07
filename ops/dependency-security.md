@@ -1,10 +1,12 @@
 # Dependency security review
 
-Review date: 7 November 2026. This record applies to the package lock in PR #85. It is a call-path assessment, not a claim that the installed graph has no advisories or that a deployment is accepted.
+Review date: 7 November 2026. This record covers the patched package versions from PR #85 and the runtime dependency cleanup in PR #87. It is a call-path assessment, not a claim that the installed graph has no advisories or that a deployment is accepted.
 
 React Router and its dev/node/serve packages now use the patched 7.18.5 family. Vite stays on major 6 at 6.4.5; PostCSS is 8.5.32. Compatible transitive updates remove the reported critical findings and the applicable Router Framework Mode risks, including [unbounded manifest expansion](https://github.com/remix-run/react-router/security/advisories/GHSA-8x6r-g9mw-2r78). React 18, the Netlify adapter and the Firebase SDK majors remain unchanged. No peer checks are bypassed and no dependency override is used.
 
-The initial full npm audit reported 54 affected package entries: 3 low, 18 moderate, 25 high and 8 critical. After the update it reports 19: 15 moderate and 4 high, with no critical or low entries. These are package and dependency-chain counts, not independent exploits. The remaining entries refer to the six advisories below. The production-only audit still reports 12 entries: 8 moderate and 4 high. Omitting dev dependencies does not remove the retained SDK findings.
+The initial full npm audit reported 54 affected package entries: 3 low, 18 moderate, 25 high and 8 critical. After the update it reports 19: 15 moderate and 4 high, with no critical or low entries. These are package and dependency-chain counts, not independent exploits. The remaining entries refer to the six advisories below. PR #85's production-only audit reported 12 entries: 8 moderate and 4 high. PR #87 moves both Firebase SDKs and their exclusive dependencies to development tools, removes unused `currency.js`, and keeps every retained package version. Its production-only audit reports zero entries. The full development graph still reports the same 19 entries and needs the call-path dispositions below.
+
+The public app has no Firebase import path. Historical capture remains an explicit development-only operator command. Inspect both the installed production graph and the freshly built client/server imports before release; a package classification alone does not establish build isolation.
 
 ## Remaining advisories
 

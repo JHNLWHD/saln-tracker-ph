@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -18,7 +19,9 @@ export async function verifyRetirement(record: RetirementRecord, origin: string,
   const base = new URL(origin);
   if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('A credential-free production origin is required');
   // ponytail: verify one buffered Git blob at a time, capped at 256 MiB; stream if larger originals are acquired.
-  const git = (args: string[]) => execFileSync('git', args, { cwd: repository, maxBuffer: 256 * 1024 * 1024 });
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')));
+  const git = (args: string[]) => execFileSync('git', ['--no-optional-locks', ...args], { cwd: repository, env, maxBuffer: 256 * 1024 * 1024 });
+  assert.equal(realpathSync(git(['rev-parse', '--show-toplevel']).toString().trim()), realpathSync(repository), 'Retirement repository root differs from the supplied directory');
   const pdfPaths = (commit: string) => git(['ls-tree', '-r', '--name-only', '-z', commit, '--', 'public/saln/']).toString().split('\0').filter(path => path.toLowerCase().endsWith('.pdf')).sort();
   const paths = pdfPaths(record.recoveryCommit);
   assert.ok(paths.length, 'Recovery commit must contain Git-held PDFs');
