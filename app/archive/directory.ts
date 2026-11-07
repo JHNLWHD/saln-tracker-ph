@@ -1,6 +1,9 @@
 import type { DirectoryFilters, DirectoryResult, PersonRecord } from './types';
 import { latestSummaryCandidates } from './financial';
 
+const dateFormat = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila', year: 'numeric', month: '2-digit', day: '2-digit' });
+export const directoryToday = () => dateFormat.format(new Date());
+
 export const searchText = (value: string) => value.normalize('NFC').toLocaleLowerCase('en-PH');
 
 export function directoryFilters(params: URLSearchParams): DirectoryFilters {
@@ -21,6 +24,7 @@ export function directoryHref(filters: DirectoryFilters, page: number, view?: 'r
 
 /** The fixture adapter uses the same public fields; deployed directories use native SQL. */
 export function directoryFromRecords(records: PersonRecord[], filters: DirectoryFilters): DirectoryResult {
+  const today = directoryToday();
   const eligible = records.filter(record => record.person.eligibility === 'eligible');
   const publicTenures = (record: PersonRecord) => record.tenures.filter(t => t.verificationStatus !== 'unverified' && !t.disputedFacts.some(fact => ['person', 'office'].includes(fact)) && record.offices.some(o => o.id === t.officeId && o.included));
   const publicOffices = (record: PersonRecord) => record.offices.filter(o => publicTenures(record).some(t => t.officeId === o.id));
@@ -41,7 +45,7 @@ export function directoryFromRecords(records: PersonRecord[], filters: Directory
     const jurisdictions = record.jurisdictions.filter(j => directIds.has(j.id));
     const fields = [record.person.canonicalName, ...record.person.nameVariants, ...record.filings.map(f => f.filerName), ...offices.map(o => o.name), ...constituencies.map(c => c.name), ...jurisdictions.map(j => j.name)];
     return (!filters.q || fields.some(value => searchText(value).includes(searchText(filters.q)))) &&
-      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || jurisdictionAncestors(record, directJurisdictions(record, [t])).has(filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !current(t.id)))) &&
+      tenures.some(t => (!filters.office || t.officeId === filters.office) && (!filters.jurisdiction || jurisdictionAncestors(record, directJurisdictions(record, [t])).has(filters.jurisdiction)) && (!filters.tenure || (filters.tenure === 'current' ? current(t.id) : t.endDate && !t.disputedFacts.includes('endDate') && t.endDate.value < today.slice(0, t.endDate.value.length) && !current(t.id)))) &&
       (!filters.documents || (record.sourceDocuments.length > 0) === (filters.documents === 'available')) && (!filters.year || record.filings.some(f => f.reportingDate.value.startsWith(filters.year)));
   }).sort((a, b) => Number(b.sourceDocuments.length > 0) - Number(a.sourceDocuments.length > 0) || a.person.canonicalName.localeCompare(b.person.canonicalName) || a.person.id.localeCompare(b.person.id));
   const page = Math.min(filters.page, Math.max(1, Math.ceil(matches.length / 30)));

@@ -115,3 +115,39 @@ test('native directory searches only public identity/office fields and applies r
     assert.ok(plan.rows.some(row => String(row.detail).includes('tenures_constituency')));
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
+
+test('former Tenure filters require a past non-disputed end in both adapters', async t => {
+  t.mock.timers.enable({ apis: ['Date'], now: Date.UTC(2026, 10, 7, 12) });
+  const directory = await mkdtemp(join(tmpdir(), 'saln-former-boundary-'));
+  const { client, db } = connectArchive({ url: `file:${join(directory, 'archive.db')}` });
+  const cases = [
+    ['future-year', '2032', false], ['current-year', '2026', false], ['current-month', '2026-11', false],
+    ['today', '2026-11-07', false], ['tomorrow', '2026-11-08', false], ['past-day', '2026-11-06', false],
+    ['past-month', '2026-10', false], ['past-year', '2025', false], ['unknown', null, false], ['disputed-past', '2025', true],
+  ] as const;
+  try {
+    await migrateArchive(db);
+    for (const [id, end, disputed] of cases) await applyReviewedManifest(db, { id: `person:${id}`, version: 1, kind: 'person', payload: {
+      review: { reviewedAt: '2026-11-07', reviewedBy: 'Synthetic boundary review' },
+      person: { id, slug: id, canonicalName: `Synthetic ${id}`, nameVariants: [] },
+      jurisdictions: [], jurisdictionRelationships: [], constituencies: [], electoralTerms: [],
+      offices: [{ id: 'synthetic-office', name: 'Synthetic Elected Office', kind: 'elected', included: true, jurisdictionId: null }],
+      tenures: [{ id: `tenure-${id}`, personId: id, officeId: 'synthetic-office', electoralTermId: null, constituencyId: null,
+        startDate: null, endDate: end === null ? null : { value: end, precision: end.length === 4 ? 'year' : end.length === 7 ? 'month' : 'day' },
+        assumptionMethod: 'unknown', verificationStatus: disputed ? 'disputed' : 'verified', disputedFacts: disputed ? ['endDate'] : [],
+        citations: [{ id: `evidence-${id}`, title: 'Synthetic Tenure evidence', url: 'https://example.org/tenure', publisher: 'Test', type: 'public_article', supports: ['person', 'office', 'endDate'], publishedDate: null }],
+      }],
+    } });
+    const archive = createDbArchive(db), query = filters('tenure=former');
+    const expected = ['past-day', 'past-month', 'past-year'];
+    const native = (await archive.browsePeople(query)).rows.map(row => row.id).sort();
+    const fixture = directoryFromRecords(await archive.listPeople(), query).rows.map(row => row.id).sort();
+    assert.deepEqual({ native, fixture }, { native: expected, fixture: expected });
+    t.mock.timers.setTime(Date.UTC(2026, 10, 7, 16)); // Midnight on 8 November in the Philippines.
+    const afterMidnight = ['past-day', 'past-month', 'past-year', 'today'];
+    assert.deepEqual({
+      native: (await archive.browsePeople(query)).rows.map(row => row.id).sort(),
+      fixture: directoryFromRecords(await archive.listPeople(), query).rows.map(row => row.id).sort(),
+    }, { native: afterMidnight, fixture: afterMidnight });
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});

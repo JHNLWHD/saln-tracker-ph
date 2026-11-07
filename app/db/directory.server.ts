@@ -1,6 +1,6 @@
 import { and, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { DirectoryFilters, DirectoryResult } from '../archive/types';
-import { searchText } from '../archive/directory';
+import { directoryToday, searchText } from '../archive/directory';
 import type { ArchiveReader } from './client.server';
 import { canonicalPersonId } from './identities.server';
 import { personIsEligible, tenureIsVerified } from './eligibility';
@@ -24,7 +24,14 @@ export async function readDirectory(tx: ArchiveReader, filters: DirectoryFilters
   if (filters.jurisdiction) selectedTenure.push(sql`(${s.offices.jurisdictionId} in (with recursive descendants(id) as (select ${filters.jurisdiction} union select r.from_id from jurisdiction_relationships r join descendants d on r.to_id = d.id) select id from descendants)
     or ${s.constituencies.jurisdictionId} in (with recursive descendants(id) as (select ${filters.jurisdiction} union select r.from_id from jurisdiction_relationships r join descendants d on r.to_id = d.id) select id from descendants))`);
   if (filters.tenure === 'current') selectedTenure.push(currentTenure);
-  if (filters.tenure === 'former') selectedTenure.push(sql`json_extract(${effectiveField('tenure', s.tenures.id, 'endDate', sql`json_object('value', ${s.tenures.endDate})`)}, '$.value') is not null and not ${currentTenure}`);
+  if (filters.tenure === 'former') {
+    const end = sql`json_extract(${effectiveField('tenure', s.tenures.id, 'endDate', sql`json_object('value', ${s.tenures.endDate})`)}, '$.value')`;
+    // A partial date in the current period does not establish that the Tenure ended.
+    const today = directoryToday();
+    const disputes = effectiveField('tenure', s.tenures.id, 'disputedFacts', s.tenures.disputedFacts);
+    selectedTenure.push(sql`${end} < substr(${today}, 1, length(${end}))
+      and not exists (select 1 from json_each(${disputes}) where value = 'endDate') and not ${currentTenure}`);
+  }
   if (selectedTenure.length) conditions.push(anyTenure(and(...selectedTenure)));
   if (filters.documents) conditions.push(filters.documents === 'available' ? hasDocuments : sql`not ${hasDocuments}`);
   if (filters.year) conditions.push(sql`exists (select 1 from ${s.filings} where ${canonicalPersonId(s.filings.personId)} = ${s.people.id} and substr(${effectiveField('filing', s.filings.id, 'reportingDate.value', s.filings.reportingDate)}, 1, 4) = ${filters.year})`);
