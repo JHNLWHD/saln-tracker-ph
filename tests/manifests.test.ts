@@ -137,6 +137,71 @@ test("matching pre-ledger records can be adopted without rewriting source metada
   } finally { await state.close(); }
 });
 
+test("later pages preserve pre-ledger attribution before and after original manifest adoption", async () => {
+  const state = await setup();
+  try {
+    const person = personManifest();
+    const original = filingManifest("z-original");
+    original.payload.document.archivePublicationDate = "2026-09-28T12:00:00.000Z";
+    await importReviewedPerson(state.db, person.payload);
+    await importReviewedFiling(state.db, original.payload, firstBytes, state.storage);
+    const originalRows = await state.db.select().from(filings);
+    const later = filingManifest("a-later");
+    later.payload.review = { reviewedAt: "2026-09-27", reviewedBy: "Later page reviewer" };
+    later.payload.document.archivePublicationDate = "2026-09-27T12:00:00.000Z";
+    assert.equal((await applyReviewedManifest(state.db, later, { bytes: firstBytes, storage: state.storage })).status, "applied");
+    const puts = state.puts;
+    assert.equal((await applyReviewedManifest(state.db, later, { bytes: firstBytes, storage: state.storage })).status, "unchanged");
+    const [application] = await state.db.select().from(manifestApplications);
+    assert.deepEqual(JSON.parse(application.canonicalPayload).payload.review, later.payload.review);
+    assert.deepEqual(await state.db.select().from(filings), originalRows);
+    const second = filingManifest("b-later");
+    second.payload.review = { reviewedAt: "2026-09-28", reviewedBy: "Another page reviewer" };
+    second.payload.document.archivePublicationDate = "2026-09-28T12:00:00.000Z";
+    assert.equal((await applyReviewedManifest(state.db, second, { bytes: firstBytes, storage: state.storage })).status, "applied");
+    assert.equal((await applyReviewedManifest(state.db, second, { bytes: firstBytes, storage: state.storage })).status, "unchanged");
+    assert.equal(state.puts, puts);
+    for (const change of [{ reviewedAt: "2026-09-25" }, { reviewedBy: "Different original reviewer" }]) {
+      const changed = structuredClone(original);
+      Object.assign(changed.payload.review, change);
+      await assert.rejects(applyReviewedManifest(state.db, changed, { bytes: firstBytes, storage: state.storage }), /different metadata|review/);
+    }
+    assert.equal((await state.db.select().from(manifestApplications)).length, 2);
+    assert.equal((await applyReviewedManifest(state.db, original, { bytes: firstBytes, storage: state.storage })).status, "applied");
+    const alias = structuredClone(original);
+    alias.id = "new-original-application-id";
+    alias.payload.review.reviewedBy = "Altered original reviewer";
+    await assert.rejects(applyReviewedManifest(state.db, alias, { bytes: firstBytes, storage: state.storage }), /different metadata|review/);
+    for (const change of [{ reviewedAt: "2026-09-25" }, { reviewedBy: "Out-of-band original reviewer" }]) {
+      await state.db.update(filings).set(change).where(eq(filings.id, original.payload.filing.id));
+      await assert.rejects(applyReviewedManifest(state.db, later, { bytes: firstBytes, storage: state.storage }), /different metadata/);
+      await state.db.update(filings).set(review).where(eq(filings.id, original.payload.filing.id));
+    }
+    for (const manifest of [original, later, second]) {
+      assert.equal((await applyReviewedManifest(state.db, manifest, { bytes: firstBytes, storage: state.storage })).status, "unchanged");
+    }
+    assert.deepEqual(await state.db.select().from(filings), originalRows);
+    assert.equal((await state.db.select().from(sourceDocuments)).length, 3);
+    assert.equal((await state.db.select().from(manifestApplications)).length, 3);
+    assert.equal(state.puts, puts);
+  } finally { await state.close(); }
+});
+
+test("a stored Filing without its original document rejects page import before storage writes", async () => {
+  const state = await setup();
+  try {
+    await importReviewedPerson(state.db, personManifest().payload);
+    await importReviewedFiling(state.db, filingManifest().payload, firstBytes, state.storage);
+    await state.db.delete(sourceDocuments);
+    const puts = state.puts;
+    await assert.rejects(applyReviewedManifest(state.db, filingManifest("later-page"), { bytes: firstBytes, storage: state.storage }), /no original Source Document/);
+    assert.equal(state.puts, puts);
+    assert.deepEqual(await state.db.select().from(sourceDocuments), []);
+    assert.deepEqual(await state.db.select().from(manifestApplications), []);
+    assert.equal((await state.db.select().from(filings)).length, 1);
+  } finally { await state.close(); }
+});
+
 test("manifest validation rejects private fields, fuzzy merges, unsupported dates, statuses, and totals", () => {
   const person = personManifest(), filing = filingManifest();
   const invalid: unknown[] = [

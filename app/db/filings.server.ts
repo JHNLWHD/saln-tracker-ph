@@ -42,16 +42,31 @@ export async function requireEligiblePerson(db: ArchiveWriter, personId: string)
 /** Read-only comparison also permits another original page for the same immutable Filing. */
 export async function inspectReviewedFiling(db: ArchiveWriter, manifest: ReviewedFiling, verifyOnly = false) {
   const { filing, document } = manifest;
-  const [original] = await db.select({ payload: manifestApplications.canonicalPayload }).from(manifestApplications)
-    .where(and(eq(manifestApplications.kind, 'filing'), sql`json_extract(${manifestApplications.canonicalPayload}, '$.payload.filing.id') = ${filing.id}`)).orderBy(sql`rowid`).limit(1);
-  // Later Documents have their own review, while the original Filing review stays immutable.
-  const review = original ? validateReviewedFiling(JSON.parse(original.payload).payload).review : manifest.review;
-  const filingRow = { ...filing, ...review, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null };
-  const documentRow = { ...document, storageKey: documentStorageKey(document.sha256), acquisitionDate: document.acquisitionDate.value, officialReleaseDate: document.officialReleaseDate?.value ?? null };
-  const [savedFilings, savedDocuments] = await Promise.all([
+  const [savedFilings, savedDocuments, firstDocuments] = await Promise.all([
     db.select().from(filings).where(eq(filings.id, filing.id)),
     db.select().from(sourceDocuments).where(eq(sourceDocuments.id, document.id)),
+    db.select({ id: sourceDocuments.id }).from(sourceDocuments).where(eq(sourceDocuments.filingId, filing.id)).orderBy(sql`rowid`).limit(1),
   ]);
+  const firstDocument = firstDocuments[0];
+  const savedFiling = savedFilings[0];
+  if (savedFiling && !firstDocument) throw new Error("Stored Filing has no original Source Document");
+  // The append-only importers create the Filing and its first Document together.
+  const [original] = firstDocument ? await db.select({ payload: manifestApplications.canonicalPayload }).from(manifestApplications)
+    .where(and(eq(manifestApplications.kind, 'filing'),
+      sql`json_extract(${manifestApplications.canonicalPayload}, '$.payload.filing.id') = ${filing.id}`,
+      sql`json_extract(${manifestApplications.canonicalPayload}, '$.payload.document.id') = ${firstDocument.id}`)).orderBy(sql`rowid`).limit(1) : [];
+  // A later page may precede original-manifest adoption. Keep the saved attribution until then.
+  let review = manifest.review;
+  if (original) {
+    review = validateReviewedFiling(JSON.parse(original.payload).payload).review;
+  } else if (firstDocument && firstDocument.id !== document.id && savedFiling) {
+    review = { reviewedAt: savedFiling.reviewedAt, reviewedBy: savedFiling.reviewedBy };
+  }
+  if (firstDocument?.id === document.id && (review.reviewedAt !== manifest.review.reviewedAt || review.reviewedBy !== manifest.review.reviewedBy)) {
+    throw new Error("Original Filing review already exists with different metadata; use an Editorial Correction");
+  }
+  const filingRow = { ...filing, ...review, reportingDate: filing.reportingDate.value, executionDate: filing.executionDate?.value ?? null, receiptDate: filing.receiptDate?.value ?? null };
+  const documentRow = { ...document, storageKey: documentStorageKey(document.sha256), acquisitionDate: document.acquisitionDate.value, officialReleaseDate: document.officialReleaseDate?.value ?? null };
   return {
     filingRows: missingRows(savedFilings, [filingRow], row => row.id, "Filing", verifyOnly),
     documentRows: missingRows(savedDocuments, [documentRow], row => row.id, "Source Document", verifyOnly),

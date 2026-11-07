@@ -36,7 +36,8 @@ function person(id: string, reverse: boolean): ReviewedPerson {
 
 async function setup(reverse = false) {
   const directory = await mkdtemp(join(tmpdir(), "saln-snapshot-test-"));
-  const connection = connectArchive({ url: `file:${join(directory, "archive.db")}` });
+  const url = `file:${join(directory, "archive.db")}`;
+  const connection = connectArchive({ url });
   await migrateArchive(connection.db);
   const ids = reverse ? ["person-b", "person-a"] : ["person-a", "person-b"];
   for (const id of ids) await importReviewedPerson(connection.db, person(id, reverse));
@@ -55,8 +56,74 @@ async function setup(reverse = false) {
     officialReleaseDate: null, acquisitionDate: "2026-09", archivePublicationDate: "2026-09-26T10:00:00.000Z", transcriptionLevel: "document_only" as const,
   }));
   await connection.db.insert(schema.sourceDocuments).values(reverse ? documents.reverse() : documents);
-  return { ...connection, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
+  return { ...connection, url, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
 }
+
+test("snapshot export works with read-only database permissions and preserves public field types", async () => {
+  const { db, client, close } = await setup();
+  try {
+    const expected = await exportPublicSnapshot(db);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await client.execute("PRAGMA query_only=ON");
+      const result = await exportPublicSnapshot(db);
+      assert.deepEqual(result, expected);
+      assert.equal(result.snapshot.data.offices[0].included, true);
+      assert.deepEqual(result.snapshot.data.tenureCitations[0].supports, ["office", "person", "startDate"]);
+    }
+  } finally { await close(); }
+});
+
+test("snapshot reads remain consistent while another client commits related metadata", async t => {
+  const state = await setup();
+  const writer = connectArchive({ url: state.url });
+  try {
+    await state.client.execute("PRAGMA journal_mode=WAL");
+    const before = await exportPublicSnapshot(state.db);
+    const begin = state.client.transaction.bind(state.client);
+    let changed = false;
+    t.mock.method(state.client, "transaction", async (...args: Parameters<typeof begin>) => {
+      const transaction = await begin(...args);
+      const execute = transaction.execute.bind(transaction);
+      t.mock.method(transaction, "execute", async (...statement: Parameters<typeof execute>) => {
+        const result = await execute(...statement);
+        if (!changed) {
+          changed = true;
+          await writer.db.transaction(async tx => {
+            await tx.update(schema.people).set({ canonicalName: "Corrected Person A" }).where(eq(schema.people.id, "person-a"));
+            await tx.insert(schema.personNames).values({ personId: "person-a", value: "New reviewed name" });
+          });
+        }
+        return result;
+      });
+      return transaction;
+    });
+    assert.deepEqual(await exportPublicSnapshot(state.db), before);
+    assert.equal(changed, true);
+    const after = await exportPublicSnapshot(state.db);
+    assert.equal(after.snapshot.data.people[0].canonicalName, "Corrected Person A");
+    assert.ok(after.snapshot.data.personNames.some(row => row.value === "New reviewed name"));
+    assert.notEqual(after.snapshot.version, before.snapshot.version);
+  } finally { writer.client.close(); await state.close(); }
+});
+
+test("a failed snapshot read closes its transaction and allows correction and retry", async t => {
+  const { db, client, close } = await setup();
+  try {
+    const expected = await exportPublicSnapshot(db);
+    await db.update(schema.filings).set({ reportingDate: "2024-02-30" }).where(eq(schema.filings.id, "filing-a"));
+    const begin = client.transaction.bind(client);
+    let captured: Awaited<ReturnType<typeof begin>> | undefined;
+    t.mock.method(client, "transaction", async (...args: Parameters<typeof begin>) => {
+      captured = await begin(...args);
+      return captured;
+    });
+    await assert.rejects(exportPublicSnapshot(db), /Invalid partial date/);
+    assert.ok(captured?.closed);
+    await db.update(schema.filings).set({ reportingDate: "2024" }).where(eq(schema.filings.id, "filing-a"));
+    assert.deepEqual(await exportPublicSnapshot(db), expected);
+    assert.ok(captured?.closed);
+  } finally { await close(); }
+});
 
 test("snapshot bytes are stable across reruns and insertion order, with a content-derived version and precise dates", async () => {
   const first = await setup(), second = await setup(true);

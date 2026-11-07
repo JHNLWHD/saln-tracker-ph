@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { eq, inArray } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/sqlite-proxy";
 import type { ArchiveDatabase } from "../db/client.server";
 import { personIsEligible } from "../db/eligibility";
 import * as schema from "../db/schema";
@@ -7,7 +8,12 @@ import { parsePartialDate } from "../db/validation";
 
 /** Read only named public fields. New private tables or columns are never exported implicitly. */
 export async function exportPublicSnapshot(db: ArchiveDatabase) {
-  const data = await db.transaction(async tx => {
+  // The libSQL Drizzle adapter starts write transactions. Keep these reads on one SDK read transaction.
+  const transaction = await db.$client.transaction("read");
+  try {
+    const tx = drizzle(async (sql, args) => ({
+      rows: (await transaction.execute({ sql, args })).rows.map(row => Array.from(row)),
+    }));
     const people = await tx.select({ id: schema.people.id, slug: schema.people.slug, canonicalName: schema.people.canonicalName })
       .from(schema.people).where(personIsEligible()).orderBy(schema.people.id);
     const personIds = people.map(person => person.id);
@@ -72,23 +78,26 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
       if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
       return { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(document.officialReleaseDate) };
     });
-    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments };
-  });
+    const data = { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments };
+    await transaction.commit();
 
-  // The digest covers the schema version and ordered public content, without a clock or itself.
-  const content = { schemaVersion: 1 as const, data };
-  const version = createHash("sha256").update(JSON.stringify(content)).digest("hex");
-  const snapshot = { schemaVersion: content.schemaVersion, version, data };
-  const documents = new Map<string, { sha256: string; byteSize: number; mediaType: string; sourceDocumentIds: string[] }>();
-  for (const document of data.sourceDocuments) {
-    const existing = documents.get(document.sha256);
-    if (existing) {
-      if (existing.byteSize !== document.byteSize || existing.mediaType !== document.mediaType) throw new Error("Source Documents with one checksum have conflicting file metadata");
-      existing.sourceDocumentIds.push(document.id);
-    } else {
-      documents.set(document.sha256, { sha256: document.sha256, byteSize: document.byteSize, mediaType: document.mediaType, sourceDocumentIds: [document.id] });
+    // The digest covers the schema version and ordered public content, without a clock or itself.
+    const content = { schemaVersion: 1 as const, data };
+    const version = createHash("sha256").update(JSON.stringify(content)).digest("hex");
+    const snapshot = { schemaVersion: content.schemaVersion, version, data };
+    const documents = new Map<string, { sha256: string; byteSize: number; mediaType: string; sourceDocumentIds: string[] }>();
+    for (const document of data.sourceDocuments) {
+      const existing = documents.get(document.sha256);
+      if (existing) {
+        if (existing.byteSize !== document.byteSize || existing.mediaType !== document.mediaType) throw new Error("Source Documents with one checksum have conflicting file metadata");
+        existing.sourceDocumentIds.push(document.id);
+      } else {
+        documents.set(document.sha256, { sha256: document.sha256, byteSize: document.byteSize, mediaType: document.mediaType, sourceDocumentIds: [document.id] });
+      }
     }
+    const checksumManifest = { schemaVersion: 1 as const, version, algorithm: "sha256" as const, documents: [...documents.keys()].sort().map(checksum => documents.get(checksum)!) };
+    return { snapshot, snapshotJson: JSON.stringify(snapshot, null, 2) + "\n", checksumManifest, checksumManifestJson: JSON.stringify(checksumManifest, null, 2) + "\n" };
+  } finally {
+    transaction.close();
   }
-  const checksumManifest = { schemaVersion: 1 as const, version, algorithm: "sha256" as const, documents: [...documents.keys()].sort().map(checksum => documents.get(checksum)!) };
-  return { snapshot, snapshotJson: JSON.stringify(snapshot, null, 2) + "\n", checksumManifest, checksumManifestJson: JSON.stringify(checksumManifest, null, 2) + "\n" };
 }

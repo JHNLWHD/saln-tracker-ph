@@ -146,6 +146,8 @@ Use `npm run archive:import -- manifest.json [source-file]` for a versioned mani
 
 The compatibility commands `archive:import-person` and `archive:import-filing` use this same ledger with stable IDs derived from the Person or Source Document ID. A rerun checks the stored metadata and, for a Filing, verifies the stored bytes without uploading them again. New pages can join an existing Filing only when its metadata matches exactly. Same-period Filings remain distinct.
 
+A Filing imported before the ledger can receive later pages with their own review attribution. Its original Filing review stays unchanged. Applying the exact original manifest also records that review in the ledger, so later replays can detect changes to the saved attribution. Before that adoption, later pages preserve the saved original review without an independent ledger comparison. Preserve Source Document insertion order during database recovery because it identifies the original document.
+
 The four examples in [the Hontiveros local verification directory](data/examples/hontiveros-2024-local-verification/README.md) demonstrate one Person, one Filing and three acquired image Source Documents. Follow that README for source URLs, checksums and scope.
 
 ```bash
