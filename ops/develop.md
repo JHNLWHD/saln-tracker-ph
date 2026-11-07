@@ -4,22 +4,26 @@ Preparation only. The remote `develop` branch exists. The stacked PRs have not b
 
 Enable only `develop` as a Netlify branch deployment. Set each variable for the **develop branch**, with the required build and Functions scopes. Never inherit production data credentials into branch deploys or deploy previews. The build command checks configuration and builds code. It performs no migration, import, schema initialization, backup or object upload. Non-production Netlify contexts other than a develop branch deployment fail closed.
 
+Set the variables below through Netlify's UI, CLI or API. Select the `develop` branch value. Include both **Builds** and **Functions** scopes for runtime variables; use all scopes if the plan does not offer individual scopes. Values in `netlify.toml` are available only during the build. They do not configure `process.env` in Functions. A passing build cannot prove runtime configuration. Redeploy after changing runtime variables, then run the checks below without exposing their values.
+
 ## Resource and credential inventory
 
 Record the actual Netlify site ID, branch URL, deployed commit, Turso database names/hosts, R2 account/bucket and private database name/host in the private acceptance report. Compare them with production's inventory before supplying credentials. Suggested names are `saln-archive-staging`, `saln-documents-staging` and `saln-tips-staging`; names alone do not prove isolation.
 
-| Variable | Develop value / role |
-| --- | --- |
-| `ARCHIVE_ENVIRONMENT` | `staging`, set in netlify.toml |
-| `ARCHIVE_ADAPTER`, `ARCHIVE_STORAGE` | `turso`, `r2`, set in netlify.toml |
-| `TURSO_DATABASE_URL`, `STAGING_TURSO_HOST` | Same reviewed staging Archive host |
-| `TURSO_AUTH_TOKEN` | Database-specific **read-only** staging Archive token |
-| `R2_ENDPOINT`, `STAGING_R2_ENDPOINT`, `R2_BUCKET`, `STAGING_R2_BUCKET` | Exact reviewed staging endpoint (including jurisdiction) and matching bucket name |
-| `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Object-read-only credentials restricted to that bucket |
-| `SOURCE_TIPS_DATABASE_URL`, `STAGING_SOURCE_TIPS_HOST` | Matching private staging host, separate from Archive |
-| `SOURCE_TIPS_AUTH_TOKEN` | Separate private queue credential; restrict access to trusted reviewers and runtime |
-| `SOURCE_TIPS_RATE_LIMIT_SECRET` | Separate server-only random key, at least 32 characters, for private client rate limits |
-| `VITE_SITE_URL` | Develop branch URL, never production's URL |
+| Variable | Develop value / role | Required scopes |
+| --- | --- | --- |
+| `ARCHIVE_ENVIRONMENT` | `staging` | Builds and Functions |
+| `ARCHIVE_ADAPTER`, `ARCHIVE_STORAGE` | `turso`, `r2` | Builds and Functions |
+| `TURSO_DATABASE_URL` | Reviewed staging Archive URL | Builds and Functions |
+| `TURSO_AUTH_TOKEN` | Database-specific **read-only** staging Archive token | Builds and Functions |
+| `R2_ENDPOINT`, `R2_BUCKET` | Exact reviewed staging endpoint (including jurisdiction) and bucket name | Builds and Functions |
+| `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Object-read-only credentials restricted to that bucket | Builds and Functions |
+| `SOURCE_TIPS_DATABASE_URL` | Private staging URL, separate from Archive | Builds and Functions |
+| `SOURCE_TIPS_AUTH_TOKEN` | Separate private queue credential; restrict access to trusted reviewers and runtime | Builds and Functions |
+| `SOURCE_TIPS_RATE_LIMIT_SECRET` | Separate server-only random key, at least 32 characters, for private client rate limits | Builds and Functions |
+| `STAGING_TURSO_HOST`, `STAGING_SOURCE_TIPS_HOST` | Hosts from the reviewed staging inventory, matching the corresponding URLs | Builds |
+| `STAGING_R2_ENDPOINT`, `STAGING_R2_BUCKET` | Endpoint and bucket from the reviewed staging inventory, matching the runtime values | Builds |
+| `VITE_SITE_URL` | Develop branch URL, never production's URL | Builds |
 
 Create the public database token with Turso's native `turso db tokens create <staging-database> --read-only`. Review native R2 token scope. The build guard compares configured targets, rejects shared public/private tokens and common leaked secret variables. It cannot establish a provider's real token grants or prove that an asserted staging host is separate from production. Live inventory and access checks are required. No secret belongs in Git, a `VITE_` variable, a report, a PR or build output.
 
@@ -35,10 +39,10 @@ Record the exact applied migration ledger, ordered manifest IDs/digests and reso
 
 ## Runtime checks
 
-Check the copied records on `/`, `/people` and every original profile URL against the capture. Check totals, items, dates, source links and original `/saln/...` file bytes. Check `?view=reviewed` separately, including reviewed Person aliases and any acquired `/documents/<sha256>` routes. Also check `/source-tip`, `/about`, `/resources` and unknown-route 404. `/data/archive.json` and `/data/source-checksums.json` redirect to the fixed release selected in `data/release/public-snapshot.json`. The files live at `/data/<version>/archive.json` and `/data/<version>/source-checksums.json`. Use that same version for both downloads. Imports cannot change these files. The live Turso Archive can have additional records awaiting the next release export.
+Check the copied records on `/` and every original profile URL against the capture. Verify that `/people` redirects to `/` and retains a search query. Check totals, items, dates, source links and original `/saln/...` file bytes. Check secondary document routes separately, including reviewed Person aliases and any acquired `/documents/<sha256>` routes. Also check `/source-tip`, `/about`, `/resources` and unknown-route 404. `/data/archive.json` and `/data/source-checksums.json` redirect to the fixed release selected in `data/release/public-snapshot.json`. The files live at `/data/<version>/archive.json` and `/data/<version>/source-checksums.json`. Use that same version for both downloads. Imports cannot change these files. The live Turso Archive can have additional records awaiting the next release export.
 
 After the approved reviewed-Archive import, export its public pair with `archive:export -- public/data`, check the exported version, and update the selector in the release PR. Commit both public files with that selector. Retain older version directories. The build validates every retained pair and its digest using local files only. Netlify and local Vite serve the version paths as static files, including HEAD and conditional requests, without Archive queries. The checked-in baseline contains 27 reviewed People and no release-approved Source Documents. It is separate from the full legacy copy. Future publication as reviewed Source Documents needs source evidence and R2 mappings; it does not block keeping the original PDFs available.
 
 Observe browser traffic and verify no Firebase calls. Verify keyboard and narrow-screen journeys. Record exact deployed SHA, migration head, manifest sequence, snapshot version and staging IDs. User acceptance belongs to #65. Do not promote to main from a successful build alone.
 
-Sources: [Netlify branch deploys](https://docs.netlify.com/deploy/deploy-types/branch-deploys/), [environment variable scopes and contexts](https://docs.netlify.com/build/environment-variables/overview/), [Turso read-only tokens](https://docs.turso.tech/cli/db/tokens/create).
+Sources: [Netlify branch deploys](https://docs.netlify.com/deploy/deploy-types/branch-deploys/), [Functions environment variables](https://docs.netlify.com/build/functions/environment-variables/), [environment variable scopes and contexts](https://docs.netlify.com/build/environment-variables/overview/), [Turso read-only tokens](https://docs.turso.tech/cli/db/tokens/create).

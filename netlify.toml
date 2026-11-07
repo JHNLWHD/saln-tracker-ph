@@ -8,7 +8,6 @@ SITE_URL = "https://saln-tracker-ph.netlify.app"
 [dev]
 command = "react-router dev"
 
-[context.develop.environment]
-ARCHIVE_ENVIRONMENT = "staging"
-ARCHIVE_ADAPTER = "turso"
-ARCHIVE_STORAGE = "r2"
+# Set develop data configuration through Netlify UI/CLI/API with Builds and
+# Functions scopes. TOML environment values are unavailable to Functions.
+# See ops/develop.md for the required branch-specific values.

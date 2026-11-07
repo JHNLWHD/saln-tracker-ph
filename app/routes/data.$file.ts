@@ -7,3 +7,5 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   if (!['GET', 'HEAD'].includes(request.method)) return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
   return redirect(`/data/${release.version}/${params.file}`, { status: 307, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 }
+
+export { loader as action };

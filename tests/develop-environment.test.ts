@@ -10,6 +10,26 @@ import { exportPublicSnapshot } from '../app/archive/snapshot.server';
 import { writeSnapshotArtifacts } from '../scripts/export-snapshot';
 import { importReviewedPerson } from '../app/db/people.server';
 import release from '../data/release/public-snapshot.json';
+import { createStaticHandler } from 'react-router';
+import * as snapshotRoute from '../app/routes/data.$file';
+
+test('snapshot aliases reject mutation requests through router dispatch with supported methods', async () => {
+  const handler = createStaticHandler([{
+    path: '/data/:file',
+    loader: ({ request, params }) => snapshotRoute.loader({ request, params: { file: params.file! }, context: {} }),
+    action: snapshotRoute.action && (({ request, params }) => snapshotRoute.action({ request, params: { file: params.file! }, context: {} })),
+  }]);
+  for (const file of ['archive.json', 'source-checksums.json']) {
+    for (const method of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      const response = await handler.queryRoute(new Request(`http://localhost/data/${file}`, { method }));
+      assert.ok(response instanceof Response);
+      assert.equal(response.status, 405);
+      assert.equal(response.headers.get('Allow'), 'GET, HEAD');
+      assert.equal(await response.text(), '');
+    }
+  }
+  await assert.rejects(handler.queryRoute(new Request('http://localhost/data/private.json', { method: 'POST' })), error => error instanceof Response && error.status === 404);
+});
 
 test('develop build checks reject ambiguous targets and credential exposure without performing writes', () => {
   const staging = { NETLIFY: 'true', CONTEXT: 'branch-deploy', BRANCH: 'develop', ARCHIVE_ENVIRONMENT: 'staging', ARCHIVE_ADAPTER: 'turso', ARCHIVE_STORAGE: 'r2', TURSO_DATABASE_URL: 'libsql://archive-staging.example.invalid', TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'archive-staging.example.invalid', R2_ENDPOINT: 'https://r2.example.invalid', STAGING_R2_ENDPOINT: 'https://r2.example.invalid', R2_BUCKET: 'documents-staging', STAGING_R2_BUCKET: 'documents-staging', R2_ACCESS_KEY_ID: 'synthetic-read-key', R2_SECRET_ACCESS_KEY: 'synthetic-read-secret', SOURCE_TIPS_DATABASE_URL: 'libsql://tips-staging.example.invalid', SOURCE_TIPS_AUTH_TOKEN: 'synthetic-private-token', SOURCE_TIPS_RATE_LIMIT_SECRET: 'synthetic-private-rate-key-at-least-32-characters', STAGING_SOURCE_TIPS_HOST: 'tips-staging.example.invalid' };
