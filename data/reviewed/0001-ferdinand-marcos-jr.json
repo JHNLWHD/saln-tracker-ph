@@ -1,0 +1,86 @@
+{
+  "review": {
+    "reviewedAt": "2026-09-26",
+    "reviewedBy": "Codex source review"
+  },
+  "person": {
+    "id": "person-ferdinand-marcos-jr",
+    "slug": "ferdinand-marcos-jr",
+    "canonicalName": "Ferdinand R. Marcos Jr.",
+    "nameVariants": []
+  },
+  "jurisdictions": [
+    {
+      "id": "jurisdiction-ph",
+      "name": "Philippines",
+      "kind": "country"
+    }
+  ],
+  "jurisdictionRelationships": [],
+  "offices": [
+    {
+      "id": "office-president-ph",
+      "name": "President of the Philippines",
+      "kind": "elected",
+      "included": true,
+      "jurisdictionId": "jurisdiction-ph"
+    }
+  ],
+  "constituencies": [
+    {
+      "id": "constituency-ph-nation",
+      "name": "Philippines",
+      "kind": "nation",
+      "jurisdictionId": "jurisdiction-ph"
+    }
+  ],
+  "electoralTerms": [],
+  "tenures": [
+    {
+      "id": "tenure-marcos-president-2022",
+      "personId": "person-ferdinand-marcos-jr",
+      "officeId": "office-president-ph",
+      "electoralTermId": null,
+      "constituencyId": "constituency-ph-nation",
+      "startDate": {
+        "value": "2022-06-30",
+        "precision": "day"
+      },
+      "endDate": null,
+      "assumptionMethod": "election",
+      "verificationStatus": "verified",
+      "disputedFacts": [],
+      "citations": [
+        {
+          "id": "evidence-marcos-inauguration-2022",
+          "title": "Inauguration of Ferdinand Romualdez Marcos Jr.",
+          "url": "https://pco.gov.ph/inauguration/pbbm/",
+          "publisher": "Presidential Communications Office",
+          "type": "official_record",
+          "supports": [
+            "person",
+            "office",
+            "startDate",
+            "assumptionMethod"
+          ],
+          "publishedDate": null
+        },
+        {
+          "id": "evidence-marcos-office-2026-09-22",
+          "title": "PBBM, ASEAN-BAC discuss preparations for 2026 Business and Investment Summit",
+          "url": "https://pco.gov.ph/news_releases/pbbm-asean-bac-discuss-preparations-for-2026-business-and-investment-summit/",
+          "publisher": "Presidential Communications Office",
+          "type": "official_record",
+          "supports": [
+            "person",
+            "office"
+          ],
+          "publishedDate": {
+            "value": "2026-09-22",
+            "precision": "day"
+          }
+        }
+      ]
+    }
+  ]
+}
