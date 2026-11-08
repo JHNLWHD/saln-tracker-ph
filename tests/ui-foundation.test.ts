@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFile } from 'node:fs/promises';
+import postcss from 'postcss';
+import tailwindcss from 'tailwindcss';
+import tailwindConfig from '../tailwind.config';
 import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
@@ -8,8 +12,29 @@ import { Footer } from '../app/components/layout/Footer';
 import { ArchiveTable, EvidenceRow, EmptyState, TextField } from '../app/components/ui/Archive';
 import { Button } from '../app/components/ui/Button';
 import { CollapsibleSection } from '../app/components/ui/CollapsibleSection';
+import { Hashtags } from '../app/components/ui/Hashtags';
 
 const render = (element: ReturnType<typeof h>) => renderToStaticMarkup(element);
+
+test('advocacy sizes and minimal borders survive the application CSS build', async () => {
+  const stylesheet = new URL('../app/app.css', import.meta.url);
+  const css = await postcss([tailwindcss(tailwindConfig)]).process(await readFile(stylesheet, 'utf8'), { from: stylesheet.pathname });
+  for (const [size, variant, fontSize] of [['sm', 'minimal', '0.75rem'], ['md', 'default', '0.875rem'], ['lg', 'glass', '1rem']] as const) {
+    const html = render(h(Hashtags, { size, variant }));
+    const classes = html.match(/^<div class="([^"]+)"/)![1].split(/\s+/);
+    const styles = new Map<string, string>();
+    css.root.walkRules(rule => {
+      if (rule.selectors.some(selector => classes.some(name => selector === `.${name}`))) {
+        rule.walkDecls(declaration => { styles.set(declaration.prop, declaration.value); });
+      }
+    });
+    assert.equal(styles.get('font-size'), fontSize, `${size} advocacy text size`);
+    if (variant === 'minimal') {
+      assert.equal(styles.get('border'), '0');
+      assert.equal(styles.get('padding-inline'), '0');
+    }
+  }
+});
 
 test('navigation has one set of links, an active page, and a reachable skip target', () => {
   const html = render(h(StaticRouter, { location: '/about', children: h(Header) }));
