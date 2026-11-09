@@ -94,9 +94,7 @@ in your Netlify account.
 
 ## Data Sources
 
-This platform is designed to aggregate SALN data from official government channels only. Currently, the system displays a "No data yet" state as we work to establish proper data sourcing partnerships with relevant government agencies.
-
-**Important:** All SALN data will be sourced exclusively from official channels to ensure accuracy and authenticity.
+The reviewed Archive publishes Source Documents from official downloads, documented formal releases, or exact preserved copies with known origin and custody. A public article can support Tenure evidence; it does not become a SALN Source Document. Legacy values and links require source review before they enter the canonical Archive.
 
 ## Design System
 
@@ -126,6 +124,21 @@ Open `/official/ferdinand-marcos-jr`. The profile shows cited Tenure evidence an
 The import validates the manifest and writes metadata in one transaction. This first import rejects an existing Person; repeatable manifests are a later slice. To remove this initial schema locally, run `npm run archive:migrate -- --down`, then migrate and import again. The `.data/` directory is ignored by Git.
 
 CLI remote writes require both `--environment staging` and `ARCHIVE_ENVIRONMENT=staging`, plus `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. These commands do not enable production publication. Do not commit database files or credentials.
+
+To add a reviewed Document-only Filing after its Person is imported:
+
+```bash
+ARCHIVE_STORAGE=local ARCHIVE_OBJECT_DIR=.data/objects npm run archive:import-filing -- reviewed-filing.json source-file
+ARCHIVE_ADAPTER=turso TURSO_DATABASE_URL=file:.data/archive.db ARCHIVE_STORAGE=local ARCHIVE_OBJECT_DIR=.data/objects npm run dev
+```
+
+The manifest identifies the Filing, exact Filer Name, Reporting Date, provenance, SHA-256, byte size, and separate source dates. PDF, JPEG, and PNG originals are supported. Do not convert released scans into a new file and call it an original. The CLI validates bytes before storage and writes metadata in one transaction. A failed database write can leave an unlisted object; the public route serves only documents linked to an eligible Person. Existing evidence is never overwritten.
+
+Open uses `/documents/:sha256`; Download uses the same route with `?download=1`. Both return the acquired bytes. Missing objects return a temporary-unavailable response. Document-only records have no reviewed summary totals; missing values are not zero.
+
+For staging, set `ARCHIVE_STORAGE=r2`, `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` along with the staging database settings above. R2 writes use a conditional request to prevent overwrite. Local publication timestamps describe the local environment; production publication dates must be reviewed for the actual release. Production storage and release remain separate gated operations.
+
+`data/examples/hontiveros-2024-page-1.local.json` records the real source used for local verification. It identifies the exact 140,352-byte Facebook-served JPEG, its stable release URL and checksum, and explicitly covers only page 1 of 3. Its publication timestamp is a local example, not a production release date. Import `data/reviewed/0002-risa-hontiveros.json` first. Acquire and verify the released image separately; source files belong in object storage and are not committed with this example. A platform may serve another rendition, so do not bypass a checksum mismatch.
 
 We welcome contributions that help improve government transparency in the Philippines. Please ensure all contributions align with our mission of promoting accountability through public access to official information.
 

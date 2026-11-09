@@ -1,0 +1,64 @@
+{
+  "review": {
+    "reviewedAt": "2026-09-26",
+    "reviewedBy": "Codex source review"
+  },
+  "person": {
+    "id": "person-risa-hontiveros",
+    "slug": "risa-hontiveros",
+    "canonicalName": "Risa Hontiveros",
+    "nameVariants": [
+      "Ana Theresia N. Hontiveros-Baraquel"
+    ]
+  },
+  "jurisdictions": [
+    {
+      "id": "jurisdiction-ph",
+      "name": "Philippines",
+      "kind": "country"
+    }
+  ],
+  "jurisdictionRelationships": [],
+  "offices": [
+    {
+      "id": "office-senator-ph",
+      "name": "Senator of the Philippines",
+      "kind": "elected",
+      "included": true,
+      "jurisdictionId": "jurisdiction-ph"
+    }
+  ],
+  "constituencies": [],
+  "electoralTerms": [],
+  "tenures": [
+    {
+      "id": "tenure-risa-hontiveros-senator-evidenced-2025",
+      "personId": "person-risa-hontiveros",
+      "officeId": "office-senator-ph",
+      "electoralTermId": null,
+      "constituencyId": null,
+      "startDate": null,
+      "endDate": null,
+      "assumptionMethod": "unknown",
+      "verificationStatus": "verified",
+      "disputedFacts": [],
+      "citations": [
+        {
+          "id": "evidence-hontiveros-senator-pna-2025-10-20",
+          "title": "Senate outlines procedures for requesting SALN",
+          "url": "https://www.pna.gov.ph/articles/1261401",
+          "publisher": "Philippine News Agency",
+          "type": "public_article",
+          "supports": [
+            "person",
+            "office"
+          ],
+          "publishedDate": {
+            "value": "2025-10-20",
+            "precision": "day"
+          }
+        }
+      ]
+    }
+  ]
+}

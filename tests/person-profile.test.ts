@@ -8,7 +8,7 @@ import { PersonProfile } from '../app/components/PersonProfile';
 const record: PersonRecord = {
   person: { id: 'person-1', slug: 'sample-person', canonicalName: 'Sample Person', nameVariants: ['Person, Sample'], legacySlugs: [], eligibility: 'eligible' },
   offices: [{ id: 'senator', name: 'Senator', kind: 'elected', included: true, jurisdictionId: 'ph' }],
-  tenures: [{ id: 'tenure-1', personId: 'person-1', officeId: 'senator', electoralTermId: null, constituencyId: 'national', startDate: { value: '2022', precision: 'year' }, endDate: null, assumptionMethod: 'election', verificationStatus: 'verified', disputedFacts: [], citations: [{ id: 'source-1', title: 'Sample Person joins Senate', publisher: 'Public News', url: 'https://example.org/tenure', type: 'public_article', supports: ['Person', 'Office', 'start year'], publishedDate: { value: '2022-07', precision: 'month' } }] }],
+  tenures: [{ id: 'tenure-1', personId: 'person-1', officeId: 'senator', electoralTermId: null, constituencyId: 'national', startDate: { value: '2022', precision: 'year' }, endDate: null, assumptionMethod: 'election', verificationStatus: 'verified', disputedFacts: [], citations: [{ id: 'source-1', title: 'Sample Person joins Senate', publisher: 'Public News', url: 'https://example.org/tenure', type: 'public_article', supports: ['person', 'office', 'startDate', 'assumptionMethod'], publishedDate: { value: '2022-07', precision: 'month' } }] }],
   constituencies: [{ id: 'national', name: 'National electorate', kind: 'nation', jurisdictionId: 'ph' }],
   jurisdictions: [{ id: 'ph', name: 'Philippines', kind: 'country' }],
   electoralTerms: [], filings: [], sourceDocuments: [], financialSummaries: [],
@@ -31,6 +31,8 @@ test('Person profile shows supported identity, Tenure evidence, and partial date
   assert.match(html, /Philippines/);
   assert.match(html, /href="https:\/\/example.org\/tenure"[^>]*>Sample Person joins Senate<\/a>/);
   assert.match(html, /Public News · Public article/);
+  assert.match(html, /Supports: Person, Office, Start date, Assumption Method/);
+  assert.doesNotMatch(html, /Supports:[^<]*(?:startDate|assumptionMethod)/);
   assert.match(html, /No SALN currently in the archive/);
   assert.match(html, /does not establish that the Person failed to file/);
   assert.doesNotMatch(html, /2022-01-01|Present|Current official|Former official|₱0/);
@@ -62,4 +64,57 @@ test('unverified legacy profile does not display excluded Offices as evidence of
   assert.match(html, /legacy profile remains available for link continuity/);
   assert.match(html, /No Tenure in an included Office has been established/);
   assert.doesNotMatch(html, />Senator<\/h3>/);
+});
+
+function documentRecord(): PersonRecord {
+  const value = structuredClone(record);
+  value.filings = [{ id: 'filing-1', personId: value.person.id, filerName: 'PERSON, SAMPLE', reportingDate: { value: '2024', precision: 'year' }, executionDate: null, receiptDate: null, supersedesFilingId: null }];
+  value.sourceDocuments = [{ id: 'document-1', filingId: 'filing-1', fileName: 'sample-saln.pdf', mediaType: 'application/pdf', byteSize: 1234, sha256: 'a'.repeat(64), storageKey: 'private-storage-key', originalUrl: 'https://example.org/source.pdf', provenanceType: 'official_download', provenanceNote: 'Acquired from the custodian publication.', officialReleaseDate: null, acquisitionDate: { value: '2026-09', precision: 'month' }, archivePublicationDate: '2026-09-26T10:00:00.000Z', transcriptionLevel: 'document_only' }];
+  return value;
+}
+
+test('Document-only Filing shows provenance and separate stable open/download actions without invented dates or totals', () => {
+  const html = render(documentRecord());
+  const route = `/documents/${'a'.repeat(64)}`;
+  assert.ok(html.indexOf('SALN Filings') < html.indexOf('Public office and evidence'));
+  assert.match(html, /Reporting Date: <span>2024<\/span>.*\(year precision\)/);
+  assert.match(html, /Filer Name<\/dt><dd>PERSON, SAMPLE<\/dd>/);
+  assert.match(html, /Execution Date<\/dt><dd>Not established<\/dd>/);
+  assert.match(html, /Receipt Date<\/dt><dd>Not established<\/dd>/);
+  assert.match(html, /Official Release Date<\/dt><dd>Not established<\/dd>/);
+  assert.match(html, /dateTime="2026-09">2026-09<\/time>/);
+  assert.match(html, /dateTime="2026-09-26T10:00:00.000Z"/);
+  assert.match(html, /Official download/);
+  assert.match(html, /Acquired from the custodian publication/);
+  assert.match(html, /href="https:\/\/example.org\/source.pdf"/);
+  assert.match(html, /Document only/);
+  assert.match(html, /No reviewed summary totals are available for this Filing/);
+  assert.ok(html.includes(`href="${route}">Open<span class="sr-only"> sample-saln.pdf</span>`));
+  assert.ok(html.includes(`href="${route}?download=1" download="sample-saln.pdf">Download<span class="sr-only"> sample-saln.pdf</span>`));
+  assert.match(html, /<th scope="col">Provenance<\/th>/);
+  assert.doesNotMatch(html, /No SALN currently in the archive|₱0|2024-12-31|2026-09-01|private-storage-key/);
+});
+
+test('same-period Filings and their multiple Source Documents remain separate', () => {
+  const value = documentRecord();
+  value.filings.push({ ...value.filings[0], id: 'filing-2', filerName: 'Sample P. Person' });
+  value.sourceDocuments.push(
+    { ...value.sourceDocuments[0], id: 'document-2', fileName: 'preserved-copy.pdf', sha256: 'b'.repeat(64), originalUrl: null, provenanceType: 'preserved_copy', provenanceNote: 'Exact copy preserved from the recorded custodian.' },
+    { ...value.sourceDocuments[0], id: 'document-3', filingId: 'filing-2', fileName: 'separate-filing.pdf', sha256: 'c'.repeat(64), provenanceType: 'formal_release', provenanceNote: 'Released by the records custodian.' },
+  );
+  const html = render(value);
+  assert.equal((html.match(/Reporting Date: <span>2024<\/span>/g) || []).length, 2);
+  assert.equal((html.match(/<table /g) || []).length, 2);
+  assert.equal((html.match(/>Open<span/g) || []).length, 3);
+  assert.equal((html.match(/No reviewed summary totals are available for this Filing/g) || []).length, 2);
+  const firstTable = html.slice(html.indexOf('<table'), html.indexOf('</table>'));
+  const secondTable = html.slice(html.indexOf('<table', html.indexOf('</table>')));
+  assert.match(firstTable, /sample-saln.pdf/);
+  assert.match(firstTable, /preserved-copy.pdf/);
+  assert.match(firstTable, /Preserved Copy/);
+  assert.doesNotMatch(firstTable, /separate-filing.pdf/);
+  assert.match(secondTable, /separate-filing.pdf/);
+  assert.match(secondTable, /Formally released copy/);
+  assert.doesNotMatch(secondTable, /preserved-copy.pdf/);
+  assert.doesNotMatch(html, /supersed|amendment|latest Filing/i);
 });

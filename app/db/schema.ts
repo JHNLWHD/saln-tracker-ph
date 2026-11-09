@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { check, index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { Citation, Constituency, Jurisdiction, Office, Tenure } from "../archive/types";
+import type { Citation, Constituency, Jurisdiction, Office, SourceDocument, Tenure } from "../archive/types";
 
 export const people = sqliteTable("people", {
   id: text("id").primaryKey(),
@@ -91,4 +91,49 @@ export const tenureCitations = sqliteTable("tenure_citations", {
 }, (t) => [
   primaryKey({ columns: [t.tenureId, t.citationId] }),
   check("tenure_citation_supports", sql`json_valid(${t.supports}) and json_type(${t.supports}) = 'array'`),
+]);
+
+export const filings = sqliteTable("filings", {
+  id: text("id").primaryKey(),
+  personId: text("person_id").notNull().references(() => people.id),
+  filerName: text("filer_name").notNull(),
+  reportingDate: text("reporting_date").notNull(),
+  executionDate: text("execution_date"),
+  receiptDate: text("receipt_date"),
+  // A supersession needs an evidence workflow; do not infer it from a later year or upload.
+  supersedesFilingId: text("supersedes_filing_id"),
+  reviewedAt: text("reviewed_at").notNull(),
+  reviewedBy: text("reviewed_by").notNull(),
+}, (t) => [
+  index("filings_person_reporting").on(t.personId, t.reportingDate),
+  check("filing_filer_name", sql`length(trim(${t.filerName})) > 0`),
+  check("filing_no_unreviewed_supersession", sql`${t.supersedesFilingId} is null`),
+]);
+
+export const sourceDocuments = sqliteTable("source_documents", {
+  id: text("id").primaryKey(),
+  filingId: text("filing_id").notNull().references(() => filings.id),
+  fileName: text("file_name").notNull(),
+  mediaType: text("media_type").notNull(),
+  byteSize: integer("byte_size").notNull(),
+  sha256: text("sha256").notNull(),
+  storageKey: text("storage_key").notNull(),
+  originalUrl: text("original_url"),
+  provenanceType: text("provenance_type").$type<SourceDocument["provenanceType"]>().notNull(),
+  provenanceNote: text("provenance_note").notNull(),
+  officialReleaseDate: text("official_release_date"),
+  acquisitionDate: text("acquisition_date").notNull(),
+  archivePublicationDate: text("archive_publication_date").notNull(),
+  transcriptionLevel: text("transcription_level").$type<SourceDocument["transcriptionLevel"]>().notNull(),
+}, (t) => [
+  index("source_documents_filing").on(t.filingId),
+  index("source_documents_checksum").on(t.sha256),
+  index("source_documents_publication").on(t.archivePublicationDate),
+  check("source_document_size", sql`${t.byteSize} > 0`),
+  check("source_document_checksum", sql`length(${t.sha256}) = 64 and ${t.sha256} not glob '*[^0-9a-f]*'`),
+  check("source_document_storage_key", sql`${t.storageKey} = 'documents/sha256/' || ${t.sha256}`),
+  check("source_document_media_type", sql`${t.mediaType} in ('application/pdf','image/jpeg','image/png')`),
+  check("source_document_provenance", sql`${t.provenanceType} in ('official_download','formal_release','preserved_copy')`),
+  check("source_document_provenance_note", sql`length(trim(${t.provenanceNote})) > 0`),
+  check("source_document_transcription", sql`${t.transcriptionLevel} in ('document_only','summary_totals','full_itemization')`),
 ]);
