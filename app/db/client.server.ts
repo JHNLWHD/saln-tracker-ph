@@ -7,3 +7,5 @@ export function connectArchive(config: Config) {
 }
 
 export type ArchiveDatabase = ReturnType<typeof connectArchive>["db"];
+/** Both the database and a Drizzle transaction expose these typed statements. */
+export type ArchiveWriter = Pick<ArchiveDatabase, "select" | "insert">;
