@@ -22,7 +22,7 @@ export async function rollbackArchive(client: Client) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const config = writeDatabaseConfig(args);
+  const config = writeDatabaseConfig(args, process.env, { allowRollback: true });
   if (args.includes("--down") && !config.url.startsWith("file:")) throw new Error("Rollback is limited to local databases");
   if (config.url === "file:.data/archive.db") await mkdir(".data", { recursive: true });
   const { client, db } = connectArchive(config);

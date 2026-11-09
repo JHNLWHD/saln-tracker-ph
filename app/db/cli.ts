@@ -1,11 +1,11 @@
 import type { Config } from "@libsql/client";
 
 /** CLI writes require a named remote target. Production publication is a later release gate. */
-export function writeDatabaseConfig(args: string[], env: NodeJS.ProcessEnv = process.env): Config {
+export function writeDatabaseConfig(args: string[], env: NodeJS.ProcessEnv = process.env, { allowRollback = false } = {}): Config {
   const url = env.TURSO_DATABASE_URL || "file:.data/archive.db";
   let environment: string | undefined;
   for (let index = 0; index < args.length; index++) {
-    if (args[index] === "--down") continue;
+    if (allowRollback && args[index] === "--down") continue;
     if (args[index] !== "--environment" || environment) throw new Error("Unsupported or repeated database option");
     environment = args[++index];
     if (!["local", "staging", "production"].includes(environment)) throw new Error("Database environment must be local, staging, or production");
