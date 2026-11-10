@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { PartialDate, PersonRecord, SourceDocument, Tenure } from '../archive/types';
+import type { Citation, CorrectionChanges, CorrectionTargetType, PartialDate, PersonRecord, SourceDocument, Tenure } from '../archive/types';
 import { ArchiveTable, EmptyState } from './ui/Archive';
 
 const assumptionLabels: Record<Tenure['assumptionMethod'], string> = {
@@ -17,6 +17,21 @@ const factLabels: Record<string, string> = {
   startDate: 'Start date',
   endDate: 'End date',
   assumptionMethod: 'Assumption Method',
+  canonicalName: 'Canonical Name',
+  nameVariants: 'Name Variants',
+  verificationStatus: 'Verification',
+  disputedFacts: 'Disputed Facts',
+  filerName: 'Filer Name',
+  reportingDate: 'Reporting Date',
+  executionDate: 'Execution Date',
+  receiptDate: 'Receipt Date',
+  fileName: 'File name',
+  originalUrl: 'Original source URL',
+  provenanceType: 'Provenance type',
+  provenanceNote: 'Provenance note',
+  officialReleaseDate: 'Official Release Date',
+  acquisitionDate: 'Acquisition Date',
+  archivePublicationDate: 'Archive Publication Date',
 };
 
 const provenanceLabels: Record<SourceDocument['provenanceType'], string> = {
@@ -35,6 +50,38 @@ function EvidenceDate({ date }: { date: PartialDate | null }) {
   if (!date) return <>Not established</>;
   return <>{date.precision === 'year' ? <span>{date.value}</span> : <time dateTime={date.value}>{date.value}</time>} <span className="archive-muted">({date.precision} precision)</span></>;
 }
+
+function EvidenceCitations({ citations }: { citations: Citation[] }) {
+  if (citations.length === 0) return <p className="archive-muted">No attributable citation is recorded.</p>;
+  return (
+    <ul className="space-y-3">
+      {citations.map(citation => (
+        <li key={citation.id} className="text-sm break-words">
+          <a href={citation.url} className="text-primary-700 underline">{citation.title}</a>
+          <p>{citation.publisher} · {citation.type === 'official_record' ? 'Official record' : 'Public article'}</p>
+          <p>Published: <EvidenceDate date={citation.publishedDate} /></p>
+          {citation.supports.length > 0 && <p>Supports: {citation.supports.map(fact => factLabels[fact] ?? fact).join(', ')}</p>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function CorrectionValue({ field, value }: { field: string; value: CorrectionChanges[keyof CorrectionChanges] }) {
+  if (value == null) return <>Not established</>;
+  if (Array.isArray(value)) return <>{value.length ? value.map(item => field === 'disputedFacts' ? factLabels[item] ?? item : item).join(', ') : 'None recorded'}</>;
+  if (typeof value === 'object') return <EvidenceDate date={value} />;
+  const labels: Record<string, Record<string, string>> = {
+    assumptionMethod: assumptionLabels,
+    provenanceType: provenanceLabels,
+    verificationStatus: { verified: 'Verified', unverified: 'Unverified', disputed: 'Disputed' },
+  };
+  return <>{labels[field]?.[value] ?? value}</>;
+}
+
+const correctionTargetLabels: Record<CorrectionTargetType, string> = {
+  person: 'Person metadata', tenure: 'Tenure evidence', filing: 'Filing metadata', source_document: 'Source Document metadata',
+};
 
 export function PersonProfile({ record }: { record: PersonRecord }) {
   const { person } = record;
@@ -66,7 +113,10 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
 
       <section aria-labelledby={`${id}-filings`} className="space-y-6">
         <h2 id={`${id}-filings`}>SALN Filings</h2>
-        {record.sourceDocuments.length === 0 && (
+        {record.sourceDocuments.length === 0 && person.eligibility !== 'eligible' && (
+          <p>Source Documents are not shown while Archive eligibility is unresolved. This does not establish that the Person failed to file a SALN.</p>
+        )}
+        {record.sourceDocuments.length === 0 && person.eligibility === 'eligible' && (
           <EmptyState>
             <p>The project has not acquired a Source Document for this Person. This does not establish that the Person failed to file a SALN.</p>
           </EmptyState>
@@ -151,23 +201,39 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
               )}
               <div>
                 <p className="font-semibold">Evidence citations</p>
-                {tenure.citations.length === 0 ? <p className="archive-muted">No attributable citation is recorded.</p> : (
-                  <ul className="space-y-3">
-                    {tenure.citations.map(citation => (
-                      <li key={citation.id} className="text-sm break-words">
-                        <a href={citation.url} className="text-primary-700 underline">{citation.title}</a>
-                        <p>{citation.publisher} · {citation.type === 'official_record' ? 'Official record' : 'Public article'}</p>
-                        <p>Published: <EvidenceDate date={citation.publishedDate} /></p>
-                        {citation.supports.length > 0 && <p>Supports: {citation.supports.map(fact => factLabels[fact] ?? fact).join(', ')}</p>}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <EvidenceCitations citations={tenure.citations} />
               </div>
             </section>
           );
         })}
       </section>
+
+      {(record.editorialCorrections?.length ?? 0) > 0 && (
+        <section aria-labelledby={`${id}-corrections`} className="space-y-4">
+          <h2 id={`${id}-corrections`}>Editorial Corrections</h2>
+          <p>This page uses the latest reviewed metadata. Earlier values and reasons are retained below. Source Documents remain unchanged.</p>
+          <ol className="space-y-6">
+            {record.editorialCorrections?.map(correction => (
+              <li key={correction.id} className="space-y-3 border-b border-gray-300 pb-6">
+                <h3>{correctionTargetLabels[correction.target.type]} · Correction {correction.revision}</h3>
+                <p className="text-sm archive-muted break-words">Reviewed <time dateTime={correction.reviewedAt}>{correction.reviewedAt}</time> · {correction.id}</p>
+                <p className="text-sm archive-muted break-words">Record: {correction.target.id}</p>
+                <p><span className="font-semibold">Reason: </span>{correction.reason}</p>
+                <dl className="space-y-3 text-sm">
+                  {Object.entries(correction.changes).map(([field, value]) => (
+                    <div key={field}>
+                      <dt className="font-semibold">{factLabels[field] ?? field}</dt>
+                      <dd>Previously: <CorrectionValue field={field} value={correction.previousValues[field as keyof CorrectionChanges]} /></dd>
+                      <dd>Corrected: <CorrectionValue field={field} value={value} /></dd>
+                    </div>
+                  ))}
+                </dl>
+                <EvidenceCitations citations={correction.citations} />
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
     </article>
   );
 }
