@@ -1,0 +1,13 @@
+# Reviewed identity and link manifests
+
+`0003-legacy-identities.json` retains the basic identity and profile keys observed in two matching public Firestore reads on 26 September 2026. The observed data digest was `b1c4adc84c46fc6a4feaf2beac46f720a5b11037781a30e5efac043d0045f1df`. The raw SDK snapshots remain outside Git. This file contains only public names, stable Person IDs, former keys and review evidence.
+
+The 49 source records retain 56 distinct document-ID/stored-slug keys. The historical migration seed supplies 42 former identifiers. Each seed name and generated key was compared exactly with its selected legacy record. These records start with no Office, Tenure, Filing or financial summary. They remain outside public search, directories, counts and the Public Data Snapshot until a Verified Tenure establishes eligibility. Their direct URLs show the scope notice. Stable IDs are assigned once in this manifest; a later name change does not regenerate them.
+
+There are two explicit reviewed Identity Matches. The [PCO inauguration page](https://pco.gov.ph/inauguration/pbbm/) identifies Ferdinand "Bongbong" Romualdez Marcos Jr. and Ferdinand R. Marcos Jr. as the same President. The [PNA report](https://www.pna.gov.ph/articles/1261401) identifies Senator Risa Hontiveros and her SALN release. These matches were reviewed on 2 October 2026. Apply the existing Marcos and Hontiveros Person payloads first, then this version 1 manifest with `npm run archive:import -- data/reviewed/0003-legacy-identities.json`.
+
+The other 47 legacy records are retained separately. Similar names do not merge them. An appointed position in legacy data does not establish or rule out a former elected Tenure.
+
+Identity Matches do not approve old amounts, statuses, inferred dates or document custody. Hontiveros's legacy share link resolves to a different post from the three acquired scans. Marcos's existing PDF paths still require separate provenance and Filing review. No legacy PDF mapping is approved in this manifest. Existing files stay in `public/saln` during migration. An approved document mapping must name the acquired PDF Source Document and its exact checksum before that static file can be removed.
+
+Additional version 1 `identities` manifests can add explicit matches or PDF mappings. A match names existing source and surviving Person IDs, a reason and attributable citations that support `identity`. Merge chains resolve directly to their surviving Person. Original Person, Tenure, Filing and Source Document rows remain unchanged. Loops, ambiguous keys and reassigned aliases are rejected transactionally. Public snapshots include reviewed matches and redirect mappings only for Archive-Eligible Persons.

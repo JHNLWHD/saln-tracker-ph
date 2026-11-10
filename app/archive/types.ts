@@ -135,10 +135,21 @@ export interface PersonRecord {
   sourceDocuments: SourceDocument[];
   financialSummaries: DeclaredFinancialSummary[];
   editorialCorrections?: EditorialCorrection[];
+  identityMatches?: IdentityMatch[];
+}
+
+export interface IdentityMatch {
+  id: string;
+  fromPersonId: string;
+  toPersonId: string;
+  reason: string;
+  reviewedAt: string;
+  citations: Citation[];
 }
 
 export interface Archive {
   listPeople(): Promise<PersonRecord[]>;
   findPersonBySlug(slug: string): Promise<PersonRecord | null>;
   findSourceDocument(sha256: string): Promise<SourceDocument | null>;
+  findLegacyDocument(path: string): Promise<SourceDocument | null>;
 }

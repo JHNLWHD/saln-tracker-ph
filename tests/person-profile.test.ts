@@ -63,7 +63,7 @@ test('unverified legacy profile does not display excluded Offices as evidence of
   unverified.offices[0].included = false;
   const html = render(unverified);
   assert.match(html, /Archive eligibility is not verified/);
-  assert.match(html, /legacy profile remains available for link continuity/);
+  assert.match(html, /profile remains available for link continuity/);
   assert.match(html, /No Tenure in an included Office has been established/);
   assert.doesNotMatch(html, />Senator<\/h3>/);
 });

@@ -3,6 +3,7 @@ import { eq, inArray } from "drizzle-orm";
 import { readArchiveTransaction, type ArchiveDatabase } from "../db/client.server";
 import { projectCorrections, readEditorialCorrections } from "../db/corrections.server";
 import { personIsEligible } from "../db/eligibility";
+import { identityLineage, readIdentityMatches, resolveIdentity } from "../db/identities.server";
 import * as schema from "../db/schema";
 import { parsePartialDate } from "../db/validation";
 import type { CorrectionChanges } from "./types";
@@ -16,12 +17,23 @@ function orderedChanges(changes: CorrectionChanges) {
 export async function exportPublicSnapshot(db: ArchiveDatabase) {
   const data = await readArchiveTransaction(db, async tx => {
     const corrections = await readEditorialCorrections(tx);
+    const matches = await readIdentityMatches(tx);
     const personRows = await tx.select({ id: schema.people.id, slug: schema.people.slug, canonicalName: schema.people.canonicalName })
       .from(schema.people).where(personIsEligible()).orderBy(schema.people.id);
     const personIds = personRows.map(person => person.id);
+    const lineageIds = personIds.flatMap(id => identityLineage(id, matches));
+    const formerPeople = await tx.select({ id: schema.people.id, slug: schema.people.slug, canonicalName: schema.people.canonicalName })
+      .from(schema.people).where(inArray(schema.people.id, lineageIds)).orderBy(schema.people.id);
     const names = await tx.select({ personId: schema.personNames.personId, value: schema.personNames.value })
-      .from(schema.personNames).where(inArray(schema.personNames.personId, personIds)).orderBy(schema.personNames.personId, schema.personNames.value);
-    const projectedPeople = personRows.map(person => projectCorrections("person", { ...person, nameVariants: names.filter(name => name.personId === person.id).map(name => name.value) }, corrections));
+      .from(schema.personNames).where(inArray(schema.personNames.personId, lineageIds)).orderBy(schema.personNames.personId, schema.personNames.value);
+    const projectedPeople = personRows.map(person => {
+      const projected = projectCorrections("person", { ...person, nameVariants: names.filter(name => name.personId === person.id).map(name => name.value) }, corrections);
+      const formerNames = formerPeople.filter(row => row.id !== person.id && resolveIdentity(row.id, matches) === person.id).flatMap(row => {
+        const former = projectCorrections("person", { ...row, nameVariants: names.filter(name => name.personId === row.id).map(name => name.value) }, corrections);
+        return [row.canonicalName, former.canonicalName, ...former.nameVariants];
+      });
+      return { ...projected, nameVariants: [...new Set([...projected.nameVariants, ...formerNames])].filter(name => name !== projected.canonicalName) };
+    });
     const people = projectedPeople.map(({ nameVariants, ...person }) => person);
     const personNames = projectedPeople.flatMap(person => [...person.nameVariants].sort().map(value => ({ personId: person.id, value })));
     const tenureRows = (await tx.select({
@@ -29,8 +41,8 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
       electoralTermId: schema.tenures.electoralTermId, constituencyId: schema.tenures.constituencyId,
       startDate: schema.tenures.startDate, endDate: schema.tenures.endDate, assumptionMethod: schema.tenures.assumptionMethod,
       verificationStatus: schema.tenures.verificationStatus, disputedFacts: schema.tenures.disputedFacts,
-    }).from(schema.tenures).where(inArray(schema.tenures.personId, personIds)).orderBy(schema.tenures.id)).map(tenure => ({
-      ...tenure, startDate: parsePartialDate(tenure.startDate), endDate: parsePartialDate(tenure.endDate), disputedFacts: [...tenure.disputedFacts].sort(),
+    }).from(schema.tenures).where(inArray(schema.tenures.personId, lineageIds)).orderBy(schema.tenures.id)).map(tenure => ({
+      ...tenure, personId: resolveIdentity(tenure.personId, matches), startDate: parsePartialDate(tenure.startDate), endDate: parsePartialDate(tenure.endDate), disputedFacts: [...tenure.disputedFacts].sort(),
     }));
     const offices = await tx.select({
       id: schema.offices.id, name: schema.offices.name, kind: schema.offices.kind, included: schema.offices.included, jurisdictionId: schema.offices.jurisdictionId,
@@ -76,10 +88,10 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
       id: schema.filings.id, personId: schema.filings.personId, filerName: schema.filings.filerName,
       reportingDate: schema.filings.reportingDate, executionDate: schema.filings.executionDate, receiptDate: schema.filings.receiptDate,
       supersedesFilingId: schema.filings.supersedesFilingId,
-    }).from(schema.filings).where(inArray(schema.filings.personId, personIds)).orderBy(schema.filings.id)).map(filing => {
+    }).from(schema.filings).where(inArray(schema.filings.personId, lineageIds)).orderBy(schema.filings.id)).map(filing => {
       const reportingDate = parsePartialDate(filing.reportingDate);
       if (!reportingDate) throw new Error("Stored Filing has no Reporting Date");
-      return projectCorrections("filing", { ...filing, reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) }, corrections);
+      return projectCorrections("filing", { ...filing, personId: resolveIdentity(filing.personId, matches), reportingDate, executionDate: parsePartialDate(filing.executionDate), receiptDate: parsePartialDate(filing.receiptDate) }, corrections);
     });
     const sourceDocuments = (await tx.select({
       id: schema.sourceDocuments.id, filingId: schema.sourceDocuments.filingId, fileName: schema.sourceDocuments.fileName,
@@ -88,12 +100,12 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
       officialReleaseDate: schema.sourceDocuments.officialReleaseDate, acquisitionDate: schema.sourceDocuments.acquisitionDate,
       archivePublicationDate: schema.sourceDocuments.archivePublicationDate, transcriptionLevel: schema.sourceDocuments.transcriptionLevel,
     }).from(schema.sourceDocuments).innerJoin(schema.filings, eq(schema.filings.id, schema.sourceDocuments.filingId))
-      .where(inArray(schema.filings.personId, personIds)).orderBy(schema.sourceDocuments.id)).map(document => {
+      .where(inArray(schema.filings.personId, lineageIds)).orderBy(schema.sourceDocuments.id)).map(document => {
       const acquisitionDate = parsePartialDate(document.acquisitionDate);
       if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
       return projectCorrections("source_document", { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(document.officialReleaseDate) }, corrections);
     });
-    const publicIds = { person: new Set(personIds), tenure: new Set(tenures.map(row => row.id)), filing: new Set(filings.map(row => row.id)), source_document: new Set(sourceDocuments.map(row => row.id)) };
+    const publicIds = { person: new Set(lineageIds), tenure: new Set(tenures.map(row => row.id)), filing: new Set(filings.map(row => row.id)), source_document: new Set(sourceDocuments.map(row => row.id)) };
     const editorialCorrections = corrections.filter(correction => publicIds[correction.target.type].has(correction.target.id))
       .sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(correction => ({
         id: correction.id, target: { type: correction.target.type, id: correction.target.id },
@@ -104,7 +116,18 @@ export async function exportPublicSnapshot(db: ArchiveDatabase) {
           publishedDate: citation.publishedDate, supports: [...citation.supports].sort(),
         })),
       }));
-    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments, editorialCorrections };
+    const identityMatches = matches.filter(row => lineageIds.includes(row.fromPersonId)).map(match => ({
+      ...match, citations: [...match.citations].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0).map(source => ({ ...source, supports: [...source.supports].sort() })),
+    }));
+    const aliasRows = await tx.select({ kind: schema.personAliases.kind, value: schema.personAliases.value, personId: schema.personAliases.personId })
+      .from(schema.personAliases).where(inArray(schema.personAliases.personId, lineageIds));
+    const aliases = [...aliasRows, ...formerPeople.filter(row => resolveIdentity(row.id, matches) !== row.id).flatMap(row => [
+      { kind: "identifier" as const, value: row.id, personId: row.id }, { kind: "slug" as const, value: row.slug, personId: row.id },
+    ])].map(row => ({ ...row, personId: resolveIdentity(row.personId, matches) }));
+    const personAliases = [...new Map(aliases.map(row => [`${row.kind}:${row.value}`, row])).values()].sort((a, b) => a.kind < b.kind ? -1 : a.kind > b.kind ? 1 : a.value < b.value ? -1 : a.value > b.value ? 1 : 0);
+    const legacyDocuments = await tx.select({ path: schema.legacyDocuments.path, sourceDocumentId: schema.legacyDocuments.sourceDocumentId, sha256: schema.legacyDocuments.sha256 })
+      .from(schema.legacyDocuments).where(inArray(schema.legacyDocuments.sourceDocumentId, sourceDocuments.map(row => row.id))).orderBy(schema.legacyDocuments.path);
+    return { people, personNames, offices, tenures, constituencies, jurisdictions, jurisdictionRelationships, electoralTerms, citations, tenureCitations, filings, sourceDocuments, editorialCorrections, identityMatches, personAliases, legacyDocuments };
   });
 
   // The digest covers the schema version and ordered public content, without a clock or itself.
