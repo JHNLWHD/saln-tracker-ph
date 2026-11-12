@@ -17,4 +17,3 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 export const db = getFirestore(app);
-

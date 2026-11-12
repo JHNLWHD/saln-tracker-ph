@@ -9,6 +9,16 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { verifyRetirement } from '../scripts/verify-retirement';
 
+test('retirement rejects placeholder production report references before repository or network reads', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-retirement-reference-'));
+  const record = { productionReportRef: 'Synthetic successful report', rollbackUntil: '2020-01-01T00:00:00Z', rollbackUsed: false, recoveryCommit: 'a'.repeat(40), productionCommit: 'a'.repeat(40), snapshotVersion: 'b'.repeat(64), documents: [] };
+  try {
+    for (const productionReportRef of ['pending production verification', 'Not yet verified', 'example report', 'report_pending', 'awaiting report', 'draft report']) {
+      await assert.rejects(verifyRetirement({ ...record, productionReportRef }, 'https://synthetic.invalid', directory), /Successful production verification/);
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
 test('retirement requires complete Git recovery and stable exact bytes, and never removes the verified file', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-retirement-fixture-'));
   const bytes = Buffer.from('%PDF-1.7\nSynthetic test document\n%%EOF\n'), hash = createHash('sha256').update(bytes).digest('hex');

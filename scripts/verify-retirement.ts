@@ -14,7 +14,7 @@ interface RetirementRecord {
 
 /** Read-only: prints reviewed removal paths after every recovery and route check passes. */
 export async function verifyRetirement(record: RetirementRecord, origin: string, repository = process.cwd()) {
-  if (!record.productionReportRef?.trim() || /^(pending|unapproved|example)$/i.test(record.productionReportRef.trim()) || !Number.isFinite(Date.parse(record.rollbackUntil)) || Date.parse(record.rollbackUntil) > Date.now() || record.rollbackUsed !== false) throw new Error('Successful production verification and a closed rollback window are required');
+  if (!record.productionReportRef?.trim() || /(?:\b|_)(?:pending|unapproved|example|todo|tbd|placeholder|not|no|awaiting|waiting|requested|draft)(?:\b|_)/i.test(record.productionReportRef.trim()) || !Number.isFinite(Date.parse(record.rollbackUntil)) || Date.parse(record.rollbackUntil) > Date.now() || record.rollbackUsed !== false) throw new Error('Successful production verification and a closed rollback window are required');
   if (![record.recoveryCommit, record.productionCommit].every(value => /^[a-f0-9]{40}$/.test(value)) || !/^[a-f0-9]{64}$/.test(record.snapshotVersion)) throw new Error('Exact recovery, production and snapshot revisions are required');
   const base = new URL(origin);
   if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password || base.pathname !== '/' || base.search || base.hash) throw new Error('A credential-free production origin is required');
