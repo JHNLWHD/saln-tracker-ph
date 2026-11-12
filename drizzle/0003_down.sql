@@ -12,6 +12,6 @@ CREATE TABLE `__previous_manifest_applications` (
 	CONSTRAINT "manifest_payload" CHECK(json_valid("__previous_manifest_applications"."canonical_payload") and json_type("__previous_manifest_applications"."canonical_payload") = 'object')
 );
 
-INSERT INTO __previous_manifest_applications SELECT * FROM manifest_applications WHERE kind != 'correction';
+INSERT INTO __previous_manifest_applications(rowid, id, version, kind, digest, canonical_payload, applied_at) SELECT rowid, id, version, kind, digest, canonical_payload, applied_at FROM manifest_applications WHERE kind != 'correction';
 DROP TABLE manifest_applications;
 ALTER TABLE __previous_manifest_applications RENAME TO manifest_applications;

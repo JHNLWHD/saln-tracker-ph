@@ -11,7 +11,7 @@ CREATE TABLE `__new_manifest_applications` (
 	CONSTRAINT "manifest_payload" CHECK(json_valid("__new_manifest_applications"."canonical_payload") and json_type("__new_manifest_applications"."canonical_payload") = 'object')
 );
 --> statement-breakpoint
-INSERT INTO `__new_manifest_applications`("id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications`;--> statement-breakpoint
+INSERT INTO `__new_manifest_applications`(rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at") SELECT rowid, "id", "version", "kind", "digest", "canonical_payload", "applied_at" FROM `manifest_applications`;--> statement-breakpoint
 DROP TABLE `manifest_applications`;--> statement-breakpoint
 ALTER TABLE `__new_manifest_applications` RENAME TO `manifest_applications`;
 --> statement-breakpoint

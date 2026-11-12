@@ -308,18 +308,30 @@ test("migration preserves the existing ledger and can reverse populated correcti
     }
     const prior = { id: "legacy-ledger", kind: "person" as const, version: 1, digest: "a".repeat(64), canonicalPayload: "{}", appliedAt: "2026-09-25T00:00:00.000Z" };
     await db.insert(manifestApplications).values(prior);
+    const later = { ...prior, id: "a-later-ledger", digest: "b".repeat(64) };
+    await db.insert(manifestApplications).values(later);
+    await client.execute("UPDATE manifest_applications SET rowid = rowid * 10");
+    const chronology = async () => (await client.execute("SELECT rowid, id FROM manifest_applications ORDER BY rowid")).rows.map(row => [row.rowid, row.id]);
+    const originalChronology = [[10, prior.id], [20, later.id]];
+    await client.execute("PRAGMA reverse_unordered_selects=ON");
     await client.batch((await readFile(new URL("../drizzle/0003_editorial_corrections.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean), "write");
-    assert.deepEqual(await db.select().from(manifestApplications), [prior]);
+    assert.deepEqual(await chronology(), originalChronology);
+    await client.execute("PRAGMA reverse_unordered_selects=OFF");
+    assert.deepEqual(await db.select().from(manifestApplications), [prior, later]);
     await client.migrate((await readFile(new URL("../drizzle/0004_reviewed_identities.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await client.migrate((await readFile(new URL("../drizzle/0005_reviewed_rosters.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await client.migrate((await readFile(new URL("../drizzle/0006_reviewed_transcriptions.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
     await applyReviewedManifest(db, person);
     await applyReviewedManifest(db, correction("name-1", "person", "person", { canonicalName: "First correction" }));
     await applyReviewedManifest(db, correction("name-2", "person", "person", { canonicalName: "Second correction" }, ["canonicalName"], "name-1"));
+    const retainedChronology = (await chronology()).filter(row => row[1] !== 'name-1' && row[1] !== 'name-2');
+    await client.execute("PRAGMA reverse_unordered_selects=ON");
     const down = await readFile(new URL("../drizzle/0006_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0005_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0004_down.sql", import.meta.url), "utf8") + await readFile(new URL("../drizzle/0003_down.sql", import.meta.url), "utf8");
     await client.migrate(down.split(";").map(sql => sql.trim()).filter(Boolean));
-    assert.equal((await db.select().from(manifestApplications)).length, 2);
+    assert.deepEqual(await chronology(), retainedChronology);
+    assert.equal((await db.select().from(manifestApplications)).length, 3);
     await assert.rejects(db.select().from(editorialCorrections));
+    await client.execute("PRAGMA reverse_unordered_selects=OFF");
     // Restore this migration before the complete local rollback.
     await client.batch((await readFile(new URL("../drizzle/0003_editorial_corrections.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean), "write");
     await client.migrate((await readFile(new URL("../drizzle/0004_reviewed_identities.sql", import.meta.url), "utf8")).split("--> statement-breakpoint").map(sql => sql.trim()).filter(Boolean));
