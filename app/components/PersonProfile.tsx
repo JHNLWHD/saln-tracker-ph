@@ -119,7 +119,7 @@ export function PersonProfile({ record }: { record: PersonRecord }) {
           {latest.length === 1 ? <><FinancialSummary summary={latest[0].summary} documents={record.sourceDocuments} /><a className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-700 underline" href={`#${id}-filing-${latest[0].summary.filingId}`}>View this Filing and Source Documents</a></> : <p>{latest.length > 1 ? 'Multiple reviewed summaries; inspect the separate Filings below.' : 'Totals not transcribed. Inspect the Source Documents below.'}</p>}
         </section>}
         <details className="text-sm"><summary className="cursor-pointer py-2 underline text-primary-700">Identity and roster details</summary><div className="mt-3 space-y-4">
-        <p className="archive-muted text-sm">Canonical Name</p>
+        <dl className="space-y-1"><dt>Canonical Name</dt><dd>{person.canonicalName}</dd></dl>
         {person.nameVariants.length > 0 && (
           <div>
             <h2 className="text-lg">Name Variants</h2>

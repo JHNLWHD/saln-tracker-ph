@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
-import type { ArchiveDatabase } from "./client.server";
+import { writeArchiveTransaction, type ArchiveDatabase } from "./client.server";
 import { canonicalJson } from "./canonical";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { inspectReviewedFiling, requireEligiblePerson, verifiedDocumentBytes, writeReviewedFiling } from "./filings.server";
@@ -62,7 +62,7 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
       if (stored.storageKey !== documentStorageKey(manifest.payload.document.sha256)) throw new Error("Storage returned an unexpected Source Document key");
     }
   }
-  return db.transaction(async tx => {
+  return writeArchiveTransaction(db, async tx => {
     const [existing] = await tx.select().from(manifestApplications).where(eq(manifestApplications.id, manifest.id));
     if (existing) checkApplication(existing);
     if (!existing) await tx.insert(manifestApplications).values({ id: manifest.id, version: manifest.version, kind: manifest.kind, digest, canonicalPayload, appliedAt: new Date().toISOString() });

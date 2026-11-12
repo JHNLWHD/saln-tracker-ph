@@ -19,6 +19,7 @@ const render = (value: PersonRecord) => renderToStaticMarkup(createElement(Perso
 test('Person profile shows supported identity, Tenure evidence, and partial dates without an inferred end', () => {
   const html = render(record);
   assert.match(html, /<h1>Sample Person<\/h1>/);
+  assert.match(html, /<dt>Canonical Name<\/dt><dd>Sample Person<\/dd>/);
   assert.match(html, /Name Variants/);
   assert.match(html, /Person, Sample/);
   assert.match(html, />Senator<\/h3>/);

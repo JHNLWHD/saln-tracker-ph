@@ -49,8 +49,53 @@ async function setup() {
       } }, { bytes, storage });
     }
   }
-  return { ...connection, storage, filing, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
+  return { ...connection, directory, storage, filing, async close() { connection.client.close(); await rm(directory, { recursive: true, force: true }); } };
 }
+
+test('concurrent identical summary applications converge and leave connections reusable', async () => {
+  for (const sharedConnection of [true, false]) {
+    const state = await setup();
+    const other = sharedConnection ? state : connectArchive({ url: `file:${join(state.directory, 'archive.db')}` });
+    try {
+      await state.filing('f1', '2024');
+      const manifest = summary('f1');
+      const outcomes = await Promise.allSettled([
+        applyReviewedManifest(state.db, manifest),
+        applyReviewedManifest(other.db, manifest),
+      ]);
+      assert.deepEqual(outcomes.filter(result => result.status === 'rejected'), []);
+      const statuses = outcomes.flatMap(result => result.status === 'fulfilled' ? [result.value.status] : []);
+      assert.deepEqual(statuses.sort(), ['applied', 'unchanged']);
+      assert.equal((await applyReviewedManifest(other.db, manifest)).status, 'unchanged');
+      const archive = createDbArchive(state.db);
+      const record = await archive.findPersonBySlug('sample-person');
+      assert.equal(record?.financialSummaries.length, 1);
+      assert.equal(record?.financialSummaries[0].declaredNetWorth, '9007199254740992.01');
+      assert.equal((await state.db.select().from(schema.manifestApplications).where(eq(schema.manifestApplications.id, manifest.id))).length, 1);
+
+      const conflicting = structuredClone(manifest);
+      conflicting.id = 'summary:duplicate-filing';
+      conflicting.payload.summary.id = 'summary-duplicate-filing';
+      await assert.rejects(
+        applyReviewedManifest(other.db, conflicting),
+        error => error instanceof Error && String(error.cause).includes('UNIQUE constraint failed'),
+      );
+      assert.equal((await state.db.select().from(schema.manifestApplications).where(eq(schema.manifestApplications.id, conflicting.id))).length, 0);
+      assert.equal((await applyReviewedManifest(other.db, manifest)).status, 'unchanged');
+
+      const blocking = await state.client.transaction();
+      try {
+        await assert.rejects(applyReviewedManifest(other.db, manifest), /SQLITE_BUSY/);
+      } finally {
+        await blocking.rollback();
+      }
+      assert.equal((await applyReviewedManifest(other.db, manifest)).status, 'unchanged');
+    } finally {
+      if (!sharedConnection) other.client.close();
+      await state.close();
+    }
+  }
+});
 
 test("cross-page summary keeps exact amounts, raw documents and replay stable while corrections remain append-only", async () => {
   const state = await setup();
