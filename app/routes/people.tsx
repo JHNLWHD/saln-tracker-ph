@@ -1,13 +1,12 @@
 import { Form, Link, isRouteErrorResponse, useNavigation, useRouteError } from 'react-router';
 import type { Route } from './+types/people';
-import { getArchive } from '../archive/archive.server';
+import { getArchive, readLegacyRecords } from '../archive/archive.server';
 import { directoryFilters, directoryHref } from '../archive/directory';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { EmptyState, TextField } from '../components/ui/Archive';
 import { Button } from '../components/ui/Button';
 import { PersonCard } from '../components/PersonCard';
-import { readLegacyRecords } from '../db/legacy.server';
 import { LegacyDirectory } from '../components/LegacyRecords';
 
 export function meta({ data }: Route.MetaArgs) {
