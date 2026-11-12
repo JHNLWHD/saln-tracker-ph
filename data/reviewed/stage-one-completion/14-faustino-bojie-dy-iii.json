@@ -1,0 +1,156 @@
+{
+  "id": "person:faustino-bojie-dy-iii",
+  "version": 1,
+  "kind": "person",
+  "payload": {
+    "review": {
+      "reviewedAt": "2026-10-02",
+      "reviewedBy": "Codex source review"
+    },
+    "person": {
+      "id": "person-faustino-bojie-dy-iii",
+      "slug": "faustino-bojie-dy-iii",
+      "canonicalName": "Faustino G. Dy III",
+      "nameVariants": [
+        "Bojie Dy",
+        "Faustino \"Bojie\" G. Dy III"
+      ]
+    },
+    "jurisdictions": [
+      {
+        "id": "jurisdiction-ph",
+        "name": "Philippines",
+        "kind": "country"
+      },
+      {
+        "id": "jurisdiction-isabela",
+        "name": "Isabela",
+        "kind": "province"
+      }
+    ],
+    "jurisdictionRelationships": [
+      {
+        "fromId": "jurisdiction-isabela",
+        "toId": "jurisdiction-ph",
+        "kind": "administrative"
+      }
+    ],
+    "offices": [
+      {
+        "id": "office-house-representative-ph",
+        "name": "Member of the House of Representatives",
+        "kind": "elected",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      },
+      {
+        "id": "office-house-speaker-ph",
+        "name": "Speaker of the House",
+        "kind": "chamber_leadership",
+        "included": true,
+        "jurisdictionId": "jurisdiction-ph"
+      }
+    ],
+    "constituencies": [
+      {
+        "id": "constituency-isabela-6",
+        "name": "Isabela 6th District",
+        "kind": "legislative_district",
+        "jurisdictionId": "jurisdiction-isabela"
+      }
+    ],
+    "electoralTerms": [],
+    "tenures": [
+      {
+        "id": "tenure-dy-isabela-6-representative-evidenced-2025",
+        "personId": "person-faustino-bojie-dy-iii",
+        "officeId": "office-house-representative-ph",
+        "electoralTermId": null,
+        "constituencyId": "constituency-isabela-6",
+        "startDate": null,
+        "endDate": null,
+        "assumptionMethod": "unknown",
+        "verificationStatus": "verified",
+        "disputedFacts": [],
+        "citations": [
+          {
+            "id": "evidence-dy-speaker-election-2025-09-17-house",
+            "title": "ISABELA REP. FAUSTINO \"BOJIE\" DY III IS NEW SPEAKER",
+            "publisher": "House of Representatives, Press and Public Affairs Bureau",
+            "url": "https://www.congress.gov.ph/media/photojournal/5972",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office"
+            ],
+            "publishedDate": {
+              "value": "2025-09-17",
+              "precision": "day"
+            }
+          },
+          {
+            "id": "evidence-dy-house-member-d027",
+            "title": "20th Congress: Dy, Faustino \"Bojie\" III G., Isabela 6th District",
+            "publisher": "House of Representatives",
+            "url": "https://congress.gov.ph/house-members/view/D027",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office"
+            ],
+            "publishedDate": null
+          }
+        ]
+      },
+      {
+        "id": "tenure-dy-speaker-2025",
+        "personId": "person-faustino-bojie-dy-iii",
+        "officeId": "office-house-speaker-ph",
+        "electoralTermId": null,
+        "constituencyId": null,
+        "startDate": {
+          "value": "2025-09-17",
+          "precision": "day"
+        },
+        "endDate": null,
+        "assumptionMethod": "chamber_selection",
+        "verificationStatus": "verified",
+        "disputedFacts": [],
+        "citations": [
+          {
+            "id": "evidence-dy-speaker-election-2025-09-17-house",
+            "title": "ISABELA REP. FAUSTINO \"BOJIE\" DY III IS NEW SPEAKER",
+            "publisher": "House of Representatives, Press and Public Affairs Bureau",
+            "url": "https://www.congress.gov.ph/media/photojournal/5972",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office",
+              "startDate",
+              "assumptionMethod"
+            ],
+            "publishedDate": {
+              "value": "2025-09-17",
+              "precision": "day"
+            }
+          },
+          {
+            "id": "evidence-dy-speaker-house-2026-09-25",
+            "title": "Speaker Dy: From doctor of Batanes to national lawmaker, Rep. Gato leaves legacy of service",
+            "publisher": "House of Representatives, Press and Public Affairs Bureau",
+            "url": "https://congress.gov.ph/media/press-releases/10250",
+            "type": "official_record",
+            "supports": [
+              "person",
+              "office"
+            ],
+            "publishedDate": {
+              "value": "2026-09-25",
+              "precision": "day"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
