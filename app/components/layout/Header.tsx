@@ -17,7 +17,6 @@ export function Header() {
           </nav>
         </div>
       </header>
-      <div id="main-content" tabIndex={-1} />
     </>
   );
 }

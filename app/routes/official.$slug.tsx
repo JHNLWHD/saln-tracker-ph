@@ -28,5 +28,5 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   return { person };
 }
 export default function Person({ loaderData }: Route.ComponentProps) {
-  return <><Header /><main className="archive-container py-8 sm:py-12">{loaderData.legacy ? <LegacyPersonProfile profile={loaderData.legacy} /> : <PersonProfile record={loaderData.person} />}</main><Footer /></>;
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8 sm:py-12">{loaderData.legacy ? <LegacyPersonProfile profile={loaderData.legacy} /> : <PersonProfile record={loaderData.person} />}</main><Footer /></>;
 }

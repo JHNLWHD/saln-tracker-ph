@@ -23,5 +23,5 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { archive: await (await getArchive()).readHome() };
 }
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return <><Header /><main className="archive-container py-6 sm:py-8">{loaderData.legacy ? <LegacyDirectory data={loaderData.legacy} query={loaderData.query} /> : <ArchiveHome data={loaderData.archive} />}</main><Footer /></>;
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-6 sm:py-8">{loaderData.legacy ? <LegacyDirectory data={loaderData.legacy} query={loaderData.query} /> : <ArchiveHome data={loaderData.archive} />}</main><Footer /></>;
 }

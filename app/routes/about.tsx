@@ -6,7 +6,7 @@ export function meta() {
   return [{ title: 'About | SALN Tracker PH' }, { name: 'description', content: 'Learn about SALNs, declared totals and the sources behind SALN Tracker PH.' }];
 }
 export default function About() {
-  return <><Header /><main className="archive-container max-w-3xl py-8 space-y-8">
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container max-w-3xl py-8 space-y-8">
     <h1>About SALN Tracker PH</h1>
     <p>SALN Tracker PH makes it easier to find the Statements of Assets, Liabilities and Net Worth of public officials in the Philippines.</p>
     <section className="space-y-3"><h2>What is a SALN?</h2>

@@ -32,7 +32,7 @@ export default function People({ loaderData }: Route.ComponentProps) {
   const loading = useNavigation().state !== 'idle';
   const { filters, directory } = loaderData;
   const pages = Math.max(1, Math.ceil(directory.total / directory.pageSize));
-  return <><Header /><main className="archive-container py-8 space-y-6">
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8 space-y-6">
     <header className="space-y-2"><p className="archive-label">SALN Tracker PH</p><h1>Find and browse People</h1><p className="archive-muted">Explore declared totals and available SALN documents. Profiles with documents appear first.</p><Link className="inline-flex min-h-11 items-center text-primary-700 underline" to="/">Browse all officials</Link></header>
     <Form method="get" action="/people" className="space-y-4" key={JSON.stringify(filters)} aria-label="Directory filters">
       <input type="hidden" name="view" value="reviewed" />
@@ -60,5 +60,5 @@ export default function People({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  return <><Header /><main className="archive-container py-8"><h1>{isRouteErrorResponse(error) && error.status === 400 ? 'Invalid directory filters' : 'Directory temporarily unavailable'}</h1><p>Check the filters or try again later.</p><Link className="underline" to="/people">Browse officials</Link></main><Footer /></>;
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8"><h1>{isRouteErrorResponse(error) && error.status === 400 ? 'Invalid directory filters' : 'Directory temporarily unavailable'}</h1><p>Check the filters or try again later.</p><Link className="underline" to="/people">Browse officials</Link></main><Footer /></>;
 }
