@@ -9,19 +9,19 @@ export function Footer() {
         <div className="site-footer-record">
           <div>
             <p className="site-footer-brand">SALN Tracker PH</p>
-            <p>Source Documents and reviewed Transcriptions for people who hold or held included elected offices in the Philippines.</p>
-            <p>The Archive does not verify real-world wealth or determine compliance.</p>
+            <p>Explore the SALNs of public officials in the Philippines.</p>
+            <p>Figures reflect declared assets, liabilities and net worth.</p>
           </div>
           <nav aria-label="Footer navigation" className="site-footer-links">
-            <Link to="/">Archive</Link>
-            <Link to="/about">About the Archive</Link>
+            <Link to="/">Home</Link>
+            <Link to="/about">About</Link>
             <Link to="/resources">Resources</Link>
             <a href="https://bettergov.ph/" target="_blank" rel="noopener noreferrer">Built by BetterGov.ph</a>
           </nav>
         </div>
         <AdvocacyPanel title="Support public access">
           <p>Help make public declarations easier to find and inspect.</p>
-          <Hashtags variant="minimal" />
+          <Hashtags />
           <p><Link to="/source-tip">Suggest a source for private review</Link></p>
           <p><a href="https://discord.com/invite/5xBQmjWm" target="_blank" rel="noopener noreferrer">Join the community</a></p>
           {import.meta.env?.VITE_GITHUB_REPO && (

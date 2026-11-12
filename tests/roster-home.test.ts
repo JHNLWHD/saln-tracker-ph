@@ -52,9 +52,16 @@ test("reviewed executive roster uses actual cited Tenures, stable identities and
     const loaded = await loader({ request: new Request("http://localhost/"), params: {}, context: {} });
     assert.deepEqual(loaded.archive, home); assert.equal('officials' in loaded, false);
     const markup = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
-    assert.match(markup, /Roster Snapshot · Verified as of/); assert.match(markup, /Totals not transcribed/);
-    assert.match(markup, /No SALN currently in the archive/); assert.match(markup, /scope="row"/); assert.match(markup, /tabindex="0"/);
+    assert.match(markup, /Officeholders as of/); assert.match(markup, /Totals not transcribed/);
+    assert.match(markup, /No SALN documents available/); assert.match(markup, /<article aria-label="Ferdinand R\. Marcos Jr\."/); assert.match(markup, /View Filings/);
     assert.ok(markup.indexOf("President of the Philippines") < markup.indexOf("Vice President of the Philippines"));
+    const multipleOffices = structuredClone(home);
+    multipleOffices.rosters[0].rows[1].documentCount = 1;
+    multipleOffices.rosters[0].rows.push({ ...home.rosters[0].rows[0], tenureId: 'another-tenure', officeName: 'Another reviewed Office' });
+    const cards = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: multipleOffices })));
+    assert.equal((cards.match(/<article aria-label="Ferdinand R\. Marcos Jr\."/g) ?? []).length, 1);
+    assert.match(cards, /President of the Philippines · Another reviewed Office/);
+    assert.ok(cards.indexOf('President of the Philippines') < cards.indexOf('Vice President of the Philippines'), 'Document coverage must not reorder the reviewed roster');
     const withRecent = structuredClone(home);
     withRecent.recentlyAdded = [{ id: 'synthetic-document', sha256: 'a'.repeat(64), fileName: 'synthetic.pdf', archivePublicationDate: '2026-10-02T00:00:00.000Z', reportingDate: { value: '2024', precision: 'year' }, canonicalName: home.rosters[0].rows[0].canonicalName, slug: home.rosters[0].rows[0].slug }];
     const linked = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: withRecent })));
@@ -122,7 +129,7 @@ test('Roster reads and exports exclude Tenures whose corrected dates or verifica
       assert.deepEqual(home.rosters[0].rows.map(row => row.officeName), ['Vice President of the Philippines']);
       assert.equal(home.rosters[0].omittedMemberCount, 1);
       const html = renderToStaticMarkup(React.createElement(MemoryRouter, {}, React.createElement(ArchiveHome, { data: home })));
-      assert.match(html, /Some roster entries are not shown/);
+      assert.match(html, /Some officials are not shown/);
       const exported = await exportPublicSnapshot(state.db);
       assert.ok(exported.snapshot.data.tenures.some(row => row.id === 'tenure-marcos-president-2022'));
       assert.deepEqual(exported.snapshot.data.rosterSnapshots[0].members.map(row => row.tenureId), home.rosters[0].snapshot.members.map(row => row.tenureId));

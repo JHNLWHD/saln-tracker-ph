@@ -8,6 +8,7 @@ import { createElement as h } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 import { Header } from '../app/components/layout/Header';
+import About from '../app/routes/about';
 import { Footer } from '../app/components/layout/Footer';
 import { ArchiveTable, EvidenceRow, EmptyState, TextField } from '../app/components/ui/Archive';
 import { Button } from '../app/components/ui/Button';
@@ -16,39 +17,44 @@ import { Hashtags } from '../app/components/ui/Hashtags';
 
 const render = (element: ReturnType<typeof h>) => renderToStaticMarkup(element);
 
-test('advocacy sizes and minimal borders survive the application CSS build', async () => {
+test('minimal advocacy borders survive the application CSS build', async () => {
   const stylesheet = new URL('../app/app.css', import.meta.url);
   const css = await postcss([tailwindcss(tailwindConfig)]).process(await readFile(stylesheet, 'utf8'), { from: stylesheet.pathname });
-  for (const [size, variant, fontSize] of [['sm', 'minimal', '0.75rem'], ['md', 'default', '0.875rem'], ['lg', 'glass', '1rem']] as const) {
-    const html = render(h(Hashtags, { size, variant }));
-    const classes = html.match(/^<div class="([^"]+)"/)![1].split(/\s+/);
-    const styles = new Map<string, string>();
-    css.root.walkRules(rule => {
-      if (rule.selectors.some(selector => classes.some(name => selector === `.${name}`))) {
-        rule.walkDecls(declaration => { styles.set(declaration.prop, declaration.value); });
-      }
-    });
-    assert.equal(styles.get('font-size'), fontSize, `${size} advocacy text size`);
-    if (variant === 'minimal') {
-      assert.equal(styles.get('border'), '0');
-      assert.equal(styles.get('padding-inline'), '0');
+  const html = render(h(Hashtags));
+  const classes = html.match(/^<div class="([^"]+)"/)![1].split(/\s+/);
+  const styles = new Map<string, string>();
+  css.root.walkRules(rule => {
+    if (rule.selectors.some(selector => classes.some(name => selector === `.${name}`))) {
+      rule.walkDecls(declaration => { styles.set(declaration.prop, declaration.value); });
     }
-  }
+  });
+  assert.equal(styles.get('font-size'), '0.875rem');
+  assert.equal(styles.get('border'), '0');
+  assert.equal(styles.get('padding-inline'), '0');
 });
 
 test('navigation has one set of links, an active page, and a reachable skip target', () => {
   const html = render(h(StaticRouter, { location: '/about', children: h(Header) }));
-  assert.match(html, /href="#archive-content"/);
-  assert.match(html, /id="archive-content" tabindex="-1"/);
+  assert.match(html, /href="#main-content"/);
   assert.match(html, /aria-label="Main navigation"/);
   assert.match(html, /aria-current="page"[^>]*href="\/about"/);
   assert.equal((html.match(/href="\/about"/g) || []).length, 1);
+  assert.match(html, /href="\/"[^>]*>Home<\/a>/);
+  assert.doesNotMatch(html, /href="\/people"/, 'Main navigation must not offer a duplicate browsing page');
   assert.doesNotMatch(html, /#OpenSALN|#PublicSALNNow/);
 });
 
-test('footer separates advocacy from the archive description', () => {
+test('the skip link targets the actual main content landmark', () => {
+  const html = render(h(StaticRouter, { location: '/about', children: h(About) }));
+  assert.match(html, /href="#main-content"/);
+  assert.match(html, /<main id="main-content" tabindex="-1"/);
+  assert.equal((html.match(/id="main-content"/g) ?? []).length, 1);
+  assert.ok(html.indexOf('id="main-content"') < html.indexOf('About SALN Tracker PH'));
+});
+
+test('footer separates advocacy from the site description', () => {
   const html = render(h(StaticRouter, { location: '/', children: h(Footer) }));
-  assert.match(html, /The Archive does not verify real-world wealth or determine compliance/);
+  assert.match(html, /Figures reflect declared assets, liabilities and net worth/);
   const advocacy = html.slice(html.indexOf('<aside'));
   assert.match(advocacy, /Advocacy · SALN Tracker PH/);
   assert.match(advocacy, /#OpenSALN #PublicSALNNow/);
@@ -60,7 +66,7 @@ test('evidence, empty state, and table preserve source and accessibility semanti
   assert.match(row, /Source Document/);
   assert.match(row, /href="\/documents\/one"/);
   assert.match(row, /Document only/);
-  assert.match(render(h(EmptyState)), /No SALN currently in the archive/);
+  assert.match(render(h(EmptyState)), /No SALN documents available/);
   const table = render(h(ArchiveTable, { caption: 'Source Documents', children: h('tbody', null, h('tr', null, h('td', null, '2024'))) }));
   assert.match(table, /role="region" aria-labelledby="([^"]+)" tabindex="0"/);
   const captionId = table.match(/aria-labelledby="([^"]+)"/)![1];

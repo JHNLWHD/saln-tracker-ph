@@ -6,17 +6,17 @@ A modern web platform dedicated to tracking and monitoring the Statement of Asse
 
 ## About
 
-The SALN Tracker Philippines is designed to aggregate and display SALN records from official government channels, making it easier for citizens to access public financial disclosure information. This platform serves as a centralized hub for transparency data, helping promote good governance and public accountability.
+SALN Tracker Philippines displays available SALN entries, declared totals and recorded source links for Philippine public officials. Sources can include declarations, public records and attributable reporting. Coverage varies by official and reporting period. The figures reflect declarations, not an independent assessment of real-world wealth.
 
 ## Features
 
-- 📋 **Official Database** - Comprehensive list of current Philippine public officials (President, Vice President, Senators)
+- 📋 **Officials and SALNs** - Browse available profiles by recorded position and status
 - 🔍 **SALN Records View** - Detailed display of financial declarations when available
 - 🏛️ **Government Transparency** - Promotes accountability through public access to SALN data
-- 📱 **Responsive Design** - Modern Filipino election website design with Philippine flag colors
-- 🚀 **Fast Performance** - Built with React Router 7 and optimized for speed
+- 📱 **Responsive Design** - Compact layouts for phones and larger screens
+- 🚀 **Server Rendering** - Built with React Router 7
 - 🔒 **TypeScript** - Type-safe development for reliability
-- 🎨 **TailwindCSS** - Beautiful, accessible styling with shadcn/ui patterns
+- 🎨 **TailwindCSS** - Shared styles for forms, tables and financial cards
 
 ## Getting Started
 
@@ -43,10 +43,10 @@ Your application will be available at `http://localhost:5173`.
 ```
 app/
 ├── components/          # Reusable UI components
-│   ├── ui/             # Base UI components (Button, Card, Badge, Hashtags)
+│   ├── ui/             # Shared forms, tables, buttons and disclosures
 │   ├── layout/         # Layout components (Header, Footer)
-│   ├── OfficialsGrid.tsx    # Main officials listing
-│   └── SALNRecordsView.tsx  # SALN records display
+│   ├── LegacyRecords.tsx   # Preserved officials and SALN entries
+│   └── PersonProfile.tsx   # Source Documents and office evidence
 ├── data/               # Data management
 │   └── officials.ts    # Officials data and SALN helpers
 ├── routes/             # Application routes
@@ -63,7 +63,7 @@ app/
 - **TypeScript** - Type safety and better developer experience
 - **TailwindCSS** - Utility-first CSS framework
 - **Vite** - Fast build tool and development server
-- **Philippine Design System** - Custom theme with flag colors and cultural elements
+- **Shared CSS tokens** - Compact typography, tables, forms and financial cards
 
 ## Building for Production
 
@@ -110,7 +110,9 @@ The redesign follows the compact navigation and table layout of the [BetterGov B
 
 ### Local reviewed Archive
 
-The relational Archive is opt-in while the legacy site remains the default. Use a local SQLite file through libSQL to inspect the first reviewed Person:
+The redesigned public routes use Turso by default and require `TURSO_DATABASE_URL`. Set `ARCHIVE_ADAPTER=turso` and use a read-only token for a hosted database. The Firebase adapter cannot serve this interface. Keep the existing production release until the reviewed Turso cutover is accepted; merging this code is not a production cutover. Use `ARCHIVE_ADAPTER=local` only for an empty fixture preview.
+
+Use a local SQLite file through libSQL for an isolated import rehearsal:
 
 ```bash
 npm ci
