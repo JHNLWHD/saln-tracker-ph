@@ -52,6 +52,8 @@ export default function App() {
         capture_pageview: true,
         capture_pageleave: true,
         capture_exceptions: true,
+        autocapture: false,
+        disable_session_recording: true,
         debug: import.meta.env.MODE === "development",
       }}
     >
