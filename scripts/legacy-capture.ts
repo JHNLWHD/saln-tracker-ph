@@ -89,7 +89,7 @@ export async function captureLegacy(scope: "database_document_tree" | "public_re
       await preserve("database-documents.json", result.format, result);
     } finally { await client.close(); }
   } else {
-    const { db } = await import("../app/lib/firebase");
+    const { db } = await import("./legacy-firebase");
     const reads: string[] = [];
     try {
       for (const index of [1, 2]) {
