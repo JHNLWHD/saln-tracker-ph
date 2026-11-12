@@ -2,6 +2,8 @@ import { createLocalArchive } from "./local";
 import { createLegacyArchive } from "./legacy";
 import type { Archive } from "./types";
 
+export { readLegacyRecords } from "../db/legacy.server";
+
 const localArchive = createLocalArchive();
 let databaseArchive: Promise<Archive> | undefined;
 let closeDatabase: (() => void) | undefined;

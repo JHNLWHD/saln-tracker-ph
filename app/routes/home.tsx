@@ -1,9 +1,8 @@
 import type { Route } from './+types/home';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { getArchive } from '../archive/archive.server';
+import { getArchive, readLegacyRecords } from '../archive/archive.server';
 import { ArchiveHome } from '../components/ArchiveHome';
-import { readLegacyRecords } from '../db/legacy.server';
 import { LegacyDirectory } from '../components/LegacyRecords';
 
 export function meta() {

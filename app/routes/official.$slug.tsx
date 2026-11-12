@@ -2,9 +2,8 @@ import { redirect } from 'react-router';
 import type { Route } from './+types/official.$slug';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
-import { getArchive } from '../archive/archive.server';
+import { getArchive, readLegacyRecords } from '../archive/archive.server';
 import { PersonProfile } from '../components/PersonProfile';
-import { readLegacyRecords } from '../db/legacy.server';
 import { LegacyPersonProfile } from '../components/LegacyRecords';
 
 export function meta({ data }: Pick<Route.MetaArgs, 'data'>) {
