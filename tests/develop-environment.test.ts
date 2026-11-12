@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { checkDevelopEnvironment, checkSnapshotArtifacts } from '../scripts/develop-preflight';
@@ -34,6 +34,23 @@ test('snapshot aliases reject mutation requests through router dispatch with sup
 test('develop build checks reject ambiguous targets and credential exposure without performing writes', () => {
   const staging = { NETLIFY: 'true', CONTEXT: 'branch-deploy', BRANCH: 'develop', ARCHIVE_ENVIRONMENT: 'staging', ARCHIVE_ADAPTER: 'turso', ARCHIVE_STORAGE: 'r2', TURSO_DATABASE_URL: 'libsql://archive-staging.example.invalid', TURSO_AUTH_TOKEN: 'synthetic-read-token', STAGING_TURSO_HOST: 'archive-staging.example.invalid', R2_ENDPOINT: 'https://r2.example.invalid', STAGING_R2_ENDPOINT: 'https://r2.example.invalid', R2_BUCKET: 'documents-staging', STAGING_R2_BUCKET: 'documents-staging', R2_ACCESS_KEY_ID: 'synthetic-read-key', R2_SECRET_ACCESS_KEY: 'synthetic-read-secret', SOURCE_TIPS_DATABASE_URL: 'libsql://tips-staging.example.invalid', SOURCE_TIPS_AUTH_TOKEN: 'synthetic-private-token', SOURCE_TIPS_RATE_LIMIT_SECRET: 'synthetic-private-rate-key-at-least-32-characters', STAGING_SOURCE_TIPS_HOST: 'tips-staging.example.invalid' };
   assert.doesNotThrow(() => checkDevelopEnvironment(staging));
+  for (const [urlKey, hostKey, target] of [
+    ['TURSO_DATABASE_URL', 'STAGING_TURSO_HOST', 'archive-staging.example.invalid'],
+    ['SOURCE_TIPS_DATABASE_URL', 'STAGING_SOURCE_TIPS_HOST', 'tips-staging.example.invalid'],
+  ] as const) {
+    for (const protocol of ['libsql', 'https']) {
+      assert.throws(() => checkDevelopEnvironment({ ...staging, [urlKey]: `${protocol}://${target}:1443` }));
+      assert.doesNotThrow(() => checkDevelopEnvironment({ ...staging, [urlKey]: `${protocol}://${target}:443` }));
+      assert.doesNotThrow(() => checkDevelopEnvironment({ ...staging, [urlKey]: `${protocol}://${target}:1443`, [hostKey]: `${target}:1443` }));
+    }
+    assert.throws(() => checkDevelopEnvironment({ ...staging, [hostKey]: `${target}:1443` }));
+    for (const url of [
+      `libsql://${target}:443?tls=0`,
+      `libsql://${target}?authToken=synthetic-url-token`,
+      `https://${target}/unreviewed-database`,
+      `libsql://${target}#unreviewed`,
+    ]) assert.throws(() => checkDevelopEnvironment({ ...staging, [urlKey]: url }));
+  }
   for (const changed of [{ R2_ENDPOINT: 'https://other-account.example.invalid' }, { STAGING_R2_ENDPOINT: '' }, { R2_ENDPOINT: 'https://r2.example.invalid/unreviewed-path' }, { SOURCE_TIPS_RATE_LIMIT_SECRET: '' }, { BRANCH: 'main' }, { CONTEXT: 'deploy-preview' }, { ARCHIVE_ADAPTER: 'firebase' }, { TURSO_DATABASE_URL: 'libsql://production.example.invalid' }, { R2_BUCKET: 'production' }, { SOURCE_TIPS_DATABASE_URL: staging.TURSO_DATABASE_URL }, { SOURCE_TIPS_AUTH_TOKEN: staging.TURSO_AUTH_TOKEN }, { VITE_DATABASE_TOKEN: 'synthetic-exposure' }, { PRODUCTION_R2_SECRET_ACCESS_KEY: 'synthetic-exposure' }]) assert.throws(() => checkDevelopEnvironment({ ...staging, ...changed }));
   assert.doesNotThrow(() => checkDevelopEnvironment({}));
   assert.doesNotThrow(() => checkDevelopEnvironment({ NETLIFY: 'true', CONTEXT: 'production' }));
@@ -68,4 +85,31 @@ test('snapshot aliases use the release pair without a database and immutable ver
     await assert.rejects(checkSnapshotArtifacts(root, after.snapshot.version), /pair differs/);
     await checkSnapshotArtifacts();
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('public snapshot versions contain only the two regular release files', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'saln-snapshot-files-'));
+  const versionPath = join(root, release.version);
+  try {
+    await mkdir(versionPath);
+    for (const file of ['archive.json', 'source-checksums.json']) {
+      await copyFile(join('public/data', release.version, file), join(versionPath, file));
+    }
+    await checkSnapshotArtifacts(root);
+    const extraFile = join(versionPath, 'private-debug.json');
+    await writeFile(extraFile, '{"contact":"synthetic@example.invalid"}');
+    await assert.rejects(checkSnapshotArtifacts(root), /Unexpected public snapshot file/);
+    await rm(extraFile);
+    const extraDirectory = join(versionPath, 'private-debug');
+    await mkdir(extraDirectory);
+    await assert.rejects(checkSnapshotArtifacts(root), /Unexpected public snapshot file/);
+    await rm(extraDirectory, { recursive: true });
+    const archivePath = join(versionPath, 'archive.json');
+    await rm(archivePath);
+    await symlink(join(process.cwd(), 'public/data', release.version, 'archive.json'), archivePath);
+    await assert.rejects(checkSnapshotArtifacts(root), /regular files/);
+    await rm(archivePath);
+    await copyFile(join('public/data', release.version, 'archive.json'), archivePath);
+    await checkSnapshotArtifacts(root);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

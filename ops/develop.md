@@ -21,9 +21,11 @@ Record the actual Netlify site ID, branch URL, deployed commit, Turso database n
 | `SOURCE_TIPS_DATABASE_URL` | Private staging URL, separate from Archive | Builds and Functions |
 | `SOURCE_TIPS_AUTH_TOKEN` | Separate private queue credential; restrict access to trusted reviewers and runtime | Builds and Functions |
 | `SOURCE_TIPS_RATE_LIMIT_SECRET` | Separate server-only random key, at least 32 characters, for private client rate limits | Builds and Functions |
-| `STAGING_TURSO_HOST`, `STAGING_SOURCE_TIPS_HOST` | Hosts from the reviewed staging inventory, matching the corresponding URLs | Builds |
+| `STAGING_TURSO_HOST`, `STAGING_SOURCE_TIPS_HOST` | Hosts from the reviewed staging inventory, including any custom port and matching the corresponding URLs | Builds |
 | `STAGING_R2_ENDPOINT`, `STAGING_R2_BUCKET` | Endpoint and bucket from the reviewed staging inventory, matching the runtime values | Builds |
 | `VITE_SITE_URL` | Develop branch URL, never production's URL | Builds |
+
+Database URLs use HTTPS or libSQL at the root path without query parameters or fragments. Omit the default TLS port 443 from the reviewed host values. Include any custom port in both the reviewed host and its database URL. URL parameters cannot supply credentials or override TLS settings.
 
 Create the public database token with Turso's native `turso db tokens create <staging-database> --read-only`. Review native R2 token scope. The build guard compares configured targets, rejects shared public/private tokens and common leaked secret variables. It cannot establish a provider's real token grants or prove that an asserted staging host is separate from production. Live inventory and access checks are required. No secret belongs in Git, a `VITE_` variable, a report, a PR or build output.
 

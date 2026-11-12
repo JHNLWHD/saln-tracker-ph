@@ -14,8 +14,9 @@ export function checkDevelopEnvironment(env: NodeJS.ProcessEnv) {
   const host = (value: string | undefined) => {
     if (!value) throw new Error('A staging database URL is required');
     const url = new URL(value);
-    if (!['https:', 'libsql:'].includes(url.protocol) || url.username || url.password) throw new Error('Staging databases require credential-free remote URLs');
-    return url.hostname;
+    if (!['https:', 'libsql:'].includes(url.protocol) || url.username || url.password || url.search || url.hash || !['', '/'].includes(url.pathname)) throw new Error('Staging databases require credential-free remote root URLs');
+    // HTTPS normalizes its default port, while libsql retains an explicit 443.
+    return url.port === '443' ? url.hostname : url.host;
   };
   if (!env.STAGING_TURSO_HOST || host(env.TURSO_DATABASE_URL) !== env.STAGING_TURSO_HOST) throw new Error('Archive database does not match the reviewed staging target');
   if (!env.STAGING_SOURCE_TIPS_HOST || host(env.SOURCE_TIPS_DATABASE_URL) !== env.STAGING_SOURCE_TIPS_HOST) throw new Error('Private database does not match the reviewed staging target');
@@ -36,6 +37,9 @@ export async function checkSnapshotArtifacts(root = 'public/data', version = rel
   assert.ok(directories.some(entry => entry.isDirectory() && entry.name === version), 'Selected snapshot is absent');
   for (const entry of directories) {
     assert.ok(entry.isDirectory() && /^[a-f0-9]{64}$/.test(entry.name), 'Unexpected public snapshot path');
+    const files = await readdir(join(root, entry.name), { withFileTypes: true });
+    assert.deepEqual(files.map(file => file.name).sort(), ['archive.json', 'source-checksums.json'], 'Unexpected public snapshot file');
+    assert.ok(files.every(file => file.isFile()), 'Snapshot artifacts must be regular files');
     const snapshotJson = await readFile(join(root, entry.name, 'archive.json'), 'utf8');
     const checksumJson = await readFile(join(root, entry.name, 'source-checksums.json'), 'utf8');
     const artifacts = serializePublicSnapshot(JSON.parse(snapshotJson).data);
