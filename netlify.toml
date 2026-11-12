@@ -1,5 +1,5 @@
 [build]
-command = "react-router build"
+command = "npm run build:netlify"
 publish = "build/client"
 
 [build.environment]
@@ -7,3 +7,7 @@ SITE_URL = "https://saln-tracker-ph.netlify.app"
 
 [dev]
 command = "react-router dev"
+
+# Set develop data configuration through Netlify UI/CLI/API with Builds and
+# Functions scopes. TOML environment values are unavailable to Functions.
+# See ops/develop.md for the required branch-specific values.
