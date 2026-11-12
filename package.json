@@ -22,13 +22,14 @@
     "archive:audit-legacy": "node --import tsx scripts/legacy-audit.ts",
     "archive:prepare-legacy-copy": "node --import tsx scripts/legacy-copy.ts",
     "archive:source-tip-destination": "node --import tsx scripts/source-tip-destination.ts",
-    "build:netlify": "node --import tsx scripts/develop-preflight.ts && npm run build"
+    "build:netlify": "node --import tsx scripts/develop-preflight.ts && npm run build",
+    "archive:verify-release": "node --import tsx scripts/verify-release.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
     "@libsql/client": "^0.15.15",
-    "@react-router/node": "^7.5.2",
-    "@react-router/serve": "^7.5.2",
+    "@react-router/node": "^7.18.5",
+    "@react-router/serve": "^7.18.5",
     "currency.js": "^2.0.4",
     "drizzle-orm": "^0.45.3",
     "firebase": "^12.6.0",
@@ -37,22 +38,22 @@
     "posthog-js": "^1.266.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "^7.5.2"
+    "react-router": "^7.18.5"
   },
   "devDependencies": {
     "@netlify/vite-plugin-react-router": "^1.0.1",
-    "@react-router/dev": "^7.5.2",
+    "@react-router/dev": "^7.18.5",
     "@types/node": "^20.17.32",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "autoprefixer": "^10.4.21",
     "drizzle-kit": "^0.31.11",
     "pdf-parse": "^2.4.5",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.32",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.23.15",
     "typescript": "^5.8.3",
-    "vite": "^6.3.3",
+    "vite": "^6.4.5",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

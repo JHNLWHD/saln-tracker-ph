@@ -1,3 +1,4 @@
+import { routeArgs } from './route-args';
 import assert from "node:assert/strict";
 import test from "node:test";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -155,12 +156,12 @@ test("existing profile route reads reviewed metadata from a local SQL database",
     process.env.TURSO_DATABASE_URL = url;
     delete process.env.TURSO_AUTH_TOKEN;
     const { loader } = await import("../app/routes/official.$slug");
-    const result = await loader({ request: new Request("http://localhost/official/person-1"), params: { slug: "person-1" }, context: {} });
+    const result = await loader(routeArgs({ request: new Request("http://localhost/official/person-1"), params: { slug: "person-1" }, context: {} }, '/official/:slug'));
     assert.ok(result.person);
     assert.equal(result.person.person.canonicalName, "Sample Person");
     assert.equal('legacyPresentation' in result, false);
     assert.deepEqual(result.person.sourceDocuments, []);
-    await assert.rejects(loader({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }), (error: unknown) => error instanceof Response && error.status === 404);
+    await assert.rejects(loader(routeArgs({ request: new Request("http://localhost/official/absent"), params: { slug: "absent" }, context: {} }, '/official/:slug')), (error: unknown) => error instanceof Response && error.status === 404);
   } finally {
     await closeArchive();
     await close();
