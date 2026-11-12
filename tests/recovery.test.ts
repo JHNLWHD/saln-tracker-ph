@@ -33,6 +33,16 @@ test('production evidence requires exact approval and whole-bucket indefinite lo
   for (const changed of [{ acceptedCommit: 'b'.repeat(40) }, { productionApprovalRef: 'pending' }, { developAcceptanceRef: '' }, { rollbackUntil: '2020-01-01' }]) assert.throws(() => assertProductionApproval({ ...record, ...changed }, revision));
 });
 
+test('production approval rejects placeholder text in either evidence reference', () => {
+  const revision = 'a'.repeat(40), record = { acceptedCommit: revision, developAcceptanceRef: 'Accepted develop report #65', productionApprovalRef: 'Owner approval for release #66', rollbackUntil: new Date(Date.now() + 3600000).toISOString() };
+  assert.doesNotThrow(() => assertProductionApproval(record, revision));
+  for (const field of ['developAcceptanceRef', 'productionApprovalRef']) {
+    for (const value of ['pending approval', 'approval pending', 'approval_example', '  Pending: owner review ', 'example approval', 'EXAMPLE-approval', 'unapproved release', 'TODO: obtain approval', 'TBD approval', 'placeholder evidence', 'not approved', 'Not yet approved', 'not currently approved', 'not accepted', 'no approval', 'awaiting owner acceptance', 'waiting for approval', 'approval requested', 'draft approval']) {
+      assert.throws(() => assertProductionApproval({ ...record, [field]: value }, revision), /references are required/, `${field}: ${value}`);
+    }
+  }
+});
+
 test('after verification requires durable before evidence bound to the exact release, target and pre-import object', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-before-evidence-')), file = join(directory, 'cutover.json.before.json');
   const binding = { acceptedCommit: 'a'.repeat(40), databaseUrl: 'libsql://production.example.invalid', preImportDatabaseDigest: 'd'.repeat(64), backupTarget: { accountId: 'b'.repeat(32), bucket: 'production-backups', jurisdiction: 'eu' }, pre: { key: `releases/${'a'.repeat(40)}/first/pre.sql`, sha256: 'c'.repeat(64) } };
@@ -238,6 +248,23 @@ test('SQL recovery accepts quoted PRAGMA identifiers and still rejects PRAGMA co
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 
+test('SQL restoration rejects grouped filesystem table references and preserves ordinary quoted values', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-local-restore-')), file = join(directory, 'fixture.sql'), marker = join(directory, 'synthetic-marker.txt');
+  const { client } = connectArchive({ url: `file:${join(directory, 'empty.db')}` });
+  try {
+    await writeFile(marker, 'task-owned-maintenance-marker');
+    const digest = await databaseFingerprint(client);
+    for (const module of ['fsdir', 'zipfile']) for (const table of [`('${module}')`, `(('${module}'))`, `('${module}' AS entries)`, `((SELECT 1) AS ordinary, ('${module}'))`, `( /* grouping */ ('${module}'))`]) {
+      const sql = `SELECT CASE WHEN (SELECT CAST(data AS TEXT) FROM ${table} WHERE path='${marker}')='task-owned-maintenance-marker' THEN 1 ELSE json('invalid') END;`;
+      await writeFile(file, sql);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(sql).digest('hex'), null, digest), /filesystem modules/);
+    }
+    const harmless = "CREATE TABLE ordinary(value TEXT); INSERT INTO ordinary VALUES ('fsdir'), ('zipfile'); SELECT * FROM (SELECT 'fsdir' AS first, 'zipfile' AS second); SELECT * FROM (VALUES ('fsdir', 'zipfile'));";
+    await writeFile(file, harmless);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(harmless).digest('hex'), null)).restored, true);
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
 test('production checkout verification ignores ambient Git repository and index overrides', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'saln-checkout-'));
   const actual = join(directory, 'actual'), other = join(directory, 'other');
@@ -307,6 +334,46 @@ test('SQL recovery distinguishes infinite SQLite real values from null and from 
       await writeFile(file, changed);
       await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(changed).digest('hex'), null, digest), /named production database/);
     }
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery rejects missing or changed AUTOINCREMENT history after allocated rows are deleted', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-sequence-recovery-')), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${join(directory, 'live.db')}`, intMode: 'bigint' });
+  const schema = 'CREATE TABLE private_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT);';
+  try {
+    await client.executeMultiple(`${schema} INSERT INTO private_jobs VALUES (100, 'removed'); DELETE FROM private_jobs;`);
+    const digest = await databaseFingerprint(client);
+    for (const sql of [schema, `${schema} INSERT INTO sqlite_sequence VALUES ('private_jobs', 99);`]) {
+      await writeFile(file, sql);
+      await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(sql).digest('hex'), null, digest), /named production database/);
+    }
+    await client.execute("INSERT INTO private_jobs(body) VALUES ('next')");
+    assert.equal(String((await client.execute('SELECT id FROM private_jobs')).rows[0].id), '101');
+  } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('SQL recovery accepts a native AUTOINCREMENT dump without changing the next allocated ID', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'saln-native-sequence-')), live = join(directory, 'live.db'), file = join(directory, 'backup.sql');
+  const { client } = connectArchive({ url: `file:${live}`, intMode: 'bigint' });
+  try {
+    await client.executeMultiple("CREATE TABLE private_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT); INSERT INTO private_jobs VALUES (100, 'removed'); DELETE FROM private_jobs;");
+    const sql = execFileSync('sqlite3', ['-init', '/dev/null', live, '.dump'], { encoding: 'utf8' });
+    await writeFile(file, sql);
+    const digest = await databaseFingerprint(client);
+    assert.equal((await verifySqlRecovery(file, createHash('sha256').update(sql).digest('hex'), null, digest)).databaseDigest, digest);
+    const next = execFileSync('sqlite3', ['-safe', '-batch', '-bail', '-init', '/dev/null', join(directory, 'roundtrip.db')], {
+      input: `${sql}\nINSERT INTO private_jobs(body) VALUES ('next'); SELECT id FROM private_jobs;`, encoding: 'utf8',
+    });
+    assert.equal(next.trim(), '101');
+    const unsafe = `${sql}\nPRAGMA journal_mode=OFF;`;
+    await writeFile(file, unsafe);
+    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(unsafe).digest('hex'), null, digest), /self-contained SQL dump/);
+    const outside = join(directory, 'outside.txt');
+    const externalWrite = `${sql}\nPRAGMA writable_schema=ON; SELECT writefile('${outside}', 'blocked'); PRAGMA writable_schema=OFF;`;
+    await writeFile(file, externalWrite);
+    await assert.rejects(verifySqlRecovery(file, createHash('sha256').update(externalWrite).digest('hex'), null, digest), /Safe SQL restore failed/);
+    await assert.rejects(access(outside));
   } finally { client.close(); await rm(directory, { recursive: true, force: true }); }
 });
 

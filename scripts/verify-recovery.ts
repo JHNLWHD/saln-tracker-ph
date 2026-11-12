@@ -54,7 +54,7 @@ export async function databaseFingerprint(client: Client) {
   const tx = await client.transaction('read');
   const encode = (value: unknown) => JSON.stringify(value, (_key, item) => typeof item === 'bigint' ? { integer: String(item) } : typeof item === 'number' && !Number.isFinite(item) ? { real: String(item) } : item instanceof ArrayBuffer ? { blob: Buffer.from(item).toString('hex') } : item);
   try {
-    const schema = await tx.execute("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE name NOT GLOB 'sqlite_*' ORDER BY type, name");
+    const schema = await tx.execute("SELECT type, name, tbl_name, sql FROM sqlite_schema WHERE name NOT GLOB 'sqlite_*' OR name = 'sqlite_sequence' ORDER BY type, name");
     const tables = schema.rows.filter(row => row.type === 'table');
     // A newly provisioned database is a valid, checksum-bound pre-import state.
     const hash = createHash('sha256').update(encode(schema.rows.map(row => Array.from(row))));
@@ -88,11 +88,16 @@ function usesFilesystemModule(sql: string) {
     const token = tokens[i], name = /^["'`\[]/.test(token) ? token.slice(1, -1) : token;
     // SQLite also accepts single-quoted table/function names. Keep those distinct
     // from string values, including values whose entire text is a module name.
-    if (/^(?:fsdir|zipfile)$/i.test(name) && (token[0] !== "'" || tokens[i + 1] === '(' || /^(?:from|join|using|\.)$/i.test(tokens[i - 1] ?? '') || tokens[i - 1] === ',' && fromClause.at(-1))) return true;
-    if (token === '(') fromClause.push(false);
+    if (/^(?:fsdir|zipfile)$/i.test(name)) {
+      let previous = i - 1, depth = fromClause.length - 1;
+      // A grouped table name keeps its FROM/JOIN position through opening parentheses.
+      while (tokens[previous] === '(') { previous--; depth = Math.max(0, depth - 1); }
+      if (token[0] !== "'" || tokens[i + 1] === '(' || /^(?:from|join|using|\.)$/i.test(tokens[previous] ?? '') || tokens[previous] === ',' && fromClause[depth]) return true;
+    }
+    if (token === '(') fromClause.push(fromClause.at(-1) === true && /^(?:from|join|using|,|\()$/i.test(tokens[i - 1] ?? ''));
     else if (token === ')') { if (fromClause.length > 1) fromClause.pop(); }
     else if (/^from$/i.test(token)) fromClause[fromClause.length - 1] = true;
-    else if (/^(?:where|group|having|order|limit|union|intersect|except|returning|;)$/i.test(token)) fromClause[fromClause.length - 1] = false;
+    else if (/^(?:select|values|where|group|having|order|limit|union|intersect|except|returning|;)$/i.test(token)) fromClause[fromClause.length - 1] = false;
   }
   return false;
 }
@@ -104,9 +109,9 @@ export async function verifySqlRecovery(file: string, checksum: string, expected
   const bytes = await readFile(file);
   assert.equal(createHash('sha256').update(bytes).digest('hex'), checksum, 'Backup checksum mismatch');
   const sql = bytes.toString('utf8');
-  // Safe mode blocks external writes. Also exclude filesystem scans and non-dump PRAGMAs.
+  // Native AUTOINCREMENT dumps use writable_schema for sqlite_sequence; safe mode still blocks external IO.
   const commands = sql.replace(/'(?:''|[^'])*'|"(?:""|[^"])*"|`(?:``|[^`])*`|\[[^\]]*\]|--[^\r\n]*|\/\*[\s\S]*?\*\//g, ' ');
-  const unsafePragmas = commands.replace(/\bPRAGMA\s+foreign_keys\s*=\s*(?:OFF|ON|0|1)\s*;/gi, '');
+  const unsafePragmas = commands.replace(/\bPRAGMA\s+(?:foreign_keys|writable_schema)\s*=\s*(?:OFF|ON|0|1)\s*;/gi, '');
   if (!commands.trim() || sql.includes('\0') || usesFilesystemModule(sql) || /\bPRAGMA\b/i.test(unsafePragmas)) throw new Error('Expected a complete, self-contained SQL dump without filesystem modules');
   const directory = await mkdtemp(join(tmpdir(), 'saln-recovery-')), config = { url: `file:${join(directory, 'restore.db')}`, intMode: 'bigint' as const };
   let connection: ReturnType<typeof connectArchive> | undefined;
@@ -188,7 +193,7 @@ export async function verifyBucketLocks(targets: ProductionBuckets, token: strin
 
 export function assertProductionApproval(record: { acceptedCommit?: string; developAcceptanceRef?: string; productionApprovalRef?: string; rollbackUntil?: string }, revision: string) {
   if (!/^[a-f0-9]{40}$/.test(revision) || record.acceptedCommit !== revision) throw new Error('Approval must identify the exact accepted commit');
-  for (const ref of [record.developAcceptanceRef, record.productionApprovalRef]) if (!ref?.trim() || /^(?:pending|unapproved|example)$/i.test(ref.trim())) throw new Error('Develop acceptance and explicit production approval references are required');
+  for (const ref of [record.developAcceptanceRef, record.productionApprovalRef]) if (!ref?.trim() || /(?:\b|_)(?:pending|unapproved|example|todo|tbd|placeholder|not|no|awaiting|waiting|requested|draft)(?:\b|_)/i.test(ref.trim())) throw new Error('Develop acceptance and explicit production approval references are required');
   const deadline = Date.parse(record.rollbackUntil ?? '');
   if (!Number.isFinite(deadline) || deadline <= Date.now()) throw new Error('An agreed future rollback deadline is required');
 }
