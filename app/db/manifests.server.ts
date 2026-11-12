@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { documentStorageKey, type DocumentStorage } from "../storage/objects.server";
-import type { ArchiveDatabase } from "./client.server";
+import { writeArchiveTransaction, type ArchiveDatabase } from "./client.server";
 import { canonicalJson } from "./canonical";
 import { validateReviewedFiling, type ReviewedFiling } from "./filing-validation";
 import { inspectReviewedFiling, requireEligiblePerson, verifiedDocumentBytes, writeReviewedFiling } from "./filings.server";
@@ -13,20 +13,24 @@ import { writeReviewedCorrection } from "./corrections.server";
 import { legacyPersonRecord, validateReviewedIdentities, type ReviewedIdentities } from "./identity-validation";
 import { writeReviewedIdentities } from "./identities.server";
 import { validateReviewedRoster, writeReviewedRoster, type ReviewedRoster } from "./rosters.server";
+import { validateReviewedReport, validateReviewedSummary, type ReviewedReport, type ReviewedSummary } from "./transcription-validation";
+import { writeReviewedReport, writeReviewedSummary } from "./transcriptions.server";
 
 export type ReviewedManifest = { id: string; version: 1 } & (
-  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling } | { kind: "correction"; payload: ReviewedCorrection } | { kind: "identities"; payload: ReviewedIdentities } | { kind: "roster"; payload: ReviewedRoster }
+  { kind: "person"; payload: ReviewedPerson } | { kind: "filing"; payload: ReviewedFiling } | { kind: "correction"; payload: ReviewedCorrection } | { kind: "identities"; payload: ReviewedIdentities } | { kind: "roster"; payload: ReviewedRoster } | { kind: "summary"; payload: ReviewedSummary } | { kind: "report"; payload: ReviewedReport }
 );
 
 export function validateReviewedManifest(value: unknown): ReviewedManifest {
   const input = object(value, ["id", "version", "kind", "payload"], "manifest");
   const id = text(input.id, "manifest.id");
   if (input.version !== 1) throw new Error("Unsupported manifest version");
-  const kind = choice(input.kind, ["person", "filing", "correction", "identities", "roster"], "manifest.kind");
+  const kind = choice(input.kind, ["person", "filing", "correction", "identities", "roster", "summary", "report"], "manifest.kind");
   if (kind === "person") return { id, version: 1, kind, payload: validateReviewedPerson(input.payload) };
   if (kind === "filing") return { id, version: 1, kind, payload: validateReviewedFiling(input.payload) };
   if (kind === "identities") return { id, version: 1, kind, payload: validateReviewedIdentities(input.payload) };
   if (kind === "roster") return { id, version: 1, kind, payload: validateReviewedRoster(input.payload) };
+  if (kind === "summary") return { id, version: 1, kind, payload: validateReviewedSummary(input.payload) };
+  if (kind === "report") return { id, version: 1, kind, payload: validateReviewedReport(input.payload) };
   return { id, version: 1, kind, payload: validateReviewedCorrection(input.payload) };
 }
 
@@ -58,7 +62,7 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
       if (stored.storageKey !== documentStorageKey(manifest.payload.document.sha256)) throw new Error("Storage returned an unexpected Source Document key");
     }
   }
-  return db.transaction(async tx => {
+  return writeArchiveTransaction(db, async tx => {
     const [existing] = await tx.select().from(manifestApplications).where(eq(manifestApplications.id, manifest.id));
     if (existing) checkApplication(existing);
     if (!existing) await tx.insert(manifestApplications).values({ id: manifest.id, version: manifest.version, kind: manifest.kind, digest, canonicalPayload, appliedAt: new Date().toISOString() });
@@ -66,6 +70,8 @@ export async function applyReviewedManifest(db: ArchiveDatabase, input: unknown,
     else if (manifest.kind === "filing") await writeReviewedFiling(tx, manifest.payload, Boolean(existing));
     else if (manifest.kind === "correction") await writeReviewedCorrection(tx, manifest.id, manifest.payload, Boolean(existing));
     else if (manifest.kind === "roster") await writeReviewedRoster(tx, manifest.id, manifest.payload, Boolean(existing));
+    else if (manifest.kind === "summary") await writeReviewedSummary(tx, manifest.id, manifest.payload, Boolean(existing));
+    else if (manifest.kind === "report") await writeReviewedReport(tx, manifest.payload, Boolean(existing));
     else {
       for (const entry of manifest.payload.legacyPeople) await writeReviewedPerson(tx, legacyPersonRecord(manifest.payload.review, entry), Boolean(existing));
       await writeReviewedIdentities(tx, manifest.id, manifest.payload, Boolean(existing));

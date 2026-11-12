@@ -1,17 +1,21 @@
 import { and, eq, inArray, sql } from "drizzle-orm";
-import type { Citation, CorrectionTargetType, EditorialCorrection, Filing, Person, SourceDocument, Tenure } from "../archive/types";
+import type { Citation, CorrectionTargetType, DeclaredFinancialSummary, EditorialCorrection, Filing, Person, SecondaryReport, SourceDocument, Tenure } from "../archive/types";
 import type { ArchiveReader, ArchiveWriter } from "./client.server";
 import { canonicalJson } from "./canonical";
 import type { ReviewedCorrection } from "./correction-validation";
 import { validateReviewedFiling } from "./filing-validation";
 import * as schema from "./schema";
 import { parsePartialDate, validateReviewedPerson, validateTenureEvidence } from "./validation";
+import { checkSummarySources, validateReviewedReport, validateSummary } from "./transcription-validation";
 
-export async function readEditorialCorrections(db: ArchiveReader): Promise<EditorialCorrection[]> {
+export async function readEditorialCorrections(db: ArchiveReader, beforeApplicationId?: string): Promise<EditorialCorrection[]> {
   const table = schema.editorialCorrections;
   const rows = await db.select({ id: table.id, targetType: table.targetType, targetId: table.targetId,
     previousCorrectionId: table.previousCorrectionId, revision: table.revision, reason: table.reason,
     reviewedAt: table.reviewedAt, previousValues: table.previousValues, changes: table.changes, citations: table.citations }).from(table)
+    .where(beforeApplicationId === undefined ? undefined : sql`${table.id} in (
+      select ${schema.manifestApplications.id} from ${schema.manifestApplications}
+      where rowid < (select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${beforeApplicationId}))`)
     .orderBy(schema.editorialCorrections.targetType, schema.editorialCorrections.targetId, schema.editorialCorrections.revision);
   return rows.map(({ targetType, targetId, ...row }) => ({ ...row, target: { type: targetType, id: targetId } }));
 }
@@ -20,7 +24,10 @@ export async function readEditorialCorrections(db: ArchiveReader): Promise<Edito
 export function projectCorrections<T extends { id: string; citations?: Citation[] }>(type: CorrectionTargetType, record: T, history: EditorialCorrection[]): T {
   const corrections = history.filter(row => row.target.type === type && row.target.id === record.id).sort((a, b) => a.revision - b.revision);
   let result = { ...record };
-  for (const correction of corrections) result = { ...result, ...correction.changes };
+  for (const correction of corrections) {
+    result = { ...result, ...correction.changes };
+    if (type === 'financial_summary' || type === 'secondary_report') result = { ...result, reviewedAt: correction.reviewedAt };
+  }
   if (type === "tenure" && record.citations) {
     const sources = new Map<string, Citation>();
     for (const source of [...record.citations, ...corrections.flatMap(row => row.citations)]) {
@@ -36,7 +43,9 @@ type Target =
   | { type: "person"; record: Pick<Person, "id" | "canonicalName" | "nameVariants"> }
   | { type: "tenure"; record: Tenure }
   | { type: "filing"; record: Filing }
-  | { type: "source_document"; record: SourceDocument };
+  | { type: "source_document"; record: SourceDocument }
+  | { type: "financial_summary"; record: DeclaredFinancialSummary }
+  | { type: "secondary_report"; record: SecondaryReport };
 
 function filingRecord(row: typeof schema.filings.$inferSelect): Filing {
   const { reviewedAt: _date, reviewedBy: _reviewer, ...filing } = row;
@@ -46,9 +55,10 @@ function filingRecord(row: typeof schema.filings.$inferSelect): Filing {
 }
 
 function documentRecord(row: typeof schema.sourceDocuments.$inferSelect): SourceDocument {
+  const { storageKey: _key, ...document } = row;
   const acquisitionDate = parsePartialDate(row.acquisitionDate);
   if (!acquisitionDate) throw new Error("Stored Source Document has no Acquisition Date");
-  return { ...row, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
+  return { ...document, acquisitionDate, officialReleaseDate: parsePartialDate(row.officialReleaseDate) };
 }
 
 async function loadTarget(db: ArchiveWriter, target: ReviewedCorrection["target"]): Promise<Target> {
@@ -70,9 +80,15 @@ async function loadTarget(db: ArchiveWriter, target: ReviewedCorrection["target"
   } else if (target.type === "filing") {
     const [filing] = await db.select().from(schema.filings).where(eq(schema.filings.id, id));
     if (filing) return { type: "filing", record: filingRecord(filing) };
-  } else {
+  } else if (target.type === "source_document") {
     const [document] = await db.select().from(schema.sourceDocuments).where(eq(schema.sourceDocuments.id, id));
     if (document) return { type: "source_document", record: documentRecord(document) };
+  } else if (target.type === "financial_summary") {
+    const [row] = await db.select().from(schema.financialSummaries).where(eq(schema.financialSummaries.id, id));
+    if (row) { const { reviewedBy: _reviewer, ...record } = row; return { type: "financial_summary", record }; }
+  } else if (target.type === "secondary_report") {
+    const [row] = await db.select().from(schema.secondaryReports).where(eq(schema.secondaryReports.id, id));
+    if (row) { const { reviewedBy: _reviewer, ...record } = row; return { type: "secondary_report", record: { ...record, publishedDate: parsePartialDate(record.publishedDate) } }; }
   }
   throw new Error("Editorial Correction target does not exist");
 }
@@ -93,7 +109,7 @@ export async function checkCitationMetadata(db: ArchiveWriter, citations: Citati
   }
 }
 
-async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: ReviewedCorrection, history: EditorialCorrection[]) {
+async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: ReviewedCorrection, history: EditorialCorrection[], beforeApplicationId?: string) {
   if (target.type === "tenure") {
     const before = projectCorrections(target.type, target.record, history);
     for (const fact of before.disputedFacts.filter(fact => patch.changes.disputedFacts && !patch.changes.disputedFacts.includes(fact))) {
@@ -117,10 +133,29 @@ async function checkEffectiveRecord(db: ArchiveWriter, target: Target, patch: Re
     const [document] = await db.select().from(schema.sourceDocuments).where(eq(schema.sourceDocuments.id, original.document.id));
     if (!filing || !document) throw new Error("Correction target has no original Filing and Source Document");
     const effectiveFiling = projectCorrections("filing", filingRecord(filing), history);
-    const { storageKey: _key, ...effectiveDocument } = projectCorrections("source_document", documentRecord(document), history);
+    const effectiveDocument = projectCorrections("source_document", documentRecord(document), history);
     validateReviewedFiling({ review: original.review,
       filing: target.type === "filing" ? { ...effectiveFiling, ...patch.changes } : effectiveFiling,
       document: target.type === "source_document" ? { ...effectiveDocument, ...patch.changes } : effectiveDocument });
+    if (target.type === 'source_document' && patch.changes.acquisitionDate) {
+      // Historical replay must not validate against summaries published after this application.
+      const summaries = await db.select().from(schema.financialSummaries).where(and(eq(schema.financialSummaries.filingId, filingId),
+        beforeApplicationId === undefined ? undefined : sql`${schema.financialSummaries.id} in (
+          select json_extract(${schema.manifestApplications.canonicalPayload}, '$.payload.summary.id') from ${schema.manifestApplications}
+          where ${schema.manifestApplications.kind} = 'summary' and rowid < (
+            select rowid from ${schema.manifestApplications} where ${schema.manifestApplications.id} = ${beforeApplicationId}))`));
+      for (const row of summaries) {
+        const summary = projectCorrections('financial_summary', row, history);
+        if (Object.values(summary.sources).some(source => source.sourceDocumentId === target.record.id) && patch.changes.acquisitionDate.value > summary.reviewedAt) throw new Error('Acquisition Date follows a reviewed summary; review the summary before this correction');
+      }
+    }
+  } else if (target.type === "financial_summary") {
+    const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
+    const summary = validateSummary({ ...record, ...patch.changes });
+    await checkSummarySources(db, summary, patch.review.reviewedAt, history);
+  } else if (target.type === "secondary_report") {
+    const { reviewedAt: _reviewDate, ...record } = projectCorrections(target.type, target.record, history);
+    validateReviewedReport({ review: patch.review, report: { ...record, ...patch.changes } });
   }
 }
 
@@ -144,6 +179,8 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
     if (!application) throw new Error('Person and Tenure corrections require an applied Person manifest');
     const source = validateReviewedPerson(JSON.parse(application.payload).payload);
     if (patch.review.reviewedAt < source.review.reviewedAt) throw new Error('Correction review date precedes its original review');
+  } else if ((original.type === 'financial_summary' || original.type === 'secondary_report') && patch.review.reviewedAt < original.record.reviewedAt) {
+    throw new Error('Correction review date precedes its original review');
   }
   const before = projectCorrections(original.type, original.record, previousHistory);
   const previousValues = Object.fromEntries(Object.keys(patch.changes).map(key => [key, Reflect.get(before, key)]));
@@ -151,9 +188,12 @@ export async function writeReviewedCorrection(db: ArchiveWriter, id: string, pat
   const addsEvidence = patch.citations.some(source => source.supports.some(fact => !existingCitations.some(existing => existing.id === source.id && existing.supports.includes(fact))));
   if (!verifyOnly && !addsEvidence && !Object.keys(patch.changes).some(key => canonicalJson(Reflect.get(before, key)) !== canonicalJson(Reflect.get(patch.changes, key)))) throw new Error("Editorial Correction does not change the target or add evidence");
   await checkCitationMetadata(db, patch.citations, allHistory);
-  // Other targets keep their current overlays; this target is checked at its exact revision on replay.
-  const effectiveHistory = [...allHistory.filter(row => row.target.type !== patch.target.type || row.target.id !== patch.target.id), ...previousHistory];
-  await checkEffectiveRecord(db, original, patch, effectiveHistory);
+  // Replay checks cross-target chronology at application time, before later corrections.
+  let effectiveHistory = [...allHistory.filter(row => row.target.type !== patch.target.type || row.target.id !== patch.target.id), ...previousHistory];
+  if (verifyOnly) {
+    effectiveHistory = await readEditorialCorrections(db, id);
+  }
+  await checkEffectiveRecord(db, original, patch, effectiveHistory, verifyOnly ? id : undefined);
   const expected: EditorialCorrection = {
     id, target: patch.target, previousCorrectionId: patch.previousCorrectionId, revision: (head?.revision ?? 0) + 1,
     reason: patch.reason, reviewedAt: patch.review.reviewedAt, previousValues, changes: patch.changes, citations: patch.citations,
