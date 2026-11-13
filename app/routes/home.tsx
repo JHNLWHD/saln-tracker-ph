@@ -1,54 +1,27 @@
-import type { Route } from "./+types/home";
-import { Header } from "../components/layout/Header";
-import { Footer } from "../components/layout/Footer";
-import { OfficialsGrid } from "../components/OfficialsGrid";
-import { Hashtags } from "../components/ui/Hashtags";
-import { CallToActionBanner } from "../components/CallToActionBanner";
-import { getOfficialsWithSALNData } from "../data/officials";
+import type { Route } from './+types/home';
+import { Header } from '../components/layout/Header';
+import { Footer } from '../components/layout/Footer';
+import { getArchive, readLegacyRecords } from '../archive/archive.server';
+import { ArchiveHome } from '../components/ArchiveHome';
+import { LegacyDirectory } from '../components/LegacyRecords';
+import { redirect } from 'react-router';
+import { searchText } from '../archive/directory';
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "SALN Tracker Philippines - Public Officials Transparency" },
-    { name: "description", content: "Track and monitor Statement of Assets, Liabilities, and Net Worth (SALN) of Philippine public officials. Promoting transparency and accountability in government." },
-  ];
+export function meta({ data }: Route.MetaArgs) {
+  const query = data?.query;
+  return [{ title: query ? `Find ${query} | SALN Tracker PH` : 'SALN Tracker PH | Declared assets and net worth' }, { name: 'description', content: 'Explore public officials and their declared assets, liabilities and net worth. Browse SALN entries and sources by year.' }, ...(query ? [{ name: 'robots', content: 'noindex,follow' }] : [])];
 }
-
-export async function loader({}: Route.LoaderArgs) {
-  const officials = await getOfficialsWithSALNData();
-  return { officials };
+export async function loader({ request }: Route.LoaderArgs) {
+  const params = new URL(request.url).searchParams, view = params.get('view');
+  const query = (params.get('q') ?? '').trim();
+  if (params.getAll('q').length > 1 || query.length > 128 || params.getAll('view').length > 1 || (view !== null && view !== 'reviewed')) throw new Response('Invalid search', { status: 400 });
+  if (view !== 'reviewed') {
+    const legacy = await readLegacyRecords();
+    if (legacy) return { query, legacy: { ...legacy, profiles: legacy.profiles.filter(profile => [profile.name, profile.position, profile.agency].some(value => value && searchText(value).includes(searchText(query)))) } };
+  }
+  if (query) throw redirect(`/people?${new URLSearchParams({ q: query, view: 'reviewed' })}`);
+  return { archive: await (await getArchive()).readHome() };
 }
-
 export default function Home({ loaderData }: Route.ComponentProps) {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      
-      <main className="container mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        <div className="space-y-6 sm:space-y-8">
-          {/* Hero Section */}
-          <div className="text-center py-8 sm:py-12 px-4 sm:px-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-white">
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4 leading-tight">
-              SALN Tracker Philippines
-            </h1>
-            <p className="text-base sm:text-xl text-primary-100 mb-2 px-2">
-              Statement of Assets, Liabilities, and Net Worth
-            </p>
-            <p className="text-sm sm:text-base text-primary-200 mb-4 sm:mb-6 px-2 leading-relaxed">
-              Promoting Transparency and Accountability in Government
-            </p>
-            <Hashtags variant="glass" size="md" className="sm:hidden" />
-            <Hashtags variant="glass" size="lg" className="hidden sm:inline-block" />
-          </div>
-          
-          {/* Call for Help Banner */}
-          <CallToActionBanner />
-          
-          {/* Officials Grid */}
-          <OfficialsGrid officials={loaderData.officials} />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
+  return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-6 sm:py-8">{loaderData.legacy ? <LegacyDirectory data={loaderData.legacy} query={loaderData.query} /> : <ArchiveHome data={loaderData.archive} />}</main><Footer /></>;
 }

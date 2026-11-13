@@ -1,0 +1,3586 @@
+{
+  "capturedAt": "2026-10-18T15:07:32.248Z",
+  "sourceDataSha256": "b1c4adc84c46fc6a4feaf2beac46f720a5b11037781a30e5efac043d0045f1df",
+  "profiles": [
+    {
+      "id": "aimee-ferolino-ampoloquio",
+      "slug": "aimee-ferolino-ampoloquio",
+      "name": "Aimee Ferolino-Ampoloquio",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2015-02-02",
+      "term_end": "2029-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 15760000,
+          "total_liabilities": 240000,
+          "net_worth": 15520000,
+          "date_filed": "2025-02-03",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/aimee-ferolino/2024-aimee-ampoloquio.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 15760000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 240000
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 13060000,
+          "total_liabilities": 0,
+          "net_worth": 13060000,
+          "date_filed": "2024-02-29",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/aimee-ferolino/2023-aimee-ampoloquio.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 13060000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 11160000,
+          "total_liabilities": 351489.64,
+          "net_worth": 10808510.36,
+          "date_filed": "2023-01-05",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/aimee-ferolino/2022-aimee-ampoloquio.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 11160000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 351489.64
+            }
+          ]
+        },
+        {
+          "year": 2021,
+          "total_assets": 12830000,
+          "total_liabilities": 658592.44,
+          "net_worth": 12171407.56,
+          "date_filed": "2022-03-08",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/aimee-ferolino/2021-aimee-ampoloquio.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 12830000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 658592.44
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 11875000,
+          "total_liabilities": 1161685,
+          "net_worth": 10713315,
+          "date_filed": "2021-03-08",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/aimee-ferolino/2020-aimee-ampoloquio.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 11875000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1161685
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aimee-torrefranca-neri",
+      "slug": "aimee-torrefranca-neri",
+      "name": "Aimee Torrefranca-Neri",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2022-02-14",
+      "term_end": "2029-02-02",
+      "saln_records": []
+    },
+    {
+      "id": "alan-peter-cayetano",
+      "slug": "alan-peter-cayetano",
+      "name": "Alan Peter Cayetano",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 110662791,
+          "total_liabilities": 1532034,
+          "net_worth": 109130757,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 110662791,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1532034
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "antonio-trillanes-iv",
+      "slug": "antonio-trillanes-iv",
+      "name": "Antonio Trillanes IV",
+      "position": "Former Senator",
+      "agency": "LEGISLATIVE",
+      "status": "inactive",
+      "term_start": "2007-06-30",
+      "term_end": "2019-06-30",
+      "saln_records": []
+    },
+    {
+      "id": "bam-aquino",
+      "slug": "bam-aquino",
+      "name": "Bam Aquino",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 86553651.25,
+          "total_liabilities": 0,
+          "net_worth": 86553651.25,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 86553651.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 47901749.25,
+          "total_liabilities": 2696611,
+          "net_worth": 45205138.25,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 47901749.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 2696611
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 39192743.62,
+          "total_liabilities": 0,
+          "net_worth": 39192743.62,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 39192743.62,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "benigno-simeon-noynoy-cojuangco-aquino-iii",
+      "slug": "benigno-simeon-noynoy-cojuangco-aquino-iii",
+      "name": "Benigno Simeon \"Noynoy\" Cojuangco Aquino III",
+      "position": "Former President",
+      "agency": "EXECUTIVE",
+      "status": "inactive",
+      "term_start": "2010-06-30",
+      "term_end": "2016-06-30",
+      "saln_records": []
+    },
+    {
+      "id": "bong-go",
+      "slug": "bong-go",
+      "name": "Bong Go",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 44531512.61,
+          "total_liabilities": 12100000,
+          "net_worth": 32431512.61,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 44531512.61,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 12100000
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 42357371.1,
+          "total_liabilities": 20082862.42,
+          "net_worth": 22274508.68,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 42357371.1,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 20082862.42
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 38961465.22,
+          "total_liabilities": 20570452.42,
+          "net_worth": 18391012.8,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 38961465.22,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 20570452.42
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "camille-villar",
+      "slug": "camille-villar",
+      "name": "Camille Villar",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 362073052,
+          "total_liabilities": 0,
+          "net_worth": 362073052,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 362073052,
+              "source": null
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "douglas-michael-mallillin",
+      "slug": "malilin",
+      "name": "Douglas Michael Mallillin",
+      "position": "Commissioner, Commission on Audit",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2025-02-10",
+      "term_end": "2032-02-02",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 99143000,
+          "total_liabilities": 0,
+          "net_worth": 99143000,
+          "date_filed": "2025-03-05",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/malilin/2025-malilin.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 99143000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ernesto-ferdinand-f-maceda-jr",
+      "slug": "ernesto-ferdinand-f-maceda-jr",
+      "name": "Ernesto Ferdinand F. Maceda Jr.",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2024-05-16",
+      "term_end": "2031-02-02",
+      "saln_records": [
+        {
+          "year": 2023,
+          "total_assets": 68192330,
+          "total_liabilities": 37000000,
+          "net_worth": 31192330,
+          "date_filed": "2024-04-25",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/ernesto-maceda/2023-ernesto-ferdinand-p.-maceda.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 68192330,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 37000000
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 57593740,
+          "total_liabilities": 28000000,
+          "net_worth": 29593740,
+          "date_filed": "2023-04-26",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/ernesto-maceda/2022-ernesto-ferdinand-p.-maceda.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 57593740,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 28000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "erwin-tulfo",
+      "slug": "erwin-tulfo",
+      "name": "Erwin Tulfo",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 656302962.13,
+          "total_liabilities": 159299537,
+          "net_worth": 497003425.13,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 656302962.13,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 159299537
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ferdinand-bongbong-romualdez-marcos-jr",
+      "slug": "ferdinand-bongbong-romualdez-marcos-jr",
+      "name": "Ferdinand \"Bongbong\" Romualdez Marcos Jr.",
+      "position": "President",
+      "agency": "EXECUTIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-30",
+      "saln_records": [
+        {
+          "year": 2015,
+          "total_assets": 537164839.97,
+          "total_liabilities": 27413698.23,
+          "net_worth": 509751141.74,
+          "date_filed": "2015-12-31",
+          "status": "submitted",
+          "source_url": "https://www.slideshare.net/slideshow/bongbong-marcos-saln-filed-in-2015pdf/251658771",
+          "source_description": "SlideShare Document",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 537164839.97,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 27413698.23
+            }
+          ]
+        },
+        {
+          "year": 2024,
+          "total_assets": 1375378062.74,
+          "total_liabilities": 0,
+          "net_worth": 1375378062.74,
+          "date_filed": "2025-04-29",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/ferdinand-marcos-jr./2024-marcos-jr..pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets reported",
+              "value": 1375378062.74,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 1157867589.2,
+          "total_liabilities": 0,
+          "net_worth": 1157867589.2,
+          "date_filed": "2024-04-29",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/ferdinand-marcos-jr./2023-marcos-jr..pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets reported",
+              "value": 1157867589.2,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 960700422.23,
+          "total_liabilities": 0,
+          "net_worth": 960700422.23,
+          "date_filed": "2022-12-31",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/ferdinand-marcos-jr./2022-marcos-jr..pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 960700422.23,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "francis-escudero",
+      "slug": "francis-escudero",
+      "name": "Francis Escudero",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 18840082.62,
+          "total_liabilities": 0,
+          "net_worth": 18840082.62,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 18840082.62,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 15575228,
+          "total_liabilities": 5000000,
+          "net_worth": 10575228,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 15575228,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5000000
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 8502082.09,
+          "total_liabilities": 0,
+          "net_worth": 8502082.09,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 8502082.09,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "gamaliel-a-cordoba",
+      "slug": "gamaliel-a-cordoba",
+      "name": "Gamaliel A. Cordoba",
+      "position": "Chairman, Commission on Audit",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2021-02-25",
+      "term_end": "2028-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 101879620,
+          "total_liabilities": 5000000,
+          "net_worth": 96879620,
+          "date_filed": "2025-04-30",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/cordoba/2024-cordoba.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 101879620,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5000000
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 96465522,
+          "total_liabilities": 5000000,
+          "net_worth": 93705733,
+          "date_filed": "2023-04-20",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/cordoba/2023-cordoba.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 96465522,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5000000
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 98705733,
+          "total_liabilities": 5000000,
+          "net_worth": 91465522,
+          "date_filed": "2024-04-29",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/cordoba/2022-cordoba.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 98705733,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "george-erwin-m-garcia",
+      "slug": "george-erwin-m-garcia",
+      "name": "George Erwin M. Garcia",
+      "position": "Chairman, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2022-02-04",
+      "term_end": "2029-02-04",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 129450000,
+          "total_liabilities": 85610000,
+          "net_worth": 43840000,
+          "date_filed": "2025-02-11",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/garcia/george-garcia-2024.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 129450000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 85610000
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 112000000,
+          "total_liabilities": 71925000,
+          "net_worth": 40075000,
+          "date_filed": "2024-01-31",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/garcia/george-erwin-garcia-2023.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 112000000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 71925000
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 105563240,
+          "total_liabilities": 72825000,
+          "net_worth": 32738240,
+          "date_filed": "2022-08-22",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/garcia/george-erwin-garcia-2022.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 105563240,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 72825000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "imee-marcos",
+      "slug": "imee-marcos",
+      "name": "Imee Marcos",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 164995467,
+          "total_liabilities": 0,
+          "net_worth": 164995467,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 164995467,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 52270467,
+          "total_liabilities": 16000000,
+          "net_worth": 36270467,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 52270467,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 16000000
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 45020467,
+          "total_liabilities": 11000000,
+          "net_worth": 34020467,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 45020467,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 11000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jinggoy-estrada",
+      "slug": "jinggoy-estrada",
+      "name": "Jinggoy Estrada",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 252689843.31,
+          "total_liabilities": 31471248.16,
+          "net_worth": 221218595.15,
+          "date_filed": "2025-10-28",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 252689843.31,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 31471248.16
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "joel-villanueva",
+      "slug": "joel-villanueva",
+      "name": "Joel Villanueva",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 72505360,
+          "total_liabilities": 23000000,
+          "net_worth": 49505360,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 72505360,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 23000000
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 57529725,
+          "total_liabilities": 24500000,
+          "net_worth": 33029725,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 57529725,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 24500000
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 56249305,
+          "total_liabilities": 26000000,
+          "net_worth": 30249305,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 56249305,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 26000000
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 54421555,
+          "total_liabilities": 27500000,
+          "net_worth": 26921555,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 54421555,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 27500000
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 23727895,
+          "total_liabilities": 0,
+          "net_worth": 23727895,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 23727895,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "juan-miguel-zubiri",
+      "slug": "juan-miguel-zubiri",
+      "name": "Juan Miguel Zubiri",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 631788168.43,
+          "total_liabilities": 200008766.51,
+          "net_worth": 431779401.92,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 631788168.43,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 200008766.51
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 368947827.67,
+          "total_liabilities": 148211125.25,
+          "net_worth": 220736702.43,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 368947827.67,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 148211125.25
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 344597827.67,
+          "total_liabilities": 140930081,
+          "net_worth": 203667746.67,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 344597827.67,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 140930081
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 316171328.67,
+          "total_liabilities": 133319758.33,
+          "net_worth": 182851570.34,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 316171328.67,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 133319758.33
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 152094252.72,
+          "total_liabilities": 0,
+          "net_worth": 152094252.72,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 152094252.72,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2016,
+          "total_assets": 121768713.77,
+          "total_liabilities": 0,
+          "net_worth": 121768713.77,
+          "date_filed": "2016-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 121768713.77,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "jv-ejercito",
+      "slug": "jv-ejercito",
+      "name": "JV Ejercito",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 179065861.12,
+          "total_liabilities": 41992401.49,
+          "net_worth": 137073459.63,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 179065861.12,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 41992401.49
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "karlo-alexei-b-nograles",
+      "slug": "karlo-alexei-b-nograles",
+      "name": "Karlo Alexei B. Nograles",
+      "position": "Chairman, Civil Service Commission",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2022-02-14",
+      "term_end": "2029-02-02",
+      "saln_records": []
+    },
+    {
+      "id": "kiko-pangilinan",
+      "slug": "kiko-pangilinan",
+      "name": "Kiko Pangilinan",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 26738597.97,
+          "total_liabilities": 0,
+          "net_worth": 26738597.97,
+          "date_filed": "2025-10-25",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdfhttps://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 26738597.97,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 20635213.25,
+          "total_liabilities": 659392,
+          "net_worth": 19975821.25,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 20635213.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 659392
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 18848984.17,
+          "total_liabilities": 2153936,
+          "net_worth": 16695048.17,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 18848984.17,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 2153936
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 13471564.17,
+          "total_liabilities": 0,
+          "net_worth": 13471564.17,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 13471564.17,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "leila-de-lima",
+      "slug": "leila-de-lima",
+      "name": "Leila de Lima",
+      "position": "Former Senator",
+      "agency": "LEGISLATIVE",
+      "status": "inactive",
+      "term_start": "2016-06-30",
+      "term_end": "2022-06-30",
+      "saln_records": []
+    },
+    {
+      "id": "lito-lapid",
+      "slug": "lito-lapid",
+      "name": "Lito Lapid",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 294383580.35,
+          "total_liabilities": 92347204.67,
+          "net_worth": 202036375.68,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 294383580.35,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 92347204.67
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 175810000,
+          "total_liabilities": 100861400,
+          "net_worth": 74948600,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 175810000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 100861400
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 171810000,
+          "total_liabilities": 100861400,
+          "net_worth": 70948600,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 171810000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 100861400
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "loren-legarda",
+      "slug": "loren-legarda",
+      "name": "Loren Legarda",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 100735952.71,
+          "total_liabilities": 21525000,
+          "net_worth": 79210952.71,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 100735952.71,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 21525000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "luis-meinrado-pangulayan",
+      "slug": "pangulayan",
+      "name": "Luis Meinrado Pangulayan",
+      "position": "Commissioner, Civil Service Commission",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2025-02-10",
+      "term_end": "2032-02-02",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 9998371,
+          "total_liabilities": 3634447.59,
+          "net_worth": 6363923.41,
+          "date_filed": "2025-02-14",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/pangulayan/2025-luis-meinrado-pangulayan.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 9998371,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 3634447.59
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maria-leonor-leni-gerona-robredo",
+      "slug": "maria-leonor-leni-gerona-robredo",
+      "name": "Maria Leonor \"Leni\" Gerona Robredo",
+      "position": "Former Vice President",
+      "agency": "EXECUTIVE",
+      "status": "inactive",
+      "term_start": "2016-06-30",
+      "term_end": "2022-06-30",
+      "saln_records": []
+    },
+    {
+      "id": "maria-norina-tangaro-casingal",
+      "slug": "casingal",
+      "name": "Maria Norina Tangaro-Casingal",
+      "position": "Commissioner, Civil Service Commission",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2025-02-10",
+      "term_end": "2032-02-02",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 17400804.6,
+          "total_liabilities": 6475567.18,
+          "net_worth": 10925237.42,
+          "date_filed": "2025-02-12",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/casingal/2025-maria-norina-tangaro-casingal.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 17400804.6,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 6475567.18
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marilyn-barua-yap",
+      "slug": "barua-yap",
+      "name": "Marilyn Barua-Yap",
+      "position": "Commissioner, Civil Service Commission",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2024-10-16",
+      "term_end": "2029-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 16585703,
+          "total_liabilities": 0,
+          "net_worth": 16585703,
+          "date_filed": "-",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/barua-yap/2024-marilyn-barua-yap.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 16585703,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mario-lipana",
+      "slug": "lipana",
+      "name": "Mario Lipana",
+      "position": "Commissioner, Commission on Audit",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2022-01-26",
+      "term_end": "2027-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 26530000,
+          "total_liabilities": 0,
+          "net_worth": 26530000,
+          "date_filed": "2024-02-05",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/lipana/mario-lipana-2024.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 26530000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 23530000,
+          "total_liabilities": 0,
+          "net_worth": 23530000,
+          "date_filed": "2024-02-19",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/lipana/mario-lipana-2023.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 23530000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 19030000,
+          "total_liabilities": 0,
+          "net_worth": 19030000,
+          "date_filed": "2023-01-25",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/lipana/mario-lipana-2022.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 19030000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mark-villar",
+      "slug": "mark-villar",
+      "name": "Mark Villar",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 1261337817,
+          "total_liabilities": 0,
+          "net_worth": 1261337817,
+          "date_filed": "2025-10-30",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 1261337817,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "miriam-defensor-santiago",
+      "slug": "miriam-defensor-santiago",
+      "name": "Miriam Defensor Santiago",
+      "position": "Former Senator",
+      "agency": "LEGISLATIVE",
+      "status": "inactive",
+      "term_start": "1995-06-30",
+      "term_end": "2016-09-29",
+      "saln_records": []
+    },
+    {
+      "id": "nelson-s-celis",
+      "slug": "nelson-s-celis",
+      "name": "Nelson S. Celis",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2024-02-07",
+      "term_end": "2031-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 42199419,
+          "total_liabilities": 0,
+          "net_worth": 42199419,
+          "date_filed": "2024-12-31",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/nelson-celis/2024-nelson-celis.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 42199419,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 13528120,
+          "total_liabilities": 0,
+          "net_worth": 13528120,
+          "date_filed": "2023-12-31",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/nelson-celis/2023-nelson-celis.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 13528120,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 10265270,
+          "total_liabilities": 0,
+          "net_worth": 10265270,
+          "date_filed": "2022-12-31",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/nelson-celis/2022-nelson-celis.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 10265270,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "noli-rafol-pipo",
+      "slug": "pipo",
+      "name": "Noli Rafol Pipo",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2025-02-10",
+      "term_end": "2032-02-02",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 21526000,
+          "total_liabilities": 0,
+          "net_worth": 21526000,
+          "date_filed": "2025-03-06",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/pipo/2025-noli-pipo.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 21526000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "panfilo-lacson",
+      "slug": "panfilo-lacson",
+      "name": "Panfilo Lacson",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 0,
+          "total_liabilities": 0,
+          "net_worth": 244940509.6,
+          "date_filed": "2025-06-30",
+          "status": "submitted",
+          "source_url": "https://www.gmanetwork.com/news/topstories/nation/963093/ping-lacson-saln-p244-million-net-worth/story/",
+          "source_description": "GMA Network",
+          "assets": [
+            {
+              "description": "Lacson said he would provide further details of his SoA, Liabilities, and Net Worth 2025 including his ITRs for 2023 and 2024 as obtained.",
+              "value": 0,
+              "source": ""
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": null,
+              "nature": "Lacson said he would provide further details of his SoA, Liabilities, and Net Worth 2025 including his ITRs for 2023 and 2024 as obtained.",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 58791068.5,
+          "total_liabilities": 460800,
+          "net_worth": 58330268.5,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 58791068.5,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 460800
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 50125538.98,
+          "total_liabilities": 1166400,
+          "net_worth": 48959138.98,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 50125538.98,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1166400
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 36305440.9,
+          "total_liabilities": 0,
+          "net_worth": 36305440.9,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 36305440.9,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "pia-cayetano",
+      "slug": "pia-cayetano",
+      "name": "Pia Cayetano",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 151088656.14,
+          "total_liabilities": 22793690.41,
+          "net_worth": 128294965.73,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 151088656.14,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 22793690.41
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 89983845.8,
+          "total_liabilities": 5392167.59,
+          "net_worth": 84591678.21,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 89983845.8,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5392167.59
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 89896030.63,
+          "total_liabilities": 7121880.48,
+          "net_worth": 82774150.15,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 89896030.63,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 7121880.48
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 81970994.97,
+          "total_liabilities": 5582715.45,
+          "net_worth": 76388279.52,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 81970994.97,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5582715.45
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 79298873.23,
+          "total_liabilities": 6189044.05,
+          "net_worth": 73109829.18,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2017.12312017.amended.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 79298873.23,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 6189044.05
+            }
+          ]
+        },
+        {
+          "year": 2016,
+          "total_assets": 80056900.06,
+          "total_liabilities": 6127550.41,
+          "net_worth": 73929349.65,
+          "date_filed": "2016-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.asof.20151231.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 80056900.06,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 6127550.41
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "raffy-tulfo",
+      "slug": "raffy-tulfo",
+      "name": "Raffy Tulfo",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 1052977100,
+          "total_liabilities": 0,
+          "net_worth": 1052977100,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 1052977100,
+              "source": null
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1052977100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rey-e-bulay",
+      "slug": "rey-e-bulay",
+      "name": "Rey E. Bulay",
+      "position": "Commissioner, Commission on Elections",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2021-10-12",
+      "term_end": "2028-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 158490500,
+          "total_liabilities": 0,
+          "net_worth": 158490500,
+          "date_filed": "2025-01-02",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rey-bulay/2024-rey-e.-bulay.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 158490500,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 142840500,
+          "total_liabilities": 0,
+          "net_worth": 142840500,
+          "date_filed": "2024-02-23",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rey-bulay/2023-rey-e.-bulay.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 142840500,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 91630000,
+          "total_liabilities": 0,
+          "net_worth": 99630000,
+          "date_filed": "2023-01-18",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rey-bulay/2022-rey-e.-bulay.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 99630000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "richard-p-palpal-latoc",
+      "slug": "richard-p-palpal-latoc",
+      "name": "Richard P. Palpal-latoc",
+      "position": "Chairman, Commission on Human Rights",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2015-08-04",
+      "term_end": "2022-08-04",
+      "saln_records": []
+    },
+    {
+      "id": "risa-hontiveros",
+      "slug": "risa-hontiveros",
+      "name": "Risa Hontiveros",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 19884098,
+          "total_liabilities": 897840,
+          "net_worth": 18986258,
+          "date_filed": "2025-10-20",
+          "status": "submitted",
+          "source_url": "https://www.facebook.com/share/p/1TU7ZSVPjq/",
+          "source_description": "Risa Hontiveros' Official FB Page",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 19884098,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 897840
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 16720359.73,
+          "total_liabilities": 0,
+          "net_worth": 16720359.73,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 16720359.73,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2019,
+          "total_assets": 16050112.22,
+          "total_liabilities": 0,
+          "net_worth": 16050112.22,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 16050112.22,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2018,
+          "total_assets": 15776787.04,
+          "total_liabilities": 149611,
+          "net_worth": 15627176.04,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 15776787.04,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 149611
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 16196665.71,
+          "total_liabilities": 0,
+          "net_worth": 16196665.71,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 16196665.71,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "robin-padilla",
+      "slug": "robin-padilla",
+      "name": "Robin Padilla",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 244042908.57,
+          "total_liabilities": 0,
+          "net_worth": 244042908.57,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 244042908.57,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 244042908.57
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rodante-marcoleta",
+      "slug": "rodante-marcoleta",
+      "name": "Rodante Marcoleta",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 80401700,
+          "total_liabilities": 28440150,
+          "net_worth": 51961550,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 80401700,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 28440150
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 30185440,
+          "total_liabilities": 1234992.52,
+          "net_worth": 28950447.48,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2018.alpha.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 30185440,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1234992.52
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 28350000,
+          "total_liabilities": 1900905,
+          "net_worth": 26449095,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.cy2017.12312017.amended.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 28350000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1900905
+            }
+          ]
+        },
+        {
+          "year": 2016,
+          "total_assets": 26300000,
+          "total_liabilities": 1068810,
+          "net_worth": 25231190,
+          "date_filed": "2016-12-31",
+          "status": "submitted",
+          "source_url": "https://docs.congress.hrep.online/download/docs/saln.alpha.31Dec2016.pdf",
+          "source_description": "House of Representatives Database",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 26300000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1068810
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rodrigo-roa-duterte",
+      "slug": "rodrigo-roa-duterte",
+      "name": "Rodrigo Roa Duterte",
+      "position": "Former President",
+      "agency": "EXECUTIVE",
+      "status": "inactive",
+      "term_start": "2016-06-30",
+      "term_end": "2022-06-30",
+      "saln_records": [
+        {
+          "year": 2022,
+          "total_assets": 38805462.17,
+          "total_liabilities": 1500000,
+          "net_worth": 37305462.17,
+          "date_filed": "2022-06-20",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2022-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 38805462.17,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1500000
+            }
+          ]
+        },
+        {
+          "year": 2021,
+          "total_assets": 40244369.42,
+          "total_liabilities": 1500000,
+          "net_worth": 38744369.42,
+          "date_filed": "2022-04-23",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2021-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 40244369.42,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1500000
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 37591132.25,
+          "total_liabilities": 1500000,
+          "net_worth": 36091132.25,
+          "date_filed": "2021-05-14",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2020-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 37591132.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1500000
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 36057057.82,
+          "total_liabilities": 3000000,
+          "net_worth": 33657057.82,
+          "date_filed": "2020-06-11",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2019-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 36057057.82,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 3000000
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 33062804.87,
+          "total_liabilities": 2000000,
+          "net_worth": 31062804.87,
+          "date_filed": "2018-04-20",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2018-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 33062804.87,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 2000000
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 29340321.07,
+          "total_liabilities": 800000,
+          "net_worth": 28540321.07,
+          "date_filed": "2017-04-21",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2017-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 29340321.07,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 800000
+            }
+          ]
+        },
+        {
+          "year": 2016,
+          "total_assets": 28428862.44,
+          "total_liabilities": 1000000,
+          "net_worth": 27428862.44,
+          "date_filed": "2017-04-18",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/rodrigo-duterte/2016-rodrigo-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 28428862.44,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1000000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ronald-bato-dela-rosa",
+      "slug": "ronald-bato-dela-rosa",
+      "name": "Ronald \"Bato\" dela Rosa",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 61314073.99,
+          "total_liabilities": 29021055.94,
+          "net_worth": 32293018.05,
+          "date_filed": "2025-10-29",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 61314073.99,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 29021055.94
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 36985720.88,
+          "total_liabilities": 2602584.59,
+          "net_worth": 34383136.29,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 36985720.88,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 2602584.59
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 36265531.68,
+          "total_liabilities": 3240290.27,
+          "net_worth": 33025241.41,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 36265531.68,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 3240290.27
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ryan-alvin-acosta",
+      "slug": "acosta",
+      "name": "Ryan Alvin Acosta",
+      "position": "Commissioner, Civil Service Commission",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2022-02-22",
+      "term_end": "2027-02-02",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 50824981.24,
+          "total_liabilities": 0,
+          "net_worth": 50824981.24,
+          "date_filed": "2025-03-19",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/acosta/ryan-alvin-acosta-2024.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 50824981.24,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 41808697.7,
+          "total_liabilities": 0,
+          "net_worth": 41808697.7,
+          "date_filed": "2024-03-07",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/acosta/ryan-alvin-acosta-2023.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 41808697.7,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 35664443,
+          "total_liabilities": 548844.84,
+          "net_worth": 35115598.16,
+          "date_filed": "2023-04-28",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/acosta/ryan-alvin-acosta-2022.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 35664443,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 548844.84
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "samuel-r-martires",
+      "slug": "samuel-r-martires",
+      "name": "Samuel R. Martires",
+      "position": "Ombudsman",
+      "agency": "CONSTITUTIONAL_COMMISSION",
+      "status": "active",
+      "term_start": "2021-08-03",
+      "term_end": "2028-08-03",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 78192000,
+          "total_liabilities": 0,
+          "net_worth": 78192000,
+          "date_filed": "2025-03-20",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2024-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 78192000,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 75746065,
+          "total_liabilities": 0,
+          "net_worth": 75746065,
+          "date_filed": "2024-04-11",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2023-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 75746065,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 70075220.25,
+          "total_liabilities": 0,
+          "net_worth": 70075220.25,
+          "date_filed": "2023-03-27",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2022-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 70075220.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2021,
+          "total_assets": 66157787.25,
+          "total_liabilities": 0,
+          "net_worth": 66157787.25,
+          "date_filed": "2022-03-21",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2021-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 66157787.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2020,
+          "total_assets": 65454395.25,
+          "total_liabilities": 0,
+          "net_worth": 65454395.25,
+          "date_filed": "2021-05-21",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2020-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 65454395.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 59474395.25,
+          "total_liabilities": 0,
+          "net_worth": 59474395.25,
+          "date_filed": "2020-08-26",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2019-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 59474395.25,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 57064806.17,
+          "total_liabilities": 0,
+          "net_worth": 57064806.17,
+          "date_filed": "2019-04-29",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/samuel-martires/2018-martires.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 57064806.17,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sara-zimmerman-duterte",
+      "slug": "sara-zimmerman-duterte",
+      "name": "Sara Zimmerman Duterte",
+      "position": "Vice President",
+      "agency": "EXECUTIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-30",
+      "saln_records": [
+        {
+          "year": 2024,
+          "total_assets": 98462370.22,
+          "total_liabilities": 9950000,
+          "net_worth": 88512370.22,
+          "date_filed": "2025-06-26",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/sara-duterte/2024-sara-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets reported",
+              "value": 98462370.22,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 9950000
+            }
+          ]
+        },
+        {
+          "year": 2023,
+          "total_assets": 80058841,
+          "total_liabilities": 2550000,
+          "net_worth": 77508841,
+          "date_filed": "2024-06-27",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/sara-duterte/2023-sara-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets reported",
+              "value": 80058841,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 2550000
+            }
+          ]
+        },
+        {
+          "year": 2022,
+          "total_assets": 74808841,
+          "total_liabilities": 3150000,
+          "net_worth": 71658841,
+          "date_filed": "2023-04-11",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/sara-duterte/2022-sara-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets reported",
+              "value": 74808841,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 3150000
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 51141947,
+          "total_liabilities": 6313188,
+          "net_worth": 44828759,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 51141947,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 6313188
+            }
+          ]
+        },
+        {
+          "year": 2016,
+          "total_assets": 41850451,
+          "total_liabilities": 6954454,
+          "net_worth": 34895997,
+          "date_filed": "2016-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 41850451,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 6954454
+            }
+          ]
+        },
+        {
+          "year": 2012,
+          "total_assets": 30778837,
+          "total_liabilities": 8692735,
+          "net_worth": 22116102,
+          "date_filed": "2012-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 30778837,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 8692735
+            }
+          ]
+        },
+        {
+          "year": 2011,
+          "total_assets": 21820391,
+          "total_liabilities": 7549242,
+          "net_worth": 14271148,
+          "date_filed": "2011-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 21820391,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 7549242
+            }
+          ]
+        },
+        {
+          "year": 2010,
+          "total_assets": 21550887,
+          "total_liabilities": 5308000,
+          "net_worth": 16242887,
+          "date_filed": "2010-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 21550887,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 5308000
+            }
+          ]
+        },
+        {
+          "year": 2009,
+          "total_assets": 20171259,
+          "total_liabilities": 1890000,
+          "net_worth": 18281265,
+          "date_filed": "2009-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 20171259,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1890000
+            }
+          ]
+        },
+        {
+          "year": 2008,
+          "total_assets": 20268617,
+          "total_liabilities": 1775000,
+          "net_worth": 18493617,
+          "date_filed": "2008-12-31",
+          "status": "submitted",
+          "source_url": "https://pcij.org/2019/04/04/duterte-sara-paolo-mark-big-spikes-br-in-wealth-cash-while-in-public-office/",
+          "source_description": "Philippine Center for Investigative Journalism",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 20268617,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 1775000
+            }
+          ]
+        },
+        {
+          "year": 2025,
+          "total_assets": 122797727,
+          "total_liabilities": 24141596,
+          "net_worth": 98656131.2,
+          "date_filed": "2027-04-26",
+          "status": "submitted",
+          "source_url": "https://saln.bettergov.ph/saln/sara-duterte/2025-sara-duterte.pdf",
+          "source_description": "Uploaded PDF",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 122797727.2,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 24141596
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tito-sotto",
+      "slug": "tito-sotto",
+      "name": "Tito Sotto",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2025-06-30",
+      "term_end": "2031-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 465604461.4,
+          "total_liabilities": 276736338,
+          "net_worth": 188868123.4,
+          "date_filed": "2025-10-24",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 465604461.4,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 276736338
+            }
+          ]
+        },
+        {
+          "year": 2019,
+          "total_assets": 383769804.3,
+          "total_liabilities": 305996942.73,
+          "net_worth": 77772861.57,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 383769804.3,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 305996942.73
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 129051804.3,
+          "total_liabilities": 58931104,
+          "net_worth": 70120700.3,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 129051804.3,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 58931104
+            }
+          ]
+        },
+        {
+          "year": 2017,
+          "total_assets": 64730400,
+          "total_liabilities": 0,
+          "net_worth": 64730400,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 64730400,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    },
+    {
+      "id": "win-gatchalian",
+      "slug": "win-gatchalian",
+      "name": "Win Gatchalian",
+      "position": "Senator",
+      "agency": "LEGISLATIVE",
+      "status": "active",
+      "term_start": "2022-06-30",
+      "term_end": "2028-06-29",
+      "saln_records": [
+        {
+          "year": 2025,
+          "total_assets": 89521016.57,
+          "total_liabilities": 0,
+          "net_worth": 89521016.57,
+          "date_filed": "2025-10-24",
+          "status": "submitted",
+          "source_url": "https://www.abs-cbn.com/news/nation/2025/10/29/all-24-senators-of-20th-congress-release-salns-1343",
+          "source_description": "ABS-CBN Network",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 89521016.57,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2020,
+          "total_assets": 91213596.57,
+          "total_liabilities": 0,
+          "net_worth": 91213596.57,
+          "date_filed": "2020-12-31",
+          "status": "submitted",
+          "source_url": "https://web.senate.gov.ph/2020%20SALN%20table%20summary.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 91213596.57,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2019,
+          "total_assets": 125404344.93,
+          "total_liabilities": 30000000,
+          "net_worth": 95404344.93,
+          "date_filed": "2019-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/2019%20SALN%20table%20summary%20Senate%20website.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 125404344.93,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": [
+            {
+              "creditor": "As reported in SALN",
+              "nature": "Total Liabilities as reported",
+              "balance": 30000000
+            }
+          ]
+        },
+        {
+          "year": 2018,
+          "total_assets": 96210607.14,
+          "total_liabilities": 0,
+          "net_worth": 96210607.14,
+          "date_filed": "2018-12-31",
+          "status": "submitted",
+          "source_url": "https://legacy.senate.gov.ph/Summary%202018%20SALN.pdf",
+          "source_description": "Philippine Senate Official Website",
+          "assets": [
+            {
+              "description": "Total Assets as reported",
+              "value": 96210607.14,
+              "source": "As reported in SALN"
+            }
+          ],
+          "liabilities": []
+        },
+        {
+          "year": 2017,
+          "total_assets": 88226485.77,
+          "total_liabilities": 0,
+          "net_worth": 88226485.77,
+          "date_filed": "2017-12-31",
+          "status": "submitted",
+          "source_url": "https://www.rappler.com/philippines/202728-senators-2017-saln-villar-pacquiao-richest/",
+          "source_description": "Rappler News Report",
+          "assets": [
+            {
+              "description": "Net Worth as reported in SALN",
+              "value": 88226485.77,
+              "source": null
+            }
+          ],
+          "liabilities": []
+        }
+      ]
+    }
+  ]
+}

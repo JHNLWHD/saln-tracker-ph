@@ -16,14 +16,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     children, 
     ...props 
   }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-lg font-medium tracking-tight transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseStyles = 'archive-button';
     
     const variants = {
-      primary: 'bg-primary-500 hover:bg-primary-600 text-white shadow-lg hover:shadow-xl focus:ring-primary-500',
-      secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-900 shadow-md hover:shadow-lg focus:ring-gray-500',
-      danger: 'bg-danger-500 hover:bg-danger-600 text-white shadow-lg hover:shadow-xl focus:ring-danger-500',
-      ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500',
-      flag: 'bg-flag-gradient hover:opacity-90 text-white shadow-lg hover:shadow-xl focus:ring-primary-500'
+      primary: 'archive-button-primary',
+      secondary: 'archive-button-secondary',
+      danger: 'archive-button-danger',
+      ghost: 'archive-button-ghost',
+      flag: 'archive-button-primary'
     };
 
     const sizes = {
@@ -35,12 +35,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} ${loading ? 'animate-pulse' : ''}`}
+        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
         disabled={disabled || loading}
+        aria-busy={loading || undefined}
         {...props}
       >
         {loading && (
-          <svg className="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
+          <svg aria-hidden="true" className="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
             <circle 
               className="opacity-25" 
               cx="12" 

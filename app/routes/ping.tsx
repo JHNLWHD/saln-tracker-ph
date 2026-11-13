@@ -13,6 +13,7 @@ export async function loader({}: Route.LoaderArgs) {
     headers: {
       "Content-Type": "text/plain",
       "Cache-Control": "no-cache, no-store, must-revalidate",
+      "X-Archive-Revision": process.env.ARCHIVE_RELEASE_REVISION || 'local',
     },
   });
 }

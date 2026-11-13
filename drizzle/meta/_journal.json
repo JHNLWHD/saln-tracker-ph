@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1790429212953,
+      "tag": "0000_archive_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1790430081332,
+      "tag": "0001_filing_documents",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1790430738187,
+      "tag": "0002_reviewed_manifests",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1790431601055,
+      "tag": "0003_editorial_corrections",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1790880798452,
+      "tag": "0004_reviewed_identities",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1790882571685,
+      "tag": "0005_reviewed_rosters",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1790883558326,
+      "tag": "0006_reviewed_transcriptions",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1790885146230,
+      "tag": "0007_directory_indexes",
+      "breakpoints": true
+    }
+  ]
+}

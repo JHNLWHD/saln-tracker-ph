@@ -6,12 +6,16 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import netlifyPlugin from "@netlify/vite-plugin-react-router";
 
 export default defineConfig({
+  define: { 'process.env.ARCHIVE_RELEASE_REVISION': JSON.stringify(process.env.COMMIT_REF || process.env.GITHUB_SHA || 'local') },
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],
     },
   },
   plugins: [reactRouter(), tsconfigPaths(), netlifyPlugin()],
+  optimizeDeps: {
+    include: ["posthog-js/react"],
+  },
   ssr: {
     noExternal: ['posthog-js', 'posthog-js/react']
   }

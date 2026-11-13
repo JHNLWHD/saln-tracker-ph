@@ -1,0 +1,12 @@
+{
+  "acceptedCommit": null,
+  "developAcceptanceRef": null,
+  "productionApprovalRef": null,
+  "snapshotVersion": null,
+  "rollbackUntil": null,
+  "targets": { "tursoDatabaseUrl": null, "accountId": null, "documentBucket": null, "documentJurisdiction": null, "backupBucket": null, "backupJurisdiction": null },
+  "backups": {
+    "pre": { "file": null, "sha256": null, "key": null },
+    "post": { "file": null, "sha256": null, "key": null }
+  }
+}
