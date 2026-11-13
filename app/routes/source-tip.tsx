@@ -5,6 +5,7 @@ import { Footer } from '../components/layout/Footer';
 import { EmptyState, TextField } from '../components/ui/Archive';
 import { Button } from '../components/ui/Button';
 import { queueSourceTip, readSourceTipBody, sourceTipsConfigured, validateSourceTip } from '../db/source-tips.server';
+import { isReadOnlyPreview } from '../archive/preview.server';
 
 const privateHeaders = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' };
 export function headers({ actionHeaders }: Pick<Route.HeadersArgs, 'actionHeaders'>) {
@@ -14,12 +15,13 @@ export function headers({ actionHeaders }: Pick<Route.HeadersArgs, 'actionHeader
 export function meta() { return [{ title: 'Suggest a source | SALN Tracker PH' }, { name: 'description', content: 'Suggest a source URL for SALN Tracker PH.' }, { name: 'robots', content: 'noindex,nofollow' }]; }
 export function loader({ request }: Route.LoaderArgs) {
   const hint = new URL(request.url).searchParams.get('person') ?? '';
-  return data({ configured: sourceTipsConfigured(), personHint: /^[A-Za-z0-9:._-]{1,128}$/.test(hint) ? hint : '' }, { headers: privateHeaders });
+  return data({ configured: sourceTipsConfigured(), readOnlyPreview: isReadOnlyPreview(), personHint: /^[A-Za-z0-9:._-]{1,128}$/.test(hint) ? hint : '' }, { headers: privateHeaders });
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
   const fail = (error: string, status: number) => data({ success: false as const, error, errors: {}, values: undefined }, { status, headers: privateHeaders });
   if (request.method !== 'POST') return fail('Use the Source Tip form to submit a source.', 405);
+  if (isReadOnlyPreview()) return fail('Source Tips are disabled in this read-only preview.', 503);
   if (request.headers.get('Origin') !== new URL(request.url).origin) return fail('Reload the form and submit it from this site.', 403);
   if (request.headers.get('Content-Type')?.split(';')[0].trim() !== 'application/x-www-form-urlencoded') return fail('Use the URL form. File uploads are not accepted.', 415);
   let checked;
@@ -39,8 +41,8 @@ export default function SourceTip({ loaderData, actionData }: Route.ComponentPro
   const failed = actionData && !actionData.success ? actionData : undefined;
   const values = failed?.values, errors = failed?.errors;
   return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8 space-y-6 max-w-3xl"><h1>Suggest a source</h1>
-    <p>Send a source URL and explain what it establishes. A Source Tip stays private until reviewers acquire and assess the evidence.</p>
-    {actionData?.success ? <div role="status"><h2>Source Tip received</h2><p>It is queued for private review. It is not published evidence.</p><Link className="underline text-primary-700" to="/">Return Home</Link></div> : !loaderData.configured && !values ? <EmptyState title="Source Tips are currently unavailable"><p>Please try again later.</p></EmptyState> : <Form method="post" encType="application/x-www-form-urlencoded" className="space-y-5 ph-no-capture" aria-label="Private Source Tip">
+    <p>{loaderData.readOnlyPreview ? 'This visual preview shows saved public data. It does not accept submissions.' : 'Send a source URL and explain what it establishes. A Source Tip stays private until reviewers acquire and assess the evidence.'}</p>
+    {actionData?.success ? <div role="status"><h2>Source Tip received</h2><p>It is queued for private review. It is not published evidence.</p><Link className="underline text-primary-700" to="/">Return Home</Link></div> : !loaderData.configured && !values ? <EmptyState title={loaderData.readOnlyPreview ? 'Source Tips are disabled in this read-only preview' : 'Source Tips are currently unavailable'}><p>{loaderData.readOnlyPreview ? 'Browse the saved SALN entries from Home.' : 'Please try again later.'}</p></EmptyState> : <Form method="post" encType="application/x-www-form-urlencoded" className="space-y-5 ph-no-capture" aria-label="Private Source Tip">
       {failed?.error && <p role="alert" className="archive-field-error">{failed.error}</p>}
       {errors && Object.keys(errors).length > 0 && <p role="alert">Check the marked fields.</p>}
       <input type="hidden" name="personHint" value={loaderData.personHint} />

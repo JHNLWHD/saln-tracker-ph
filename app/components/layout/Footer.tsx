@@ -22,7 +22,7 @@ export function Footer() {
         <AdvocacyPanel title="Support public access">
           <p>Help make public declarations easier to find and inspect.</p>
           <Hashtags />
-          <p><Link to="/source-tip">Suggest a source for private review</Link></p>
+          <p><Link to="/source-tip">{import.meta.env?.VITE_READ_ONLY_PREVIEW === 'true' ? 'Source Tips are disabled in this preview' : 'Suggest a source for private review'}</Link></p>
           <p><a href="https://discord.com/invite/5xBQmjWm" target="_blank" rel="noopener noreferrer">Join the community</a></p>
           {import.meta.env?.VITE_GITHUB_REPO && (
             <p><a href={`https://github.com/${import.meta.env.VITE_GITHUB_REPO}`} target="_blank" rel="noopener noreferrer">Contribute on GitHub</a></p>

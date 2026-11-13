@@ -1,5 +1,6 @@
 import { createLocalArchive } from "./local";
 import type { Archive } from "./types";
+import { isReadOnlyPreview } from './preview.server';
 
 export { readLegacyRecords } from "../db/legacy.server";
 
@@ -7,6 +8,7 @@ const localArchive = createLocalArchive();
 let databaseArchive: Promise<Archive> | undefined;
 let closeDatabase: (() => void) | undefined;
 export async function getArchive(): Promise<Archive> {
+  if (isReadOnlyPreview()) return localArchive;
   if (process.env.ARCHIVE_ENVIRONMENT === 'staging' && process.env.ARCHIVE_ADAPTER !== 'turso') throw new Error('Staging requires the Turso Archive adapter');
   const adapter = process.env.ARCHIVE_ADAPTER ?? "turso";
   if (adapter === "local") return localArchive;

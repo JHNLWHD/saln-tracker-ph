@@ -1,4 +1,5 @@
 import { connectArchive } from './client.server';
+import { isReadOnlyPreview } from '../archive/preview.server';
 
 function object(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid stored legacy value');
@@ -58,6 +59,10 @@ export type LegacyRecord = LegacyProfile['saln_records'][number];
 export type LegacyData = { capturedAt: string; profiles: LegacyProfile[] };
 
 export async function readLegacyRecords(): Promise<LegacyData | null> {
+  if (isReadOnlyPreview()) {
+    const { default: saved } = await import('../../data/preview/legacy-public-2026-10-18.json');
+    return { capturedAt: saved.capturedAt, profiles: structuredClone(saved.profiles) };
+  }
   if (process.env.ARCHIVE_ENVIRONMENT === 'staging' && process.env.ARCHIVE_ADAPTER !== 'turso') return null;
   if ((process.env.ARCHIVE_ADAPTER ?? 'turso') !== 'turso' || !process.env.TURSO_DATABASE_URL) return null;
   const { client } = connectArchive({ url: process.env.TURSO_DATABASE_URL, authToken: process.env.TURSO_AUTH_TOKEN });

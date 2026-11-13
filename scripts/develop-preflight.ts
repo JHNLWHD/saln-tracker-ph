@@ -5,9 +5,14 @@ import assert from 'node:assert/strict';
 import { serializePublicSnapshot } from '../app/archive/snapshot.server';
 import release from '../data/release/public-snapshot.json';
 import { sourceTipDestination } from '../app/db/source-tips.server';
+import { isReadOnlyPreview } from '../app/archive/preview.server';
 
 /** Configuration checks only. Builds never open a database or write an object. */
 export function checkDevelopEnvironment(env: NodeJS.ProcessEnv) {
+  if (isReadOnlyPreview(env)) {
+    if (env.NETLIFY === 'true' && (env.CONTEXT !== 'branch-deploy' || env.BRANCH !== 'develop')) throw new Error('Only the develop branch may build the read-only preview');
+    return;
+  }
   if (env.NETLIFY !== 'true' || env.CONTEXT === 'production') return;
   if (env.CONTEXT !== 'branch-deploy' || env.BRANCH !== 'develop') throw new Error('Only the isolated develop branch may use staging resources');
   if (env.ARCHIVE_ENVIRONMENT !== 'staging' || env.ARCHIVE_ADAPTER !== 'turso' || env.ARCHIVE_STORAGE !== 'r2') throw new Error('Develop requires the staging Turso/R2 Archive');

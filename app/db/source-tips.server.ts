@@ -5,6 +5,7 @@ import { and, count, eq, gte } from 'drizzle-orm';
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import type { Client } from '@libsql/client';
 import { connectArchive } from './client.server';
+import { isReadOnlyPreview } from '../archive/preview.server';
 
 /** This table exists only in the separate private destination, never in the Archive schema. */
 const tips = sqliteTable('source_tips', {
@@ -28,6 +29,7 @@ export function sourceTipDestination(env: NodeJS.ProcessEnv = process.env) {
 }
 
 export function sourceTipsConfigured(env: NodeJS.ProcessEnv = process.env) {
+  if (isReadOnlyPreview(env)) return false;
   try { const config = sourceTipDestination(env); return config.url.startsWith('file:') || (env.SOURCE_TIPS_RATE_LIMIT_SECRET?.length ?? 0) >= 32; } catch { return false; }
 }
 
@@ -53,6 +55,7 @@ export function validateSourceTip(form: URLSearchParams) {
 
 /** Never fetch the submitted URL or write to a public Archive table. */
 export async function queueSourceTip(tip: SourceTipInput, trustedIp: unknown, env: NodeJS.ProcessEnv = process.env) {
+  if (isReadOnlyPreview(env)) throw new Error('Source Tips are disabled in this preview');
   const rateKey = sourceTipRateKey(trustedIp, env);
   const { client, db } = connectArchive(sourceTipDestination(env));
   const id = randomUUID();

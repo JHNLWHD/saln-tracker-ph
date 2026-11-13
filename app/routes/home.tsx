@@ -6,6 +6,7 @@ import { ArchiveHome } from '../components/ArchiveHome';
 import { LegacyDirectory } from '../components/LegacyRecords';
 import { redirect } from 'react-router';
 import { searchText } from '../archive/directory';
+import { checkPreviewView } from '../archive/preview.server';
 
 export function meta({ data }: Route.MetaArgs) {
   const query = data?.query;
@@ -15,6 +16,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const params = new URL(request.url).searchParams, view = params.get('view');
   const query = (params.get('q') ?? '').trim();
   if (params.getAll('q').length > 1 || query.length > 128 || params.getAll('view').length > 1 || (view !== null && view !== 'reviewed')) throw new Response('Invalid search', { status: 400 });
+  checkPreviewView(request);
   if (view !== 'reviewed') {
     const legacy = await readLegacyRecords();
     if (legacy) return { query, legacy: { ...legacy, profiles: legacy.profiles.filter(profile => [profile.name, profile.position, profile.agency].some(value => value && searchText(value).includes(searchText(query)))) } };

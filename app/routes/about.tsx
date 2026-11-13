@@ -25,8 +25,8 @@ export default function About() {
       <p>The site may not have a copy for every official or reporting period. A missing entry does not establish whether a SALN was filed.</p>
     </section>
     <section className="space-y-3"><h2>Suggest a source</h2>
-      <p>Found a missing document or an error? Send a source URL and a short explanation. Submissions and optional contact details stay private while the source is checked.</p>
-      <Link className="text-primary-700 underline" to="/source-tip">Suggest a source</Link>
+      <p>{import.meta.env?.VITE_READ_ONLY_PREVIEW === 'true' ? 'Source Tips are disabled in this read-only visual preview. No submissions are stored.' : 'Found a missing document or an error? Send a source URL and a short explanation. Submissions and optional contact details stay private while the source is checked.'}</p>
+      <Link className="text-primary-700 underline" to="/source-tip">{import.meta.env?.VITE_READ_ONLY_PREVIEW === 'true' ? 'Read about disabled Source Tips' : 'Suggest a source'}</Link>
     </section>
   </main><Footer /></>;
 }

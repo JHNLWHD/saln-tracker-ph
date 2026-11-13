@@ -2,6 +2,16 @@
 
 Preparation only. The remote `develop` branch exists. The stacked PRs have not been merged. No staging Turso database, R2 bucket, private Source Tips destination or deployed revision is claimed as verified by this PR. Issue #64 stays open until its live criteria pass.
 
+## Read-only visual preview
+
+The preview copy on `develop` can use the public data saved on 18 October 2026 without any data service. Set `ARCHIVE_ENVIRONMENT=preview`, `ARCHIVE_ADAPTER=local`, `ARCHIVE_STORAGE=local`, `ARCHIVE_PREVIEW_BRANCH=develop` and `VITE_READ_ONLY_PREVIEW=true` only for the `develop` branch, including Builds and Functions scopes. Set `VITE_SITE_URL` to its preview URL. Do not supply Turso, R2, Source Tip or staging data-service settings. Disable Netlify prerender for this branch. Analytics is not initialized in this mode.
+
+The build checks the actual develop branch context. Functions validate the explicit branch-scoped marker and the paired preview settings because Netlify does not provide build branch/context variables at runtime. Invalid or partial settings fail before data-service access. Home, search, original profiles and Git-held PDFs remain available. Reviewed-only UI views return an explicit unavailable response; static release snapshots remain separate downloadable artifacts. Source Tips show a disabled explanation and reject POST before reading its body or opening a client. Preview HTML and static files are noindex; robots disallows crawling and its sitemap is empty.
+
+This is a visual preview of saved public data, not full staging acceptance or current source verification. The preview commits are independent copies; the original PRs stay open. Before later PR integration, restore the original develop tree with a separately authorized normal commit. Keep preview history and do not rewrite or merge the original PR branches for this preview.
+
+The full staging deployment below remains a separate mode with all its existing requirements.
+
 Enable only `develop` as a Netlify branch deployment. Set each variable for the **develop branch**, with the required build and Functions scopes. Never inherit production data credentials into branch deploys or deploy previews. The build command checks configuration and builds code. It performs no migration, import, schema initialization, backup or object upload. Non-production Netlify contexts other than a develop branch deployment fail closed.
 
 Set the variables below through Netlify's UI, CLI or API. Select the `develop` branch value. Include both **Builds** and **Functions** scopes for runtime variables; use all scopes if the plan does not offer individual scopes. Values in `netlify.toml` are available only during the build. They do not configure `process.env` in Functions. A passing build cannot prove runtime configuration. Redeploy after changing runtime variables, then run the checks below without exposing their values.

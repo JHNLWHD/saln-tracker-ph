@@ -7,6 +7,7 @@ import { Footer } from '../components/layout/Footer';
 import { EmptyState, TextField } from '../components/ui/Archive';
 import { Button } from '../components/ui/Button';
 import { PersonCard } from '../components/PersonCard';
+import { checkPreviewView } from '../archive/preview.server';
 
 export function meta({ data }: Route.MetaArgs) {
   const query = data?.filters?.q;
@@ -25,6 +26,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (view !== 'reviewed' && [...params.keys()].every(key => key === 'q')) {
     throw redirect(`/${params.size ? `?${params}` : ''}`, 301);
   }
+  checkPreviewView(request, true);
   return { filters, directory: await (await getArchive()).browsePeople(filters) };
 }
 
@@ -60,5 +62,6 @@ export default function People({ loaderData }: Route.ComponentProps) {
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  if (import.meta.env?.VITE_READ_ONLY_PREVIEW === 'true' && isRouteErrorResponse(error) && error.status === 503) return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8"><h1>Reviewed views are not available in this visual preview</h1><p>Browse the saved public SALN entries from Home.</p><Link className="underline" to="/">Return Home</Link></main><Footer /></>;
   return <><Header /><main id="main-content" tabIndex={-1} className="archive-container py-8"><h1>{isRouteErrorResponse(error) && error.status === 400 ? 'Invalid directory filters' : 'Directory temporarily unavailable'}</h1><p>Check the filters or try again later.</p><Link className="underline" to="/people">Browse officials</Link></main><Footer /></>;
 }

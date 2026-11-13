@@ -5,12 +5,14 @@ import { Footer } from '../components/layout/Footer';
 import { getArchive, readLegacyRecords } from '../archive/archive.server';
 import { PersonProfile } from '../components/PersonProfile';
 import { LegacyPersonProfile } from '../components/LegacyRecords';
+import { checkPreviewView } from '../archive/preview.server';
 
 export function meta({ data }: Pick<Route.MetaArgs, 'data'>) {
   const name = data?.legacy?.name ?? data?.person?.person.canonicalName;
   return [{ title: `${name ?? 'Person'} | SALN Tracker PH` }, { name: 'description', content: name ? `View SALN entries, declared assets, liabilities and net worth for ${name}.` : 'Browse public officials and their SALN entries.' }];
 }
 export async function loader({ params, request }: Route.LoaderArgs) {
+  checkPreviewView(request);
   const person = await (await getArchive()).findPersonBySlug(params.slug);
   if (new URL(request.url).searchParams.get('view') !== 'reviewed') {
     const profiles = (await readLegacyRecords())?.profiles;

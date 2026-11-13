@@ -14,6 +14,10 @@ import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import { EmptyState } from "./components/ui/Archive";
 
+export function headers() {
+  return import.meta.env.VITE_READ_ONLY_PREVIEW === 'true' ? { 'X-Robots-Tag': 'noindex, nofollow', 'Cache-Control': 'no-store' } : {};
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
   { rel: "icon", type: "image/png", href: "/favicon-96x96.png", sizes: "96x96" },
@@ -32,9 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="apple-mobile-web-app-title" content="SALN Tracker PH" />
         <meta name="google-site-verification" content="8eVz-3g4SCi3zM_wW6c7Hr8LsobQZ5BxPMac-hKpGSU" />
         <Meta />
+        {import.meta.env.VITE_READ_ONLY_PREVIEW === 'true' && <meta name="robots" content="noindex, nofollow" />}
         <Links />
       </head>
       <body>
+        {import.meta.env.VITE_READ_ONLY_PREVIEW === 'true' && <aside aria-label="Read-only preview" className="border-b border-primary-200 bg-primary-50 px-4 py-3 text-center text-sm text-primary-900">Read-only preview · Saved public data from 18 October 2026 · Source Tips disabled</aside>}
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -44,6 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  if (import.meta.env.VITE_READ_ONLY_PREVIEW === 'true') return <Outlet />;
   return (
     <PostHogProvider
       apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
